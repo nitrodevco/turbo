@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Turbo.Main": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

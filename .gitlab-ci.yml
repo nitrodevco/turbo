@@ -1,0 +1,9 @@
+image: mcr.microsoft.com/dotnet/sdk:5.0
+
+stages:
+  - test
+
+Test Turbo:
+    stage: test
+    script:
+        - dotnet test
