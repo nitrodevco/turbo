@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Database.Entities;
 
 namespace Turbo.Database.Repositories
 {
-    public interface IRepository<T> where T : class
+    public interface IHabboRepository : IRepository<Habbo>
     {
-        // Todo: Put methods that every repository needs in here
-
-        T Find(int id);
+        // Todo: Put Habbo repository specific methods in here
     }
 }

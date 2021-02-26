@@ -22,7 +22,6 @@ namespace Turbo.Core.Configuration
         public string DatabaseUser { get; }
         public string DatabasePassword { get; }
         public string DatabaseName { get; }
-        public string MySqlVersion { get; }
 
         public int NetworkWorkerThreads { get; }
     }
