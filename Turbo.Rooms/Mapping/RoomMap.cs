@@ -30,7 +30,7 @@ namespace Turbo.Rooms.Mapping
 
         public void GenerateMap()
         {
-            IRoomModel roomModel = Room
+            //IRoomModel roomModel = Room
         }
     }
 }
