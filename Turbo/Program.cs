@@ -16,6 +16,7 @@ using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
 using Turbo.Plugins;
 using Microsoft.EntityFrameworkCore;
+using Turbo.Database.Repositories;
 
 namespace Turbo.Main
 {
@@ -46,6 +47,9 @@ namespace Turbo.Main
                         .EnableSensitiveDataLogging()
                         .EnableDetailedErrors()
                     );
+
+                    // Repositories
+                    services.AddScoped<IHabboRepository, HabboRepository>();
 
                     // Singletons
                     services.AddSingleton<IPluginManager, TurboPluginManager>();
