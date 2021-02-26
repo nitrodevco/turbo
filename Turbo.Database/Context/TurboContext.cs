@@ -5,11 +5,14 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Turbo.Database.Attributes;
+using Turbo.Database.Entities;
 
 namespace Turbo.Database.Context
 {
     public class TurboContext : DbContext, IEmulatorContext
     {
+        public DbSet<Habbo> Habbos { get; set; }
+
         public TurboContext(DbContextOptions<TurboContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
