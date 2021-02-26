@@ -1,22 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Turbo.Database.Attributes;
-using Turbo.Plugins;
+using Turbo.Database.Entities;
 
 namespace Turbo.Database.Context
 {
     public class TurboContext : DbContext, IEmulatorContext
     {
+        public DbSet<Habbo> Habbos { get; set; }
+
         public TurboContext(DbContextOptions<TurboContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var entityMethod = typeof(ModelBuilder).GetMethod("Entity");
+            var entityMethod = typeof(ModelBuilder).GetMethod("Entity", Type.EmptyTypes);
 
             if (!Directory.Exists("plugins"))
             {
