@@ -34,9 +34,6 @@ namespace Turbo.Main.Configuration
         public string DatabasePassword { get; set; }
         public string DatabaseName { get; set; }
 
-        // MariaDB or MySQL (example: 10.5.9)
-        public string MySqlVersion { get; set; }
-
         public int NetworkWorkerThreads { get; set; }
     }
 }

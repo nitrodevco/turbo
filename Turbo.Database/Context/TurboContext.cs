@@ -1,12 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using Turbo.Database.Attributes;
-using Turbo.Plugins;
 
 namespace Turbo.Database.Context
 {
@@ -16,7 +14,7 @@ namespace Turbo.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var entityMethod = typeof(ModelBuilder).GetMethod("Entity");
+            var entityMethod = typeof(ModelBuilder).GetMethod("Entity", Type.EmptyTypes);
 
             if (!Directory.Exists("plugins"))
             {
