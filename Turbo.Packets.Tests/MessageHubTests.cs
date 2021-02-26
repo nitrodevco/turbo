@@ -217,9 +217,9 @@ namespace Turbo.Packets.Tests
 
         internal class MockSession : ISession
         {
-            public IPlayer Player => throw new NotImplementedException();
-
-            public string IPAddress => throw new NotImplementedException();
+            public IPlayer Player { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public string IPAddress { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public string Revision { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
             public void Disconnect()
             {

@@ -5,8 +5,9 @@ namespace Turbo.Packets.Sessions
 {
     public interface ISession
     {
-        public IPlayer Player { get; }
-        public string IPAddress { get; }
+        public IPlayer Player { get; set; }
+        public string IPAddress { get; set; }
+        public string Revision { get; set; }
         public void Disconnect();
         public ISession Send(IComposer composer);
         public ISession SendQueue(IComposer composer);
