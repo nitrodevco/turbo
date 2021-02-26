@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Turbo.Rooms.Security
 {
-    class RoomBan
+    public class RoomMute : IRoomMute
     {
     }
 }
