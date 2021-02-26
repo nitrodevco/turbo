@@ -17,6 +17,6 @@ namespace Turbo.Database.Repositories
             _context = context;
         }
 
-        public Habbo Find(int id) => _context.Habbos.Find(id);
+        public async Task<Habbo> FindAsync(int id) => await _context.Habbos.FindAsync(id);
     }
 }

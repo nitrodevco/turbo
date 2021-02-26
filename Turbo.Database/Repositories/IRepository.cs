@@ -10,6 +10,6 @@ namespace Turbo.Database.Repositories
     {
         // Todo: Put methods that every repository needs in here
 
-        T Find(int id);
+        Task<T> FindAsync(int id);
     }
 }
