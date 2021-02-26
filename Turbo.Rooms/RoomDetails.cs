@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Turbo.Rooms
 {
-    class RoomDetails
+    public class RoomDetails
     {
+        public int Id
+        {
+            get
+            {
+                return 0;
+            }
+        }
     }
 }

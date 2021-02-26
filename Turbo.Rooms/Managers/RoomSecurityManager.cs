@@ -6,7 +6,23 @@ using System.Threading.Tasks;
 
 namespace Turbo.Rooms.Managers
 {
-    class RoomSecurityManager
+    public class RoomSecurityManager
     {
+        private IRoom Room { get; set; }
+
+        public RoomSecurityManager(IRoom room)
+        {
+            Room = room;
+        }
+
+        public void Init()
+        {
+
+        }
+
+        public void Dispose()
+        {
+
+        }
     }
 }

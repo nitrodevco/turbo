@@ -6,7 +6,15 @@ using System.Threading.Tasks;
 
 namespace Turbo.Rooms
 {
-    interface IRoom
+    public interface IRoom
     {
+        public IRoomManager RoomManager { get; }
+        public RoomDetails RoomDetails { get; }
+
+        public void Dispose();
+        public void TryDispose();
+        public void CancelDispose();
+
+        public int Id;
     }
 }

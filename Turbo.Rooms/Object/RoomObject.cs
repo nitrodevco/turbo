@@ -8,8 +8,8 @@ namespace Turbo.Rooms.Object
         public int Id { get; private set; }
         public string Type { get; private set; }
 
-        public readonly IPoint Location;
-        public readonly IPoint Direction;
+        public IPoint Location { get; private set; }
+        public IPoint Direction { get; private set; }
 
         public RoomObject(int id, string type)
         {

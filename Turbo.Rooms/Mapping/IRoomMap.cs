@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Rooms.Object
+namespace Turbo.Rooms.Mapping
 {
-    public interface IRoomObjectManager
+    public interface IRoomMap
     {
+        public void Dispose();
+        public void GenerateMap();
     }
 }
