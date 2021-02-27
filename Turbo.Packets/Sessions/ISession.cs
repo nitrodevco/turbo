@@ -1,11 +1,13 @@
-﻿using Turbo.Core.Players;
-using Turbo.Packets.Composers;
+﻿using Turbo.Packets.Composers;
+using Turbo.Core;
+using System;
 
 namespace Turbo.Packets.Sessions
 {
-    public interface ISession
+    public interface ISession : IDisposable
     {
-        public IPlayer Player { get; }
+        public ISessionPlayer SessionPlayer { get; }
+        public bool SetSessionPlayer(ISessionPlayer sessionPlayer);
         public string IPAddress { get; }
         public void Disconnect();
         public ISession Send(IComposer composer);

@@ -32,7 +32,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Database", "Turbo.Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Furniture", "Turbo.Furniture\Turbo.Furniture.csproj", "{C790157F-BB1C-47D6-8742-D6BFF3C358E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turbo.Database.Tests", "Turbo.Database.Tests\Turbo.Database.Tests.csproj", "{9B02A4C9-00E1-4026-9967-56ADF77A1584}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Database.Tests", "Turbo.Database.Tests\Turbo.Database.Tests.csproj", "{9B02A4C9-00E1-4026-9967-56ADF77A1584}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turbo.Players", "Turbo.Player\Turbo.Players.csproj", "{AA8A9D68-1FAA-455B-B753-95F5E267B38E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,6 +106,10 @@ Global
 		{9B02A4C9-00E1-4026-9967-56ADF77A1584}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B02A4C9-00E1-4026-9967-56ADF77A1584}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B02A4C9-00E1-4026-9967-56ADF77A1584}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA8A9D68-1FAA-455B-B753-95F5E267B38E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA8A9D68-1FAA-455B-B753-95F5E267B38E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA8A9D68-1FAA-455B-B753-95F5E267B38E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA8A9D68-1FAA-455B-B753-95F5E267B38E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

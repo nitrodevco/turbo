@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using System;
-using Turbo.Core.Players;
+using Turbo.Core;
 using Turbo.Packets.Composers;
 using Turbo.Packets.Incoming;
 using Turbo.Packets.Sessions;
@@ -215,9 +215,9 @@ namespace Turbo.Packets.Tests
             }
         }
 
-        internal class MockSession : ISession
+        internal class MockSession : ISessionPlayer
         {
-            public IPlayer Player => throw new NotImplementedException();
+            public ISessionPlayer Player => throw new NotImplementedException();
 
             public string IPAddress => throw new NotImplementedException();
 

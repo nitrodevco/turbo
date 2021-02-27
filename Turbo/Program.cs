@@ -17,6 +17,8 @@ using Turbo.Networking.REST;
 using Turbo.Plugins;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Repositories;
+using Turbo.Players;
+using Turbo.Rooms;
 
 namespace Turbo.Main
 {
@@ -57,6 +59,9 @@ namespace Turbo.Main
                     services.AddSingleton<IGameServer, GameServer>();
                     services.AddSingleton<IWSGameServer, WSGameServer>();
                     services.AddSingleton<IRestServer, RestServer>();
+
+                    services.AddSingleton<IPlayerManager, PlayerManager>();
+                    services.AddSingleton<IRoomManager, RoomManager>();
 
                     // Emulator
                     services.AddHostedService<TurboEmulator>();

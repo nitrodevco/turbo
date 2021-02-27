@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Entities\Room\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
