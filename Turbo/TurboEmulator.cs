@@ -21,20 +21,17 @@ namespace Turbo.Main
         private readonly IHostApplicationLifetime _appLifetime;
         private readonly ILogger<TurboEmulator> _logger;
         private readonly IPluginManager _pluginManager;
-        private readonly INetworkEventLoopGroup _networkEventLoopGroup;
         private readonly IServerManager _serverManager;
 
         public TurboEmulator(
             IHostApplicationLifetime appLifetime,
             ILogger<TurboEmulator> logger,
             IPluginManager pluginManager,
-            IServerManager serverManager,
-            INetworkEventLoopGroup eventLoop)
+            IServerManager serverManager)
         {
             _appLifetime = appLifetime;
             _logger = logger;
             _pluginManager = pluginManager;
-            _networkEventLoopGroup = eventLoop;
             _serverManager = serverManager;
         }
 
