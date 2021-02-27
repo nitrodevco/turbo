@@ -2,21 +2,18 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Threading.Tasks;
-using Turbo.Core;
 using Turbo.Core.Configuration;
 using Turbo.Database.Context;
 using Turbo.Main.Configuration;
-using Turbo.Networking.EventLoop;
-using Turbo.Networking.Game;
-using Turbo.Networking.Game.WebSocket;
-using Turbo.Networking.REST;
 using Turbo.Plugins;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Repositories;
+using Turbo.Networking;
+using Turbo.Networking.Game;
+using Turbo.Networking.Game.WebSocket;
+using Turbo.Networking.REST;
+using Turbo.Networking.EventLoop;
 
 namespace Turbo.Main
 {
@@ -53,6 +50,7 @@ namespace Turbo.Main
 
                     // Singletons
                     services.AddSingleton<IPluginManager, TurboPluginManager>();
+                    services.AddSingleton<IServerManager, ServerManager>();
                     services.AddSingleton<INetworkEventLoopGroup, NetworkEventLoopGroup>();
                     services.AddSingleton<IGameServer, GameServer>();
                     services.AddSingleton<IWSGameServer, WSGameServer>();

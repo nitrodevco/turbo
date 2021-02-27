@@ -60,7 +60,7 @@ namespace Turbo.Networking.REST
         public async Task StartAsync()
         {
             ServerChannel = await _serverBootstrap.BindAsync(IPAddress.Parse(Host), Port);
-            _logger.LogInformation("{Context} -> Listening on {Host}:{Port}", nameof(RestServer), Host, Port);
+            _logger.LogInformation("{Context} -> Listening on http://{Host}:{Port}", nameof(RestServer), Host, Port);
         }
     }
 }

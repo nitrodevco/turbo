@@ -60,7 +60,6 @@ namespace Turbo.Networking.Game
         public async Task ShutdownAsync()
         {
             await ServerChannel.CloseAsync();
-            await _eventLoopGroup.Group.ShutdownGracefullyAsync();
         }
     }
 }

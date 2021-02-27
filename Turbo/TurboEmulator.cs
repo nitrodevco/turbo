@@ -6,10 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core;
+using Turbo.Networking;
 using Turbo.Networking.EventLoop;
-using Turbo.Networking.Game;
-using Turbo.Networking.Game.WebSocket;
-using Turbo.Networking.REST;
 using Turbo.Plugins;
 
 namespace Turbo.Main
@@ -24,26 +22,20 @@ namespace Turbo.Main
         private readonly ILogger<TurboEmulator> _logger;
         private readonly IPluginManager _pluginManager;
         private readonly INetworkEventLoopGroup _networkEventLoopGroup;
-        private readonly IGameServer _gameServer;
-        private readonly IWSGameServer _wsGameServer;
-        private readonly IRestServer _restServer;
+        private readonly IServerManager _serverManager;
 
         public TurboEmulator(
             IHostApplicationLifetime appLifetime,
             ILogger<TurboEmulator> logger,
             IPluginManager pluginManager,
-            INetworkEventLoopGroup eventLoop,
-            IGameServer gameServer,
-            IWSGameServer wSGameServer,
-            IRestServer restServer)
+            IServerManager serverManager,
+            INetworkEventLoopGroup eventLoop)
         {
             _appLifetime = appLifetime;
             _logger = logger;
             _pluginManager = pluginManager;
             _networkEventLoopGroup = eventLoop;
-            _gameServer = gameServer;
-            _wsGameServer = wSGameServer;
-            _restServer = restServer;
+            _serverManager = serverManager;
         }
 
         /// <summary>
@@ -74,9 +66,7 @@ namespace Turbo.Main
 
             // Start services
             _pluginManager.LoadPlugins();
-            _gameServer.StartAsync().Wait();
-            _wsGameServer.StartAsync().Wait();
-            _restServer.StartAsync().Wait();
+            _serverManager.StartServersAsync();
 
             return Task.CompletedTask;
         }
