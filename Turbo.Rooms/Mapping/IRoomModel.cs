@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Turbo.Rooms.Mapping
 {
-    interface IRoomModel
+    public interface IRoomModel
     {
     }
 }

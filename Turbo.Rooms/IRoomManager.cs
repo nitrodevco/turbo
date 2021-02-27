@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Rooms.Object
+namespace Turbo.Rooms
 {
-    public interface IRoomObjectManager
+    public interface IRoomManager : IRoomContainer
     {
+        
     }
 }

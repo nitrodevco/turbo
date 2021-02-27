@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Turbo.Rooms
 {
-    interface IRoomContainer
+    public interface IRoomContainer
     {
+        public IRoom GetRoom(int id);
+        public IRoom AddRoom(IRoom room);
+        public void RemoveRoom(int id);
+        public void RemoveAllRooms();
     }
 }

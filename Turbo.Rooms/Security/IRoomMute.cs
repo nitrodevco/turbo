@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Rooms.Object
+namespace Turbo.Rooms.Security
 {
-    public interface IRoomObjectManager
+    public interface IRoomMute
     {
     }
 }
