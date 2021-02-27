@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Turbo.Database.Entities;
+using Turbo.Database.Entities.Players;
 using Turbo.Packets.Sessions;
 
 namespace Turbo.Players
@@ -30,14 +32,14 @@ namespace Turbo.Players
             return true;
         }
 
-        public void Init()
+        public async ValueTask InitAsync()
         {
             // load roles
             // load inventory
             // load messenger
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             if (_isDisposing) return;
 

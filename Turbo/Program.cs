@@ -16,9 +16,10 @@ using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
 using Turbo.Plugins;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Database.Repositories;
 using Turbo.Players;
 using Turbo.Rooms;
+using Turbo.Database.Repositories;
+using Turbo.Database.Repositories.Player;
 
 namespace Turbo.Main
 {
@@ -51,7 +52,7 @@ namespace Turbo.Main
                     );
 
                     // Repositories
-                    services.AddScoped<IHabboRepository, HabboRepository>();
+                    services.AddSingleton<IPlayerRepository, PlayerRepository>();
 
                     // Singletons
                     services.AddSingleton<IPluginManager, TurboPluginManager>();

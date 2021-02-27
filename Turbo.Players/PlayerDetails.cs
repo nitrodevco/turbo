@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Turbo.Database.Entities;
+using Turbo.Database.Entities.Players;
 
 namespace Turbo.Players
 {

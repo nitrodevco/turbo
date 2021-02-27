@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Database.Entities
+namespace Turbo.Database.Entities.Players
 {
     public class PlayerEntity : Entity
     {

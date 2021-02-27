@@ -1,20 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
+using Turbo.Database.Context;
+using Turbo.Database.Entities.Players;
+using Turbo.Database.Repositories.Player;
 using Turbo.Packets.Sessions;
 
 namespace Turbo.Players
 {
     public class PlayerManager : IPlayerManager, IPlayerContainer
     {
-        internal readonly Dictionary<int, IPlayer> _players;
+        private readonly IPlayerRepository _playerRepository;
 
-        public PlayerManager()
+        private readonly Dictionary<int, IPlayer> _players;
+
+        public PlayerManager(IPlayerRepository playerRepository)
         {
+            _playerRepository = playerRepository;
+
             _players = new Dictionary<int, IPlayer>();
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
 
         }
@@ -40,16 +48,19 @@ namespace Turbo.Players
             return null;
         }
 
-        public IPlayer GetOfflinePlayerById(int id)
+        public async Task<IPlayer> GetOfflinePlayerById(int id)
         {
             IPlayer player = GetPlayerById(id);
 
             if (player != null) return player;
 
-            // lookup in repository
-            // create new Player(this, PlayerEntity);
+            PlayerEntity playerEntity = await _playerRepository.FindAsync(id);
 
-            return null;
+            if (playerEntity == null) return null;
+
+            player = new Player(this, playerEntity);
+
+            return player;
         }
 
         public IPlayer GetOfflinePlayerByUsername(string username)
@@ -64,17 +75,18 @@ namespace Turbo.Players
             return null;
         }
 
-        public IPlayer CreatePlayer(int id, ISession session)
+        public async Task<IPlayer> CreatePlayer(int id, ISession session)
         {
             if ((id <= 0) || (session == null)) return null;
 
-            IPlayer player = GetOfflinePlayerById(id);
+            IPlayer player = await GetOfflinePlayerById(id);
 
             if (player == null) return null;
 
             if(!player.SetSession(session))
             {
-                player.Dispose();
+                await player.DisposeAsync();
+
                 session.Dispose();
 
                 return null;
@@ -82,12 +94,12 @@ namespace Turbo.Players
 
             _players.Add(id, player);
 
-            player.Init();
+            await player.InitAsync();
 
             return player;
         }
 
-        public void RemovePlayer(int id)
+        public async ValueTask RemovePlayer(int id)
         {
             if (id <= 0) return;
 
@@ -97,16 +109,16 @@ namespace Turbo.Players
 
             _players.Remove(id);
 
-            player.Dispose();
+            await player.DisposeAsync();
         }
 
-        public void RemoveAllPlayers()
+        public async ValueTask RemoveAllPlayers()
         {
             foreach(IPlayer player in _players.Values)
             {
                 _players.Remove(player.Id);
 
-                player.Dispose();
+                await player.DisposeAsync();
             }
         }
     }

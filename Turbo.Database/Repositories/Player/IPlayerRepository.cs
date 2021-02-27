@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Turbo.Database.Entities;
+using Turbo.Database.Entities.Players;
 
-namespace Turbo.Database.Repositories
+namespace Turbo.Database.Repositories.Player
 {
-    public interface IHabboRepository : IRepository<Habbo>
+    public interface IPlayerRepository : IRepository<PlayerEntity>
     {
-        // Todo: Put Habbo repository specific methods in here
     }
 }

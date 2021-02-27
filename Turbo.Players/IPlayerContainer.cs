@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Turbo.Players
 {
     public interface IPlayerContainer
     {
-        public void RemovePlayer(int id);
-        public void RemoveAllPlayers();
+        public ValueTask RemovePlayer(int id);
+        public ValueTask RemoveAllPlayers();
     }
 }

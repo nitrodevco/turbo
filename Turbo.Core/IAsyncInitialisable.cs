@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Database.Entities
+namespace Turbo.Core
 {
-    public class Habbo
+    public interface IAsyncInitialisable
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        public ValueTask InitAsync();
     }
 }
