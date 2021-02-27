@@ -54,13 +54,12 @@ namespace Turbo.Networking.Game.WebSocket
         public async Task StartAsync()
         {
             ServerChannel = await _serverBootstrap.BindAsync(IPAddress.Parse(Host), Port);
-            _logger.LogInformation("{Context} -> Listening on {Host}:{Port}", nameof(WSGameServer), Host, Port);
+            _logger.LogInformation("{Context} -> Listening on ws://{Host}:{Port}", nameof(WSGameServer), Host, Port);
         }
 
         public async Task ShutdownAsync()
         {
             await ServerChannel.CloseAsync();
-            await _eventLoopGroup.Group.ShutdownGracefullyAsync();
         }
     }
 }
