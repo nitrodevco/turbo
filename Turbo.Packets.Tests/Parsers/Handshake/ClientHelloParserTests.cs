@@ -35,7 +35,7 @@ namespace Turbo.Packets.Tests.Parsers.Handshake
             var deviceCategory = _fixture.Create<int>();
 
             IByteBuffer buffer = Unpooled.Buffer();
-            var encoding = Encoding.Default;
+            var encoding = Encoding.UTF8;
 
             buffer.WriteShort(encoding.GetByteCount(production));
             buffer.WriteString(production, encoding);
