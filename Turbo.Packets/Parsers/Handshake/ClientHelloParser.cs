@@ -8,7 +8,13 @@ namespace Turbo.Packets.Parsers.Handshake
     {
         ClientHelloMessage IParser<ClientHelloMessage>.Parse(ClientPacket packet)
         {
-            return new ClientHelloMessage(packet.PopString(), packet.PopString(), packet.PopInt(), packet.PopInt());
+            return new ClientHelloMessage
+            {
+                Production = packet.PopString(),
+                Platform = packet.PopString(),
+                ClientPlatform = packet.PopInt(),
+                DeviceCategory = packet.PopInt()
+            };
         }
     }
 }
