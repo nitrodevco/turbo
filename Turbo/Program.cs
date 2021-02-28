@@ -20,6 +20,9 @@ using Turbo.Players;
 using Turbo.Rooms;
 using Turbo.Database.Repositories;
 using Turbo.Database.Repositories.Player;
+using System.Reflection;
+using System.Linq;
+using Turbo.Database.Repositories.Furniture;
 
 namespace Turbo.Main
 {
@@ -53,6 +56,8 @@ namespace Turbo.Main
                     );
 
                     // Repositories
+                    services.AddSingleton<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
+                    services.AddSingleton<IFurnitureRepository, FurnitureRepository>();
                     services.AddSingleton<IPlayerRepository, PlayerRepository>();
 
                     // Singletons

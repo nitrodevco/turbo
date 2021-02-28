@@ -24,7 +24,7 @@ namespace Turbo.Players
 
         public async ValueTask DisposeAsync()
         {
-
+            await RemoveAllPlayers();
         }
 
         public IPlayer GetPlayerById(int id)
@@ -86,8 +86,7 @@ namespace Turbo.Players
             if(!player.SetSession(session))
             {
                 await player.DisposeAsync();
-
-                session.Dispose();
+                await session.DisposeAsync();
 
                 return null;
             }
@@ -114,11 +113,9 @@ namespace Turbo.Players
 
         public async ValueTask RemoveAllPlayers()
         {
-            foreach(IPlayer player in _players.Values)
+            foreach(int id in _players.Keys)
             {
-                _players.Remove(player.Id);
-
-                await player.DisposeAsync();
+                await RemovePlayer(id);
             }
         }
     }

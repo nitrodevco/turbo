@@ -49,7 +49,7 @@ namespace Turbo.Players
 
             if (_playerContainer != null)
             {
-                _playerContainer.RemovePlayer(Id);
+                await _playerContainer.RemovePlayer(Id);
             }
 
             // set offline in PlayerDetails
@@ -58,12 +58,9 @@ namespace Turbo.Players
             // dispose inventory
             // dispose roles
 
-            _session.Dispose();
+            await _session.DisposeAsync();
 
             PlayerDetails.SaveNow();
-
-            // save player details
-
         }
 
         public int Id

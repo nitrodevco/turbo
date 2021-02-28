@@ -4,7 +4,7 @@ using System;
 
 namespace Turbo.Packets.Sessions
 {
-    public interface ISession : IDisposable
+    public interface ISession : IAsyncDisposable
     {
         public ISessionPlayer SessionPlayer { get; }
         public bool SetSessionPlayer(ISessionPlayer sessionPlayer);

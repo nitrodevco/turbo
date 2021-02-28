@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Turbo.Database.Attributes;
 using Turbo.Database.Entities;
+using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Context
@@ -13,6 +14,9 @@ namespace Turbo.Database.Context
     public class TurboContext : DbContext, IEmulatorContext
     {
         public DbSet<PlayerEntity> Players { get; set; }
+
+        public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }
+        public DbSet<FurnitureEntity> Furnitures { get; set; }
 
         public TurboContext(DbContextOptions<TurboContext> options) : base(options) { }
 
