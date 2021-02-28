@@ -14,6 +14,9 @@ using Turbo.Networking.Game;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
 using Turbo.Networking.EventLoop;
+using Turbo.Packets.Revisions;
+using Turbo.Networking.Clients;
+using Turbo.Packets;
 
 namespace Turbo.Main
 {
@@ -55,6 +58,9 @@ namespace Turbo.Main
                     services.AddSingleton<IGameServer, GameServer>();
                     services.AddSingleton<IWSGameServer, WSGameServer>();
                     services.AddSingleton<IRestServer, RestServer>();
+                    services.AddSingleton<IRevisionManager, RevisionManager>();
+                    services.AddSingleton<ISessionManager, SessionManager>();
+                    services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
 
                     // Emulator
                     services.AddHostedService<TurboEmulator>();

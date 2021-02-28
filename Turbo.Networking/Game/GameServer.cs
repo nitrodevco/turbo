@@ -7,6 +7,9 @@ using DotNetty.Transport.Channels.Sockets;
 using System.Threading.Tasks;
 using System.Net;
 using Turbo.Networking.EventLoop;
+using Turbo.Packets;
+using Turbo.Networking.Clients;
+using Turbo.Packets.Revisions;
 
 namespace Turbo.Networking.Game
 {
@@ -15,6 +18,9 @@ namespace Turbo.Networking.Game
         private readonly ILogger<GameServer> _logger;
         private readonly IEmulatorConfig _config;
         private readonly INetworkEventLoopGroup _eventLoopGroup;
+        private readonly IPacketMessageHub _messageHub;
+        private readonly ISessionManager _sessionManager;
+        private readonly IRevisionManager _revisionManager;
 
         protected readonly ServerBootstrap _serverBootstrap;
         protected IChannel ServerChannel { get; private set; }
@@ -25,11 +31,15 @@ namespace Turbo.Networking.Game
         public GameServer(
             ILogger<GameServer> logger,
             IEmulatorConfig config,
-            INetworkEventLoopGroup eventLoopGroup)
+            INetworkEventLoopGroup eventLoopGroup,
+            IPacketMessageHub hub, ISessionManager sessionManager, IRevisionManager revisionManager)
         {
             _logger = logger;
             _config = config;
             _eventLoopGroup = eventLoopGroup;
+            _messageHub = hub;
+            _sessionManager = sessionManager;
+            _revisionManager = revisionManager;
 
             Host = _config.GameHost;
             Port = _config.GameTCPPort;
@@ -48,7 +58,7 @@ namespace Turbo.Networking.Game
             _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
             _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
             _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
-            _serverBootstrap.ChildHandler(new GameChannelInitializer());
+            _serverBootstrap.ChildHandler(new GameChannelInitializer(_messageHub, _sessionManager, _revisionManager));
         }
 
         public async Task StartAsync()

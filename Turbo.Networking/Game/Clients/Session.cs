@@ -9,7 +9,6 @@ namespace Turbo.Networking.Game.Clients
     public class Session : ISession
     {
         private readonly IChannelHandlerContext _channel;
-        private readonly ILogger<Session> _logger;
 
         public IPlayer Player { get; set; }
 
@@ -17,10 +16,9 @@ namespace Turbo.Networking.Game.Clients
 
         public string Revision { get; set; }
 
-        public Session(IChannelHandlerContext channel, ILogger<Session> logger)
+        public Session(IChannelHandlerContext channel)
         {
             this._channel = channel;
-            this._logger = logger;
         }
 
         public void Disconnect()
