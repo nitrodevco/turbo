@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Furniture;
+using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Repositories.Furniture
 {
@@ -18,5 +19,7 @@ namespace Turbo.Database.Repositories.Furniture
         }
 
         public async Task<FurnitureDefinitionEntity> FindAsync(int id) => await _context.FurnitureDefinitions.FindAsync(id);
+
+        public async Task<List<FurnitureDefinitionEntity>> FindAllAsync() => await _context.FurnitureDefinitions.ToListAsync();
     }
 }

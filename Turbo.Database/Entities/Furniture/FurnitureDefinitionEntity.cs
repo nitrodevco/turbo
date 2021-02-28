@@ -7,19 +7,23 @@ using System.Threading.Tasks;
 
 namespace Turbo.Database.Entities.Furniture
 {
+    [Table("furniture_definitions")]
     public class FurnitureDefinitionEntity : Entity
     {
+        [Column("sprite_id")]
+        public int SpriteId { get; set; }
+
         [Column("public_name")]
         public string PublicName { get; set; }
 
         [Column("product_name")]
         public string ProductName { get; set; }
 
-        [Column("sprite_id")]
-        public int SpriteId { get; set; }
-
         [Column("type")]
-        public string type { get; set; }
+        public string Type { get; set; }
+
+        [Column("logic")]
+        public string Logic { get; set; }
 
         [Column("x")]
         public int X { get; set; }
@@ -29,9 +33,6 @@ namespace Turbo.Database.Entities.Furniture
 
         [Column("z")]
         public double Z { get; set; }
-
-        [Column("logic")]
-        public string Logic { get; set; }
 
         [Column("can_stack")]
         public bool CanStack { get; set; }

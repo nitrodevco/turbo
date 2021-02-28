@@ -8,9 +8,6 @@ namespace Turbo.Rooms
 {
     public interface IRoomContainer
     {
-        public IRoom GetRoom(int id);
-        public IRoom AddRoom(IRoom room);
-        public void RemoveRoom(int id);
-        public void RemoveAllRooms();
+        public ValueTask RemoveRoom(int id);
     }
 }

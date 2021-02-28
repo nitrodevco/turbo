@@ -6,11 +6,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core;
+using Turbo.Furniture;
 using Turbo.Networking.EventLoop;
 using Turbo.Networking.Game;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
+using Turbo.Players;
 using Turbo.Plugins;
+using Turbo.Rooms;
 
 namespace Turbo.Main
 {
@@ -28,6 +31,10 @@ namespace Turbo.Main
         private readonly IWSGameServer _wsGameServer;
         private readonly IRestServer _restServer;
 
+        private readonly IFurnitureManager _furnitureManager;
+        private readonly IRoomManager _roomManager;
+        private readonly IPlayerManager _playerManager;
+
         public TurboEmulator(
             IHostApplicationLifetime appLifetime,
             ILogger<TurboEmulator> logger,
@@ -35,7 +42,10 @@ namespace Turbo.Main
             INetworkEventLoopGroup eventLoop,
             IGameServer gameServer,
             IWSGameServer wSGameServer,
-            IRestServer restServer)
+            IRestServer restServer,
+            IFurnitureManager furnitureManager,
+            IRoomManager roomManager,
+            IPlayerManager playerManager)
         {
             _appLifetime = appLifetime;
             _logger = logger;
@@ -44,6 +54,10 @@ namespace Turbo.Main
             _gameServer = gameServer;
             _wsGameServer = wSGameServer;
             _restServer = restServer;
+
+            _furnitureManager = furnitureManager;
+            _roomManager = roomManager;
+            _playerManager = playerManager;
         }
 
         /// <summary>
@@ -77,6 +91,9 @@ namespace Turbo.Main
             _gameServer.StartAsync().Wait();
             _wsGameServer.StartAsync().Wait();
             _restServer.StartAsync().Wait();
+
+            _furnitureManager.InitAsync();
+            _roomManager.InitAsync();
 
             return Task.CompletedTask;
         }

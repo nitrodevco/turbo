@@ -23,6 +23,7 @@ using Turbo.Database.Repositories.Player;
 using System.Reflection;
 using System.Linq;
 using Turbo.Database.Repositories.Furniture;
+using Turbo.Furniture;
 
 namespace Turbo.Main
 {
@@ -67,6 +68,7 @@ namespace Turbo.Main
                     services.AddSingleton<IWSGameServer, WSGameServer>();
                     services.AddSingleton<IRestServer, RestServer>();
 
+                    services.AddSingleton<IFurnitureManager, FurnitureManager>();
                     services.AddSingleton<IPlayerManager, PlayerManager>();
                     services.AddSingleton<IRoomManager, RoomManager>();
 

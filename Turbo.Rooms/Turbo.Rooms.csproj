@@ -7,4 +7,8 @@
   <ItemGroup>
     <Folder Include="Utils\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
+  </ItemGroup>
 </Project>
