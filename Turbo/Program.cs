@@ -48,7 +48,8 @@ namespace Turbo.Main
                     services.AddDbContext<IEmulatorContext, TurboContext>(options => options
                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
                         .EnableSensitiveDataLogging()
-                        .EnableDetailedErrors()
+                        .EnableDetailedErrors(),
+                        ServiceLifetime.Singleton
                     );
 
                     // Repositories
