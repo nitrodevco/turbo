@@ -18,12 +18,5 @@ namespace Turbo.Packets.Parsers.Handshake
                 DeviceCategory = packet.PopInt()
             };
         }
-
-        public override async Task HandleAsync(ISession session, IClientPacket message, IPacketMessageHub hub)
-        {
-            ClientHelloMessage messageEvent = (ClientHelloMessage)Parse(message);
-            session.Revision = messageEvent.Production;
-            await hub.PublishAsync(messageEvent, session);
-        }
     }
 }

@@ -25,7 +25,7 @@ namespace Turbo.Networking.Game.Handler
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
-            _sessionManager.TryRegisterSession(context.Channel.Id, new Session(context));
+            _sessionManager.TryRegisterSession(context.Channel.Id, new Session(context, _revisionManager.DefaultRevision));
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
@@ -42,16 +42,10 @@ namespace Turbo.Networking.Game.Handler
             // then publish message data to listeners
             if (_sessionManager.TryGetSession(ctx.Channel.Id, out ISession session))
             {
-                string revisionStr = session.Revision;
-                if (string.IsNullOrEmpty(revisionStr)) revisionStr = _revisionManager.DefaultRevision;
-
-                if(_revisionManager.Revisions.TryGetValue(revisionStr, out IRevision revision))
+                if(session.Revision.Parsers.TryGetValue(msg.Header, out IParser parser))
                 {
-                    if(revision.Parsers.TryGetValue(msg.Header, out IParser parser))
-                    {
-                        Console.WriteLine("Received " + msg.Header + " : "  + parser.GetType().Name);
-                        await parser.HandleAsync(session, msg, _messageHub);
-                    }
+                    Console.WriteLine("Received " + msg.Header + " : "  + parser.GetType().Name);
+                    await parser.HandleAsync(session, msg, _messageHub);
                 }
             }
         }

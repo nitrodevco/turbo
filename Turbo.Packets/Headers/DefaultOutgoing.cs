@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Packets.Outgoing
+namespace Turbo.Packets.Headers
 {
-    public interface ISerializer
+    public static class DefaultOutgoing
     {
+        public const int AuthenticationOK = 2491;
     }
 }
