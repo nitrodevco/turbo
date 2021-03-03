@@ -10,6 +10,7 @@ using Turbo.Networking.EventLoop;
 using Turbo.Packets;
 using Turbo.Networking.Clients;
 using Turbo.Packets.Revisions;
+using Turbo.Networking.Game.Clients;
 
 namespace Turbo.Networking.Game
 {
@@ -21,6 +22,7 @@ namespace Turbo.Networking.Game
         private readonly IPacketMessageHub _messageHub;
         private readonly ISessionManager _sessionManager;
         private readonly IRevisionManager _revisionManager;
+        private readonly ISessionFactory _sessionFactory;
 
         protected readonly ServerBootstrap _serverBootstrap;
         protected IChannel ServerChannel { get; private set; }
@@ -32,7 +34,7 @@ namespace Turbo.Networking.Game
             ILogger<GameServer> logger,
             IEmulatorConfig config,
             INetworkEventLoopGroup eventLoopGroup,
-            IPacketMessageHub hub, ISessionManager sessionManager, IRevisionManager revisionManager)
+            IPacketMessageHub hub, ISessionManager sessionManager, IRevisionManager revisionManager, ISessionFactory sessionFactory)
         {
             _logger = logger;
             _config = config;
@@ -40,6 +42,7 @@ namespace Turbo.Networking.Game
             _messageHub = hub;
             _sessionManager = sessionManager;
             _revisionManager = revisionManager;
+            _sessionFactory = sessionFactory;
 
             Host = _config.GameHost;
             Port = _config.GameTCPPort;
@@ -58,7 +61,7 @@ namespace Turbo.Networking.Game
             _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
             _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
             _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
-            _serverBootstrap.ChildHandler(new GameChannelInitializer(_messageHub, _sessionManager, _revisionManager));
+            _serverBootstrap.ChildHandler(new GameChannelInitializer(_messageHub, _sessionManager, _revisionManager, _sessionFactory));
         }
 
         public async Task StartAsync()

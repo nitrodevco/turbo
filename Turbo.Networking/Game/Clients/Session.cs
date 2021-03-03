@@ -1,5 +1,5 @@
-﻿using DotNetty.Buffers;
-using DotNetty.Transport.Channels;
+﻿using DotNetty.Transport.Channels;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Players;
 using Turbo.Packets.Outgoing;
 using Turbo.Packets.Revisions;
@@ -11,6 +11,7 @@ namespace Turbo.Networking.Game.Clients
     public class Session : ISession
     {
         private readonly IChannelHandlerContext _channel;
+        private readonly ILogger<Session> _logger;
 
         public IPlayer Player { get; set; }
 
@@ -18,10 +19,11 @@ namespace Turbo.Networking.Game.Clients
 
         public IRevision Revision { get; set; }
 
-        public Session(IChannelHandlerContext channel, IRevision initialRevision)
+        public Session(IChannelHandlerContext channel, IRevision initialRevision, ILogger<Session> logger)
         {
             this._channel = channel;
             this.Revision = initialRevision;
+            this._logger = logger;
         }
 
         public void Disconnect()
@@ -43,11 +45,15 @@ namespace Turbo.Networking.Game.Clients
 
         protected void Send(IComposer composer, bool queue)
         {
-            if(Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
+            if (Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
             {
                 IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(2), composer);
                 if (queue) _channel.WriteAsync(packet);
                 else _channel.WriteAndFlushAsync(packet);
+            }
+            else
+            {
+                _logger.LogDebug($"No matching serializer found for message {composer.GetType().Name}");
             }
         }
 

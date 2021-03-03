@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Turbo.Core.Configuration;
 using Turbo.Networking.Clients;
 using Turbo.Networking.EventLoop;
+using Turbo.Networking.Game.Clients;
 using Turbo.Packets;
 using Turbo.Packets.Revisions;
 
@@ -21,6 +22,7 @@ namespace Turbo.Networking.Game.WebSocket
         private readonly IPacketMessageHub _messageHub;
         private readonly ISessionManager _sessionManager;
         private readonly IRevisionManager _revisionManager;
+        private readonly ISessionFactory _sessionFactory;
 
         protected readonly ServerBootstrap _serverBootstrap;
         protected IChannel ServerChannel { get; private set; }
@@ -32,7 +34,7 @@ namespace Turbo.Networking.Game.WebSocket
         public WSGameServer(ILogger<WSGameServer> logger,
             IEmulatorConfig config,
             INetworkEventLoopGroup eventLoopGroup,
-            IPacketMessageHub hub, ISessionManager sessionManager, IRevisionManager revisionManager)
+            IPacketMessageHub hub, ISessionManager sessionManager, IRevisionManager revisionManager, ISessionFactory sessionFactory)
         {
             _logger = logger;
             _config = config;
@@ -40,6 +42,7 @@ namespace Turbo.Networking.Game.WebSocket
             _messageHub = hub;
             _sessionManager = sessionManager;
             _revisionManager = revisionManager;
+            _sessionFactory = sessionFactory;
 
             Host = _config.GameHost;
             Port = _config.GameWSPort;
@@ -58,7 +61,7 @@ namespace Turbo.Networking.Game.WebSocket
             _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
             _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
             _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
-            _serverBootstrap.ChildHandler(new WSChannelInitializer(_messageHub, _sessionManager, _revisionManager));
+            _serverBootstrap.ChildHandler(new WSChannelInitializer(_messageHub, _sessionManager, _revisionManager, _sessionFactory));
         }
 
         public async Task StartAsync()

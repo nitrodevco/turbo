@@ -22,5 +22,12 @@ namespace Turbo.Networking.Clients
         {
             return this._clients.TryAdd(id, session);
         }
+
+        public void DisconnectSession(IChannelId id)
+        {
+            if(this._clients.TryRemove(id, out ISession session)) {
+                session.Disconnect();
+            }
+        }
     }
 }

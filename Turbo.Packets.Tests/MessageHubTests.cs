@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using Turbo.Core.Players;
-using Turbo.Packets.Composers;
 using Turbo.Packets.Incoming;
+using Turbo.Packets.Outgoing;
+using Turbo.Packets.Revisions;
 using Turbo.Packets.Sessions;
 using Xunit;
 
@@ -220,8 +221,14 @@ namespace Turbo.Packets.Tests
             public IPlayer Player { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
             public string IPAddress { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
             public string Revision { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            IRevision ISession.Revision { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
             public void Disconnect()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Flush()
             {
                 throw new NotImplementedException();
             }

@@ -15,36 +15,37 @@ namespace Turbo.Networking.Game.Handler
         private IPacketMessageHub _messageHub;
         private ISessionManager _sessionManager;
         private IRevisionManager _revisionManager;
+        private ISessionFactory _sessionFactory;
 
-        public GameMessageHandler(IPacketMessageHub messageHub, ISessionManager sessionManager, IRevisionManager revisionManager)
+        public GameMessageHandler(IPacketMessageHub messageHub,
+            ISessionManager sessionManager,
+            IRevisionManager revisionManager,
+            ISessionFactory sessionFactory)
         {
             _messageHub = messageHub;
             _sessionManager = sessionManager;
             _revisionManager = revisionManager;
+            _sessionFactory = sessionFactory;
         }
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
-            _sessionManager.TryRegisterSession(context.Channel.Id, new Session(context, _revisionManager.DefaultRevision));
+            _sessionManager.TryRegisterSession(context.Channel.Id,
+                _sessionFactory.Create(context, _revisionManager.DefaultRevision));
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
-           if(_sessionManager.TryGetSession(context.Channel.Id, out ISession session))
-           {
-                session.Disconnect();
-           }
+            _sessionManager.DisconnectSession(context.Channel.Id);
         }
 
         protected override async void ChannelRead0(IChannelHandlerContext ctx, IClientPacket msg)
         {
-            // do the thing where we get parser for the message
-            // then publish message data to listeners
             if (_sessionManager.TryGetSession(ctx.Channel.Id, out ISession session))
             {
-                if(session.Revision.Parsers.TryGetValue(msg.Header, out IParser parser))
+                if (session.Revision.Parsers.TryGetValue(msg.Header, out IParser parser))
                 {
-                    Console.WriteLine("Received " + msg.Header + " : "  + parser.GetType().Name);
+                    Console.WriteLine("Received " + msg.Header + " : " + parser.GetType().Name);
                     await parser.HandleAsync(session, msg, _messageHub);
                 }
             }
