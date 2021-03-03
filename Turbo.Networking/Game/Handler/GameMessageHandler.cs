@@ -1,5 +1,7 @@
 ﻿using DotNetty.Transport.Channels;
+using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using Turbo.Networking.Clients;
 using Turbo.Networking.Game.Clients;
 using Turbo.Packets;
@@ -12,20 +14,23 @@ namespace Turbo.Networking.Game.Handler
 {
     class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
     {
-        private IPacketMessageHub _messageHub;
-        private ISessionManager _sessionManager;
-        private IRevisionManager _revisionManager;
-        private ISessionFactory _sessionFactory;
+        private readonly IPacketMessageHub _messageHub;
+        private readonly ISessionManager _sessionManager;
+        private readonly IRevisionManager _revisionManager;
+        private readonly ISessionFactory _sessionFactory;
+        private readonly ILogger<GameMessageHandler> _logger;
 
         public GameMessageHandler(IPacketMessageHub messageHub,
             ISessionManager sessionManager,
             IRevisionManager revisionManager,
-            ISessionFactory sessionFactory)
+            ISessionFactory sessionFactory,
+            ILogger<GameMessageHandler> logger)
         {
             _messageHub = messageHub;
             _sessionManager = sessionManager;
             _revisionManager = revisionManager;
             _sessionFactory = sessionFactory;
+            _logger = logger;
         }
 
         public override void ChannelActive(IChannelHandlerContext context)
@@ -45,15 +50,20 @@ namespace Turbo.Networking.Game.Handler
             {
                 if (session.Revision.Parsers.TryGetValue(msg.Header, out IParser parser))
                 {
-                    Console.WriteLine("Received " + msg.Header + " : " + parser.GetType().Name);
+                    _logger.LogDebug($"Received {msg.Header}:{parser.GetType().Name}");
                     await parser.HandleAsync(session, msg, _messageHub);
+                }
+                else
+                {
+                    _logger.LogDebug($"No matching parser found for message {msg.Header}:{msg}");
                 }
             }
         }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            // log the error
+            if (exception is IOException) return;
+            _logger.LogError(exception.Message);
         }
     }
 }
