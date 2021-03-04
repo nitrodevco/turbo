@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Rooms
+namespace Turbo.Core
 {
-    public interface IRoomContainer
+    public interface ISessionPlayer
     {
-        public ValueTask RemoveRoom(int id);
+        // session player just needs one function
+        // send packet
     }
 }

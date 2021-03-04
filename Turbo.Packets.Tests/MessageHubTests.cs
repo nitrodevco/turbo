@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
+using System.Threading.Tasks;
+using Turbo.Core;
+using Turbo.Packets.Composers;
 using Turbo.Packets.Incoming;
 using Turbo.Packets.Sessions;
 using Xunit;
@@ -211,6 +214,38 @@ namespace Turbo.Packets.Tests
             public bool Call(MockEvent message, ISession session)
             {
                 return false;
+            }
+        }
+
+        internal class MockSession : ISession
+        {
+            public ISessionPlayer SessionPlayer => throw new NotImplementedException();
+
+            public string IPAddress => throw new NotImplementedException();
+
+            public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public async ValueTask DisposeAsync()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Disconnect()
+            {
+                throw new NotImplementedException();
+            }
+
+            public ISession Send(IComposer composer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public ISession SendQueue(IComposer composer)
+            {
+                throw new NotImplementedException();
             }
         }
 

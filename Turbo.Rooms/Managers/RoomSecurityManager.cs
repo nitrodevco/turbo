@@ -3,24 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomSecurityManager
+    public class RoomSecurityManager : IAsyncInitialisable, IAsyncDisposable
     {
-        private IRoom Room { get; set; }
+        private readonly IRoom _room;
 
         public RoomSecurityManager(IRoom room)
         {
-            Room = room;
+            _room = room;
         }
 
-        public void Init()
+        public async ValueTask InitAsync()
         {
 
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
 
         }

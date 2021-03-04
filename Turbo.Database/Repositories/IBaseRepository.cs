@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Turbo.Database.Repositories
 {
-    public interface IRepository<T> where T : class
+    public interface IBaseRepository<T> where T : class
     {
         // Todo: Put methods that every repository needs in here
 

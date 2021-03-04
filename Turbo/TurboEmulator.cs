@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
@@ -8,7 +8,14 @@ using System.Threading.Tasks;
 using Turbo.Core;
 using Turbo.Networking;
 using Turbo.Networking.EventLoop;
+using Turbo.Furniture;
+using Turbo.Networking.EventLoop;
+using Turbo.Networking.Game;
+using Turbo.Networking.Game.WebSocket;
+using Turbo.Networking.REST;
+using Turbo.Players;
 using Turbo.Plugins;
+using Turbo.Rooms;
 
 namespace Turbo.Main
 {
@@ -23,16 +30,34 @@ namespace Turbo.Main
         private readonly IPluginManager _pluginManager;
         private readonly IServerManager _serverManager;
 
+        private readonly IFurnitureManager _furnitureManager;
+        private readonly IRoomManager _roomManager;
+        private readonly IPlayerManager _playerManager;
+
         public TurboEmulator(
             IHostApplicationLifetime appLifetime,
             ILogger<TurboEmulator> logger,
             IPluginManager pluginManager,
             IServerManager serverManager)
+            INetworkEventLoopGroup eventLoop,
+            IGameServer gameServer,
+            IWSGameServer wSGameServer,
+            IRestServer restServer,
+            IFurnitureManager furnitureManager,
+            IRoomManager roomManager,
+            IPlayerManager playerManager)
         {
             _appLifetime = appLifetime;
             _logger = logger;
             _pluginManager = pluginManager;
             _serverManager = serverManager;
+            _networkEventLoopGroup = eventLoop;
+            _gameServer = gameServer;
+            _wsGameServer = wSGameServer;
+            _restServer = restServer;
+            _furnitureManager = furnitureManager;
+            _roomManager = roomManager;
+            _playerManager = playerManager;
         }
 
         /// <summary>
@@ -64,6 +89,9 @@ namespace Turbo.Main
             // Start services
             _pluginManager.LoadPlugins();
             _serverManager.StartServersAsync();
+
+            _furnitureManager.InitAsync();
+            _roomManager.InitAsync();
 
             return Task.CompletedTask;
         }

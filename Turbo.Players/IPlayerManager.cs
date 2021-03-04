@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using Turbo.Core;
 
-namespace Turbo.Furniture
+namespace Turbo.Players
 {
-    public interface IFurnitureManager : IAsyncInitialisable, IAsyncDisposable
+    public interface IPlayerManager : IAsyncDisposable
     {
     }
 }

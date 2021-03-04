@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Database.Entities
+namespace Turbo.Security
 {
-    public class Habbo
+    public class SecurityManager
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

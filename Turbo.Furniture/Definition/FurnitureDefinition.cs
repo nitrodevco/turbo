@@ -1,24 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Definition
 {
     public class FurnitureDefinition : IFurnitureDefinition
     {
-        public int Id { get; private set; }
-        public int SpriteId { get; private set; }
-        public string PublicName { get; private set; }
-        public string ProductName { get; private set; }
-        public string Type { get; private set; }
-        public string LogicType { get; private set; }
-        public int X { get; private set; }
-        public int Y { get; private set; }
-        public int Z { get; private set; }
+        private readonly FurnitureDefinitionEntity _entity;
 
-        public FurnitureDefinition()
+        public FurnitureDefinition(FurnitureDefinitionEntity entity)
         {
+            _entity = entity;
+        }
 
+        public int Id
+        {
+            get
+            {
+                return _entity.Id;
+            }
+        }
+
+        public int SpriteId
+        {
+            get
+            {
+                return _entity.SpriteId;
+            }
+        }
+
+        public string PublicName
+        {
+            get
+            {
+                return _entity.PublicName;
+            }
+        }
+
+        public string ProductName
+        {
+            get
+            {
+                return _entity.ProductName;
+            }
+        }
+
+        public string Type
+        {
+            get
+            {
+                return _entity.Type;
+            }
+        }
+
+        public string Logic
+        {
+            get
+            {
+                return _entity.Logic;
+            }
+        }
+
+        public int X
+        {
+            get
+            {
+                return _entity.X;
+            }
+        }
+
+        public int Y
+        {
+            get
+            {
+                return _entity.Y;
+            }
+        }
+
+        public double Z
+        {
+            get
+            {
+                return _entity.Z;
+            }
         }
     }
 }
