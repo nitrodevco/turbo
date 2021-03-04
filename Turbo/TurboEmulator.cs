@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core;
+using Turbo.Networking;
+using Turbo.Networking.EventLoop;
 using Turbo.Furniture;
 using Turbo.Networking.EventLoop;
 using Turbo.Networking.Game;
@@ -26,10 +28,7 @@ namespace Turbo.Main
         private readonly IHostApplicationLifetime _appLifetime;
         private readonly ILogger<TurboEmulator> _logger;
         private readonly IPluginManager _pluginManager;
-        private readonly INetworkEventLoopGroup _networkEventLoopGroup;
-        private readonly IGameServer _gameServer;
-        private readonly IWSGameServer _wsGameServer;
-        private readonly IRestServer _restServer;
+        private readonly IServerManager _serverManager;
 
         private readonly IFurnitureManager _furnitureManager;
         private readonly IRoomManager _roomManager;
@@ -39,6 +38,7 @@ namespace Turbo.Main
             IHostApplicationLifetime appLifetime,
             ILogger<TurboEmulator> logger,
             IPluginManager pluginManager,
+            IServerManager serverManager)
             INetworkEventLoopGroup eventLoop,
             IGameServer gameServer,
             IWSGameServer wSGameServer,
@@ -50,11 +50,11 @@ namespace Turbo.Main
             _appLifetime = appLifetime;
             _logger = logger;
             _pluginManager = pluginManager;
+            _serverManager = serverManager;
             _networkEventLoopGroup = eventLoop;
             _gameServer = gameServer;
             _wsGameServer = wSGameServer;
             _restServer = restServer;
-
             _furnitureManager = furnitureManager;
             _roomManager = roomManager;
             _playerManager = playerManager;
@@ -88,9 +88,7 @@ namespace Turbo.Main
 
             // Start services
             _pluginManager.LoadPlugins();
-            _gameServer.StartAsync().Wait();
-            _wsGameServer.StartAsync().Wait();
-            _restServer.StartAsync().Wait();
+            _serverManager.StartServersAsync();
 
             _furnitureManager.InitAsync();
             _roomManager.InitAsync();

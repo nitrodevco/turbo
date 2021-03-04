@@ -1,24 +1,25 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using System;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Threading.Tasks;
-using Turbo.Core;
 using Turbo.Core.Configuration;
 using Turbo.Database.Context;
 using Turbo.Main.Configuration;
-using Turbo.Networking.EventLoop;
-using Turbo.Networking.Game;
-using Turbo.Networking.Game.WebSocket;
-using Turbo.Networking.REST;
 using Turbo.Plugins;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Players;
 using Turbo.Rooms;
 using Turbo.Database.Repositories;
+using Turbo.Networking;
+using Turbo.Networking.Game;
+using Turbo.Networking.Game.WebSocket;
+using Turbo.Networking.REST;
+using Turbo.Networking.EventLoop;
+using Turbo.Packets.Revisions;
+using Turbo.Networking.Clients;
+using Turbo.Packets;
+using Turbo.Networking.Game.Clients;
 using Turbo.Database.Repositories.Player;
 using System.Reflection;
 using System.Linq;
@@ -63,10 +64,15 @@ namespace Turbo.Main
 
                     // Singletons
                     services.AddSingleton<IPluginManager, TurboPluginManager>();
+                    services.AddSingleton<IServerManager, ServerManager>();
                     services.AddSingleton<INetworkEventLoopGroup, NetworkEventLoopGroup>();
                     services.AddSingleton<IGameServer, GameServer>();
                     services.AddSingleton<IWSGameServer, WSGameServer>();
                     services.AddSingleton<IRestServer, RestServer>();
+                    services.AddSingleton<IRevisionManager, RevisionManager>();
+                    services.AddSingleton<ISessionManager, SessionManager>();
+                    services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
+                    services.AddSingleton<ISessionFactory, SessionFactory>();
 
                     services.AddSingleton<IFurnitureManager, FurnitureManager>();
                     services.AddSingleton<IPlayerManager, PlayerManager>();
