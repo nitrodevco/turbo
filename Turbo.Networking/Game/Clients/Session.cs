@@ -1,6 +1,7 @@
 ﻿using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 using Turbo.Core.Players;
 using Turbo.Packets.Outgoing;
 using Turbo.Packets.Revisions;
@@ -29,30 +30,28 @@ namespace Turbo.Networking.Game.Clients
             this.LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
-        public void Disconnect()
+        public async Task Disconnect()
         {
-            _channel.CloseAsync();
+           await _channel.CloseAsync();
         }
 
-        public ISession Send(IComposer composer)
+        public async Task Send(IComposer composer)
         {
-            Send(composer, false);
-            return this;
+            await Send(composer, false);
         }
 
-        public ISession SendQueue(IComposer composer)
+        public async Task SendQueue(IComposer composer)
         {
-            Send(composer, true);
-            return this;
+            await Send(composer, true);
         }
 
-        protected void Send(IComposer composer, bool queue)
+        protected async Task Send(IComposer composer, bool queue)
         {
             if (Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
             {
                 IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(2), composer);
-                if (queue) _channel.WriteAsync(packet);
-                else _channel.WriteAndFlushAsync(packet);
+                if (queue) await _channel.WriteAsync(packet);
+                else await _channel.WriteAndFlushAsync(packet);
             }
             else
             {
