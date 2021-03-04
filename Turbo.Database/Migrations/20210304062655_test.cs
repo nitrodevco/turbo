@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Turbo.Database.Migrations
 {
-    public partial class _1 : Migration
+    public partial class test : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -76,10 +76,39 @@ namespace Turbo.Database.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "security_tickets",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PlayerEntityId = table.Column<int>(type: "int", nullable: true),
+                    ticket = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    ip_address = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    is_locked = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_security_tickets", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_security_tickets_players_PlayerEntityId",
+                        column: x => x.PlayerEntityId,
+                        principalTable: "players",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_furniture_FurnitureDefinitionEntityId",
                 table: "furniture",
                 column: "FurnitureDefinitionEntityId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_security_tickets_PlayerEntityId",
+                table: "security_tickets",
+                column: "PlayerEntityId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -88,10 +117,13 @@ namespace Turbo.Database.Migrations
                 name: "furniture");
 
             migrationBuilder.DropTable(
-                name: "players");
+                name: "security_tickets");
 
             migrationBuilder.DropTable(
                 name: "furniture_definitions");
+
+            migrationBuilder.DropTable(
+                name: "players");
         }
     }
 }

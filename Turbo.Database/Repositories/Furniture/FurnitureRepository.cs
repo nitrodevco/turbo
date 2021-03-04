@@ -20,6 +20,7 @@ namespace Turbo.Database.Repositories.Furniture
             _context = context;
         }
 
-        public async Task<FurnitureEntity> FindAsync(int id) => await _context.Furnitures.FindAsync(id);
+        public async Task<FurnitureEntity> FindAsync(int id) => await _context.Furnitures
+            .FindAsync(id);
     }
 }

@@ -36,7 +36,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Database.Tests", "Tur
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Players", "Turbo.Players\Turbo.Players.csproj", "{C4D4E6AF-ECDE-41B8-967F-1B1F61D2F2AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turbo.Security", "Turbo.Security\Turbo.Security.csproj", "{6BB40E61-F970-4782-B250-372CBEE8660C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Security", "Turbo.Security\Turbo.Security.csproj", "{6BB40E61-F970-4782-B250-372CBEE8660C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

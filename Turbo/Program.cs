@@ -25,6 +25,9 @@ using System.Reflection;
 using System.Linq;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture;
+using Turbo.Security;
+using Turbo.Database.Repositories.Security;
+using Turbo.Database.Entities.Security;
 
 namespace Turbo.Main
 {
@@ -61,6 +64,7 @@ namespace Turbo.Main
                     services.AddSingleton<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
                     services.AddSingleton<IFurnitureRepository, FurnitureRepository>();
                     services.AddSingleton<IPlayerRepository, PlayerRepository>();
+                    services.AddSingleton<ISecurityTicketRepository, SecurityTicketRepository>();
 
                     // Singletons
                     services.AddSingleton<IPluginManager, TurboPluginManager>();
@@ -74,6 +78,7 @@ namespace Turbo.Main
                     services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
                     services.AddSingleton<ISessionFactory, SessionFactory>();
 
+                    services.AddSingleton<ISecurityManager, SecurityManager>();
                     services.AddSingleton<IFurnitureManager, FurnitureManager>();
                     services.AddSingleton<IPlayerManager, PlayerManager>();
                     services.AddSingleton<IRoomManager, RoomManager>();

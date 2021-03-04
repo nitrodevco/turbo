@@ -158,6 +158,43 @@ namespace Turbo.Database.Migrations
                     b.ToTable("players");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Security.SecurityTicketEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("ip_address");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_locked");
+
+                    b.Property<int?>("PlayerEntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Ticket")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("ticket");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerEntityId");
+
+                    b.ToTable("security_tickets");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureEntity", b =>
                 {
                     b.HasOne("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", "FurnitureDefinitionEntity")
@@ -165,6 +202,15 @@ namespace Turbo.Database.Migrations
                         .HasForeignKey("FurnitureDefinitionEntityId");
 
                     b.Navigation("FurnitureDefinitionEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Security.SecurityTicketEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany()
+                        .HasForeignKey("PlayerEntityId");
+
+                    b.Navigation("PlayerEntity");
                 });
 #pragma warning restore 612, 618
         }

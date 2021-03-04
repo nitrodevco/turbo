@@ -2,11 +2,12 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Threading.Tasks;
 using Turbo.Core;
-using Turbo.Packets.Composers;
 using Turbo.Packets.Incoming;
 using Turbo.Packets.Sessions;
 using Xunit;
 using Moq;
+using Turbo.Packets.Outgoing;
+using Turbo.Packets.Revisions;
 
 namespace Turbo.Packets.Tests
 {
@@ -219,21 +220,42 @@ namespace Turbo.Packets.Tests
 
         internal class MockSession : ISession
         {
+            public IRevision Revision
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
             public ISessionPlayer SessionPlayer => throw new NotImplementedException();
 
             public string IPAddress => throw new NotImplementedException();
+
+            public long LastPongTimestamp
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
 
             public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
             {
                 throw new NotImplementedException();
             }
 
-            public async ValueTask DisposeAsync()
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Disconnect()
+            public ValueTask DisposeAsync()
             {
                 throw new NotImplementedException();
             }
@@ -244,6 +266,11 @@ namespace Turbo.Packets.Tests
             }
 
             public ISession SendQueue(IComposer composer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Flush()
             {
                 throw new NotImplementedException();
             }

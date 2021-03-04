@@ -5,13 +5,15 @@ using System.Text;
 using Turbo.Database.Entities;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Players;
+using Turbo.Database.Entities.Security;
 
 namespace Turbo.Database.Context
 {
     public interface IEmulatorContext : IDisposable
     {
         public DbSet<PlayerEntity> Players { get; set; }
-        
+        public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
+
         // FURNITURE
         public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }
         public DbSet<FurnitureEntity> Furnitures { get; set; }

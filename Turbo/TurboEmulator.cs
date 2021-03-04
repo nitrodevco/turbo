@@ -9,13 +9,13 @@ using Turbo.Core;
 using Turbo.Networking;
 using Turbo.Networking.EventLoop;
 using Turbo.Furniture;
-using Turbo.Networking.EventLoop;
 using Turbo.Networking.Game;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
 using Turbo.Players;
 using Turbo.Plugins;
 using Turbo.Rooms;
+using Turbo.Security;
 
 namespace Turbo.Main
 {
@@ -30,6 +30,7 @@ namespace Turbo.Main
         private readonly IPluginManager _pluginManager;
         private readonly IServerManager _serverManager;
 
+        private readonly ISecurityManager _securityManager;
         private readonly IFurnitureManager _furnitureManager;
         private readonly IRoomManager _roomManager;
         private readonly IPlayerManager _playerManager;
@@ -38,11 +39,8 @@ namespace Turbo.Main
             IHostApplicationLifetime appLifetime,
             ILogger<TurboEmulator> logger,
             IPluginManager pluginManager,
-            IServerManager serverManager)
-            INetworkEventLoopGroup eventLoop,
-            IGameServer gameServer,
-            IWSGameServer wSGameServer,
-            IRestServer restServer,
+            IServerManager serverManager,
+            ISecurityManager securityManager,
             IFurnitureManager furnitureManager,
             IRoomManager roomManager,
             IPlayerManager playerManager)
@@ -51,10 +49,7 @@ namespace Turbo.Main
             _logger = logger;
             _pluginManager = pluginManager;
             _serverManager = serverManager;
-            _networkEventLoopGroup = eventLoop;
-            _gameServer = gameServer;
-            _wsGameServer = wSGameServer;
-            _restServer = restServer;
+            _securityManager = securityManager;
             _furnitureManager = furnitureManager;
             _roomManager = roomManager;
             _playerManager = playerManager;
@@ -90,6 +85,7 @@ namespace Turbo.Main
             _pluginManager.LoadPlugins();
             _serverManager.StartServersAsync();
 
+            _securityManager.InitAsync();
             _furnitureManager.InitAsync();
             _roomManager.InitAsync();
 
@@ -117,6 +113,10 @@ namespace Turbo.Main
             _logger.LogInformation("Shutting down. Disposing services...");
 
             // Todo: Dispose all services here
+            _roomManager.DisposeAsync();
+            _furnitureManager.DisposeAsync();
+            _roomManager.DisposeAsync();
+            _playerManager.DisposeAsync();
 
             return Task.CompletedTask;
         }

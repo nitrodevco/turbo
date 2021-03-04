@@ -1,7 +1,8 @@
 ﻿using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
-using Turbo.Core.Players;
+using System.Threading.Tasks;
+using Turbo.Core;
 using Turbo.Packets.Outgoing;
 using Turbo.Packets.Revisions;
 using Turbo.Packets.Serializers;
@@ -14,35 +15,48 @@ namespace Turbo.Networking.Game.Clients
         private readonly IChannelHandlerContext _channel;
         private readonly ILogger<Session> _logger;
 
-        public IPlayer Player { get; set; }
-
-        public string IPAddress { get; set; }
-
         public IRevision Revision { get; set; }
+        public ISessionPlayer SessionPlayer { get; private set; }
+
+        public string IPAddress { get; private set; }
         public long LastPongTimestamp { get; set; }
 
         public Session(IChannelHandlerContext channel, IRevision initialRevision, ILogger<Session> logger)
         {
-            this._channel = channel;
-            this.Revision = initialRevision;
-            this._logger = logger;
-            this.LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            _channel = channel;
+            _logger = logger;
+
+            Revision = initialRevision;
+            LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
-        public void Disconnect()
+        public async ValueTask DisposeAsync()
         {
-            _channel.CloseAsync();
+            if (SessionPlayer != null) await SessionPlayer.DisposeAsync();
+
+            await _channel.CloseAsync();
+        }
+
+        public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
+        {
+            if ((SessionPlayer != null) && (SessionPlayer != sessionPlayer)) return false;
+
+            SessionPlayer = sessionPlayer;
+
+            return true;
         }
 
         public ISession Send(IComposer composer)
         {
             Send(composer, false);
+
             return this;
         }
 
         public ISession SendQueue(IComposer composer)
         {
             Send(composer, true);
+
             return this;
         }
 
@@ -51,7 +65,9 @@ namespace Turbo.Networking.Game.Clients
             if (Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
             {
                 IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(2), composer);
+
                 if (queue) _channel.WriteAsync(packet);
+
                 else _channel.WriteAndFlushAsync(packet);
             }
             else

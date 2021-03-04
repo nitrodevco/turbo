@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Turbo.Core
 {
-    public interface ISessionPlayer
+    public interface ISessionPlayer : IAsyncDisposable
     {
         // session player just needs one function
         // send packet
