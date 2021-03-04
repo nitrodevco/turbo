@@ -240,6 +240,24 @@ namespace Turbo.Packets
             return false;
         }
 
+        public bool Exists<T>(object subscriber, Func<T, ISession, Task> handler) where T : IMessageEvent
+        {
+            lock (_listenerLock)
+            {
+                foreach (IListener h in _listeners)
+                {
+                    if (Equals(h.Sender.Target, subscriber) &&
+                         typeof(T) == h.Type &&
+                         h.Action.Equals(handler))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         internal class Listener : IListener
         {
             public Delegate Action { get; set; }
