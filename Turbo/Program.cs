@@ -17,6 +17,7 @@ using Turbo.Networking.EventLoop;
 using Turbo.Packets.Revisions;
 using Turbo.Networking.Clients;
 using Turbo.Packets;
+using Turbo.Networking.Game.Clients;
 
 namespace Turbo.Main
 {
@@ -61,6 +62,7 @@ namespace Turbo.Main
                     services.AddSingleton<IRevisionManager, RevisionManager>();
                     services.AddSingleton<ISessionManager, SessionManager>();
                     services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
+                    services.AddSingleton<ISessionFactory, SessionFactory>();
 
                     // Emulator
                     services.AddHostedService<TurboEmulator>();

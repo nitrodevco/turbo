@@ -1,5 +1,7 @@
 ﻿using DotNetty.Transport.Channels;
+using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
 using Turbo.Networking.Clients;
 using Turbo.Networking.Game.Clients;
 using Turbo.Packets;
@@ -12,53 +14,56 @@ namespace Turbo.Networking.Game.Handler
 {
     class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
     {
-        private IPacketMessageHub _messageHub;
-        private ISessionManager _sessionManager;
-        private IRevisionManager _revisionManager;
+        private readonly IPacketMessageHub _messageHub;
+        private readonly ISessionManager _sessionManager;
+        private readonly IRevisionManager _revisionManager;
+        private readonly ISessionFactory _sessionFactory;
+        private readonly ILogger<GameMessageHandler> _logger;
 
-        public GameMessageHandler(IPacketMessageHub messageHub, ISessionManager sessionManager, IRevisionManager revisionManager)
+        public GameMessageHandler(IPacketMessageHub messageHub,
+            ISessionManager sessionManager,
+            IRevisionManager revisionManager,
+            ISessionFactory sessionFactory,
+            ILogger<GameMessageHandler> logger)
         {
             _messageHub = messageHub;
             _sessionManager = sessionManager;
             _revisionManager = revisionManager;
+            _sessionFactory = sessionFactory;
+            _logger = logger;
         }
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
-            _sessionManager.TryRegisterSession(context.Channel.Id, new Session(context));
+            _sessionManager.TryRegisterSession(context.Channel.Id,
+                _sessionFactory.Create(context, _revisionManager.DefaultRevision));
         }
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
-           if(_sessionManager.TryGetSession(context.Channel.Id, out ISession session))
-           {
-                session.Disconnect();
-           }
+            _sessionManager.DisconnectSession(context.Channel.Id);
         }
 
         protected override async void ChannelRead0(IChannelHandlerContext ctx, IClientPacket msg)
         {
-            // do the thing where we get parser for the message
-            // then publish message data to listeners
             if (_sessionManager.TryGetSession(ctx.Channel.Id, out ISession session))
             {
-                string revisionStr = session.Revision;
-                if (string.IsNullOrEmpty(revisionStr)) revisionStr = _revisionManager.DefaultRevision;
-
-                if(_revisionManager.Revisions.TryGetValue(revisionStr, out IRevision revision))
+                if (session.Revision.Parsers.TryGetValue(msg.Header, out IParser parser))
                 {
-                    if(revision.Parsers.TryGetValue(msg.Header, out IParser parser))
-                    {
-                        Console.WriteLine("Received " + msg.Header + " : "  + parser.GetType().Name);
-                        await parser.HandleAsync(session, msg, _messageHub);
-                    }
+                    _logger.LogDebug($"Received {msg.Header}:{parser.GetType().Name}");
+                    await parser.HandleAsync(session, msg, _messageHub);
+                }
+                else
+                {
+                    _logger.LogDebug($"No matching parser found for message {msg.Header}:{msg}");
                 }
             }
         }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            // log the error
+            if (exception is IOException) return;
+            _logger.LogError(exception.Message);
         }
     }
 }

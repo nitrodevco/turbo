@@ -3,13 +3,11 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Turbo.Core.Configuration;
-using Turbo.Networking.Clients;
 using Turbo.Networking.EventLoop;
-using Turbo.Packets;
-using Turbo.Packets.Revisions;
 
 namespace Turbo.Networking.Game.WebSocket
 {
@@ -18,9 +16,7 @@ namespace Turbo.Networking.Game.WebSocket
         private readonly ILogger<WSGameServer> _logger;
         private readonly IEmulatorConfig _config;
         private readonly INetworkEventLoopGroup _eventLoopGroup;
-        private readonly IPacketMessageHub _messageHub;
-        private readonly ISessionManager _sessionManager;
-        private readonly IRevisionManager _revisionManager;
+        private readonly IServiceProvider _provider;
 
         protected readonly ServerBootstrap _serverBootstrap;
         protected IChannel ServerChannel { get; private set; }
@@ -32,14 +28,12 @@ namespace Turbo.Networking.Game.WebSocket
         public WSGameServer(ILogger<WSGameServer> logger,
             IEmulatorConfig config,
             INetworkEventLoopGroup eventLoopGroup,
-            IPacketMessageHub hub, ISessionManager sessionManager, IRevisionManager revisionManager)
+            IServiceProvider provider)
         {
             _logger = logger;
             _config = config;
             _eventLoopGroup = eventLoopGroup;
-            _messageHub = hub;
-            _sessionManager = sessionManager;
-            _revisionManager = revisionManager;
+            _provider = provider;
 
             Host = _config.GameHost;
             Port = _config.GameWSPort;
@@ -58,7 +52,7 @@ namespace Turbo.Networking.Game.WebSocket
             _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
             _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
             _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
-            _serverBootstrap.ChildHandler(new WSChannelInitializer(_messageHub, _sessionManager, _revisionManager));
+            _serverBootstrap.ChildHandler(new WSChannelInitializer(_provider));
         }
 
         public async Task StartAsync()

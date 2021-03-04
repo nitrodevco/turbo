@@ -7,5 +7,6 @@ namespace Turbo.Networking.Clients
     {
         public bool TryGetSession(IChannelId id, out ISession session);
         public bool TryRegisterSession(IChannelId id, in ISession session);
+        public void DisconnectSession(IChannelId id);
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Turbo.Packets.Outgoing;
 using Turbo.Packets.Parsers;
+using Turbo.Packets.Serializers;
 
 namespace Turbo.Packets.Revisions
 {
