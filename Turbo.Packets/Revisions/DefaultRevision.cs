@@ -29,6 +29,9 @@ namespace Turbo.Packets.Revisions
             Parsers.Add(DefaultIncoming.ClientHello, new ClientHelloParser());
             Parsers.Add(DefaultIncoming.SSOTicket, new SSOTicketParser());
             Parsers.Add(DefaultIncoming.Pong, new PongParser());
+            Parsers.Add(DefaultIncoming.InfoRetrieve, new InfoRetrieveParser());
+            Parsers.Add(DefaultIncoming.UniqueId, new UniqueIdParser());
+            Parsers.Add(DefaultIncoming.VersionCheck, new VersionCheckParser());
         }
 
         private void RegisterSerializers()
