@@ -16,6 +16,7 @@ using Turbo.Players;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Security;
+using Turbo.Players.Authentication;
 
 namespace Turbo.Main
 {
@@ -61,7 +62,7 @@ namespace Turbo.Main
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             Console.WriteLine(@"
                 ████████╗██╗   ██╗██████╗ ██████╗  ██████╗ 
@@ -71,6 +72,7 @@ namespace Turbo.Main
                    ██║   ╚██████╔╝██║  ██║██████╔╝╚██████╔╝
                    ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ 
             ");
+
             Console.WriteLine("Running {0}", GetVersion());
             Console.WriteLine();
 
@@ -83,13 +85,11 @@ namespace Turbo.Main
 
             // Start services
             _pluginManager.LoadPlugins();
-            _serverManager.StartServersAsync();
+            await _serverManager.StartServersAsync();
 
-            _securityManager.InitAsync();
-            _furnitureManager.InitAsync();
-            _roomManager.InitAsync();
-
-            return Task.CompletedTask;
+            await _securityManager.InitAsync();
+            await _furnitureManager.InitAsync();
+            await _roomManager.InitAsync();
         }
 
         /// <summary>
@@ -108,17 +108,15 @@ namespace Turbo.Main
         /// This method is called by the .NET Generic Host.
         /// See https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0 for more information.
         /// </summary>
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Shutting down. Disposing services...");
 
             // Todo: Dispose all services here
-            _roomManager.DisposeAsync();
-            _furnitureManager.DisposeAsync();
-            _roomManager.DisposeAsync();
-            _playerManager.DisposeAsync();
-
-            return Task.CompletedTask;
+            await _roomManager.DisposeAsync();
+            await _furnitureManager.DisposeAsync();
+            await _roomManager.DisposeAsync();
+            await _playerManager.DisposeAsync();
         }
 
         /// <summary>
