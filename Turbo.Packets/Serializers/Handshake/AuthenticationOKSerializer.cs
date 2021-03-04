@@ -1,7 +1,6 @@
 ﻿using Turbo.Packets.Headers;
 using Turbo.Packets.Outgoing;
 using Turbo.Packets.Outgoing.Handshake;
-using Turbo.Packets.Serializers;
 
 namespace Turbo.Packets.Serializers.Handshake
 {

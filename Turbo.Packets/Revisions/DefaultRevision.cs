@@ -35,6 +35,7 @@ namespace Turbo.Packets.Revisions
         {
             Serializers.Add(typeof(AuthenticationOKMessage), new AuthenticationOKSerializer());
             Serializers.Add(typeof(PingMessage), new PingSerializer());
+            Serializers.Add(typeof(UniqueMachineIdMessage), new UniqueMachineIdSerializer());
         }
     }
 }
