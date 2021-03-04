@@ -1,5 +1,6 @@
 ﻿using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
+using System;
 using Turbo.Core.Players;
 using Turbo.Packets.Outgoing;
 using Turbo.Packets.Revisions;
@@ -18,12 +19,14 @@ namespace Turbo.Networking.Game.Clients
         public string IPAddress { get; set; }
 
         public IRevision Revision { get; set; }
+        public long LastPongTimestamp { get; set; }
 
         public Session(IChannelHandlerContext channel, IRevision initialRevision, ILogger<Session> logger)
         {
             this._channel = channel;
             this.Revision = initialRevision;
             this._logger = logger;
+            this.LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
         public void Disconnect()

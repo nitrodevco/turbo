@@ -9,5 +9,6 @@ namespace Turbo.Packets.Headers
     public static class DefaultOutgoing
     {
         public const int AuthenticationOK = 2491;
+        public const int Ping = 3928;
     }
 }

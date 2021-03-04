@@ -1,8 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Turbo.Packets.Incoming;
+﻿using Turbo.Packets.Incoming;
 using Turbo.Packets.Incoming.Handshake;
-using Turbo.Packets.Sessions;
 
 namespace Turbo.Packets.Parsers.Handshake
 {

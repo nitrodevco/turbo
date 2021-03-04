@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Turbo.Packets.Composers.Handshake;
 using Turbo.Packets.Headers;
 using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Parsers;
 using Turbo.Packets.Parsers.Handshake;
 using Turbo.Packets.Serializers;
+using Turbo.Packets.Serializers.Handshake;
 
 namespace Turbo.Packets.Revisions
 {
@@ -28,11 +28,13 @@ namespace Turbo.Packets.Revisions
         {
             Parsers.Add(DefaultIncoming.ClientHello, new ClientHelloParser());
             Parsers.Add(DefaultIncoming.SSOTicket, new SSOTicketParser());
+            Parsers.Add(DefaultIncoming.Pong, new PongParser());
         }
 
         private void RegisterSerializers()
         {
             Serializers.Add(typeof(AuthenticationOKMessage), new AuthenticationOKSerializer());
+            Serializers.Add(typeof(PingMessage), new PingSerializer());
         }
     }
 }

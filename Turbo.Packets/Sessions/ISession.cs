@@ -8,6 +8,7 @@ namespace Turbo.Packets.Sessions
     {
         public IPlayer Player { get; set; }
         public string IPAddress { get; set; }
+        public long LastPongTimestamp { get; set; }
         public IRevision Revision { get; set; }
         public void Disconnect();
         public ISession Send(IComposer composer);

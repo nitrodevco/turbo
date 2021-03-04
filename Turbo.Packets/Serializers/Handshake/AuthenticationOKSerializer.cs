@@ -3,7 +3,7 @@ using Turbo.Packets.Outgoing;
 using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Serializers;
 
-namespace Turbo.Packets.Composers.Handshake
+namespace Turbo.Packets.Serializers.Handshake
 {
     public class AuthenticationOKSerializer : AbstractSerializer<AuthenticationOKMessage>
     {
