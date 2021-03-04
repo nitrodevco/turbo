@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Turbo.Rooms.Mapping;
 
 namespace Turbo.Rooms
@@ -15,27 +16,27 @@ namespace Turbo.Rooms
             Models = new Dictionary<string, IRoomModel>();
         }
 
-        public void OnInit()
+        public async ValueTask InitAsync()
         {
-            LoadModels();
+            await LoadModels();
 
             // set a interval for TryDisposeAllRooms()
         }
 
-        public void OnDispose()
+        public async ValueTask DisposeAsync()
         {
-            // cancel the dispose interval
+            // cancel the TryDisposeAllRooms interval
 
-            RemoveAllRooms();
+            await RemoveAllRooms();
         }
 
-        public IRoom GetRoom(int id)
+        public async Task<IRoom> GetRoom(int id)
         {
             IRoom room = GetOnlineRoom(id);
 
             if (room != null) return room;
 
-            return GetOfflineRoom(id);
+            return await GetOfflineRoom(id);
         }
 
         public IRoom GetOnlineRoom(int id)
@@ -49,7 +50,7 @@ namespace Turbo.Rooms
             return room;
         }
 
-        public IRoom GetOfflineRoom(int id)
+        public async Task<IRoom> GetOfflineRoom(int id)
         {
             IRoom room = GetOnlineRoom(id);
 
@@ -61,10 +62,10 @@ namespace Turbo.Rooms
 
             room = new Room(this, roomDetails);
 
-            return AddRoom(room);
+            return await AddRoom(room);
         }
 
-        public IRoom AddRoom(IRoom room)
+        public async Task<IRoom> AddRoom(IRoom room)
         {
             if (room == null) return null;
 
@@ -72,7 +73,7 @@ namespace Turbo.Rooms
 
             if(existing != null)
             {
-                if (room != existing) room.Dispose();
+                if (room != existing) await room.DisposeAsync();
 
                 return existing;
             }
@@ -82,7 +83,7 @@ namespace Turbo.Rooms
             return room;
         }
 
-        public void RemoveRoom(int id)
+        public async ValueTask RemoveRoom(int id)
         {
             IRoom room = GetOnlineRoom(id);
 
@@ -90,18 +91,16 @@ namespace Turbo.Rooms
 
             Rooms.Remove(room.Id);
 
-            room.Dispose();
+            await room.DisposeAsync();
         }
 
-        public void RemoveAllRooms()
+        public async ValueTask RemoveAllRooms()
         {
             if (Rooms.Count == 0) return;
 
             foreach(int id in Rooms.Keys)
             {
-                Rooms.Remove(id);
-
-                RemoveRoom(id);
+                await RemoveRoom(id);
             }
         }
 
@@ -113,9 +112,7 @@ namespace Turbo.Rooms
             }
         }
 
-
-
-        private void LoadModels()
+        private async ValueTask LoadModels()
         {
 
         }

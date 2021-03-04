@@ -37,7 +37,7 @@ namespace Turbo.Networking.Clients
         public void DisconnectSession(IChannelId id)
         {
             if(this._clients.TryRemove(id, out ISession session)) {
-                session.Disconnect();
+                session.DisposeAsync();
             }
         }
 
@@ -54,7 +54,7 @@ namespace Turbo.Networking.Clients
 
                 if(timeNow - session.LastPongTimestamp > 60)
                 {
-                    session.Disconnect();
+                    session.DisposeAsync();
                     return;
                 }
 

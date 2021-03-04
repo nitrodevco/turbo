@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core;
 
-namespace Turbo.Database.Entities
+namespace Turbo.Security
 {
-    public class Habbo
+    public interface ISecurityManager : IAsyncInitialisable, IAsyncDisposable
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

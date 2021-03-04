@@ -1,19 +1,20 @@
 ﻿using System.Threading.Tasks;
 using Turbo.Core.Players;
-using Turbo.Packets.Outgoing;
 using Turbo.Packets.Revisions;
+using Turbo.Core;
+using System;
 
 namespace Turbo.Packets.Sessions
 {
-    public interface ISession
+    public interface ISession : IAsyncDisposable
     {
-        public IPlayer Player { get; set; }
-        public string IPAddress { get; set; }
-        public long LastPongTimestamp { get; set; }
         public IRevision Revision { get; set; }
-        public Task Disconnect();
-        public Task Send(IComposer composer);
-        public Task SendQueue(IComposer composer);
+        public ISessionPlayer SessionPlayer { get; }
+        public string IPAddress { get; }
+        public long LastPongTimestamp { get; set; }
+        public bool SetSessionPlayer(ISessionPlayer sessionPlayer);
+        public ISession Send(IComposer composer);
+        public ISession SendQueue(IComposer composer);
         public void Flush();
     }
 }
