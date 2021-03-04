@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Turbo.Core.Players;
 using Turbo.Packets.Revisions;
 using Turbo.Core;
 using System;
+using Turbo.Packets.Outgoing;
 
 namespace Turbo.Packets.Sessions
 {
@@ -13,8 +13,8 @@ namespace Turbo.Packets.Sessions
         public string IPAddress { get; }
         public long LastPongTimestamp { get; set; }
         public bool SetSessionPlayer(ISessionPlayer sessionPlayer);
-        public ISession Send(IComposer composer);
-        public ISession SendQueue(IComposer composer);
+        public Task Send(IComposer composer);
+        public Task SendQueue(IComposer composer);
         public void Flush();
     }
 }

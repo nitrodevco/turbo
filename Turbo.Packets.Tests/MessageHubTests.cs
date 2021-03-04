@@ -260,12 +260,12 @@ namespace Turbo.Packets.Tests
                 throw new NotImplementedException();
             }
 
-            public ISession Send(IComposer composer)
+            public Task Send(IComposer composer)
             {
                 throw new NotImplementedException();
             }
 
-            public ISession SendQueue(IComposer composer)
+            public Task SendQueue(IComposer composer)
             {
                 throw new NotImplementedException();
             }

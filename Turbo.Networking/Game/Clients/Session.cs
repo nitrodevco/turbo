@@ -2,9 +2,7 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using Turbo.Core.Players;
 using Turbo.Core;
->>>>>>> Turbo.Networking/Game/Clients/Session.cs
 using Turbo.Packets.Outgoing;
 using Turbo.Packets.Revisions;
 using Turbo.Packets.Serializers;
