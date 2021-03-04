@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Turbo.Packets.Incoming.Handshake
+﻿namespace Turbo.Packets.Incoming.Handshake
 {
-    public record VersionCheckMessage
+    public record VersionCheckMessage : IMessageEvent
     {
         public int ClientID { get; init; }
         public string ClientURL { get; init; }
