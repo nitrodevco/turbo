@@ -136,7 +136,7 @@ namespace Turbo.Packets
             }
         }
 
-        public void Unsubscribe<T>(object subscriber, Func<T, ISession, Task> handler = null) where T : IMessageEvent
+        public void Unsubscribe<T>(object subscriber, Func<T, ISession, Task> handler) where T : IMessageEvent
         {
             lock (_listenerLock)
             {

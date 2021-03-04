@@ -173,7 +173,7 @@ namespace Turbo.Packets.Tests
 
             GC.Collect();
 
-            _hub.Unsubscribe<MockEvent>(_subscriber);
+            _hub.Unsubscribe(_subscriber);
 
             Assert.False(_hub.Exists(_subscriber2));
             Assert.False(_hub.Exists(_subscriber));
