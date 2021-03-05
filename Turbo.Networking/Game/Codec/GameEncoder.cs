@@ -7,7 +7,7 @@ using Turbo.Packets.Composers;
 
 namespace Turbo.Networking.Game.Codec
 {
-    class GameEncoder : MessageToByteEncoder<Composer>
+    public class GameEncoder : MessageToByteEncoder<Composer>
     {
         protected override void Encode(IChannelHandlerContext context, Composer message, IByteBuffer output)
         {

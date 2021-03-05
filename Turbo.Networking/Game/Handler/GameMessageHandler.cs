@@ -4,7 +4,7 @@ using Turbo.Packets.Incoming;
 
 namespace Turbo.Networking.Game.Handler
 {
-    class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
+    public class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
     {
         public override void ChannelActive(IChannelHandlerContext context)
         {
