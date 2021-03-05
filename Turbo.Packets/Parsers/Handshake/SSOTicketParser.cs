@@ -3,7 +3,7 @@ using Turbo.Packets.Incoming.Handshake;
 
 namespace Turbo.Packets.Parsers.Handshake
 {
-    class SSOTicketParser : AbstractParser<SSOTicketMessage>
+    public class SSOTicketParser : AbstractParser<SSOTicketMessage>
     {
         public override IMessageEvent Parse(IClientPacket packet)
         {
