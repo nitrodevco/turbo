@@ -13,9 +13,9 @@ namespace Turbo.Rooms
         public IRoomManager RoomManager { get; private set; }
         public RoomDetails RoomDetails { get; private set; }
 
-        public RoomSecurityManager RoomSecurityManager { get; private set; }
-        public RoomFurnitureManager RoomFurnitureManager { get; private set; }
-        public RoomUserManager RoomUserManager { get; private set; }
+        public readonly RoomSecurityManager RoomSecurityManager;
+        public readonly RoomFurnitureManager RoomFurnitureManager;
+        public readonly RoomUserManager RoomUserManager;
 
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
@@ -32,16 +32,16 @@ namespace Turbo.Rooms
             RoomUserManager = new RoomUserManager(this);
         }
 
-        public void Init()
+        public async ValueTask InitAsync()
         {
-            LoadMapping();
+            await LoadMapping();
 
-            if (RoomSecurityManager != null) RoomSecurityManager.Init();
-            if (RoomFurnitureManager != null) RoomFurnitureManager.Init();
-            if (RoomUserManager != null) RoomUserManager.Init();
+            if (RoomSecurityManager != null) await RoomSecurityManager.InitAsync();
+            if (RoomFurnitureManager != null) await RoomFurnitureManager.InitAsync();
+            if (RoomUserManager != null) await RoomUserManager.InitAsync();
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
             if (IsDisposing) return;
 
@@ -51,12 +51,12 @@ namespace Turbo.Rooms
 
             if(RoomManager != null)
             {
-                RoomManager.RemoveRoom(Id);
+                await RoomManager.RemoveRoom(Id);
             }
 
-            if (RoomUserManager != null) RoomUserManager.Dispose();
-            if (RoomFurnitureManager != null) RoomFurnitureManager.Dispose();
-            if (RoomSecurityManager != null) RoomSecurityManager.Dispose();
+            if (RoomUserManager != null) await RoomUserManager.DisposeAsync();
+            if (RoomFurnitureManager != null) await RoomFurnitureManager.DisposeAsync();
+            if (RoomSecurityManager != null) await RoomSecurityManager.DisposeAsync();
         }
 
         public void TryDispose()
@@ -69,7 +69,7 @@ namespace Turbo.Rooms
 
         }
 
-        private void LoadMapping()
+        private async ValueTask LoadMapping()
         {
             if(RoomMap != null)
             {

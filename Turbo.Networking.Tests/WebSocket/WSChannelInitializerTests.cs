@@ -7,10 +7,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Networking.Clients;
+using Turbo.Networking.Game.Clients;
 using Turbo.Networking.Game.Codec;
 using Turbo.Networking.Game.Handler;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.Game.WebSocket.Codec;
+using Turbo.Packets;
+using Turbo.Packets.Revisions;
 using Xunit;
 
 namespace Turbo.Networking.Tests.WebSocket
@@ -19,6 +23,13 @@ namespace Turbo.Networking.Tests.WebSocket
     {
         private readonly Mock<IChannel> _channelMock;
         private readonly Mock<IChannelPipeline> _channelPipelineMock;
+        private readonly Mock<IServiceProvider> _serviceProviderMock;
+
+        private readonly Mock<IPacketMessageHub> _packetMessageHubMock;
+        private readonly Mock<ISessionManager> _sessionManagerMock;
+        private readonly Mock<IRevisionManager> _revisionManagerMock;
+        private readonly Mock<ISessionFactory> _sessionFactoryMock;
+
         private readonly WSChannelInitializerMock _sut;
 
         public WSChannelInitializerTests()
@@ -26,7 +37,19 @@ namespace Turbo.Networking.Tests.WebSocket
             _channelMock = new Mock<IChannel>();
             _channelPipelineMock = new Mock<IChannelPipeline>();
             _channelMock.SetupGet(x => x.Pipeline).Returns(_channelPipelineMock.Object);
-            _sut = new WSChannelInitializerMock();
+
+            _packetMessageHubMock = new Mock<IPacketMessageHub>();
+            _sessionManagerMock = new Mock<ISessionManager>();
+            _revisionManagerMock = new Mock<IRevisionManager>();
+            _sessionFactoryMock = new Mock<ISessionFactory>();
+
+            _serviceProviderMock = new Mock<IServiceProvider>();
+            _serviceProviderMock.Setup(x => x.GetService(typeof(IPacketMessageHub))).Returns(_packetMessageHubMock.Object);
+            _serviceProviderMock.Setup(x => x.GetService(typeof(ISessionManager))).Returns(_sessionManagerMock.Object);
+            _serviceProviderMock.Setup(x => x.GetService(typeof(IRevisionManager))).Returns(_revisionManagerMock.Object);
+            _serviceProviderMock.Setup(x => x.GetService(typeof(ISessionFactory))).Returns(_sessionFactoryMock.Object);
+
+            _sut = new WSChannelInitializerMock(_serviceProviderMock.Object);
         }
 
         [Fact]
@@ -55,7 +78,7 @@ namespace Turbo.Networking.Tests.WebSocket
 
     internal class WSChannelInitializerMock : WSChannelInitializer
     {
-        public WSChannelInitializerMock() : base() { }
+        public WSChannelInitializerMock(IServiceProvider serviceProvider) : base(serviceProvider) { }
 
         public void ExecuteInitChannel(IChannel channel)
         {

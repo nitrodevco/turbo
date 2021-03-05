@@ -1,9 +1,12 @@
-﻿using Turbo.Packets.Incoming;
+﻿using System.Threading.Tasks;
+using Turbo.Packets.Incoming;
+using Turbo.Packets.Sessions;
 
 namespace Turbo.Packets.Parsers
 {
-    public interface IParser<T> where T : IMessageEvent
+    public interface IParser
     {
-        T Parse(ClientPacket packet);
+        public IMessageEvent Parse(IClientPacket packet);
+        public Task HandleAsync(ISession session, IClientPacket message, IPacketMessageHub hub);
     }
 }

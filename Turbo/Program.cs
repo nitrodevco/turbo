@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -8,12 +8,26 @@ using Turbo.Database.Context;
 using Turbo.Main.Configuration;
 using Turbo.Plugins;
 using Microsoft.EntityFrameworkCore;
+using Turbo.Players;
+using Turbo.Rooms;
 using Turbo.Database.Repositories;
 using Turbo.Networking;
 using Turbo.Networking.Game;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
 using Turbo.Networking.EventLoop;
+using Turbo.Packets.Revisions;
+using Turbo.Networking.Clients;
+using Turbo.Packets;
+using Turbo.Networking.Game.Clients;
+using Turbo.Database.Repositories.Player;
+using System.Reflection;
+using System.Linq;
+using Turbo.Database.Repositories.Furniture;
+using Turbo.Furniture;
+using Turbo.Security;
+using Turbo.Database.Repositories.Security;
+using Turbo.Database.Entities.Security;
 
 namespace Turbo.Main
 {
@@ -42,11 +56,15 @@ namespace Turbo.Main
                     services.AddDbContext<IEmulatorContext, TurboContext>(options => options
                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
                         .EnableSensitiveDataLogging()
-                        .EnableDetailedErrors()
+                        .EnableDetailedErrors(),
+                        ServiceLifetime.Singleton
                     );
 
                     // Repositories
-                    services.AddScoped<IHabboRepository, HabboRepository>();
+                    services.AddSingleton<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
+                    services.AddSingleton<IFurnitureRepository, FurnitureRepository>();
+                    services.AddSingleton<IPlayerRepository, PlayerRepository>();
+                    services.AddSingleton<ISecurityTicketRepository, SecurityTicketRepository>();
 
                     // Singletons
                     services.AddSingleton<IPluginManager, TurboPluginManager>();
@@ -55,6 +73,15 @@ namespace Turbo.Main
                     services.AddSingleton<IGameServer, GameServer>();
                     services.AddSingleton<IWSGameServer, WSGameServer>();
                     services.AddSingleton<IRestServer, RestServer>();
+                    services.AddSingleton<IRevisionManager, RevisionManager>();
+                    services.AddSingleton<ISessionManager, SessionManager>();
+                    services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
+                    services.AddSingleton<ISessionFactory, SessionFactory>();
+
+                    services.AddSingleton<ISecurityManager, SecurityManager>();
+                    services.AddSingleton<IFurnitureManager, FurnitureManager>();
+                    services.AddSingleton<IPlayerManager, PlayerManager>();
+                    services.AddSingleton<IRoomManager, RoomManager>();
 
                     // Emulator
                     services.AddHostedService<TurboEmulator>();

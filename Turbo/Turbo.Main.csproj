@@ -31,8 +31,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
     <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
+    <ProjectReference Include="..\Turbo.Furniture\Turbo.Furniture.csproj" />
     <ProjectReference Include="..\Turbo.Networking\Turbo.Networking.csproj" />
+    <ProjectReference Include="..\Turbo.Players\Turbo.Players.csproj" />
     <ProjectReference Include="..\Turbo.Plugins\Turbo.Plugins.csproj" />
+    <ProjectReference Include="..\Turbo.Rooms\Turbo.Rooms.csproj" />
+    <ProjectReference Include="..\Turbo.Security\Turbo.Security.csproj" />
   </ItemGroup>
 
 </Project>

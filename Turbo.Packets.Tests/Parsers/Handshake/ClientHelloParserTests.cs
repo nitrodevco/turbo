@@ -16,7 +16,7 @@ namespace Turbo.Packets.Tests.Parsers.Handshake
     public class ClientHelloParserTests
     {
         private readonly IFixture _fixture;
-        private readonly IParser<ClientHelloMessage> _sut;
+        private readonly IParser _sut;
 
         public ClientHelloParserTests()
         {
@@ -47,7 +47,7 @@ namespace Turbo.Packets.Tests.Parsers.Handshake
             var packet = new ClientPacket(packetHeader, buffer);
 
             // Act
-            var result = _sut.Parse(packet);
+            var result = (ClientHelloMessage)_sut.Parse(packet);
 
             // Assert
             Assert.Equal(production, result.Production);

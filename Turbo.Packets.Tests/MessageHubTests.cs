@@ -1,10 +1,13 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
-using Turbo.Core.Players;
-using Turbo.Packets.Composers;
+using System.Threading.Tasks;
+using Turbo.Core;
 using Turbo.Packets.Incoming;
 using Turbo.Packets.Sessions;
 using Xunit;
+using Moq;
+using Turbo.Packets.Outgoing;
+using Turbo.Packets.Revisions;
 
 namespace Turbo.Packets.Tests
 {
@@ -13,14 +16,14 @@ namespace Turbo.Packets.Tests
         private readonly IPacketMessageHub _hub;
         private readonly object _subscriber;
         private object _subscriber2;
-        private readonly ISession _mockSession;
+        private readonly Mock<ISession> _mockSession;
 
         public MessageHubTests()
         {
             this._hub = new PacketMessageHub(new NullLogger<PacketMessageHub>());
             this._subscriber = new object();
             this._subscriber2 = new object();
-            this._mockSession = new MockSession();
+            this._mockSession = new Mock<ISession>();
         }
 
         [Fact]
@@ -31,7 +34,7 @@ namespace Turbo.Packets.Tests
             _hub.Subscribe(new object(), new Action<MockEvent, ISession>( (a, b) => callCount++));
 
             
-            _hub.Publish(new MockEvent(), this._mockSession);
+            _hub.Publish(new MockEvent(), this._mockSession.Object);
 
             Assert.Equal(2, callCount);
         }
@@ -43,7 +46,7 @@ namespace Turbo.Packets.Tests
             _hub.Subscribe<MockEvent>(_subscriber, (a, b) => callCount++);
             _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a,b) => callCount++));
 
-            _hub.Publish(new MockEvent2("data"), this._mockSession);
+            _hub.Publish(new MockEvent2("data"), this._mockSession.Object);
 
             Assert.Equal(2, callCount);
         }
@@ -55,7 +58,7 @@ namespace Turbo.Packets.Tests
             _hub.Subscribe(_subscriber, new Action<MockEvent2, ISession>( (a, b) => callCount++));
             _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a, b) => callCount++));
 
-            _hub.Publish(new MockEvent(), this._mockSession);
+            _hub.Publish(new MockEvent(), this._mockSession.Object);
 
             Assert.Equal(1, callCount);
         }
@@ -70,14 +73,14 @@ namespace Turbo.Packets.Tests
 
             Assert.Single(_hub.GetCallables<MockEvent>()); // we have registered a callable
 
-            _hub.Publish(new MockEvent(), this._mockSession);
-            _hub.PublishAsync(new MockEvent(), this._mockSession);
+            _hub.Publish(new MockEvent(), this._mockSession.Object);
+            _hub.PublishAsync(new MockEvent(), this._mockSession.Object);
 
             Assert.Equal(0, callCount);// event was cancelled, should not call listener
 
             _hub.UnRegisterCallable(callable);
 
-            _hub.Publish(new MockEvent(), this._mockSession);
+            _hub.Publish(new MockEvent(), this._mockSession.Object);
 
             Assert.Equal(1, callCount); // event was not cancelled, should call listener
         }
@@ -93,7 +96,7 @@ namespace Turbo.Packets.Tests
             Assert.Single(_hub.GetCallables<MockEvent>()); // we have registered a callable for that type
             Assert.Empty(_hub.GetCallables<MockEvent2>()); // we dont have any callables for that event
 
-            _hub.Publish(new MockEvent2("data"), this._mockSession);
+            _hub.Publish(new MockEvent2("data"), this._mockSession.Object);
 
             Assert.Equal(1, callCount);// our type of event was not cancelled, should call listener
 
@@ -114,8 +117,8 @@ namespace Turbo.Packets.Tests
             Assert.True(_hub.Exists(_subscriber2));
             Assert.False(_hub.Exists(_subscriber));
 
-            _hub.Publish(new MockEvent2("data"), this._mockSession);
-            _hub.Publish(new MockEvent(), this._mockSession);
+            _hub.Publish(new MockEvent2("data"), this._mockSession.Object);
+            _hub.Publish(new MockEvent(), this._mockSession.Object);
 
             Assert.False(subscr1);
             Assert.True(subscr2);
@@ -170,7 +173,7 @@ namespace Turbo.Packets.Tests
 
             GC.Collect();
 
-            _hub.Unsubscribe<MockEvent>(_subscriber);
+            _hub.Unsubscribe(_subscriber);
 
             Assert.False(_hub.Exists(_subscriber2));
             Assert.False(_hub.Exists(_subscriber));
@@ -183,7 +186,7 @@ namespace Turbo.Packets.Tests
 
             try
             {
-                _hub.Publish(new MockEvent(), _mockSession);
+                _hub.Publish(new MockEvent(), _mockSession.Object);
             }
 
             catch (InvalidOperationException e)
@@ -217,21 +220,57 @@ namespace Turbo.Packets.Tests
 
         internal class MockSession : ISession
         {
-            public IPlayer Player { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-            public string IPAddress { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-            public string Revision { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public IRevision Revision
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
 
-            public void Disconnect()
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public ISessionPlayer SessionPlayer => throw new NotImplementedException();
+
+            public string IPAddress => throw new NotImplementedException();
+
+            public long LastPongTimestamp
+            {
+                get
+                {
+                    throw new NotImplementedException();
+                }
+
+                set
+                {
+                    throw new NotImplementedException();
+                }
+            }
+
+            public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
             {
                 throw new NotImplementedException();
             }
 
-            public ISession Send(IComposer composer)
+            public ValueTask DisposeAsync()
             {
                 throw new NotImplementedException();
             }
 
-            public ISession SendQueue(IComposer composer)
+            public Task Send(IComposer composer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public Task SendQueue(IComposer composer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Flush()
             {
                 throw new NotImplementedException();
             }

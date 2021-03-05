@@ -1,7 +1,11 @@
-﻿using DotNetty.Transport.Channels;
+using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
-using Turbo.Core.Players;
-using Turbo.Packets.Composers;
+using System;
+using System.Threading.Tasks;
+using Turbo.Core;
+using Turbo.Packets.Outgoing;
+using Turbo.Packets.Revisions;
+using Turbo.Packets.Serializers;
 using Turbo.Packets.Sessions;
 
 namespace Turbo.Networking.Game.Clients
@@ -11,33 +15,61 @@ namespace Turbo.Networking.Game.Clients
         private readonly IChannelHandlerContext _channel;
         private readonly ILogger<Session> _logger;
 
-        public IPlayer Player { get; set; }
+        public IRevision Revision { get; set; }
+        public ISessionPlayer SessionPlayer { get; private set; }
 
-        public string IPAddress { get; set; }
+        public string IPAddress { get; private set; }
+        public long LastPongTimestamp { get; set; }
 
-        public string Revision { get; set; }
-
-        public Session(IChannelHandlerContext channel, ILogger<Session> logger)
+        public Session(IChannelHandlerContext channel, IRevision initialRevision, ILogger<Session> logger)
         {
-            this._channel = channel;
-            this._logger = logger;
+            _channel = channel;
+            _logger = logger;
+
+            Revision = initialRevision;
+            LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
-        public void Disconnect()
+        public async ValueTask DisposeAsync()
         {
-            _channel.CloseAsync();
+            if (SessionPlayer != null) await SessionPlayer.DisposeAsync();
+
+            await _channel.CloseAsync();
+        }
+        
+        public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
+        {
+            if ((SessionPlayer != null) && (SessionPlayer != sessionPlayer)) return false;
+
+            SessionPlayer = sessionPlayer;
+
+            return true;
         }
 
-        public ISession Send(IComposer composer)
+        public async Task Send(IComposer composer)
         {
-            _channel.WriteAndFlushAsync(composer);
-            return this;
+            await Send(composer, false);
         }
 
-        public ISession SendQueue(IComposer composer)
+        public async Task SendQueue(IComposer composer)
         {
-            _channel.WriteAsync(composer);
-            return this;
+            await Send(composer, true);
         }
+
+        protected async Task Send(IComposer composer, bool queue)
+        {
+            if (Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
+            {
+                IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(2), composer);
+                if (queue) await _channel.WriteAsync(packet);
+                else await _channel.WriteAndFlushAsync(packet);
+            }
+            else
+            {
+                _logger.LogDebug($"No matching serializer found for message {composer.GetType().Name}");
+            }
+        }
+
+        public void Flush() => _channel.Flush();
     }
 }

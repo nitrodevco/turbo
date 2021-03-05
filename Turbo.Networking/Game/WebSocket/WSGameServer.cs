@@ -3,6 +3,7 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Turbo.Core.Configuration;
@@ -15,6 +16,7 @@ namespace Turbo.Networking.Game.WebSocket
         private readonly ILogger<WSGameServer> _logger;
         private readonly IEmulatorConfig _config;
         private readonly INetworkEventLoopGroup _eventLoopGroup;
+        private readonly IServiceProvider _provider;
 
         protected readonly ServerBootstrap _serverBootstrap;
         protected IChannel ServerChannel { get; private set; }
@@ -25,11 +27,13 @@ namespace Turbo.Networking.Game.WebSocket
 
         public WSGameServer(ILogger<WSGameServer> logger,
             IEmulatorConfig config,
-            INetworkEventLoopGroup eventLoopGroup)
+            INetworkEventLoopGroup eventLoopGroup,
+            IServiceProvider provider)
         {
             _logger = logger;
             _config = config;
             _eventLoopGroup = eventLoopGroup;
+            _provider = provider;
 
             Host = _config.GameHost;
             Port = _config.GameWSPort;
@@ -48,7 +52,7 @@ namespace Turbo.Networking.Game.WebSocket
             _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
             _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
             _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
-            _serverBootstrap.ChildHandler(new WSChannelInitializer());
+            _serverBootstrap.ChildHandler(new WSChannelInitializer(_provider));
         }
 
         public async Task StartAsync()

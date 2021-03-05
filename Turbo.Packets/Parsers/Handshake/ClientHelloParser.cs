@@ -1,12 +1,11 @@
-﻿using System;
-using Turbo.Packets.Incoming;
+﻿using Turbo.Packets.Incoming;
 using Turbo.Packets.Incoming.Handshake;
 
 namespace Turbo.Packets.Parsers.Handshake
 {
-    public class ClientHelloParser : IParser<ClientHelloMessage>
+    public class ClientHelloParser : AbstractParser<ClientHelloMessage>
     {
-        ClientHelloMessage IParser<ClientHelloMessage>.Parse(ClientPacket packet)
+        public override IMessageEvent Parse(IClientPacket packet)
         {
             return new ClientHelloMessage
             {

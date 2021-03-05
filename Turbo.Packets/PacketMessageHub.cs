@@ -136,6 +136,21 @@ namespace Turbo.Packets
             }
         }
 
+        public void Unsubscribe<T>(object subscriber, Func<T, ISession, Task> handler) where T : IMessageEvent
+        {
+            lock (_listenerLock)
+            {
+                IEnumerable<IListener> query = _listeners.Where(a => !a.Sender.IsAlive ||
+                                                a.Sender.Target.Equals(subscriber) && a.Type == typeof(T));
+
+                if (handler != null)
+                    query = query.Where(a => a.Action.Equals(handler));
+
+                foreach (IListener h in query.ToList())
+                    _listeners.Remove(h);
+            }
+        }
+
         private void SubscribeDelegate<T>(object subscriber, Delegate handler) where T : IMessageEvent
         {
             IListener item = new Listener
@@ -208,6 +223,24 @@ namespace Turbo.Packets
         }
 
         public bool Exists<T>(object subscriber, Action<T, ISession> handler) where T : IMessageEvent
+        {
+            lock (_listenerLock)
+            {
+                foreach (IListener h in _listeners)
+                {
+                    if (Equals(h.Sender.Target, subscriber) &&
+                         typeof(T) == h.Type &&
+                         h.Action.Equals(handler))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool Exists<T>(object subscriber, Func<T, ISession, Task> handler) where T : IMessageEvent
         {
             lock (_listenerLock)
             {
