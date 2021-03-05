@@ -33,6 +33,7 @@ namespace Turbo.Main.Configuration
         public string DatabaseUser { get; set; }
         public string DatabasePassword { get; set; }
         public string DatabaseName { get; set; }
+        public bool DatabaseLoggingEnabled { get; set; }
 
         public int NetworkWorkerThreads { get; set; }
     }

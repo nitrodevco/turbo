@@ -28,6 +28,7 @@ using Turbo.Furniture;
 using Turbo.Security;
 using Turbo.Database.Repositories.Security;
 using Turbo.Database.Entities.Security;
+using Turbo.Main.Extensions;
 
 namespace Turbo.Main
 {
@@ -55,33 +56,15 @@ namespace Turbo.Main
                     var connectionString = $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
                     services.AddDbContext<IEmulatorContext, TurboContext>(options => options
                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
-                        .EnableSensitiveDataLogging()
+                        .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
                         .EnableDetailedErrors(),
                         ServiceLifetime.Singleton
                     );
 
-                    // Repositories
-                    services.AddSingleton<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
-                    services.AddSingleton<IFurnitureRepository, FurnitureRepository>();
-                    services.AddSingleton<IPlayerRepository, PlayerRepository>();
-                    services.AddSingleton<ISecurityTicketRepository, SecurityTicketRepository>();
-
-                    // Singletons
-                    services.AddSingleton<IPluginManager, TurboPluginManager>();
-                    services.AddSingleton<IServerManager, ServerManager>();
-                    services.AddSingleton<INetworkEventLoopGroup, NetworkEventLoopGroup>();
-                    services.AddSingleton<IGameServer, GameServer>();
-                    services.AddSingleton<IWSGameServer, WSGameServer>();
-                    services.AddSingleton<IRestServer, RestServer>();
-                    services.AddSingleton<IRevisionManager, RevisionManager>();
-                    services.AddSingleton<ISessionManager, SessionManager>();
-                    services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
-                    services.AddSingleton<ISessionFactory, SessionFactory>();
-
-                    services.AddSingleton<ISecurityManager, SecurityManager>();
-                    services.AddSingleton<IFurnitureManager, FurnitureManager>();
-                    services.AddSingleton<IPlayerManager, PlayerManager>();
-                    services.AddSingleton<IRoomManager, RoomManager>();
+                    // Repositories, Managers and networking
+                    services.AddRepositories();
+                    services.AddManagers();
+                    services.AddNetworking();
 
                     // Emulator
                     services.AddHostedService<TurboEmulator>();
