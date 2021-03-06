@@ -9,5 +9,6 @@ namespace Turbo.Security
 {
     public interface ISecurityManager : IAsyncInitialisable, IAsyncDisposable
     {
+        public Task<int> GetPlayerIdFromTicket(string ticket);
     }
 }

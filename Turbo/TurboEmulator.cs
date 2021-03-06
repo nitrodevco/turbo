@@ -7,11 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core;
 using Turbo.Networking;
-using Turbo.Networking.EventLoop;
 using Turbo.Furniture;
-using Turbo.Networking.Game;
-using Turbo.Networking.Game.WebSocket;
-using Turbo.Networking.REST;
 using Turbo.Players;
 using Turbo.Plugins;
 using Turbo.Rooms;
@@ -117,6 +113,7 @@ namespace Turbo.Main
             _furnitureManager.DisposeAsync();
             _roomManager.DisposeAsync();
             _playerManager.DisposeAsync();
+            _serverManager.ShutdownServersAsync();
 
             return Task.CompletedTask;
         }
