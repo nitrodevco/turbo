@@ -19,6 +19,7 @@ using Turbo.Networking.REST;
 using Turbo.Packets;
 using Turbo.Packets.Revisions;
 using Turbo.Players;
+using Turbo.Players.Authentication;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Security;
@@ -37,6 +38,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IFurnitureManager, FurnitureManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
+            services.AddSingleton<IAuthenticationService, AuthenticationService>();
         }
 
         public static void AddNetworking(this IServiceCollection services)

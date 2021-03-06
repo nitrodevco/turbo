@@ -12,6 +12,7 @@ using Turbo.Players;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Security;
+using Turbo.Players.Authentication;
 
 namespace Turbo.Main
 {
@@ -39,7 +40,8 @@ namespace Turbo.Main
             ISecurityManager securityManager,
             IFurnitureManager furnitureManager,
             IRoomManager roomManager,
-            IPlayerManager playerManager)
+            IPlayerManager playerManager,
+            IAuthenticationService authenticationService)
         {
             _appLifetime = appLifetime;
             _logger = logger;
