@@ -11,6 +11,8 @@ namespace Turbo.Database.Entities.Furniture
     public class FurnitureEntity : Entity
     {
         [Column("definition_id")]
+        public int FurnitureDefinitionEntityId { get; set; }
+
         public FurnitureDefinitionEntity FurnitureDefinitionEntity { get; set; }
     }
 }

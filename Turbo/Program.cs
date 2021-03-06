@@ -28,6 +28,8 @@ using Turbo.Furniture;
 using Turbo.Security;
 using Turbo.Database.Repositories.Security;
 using Turbo.Database.Entities.Security;
+using Turbo.Database.Repositories.Room;
+using Turbo.Players.Authentication;
 
 namespace Turbo.Main
 {
@@ -64,6 +66,8 @@ namespace Turbo.Main
                     services.AddSingleton<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
                     services.AddSingleton<IFurnitureRepository, FurnitureRepository>();
                     services.AddSingleton<IPlayerRepository, PlayerRepository>();
+                    services.AddSingleton<IRoomModelRepository, RoomModelRepository>();
+                    services.AddSingleton<IRoomRepository, RoomRepository>();
                     services.AddSingleton<ISecurityTicketRepository, SecurityTicketRepository>();
 
                     // Singletons
@@ -81,6 +85,7 @@ namespace Turbo.Main
                     services.AddSingleton<ISecurityManager, SecurityManager>();
                     services.AddSingleton<IFurnitureManager, FurnitureManager>();
                     services.AddSingleton<IPlayerManager, PlayerManager>();
+                    services.AddSingleton<IAuthenticationService, AuthenticationService>();
                     services.AddSingleton<IRoomManager, RoomManager>();
 
                     // Emulator

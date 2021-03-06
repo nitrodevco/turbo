@@ -6,23 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Turbo.Database.Entities.Players;
 
-namespace Turbo.Database.Entities.Security
+namespace Turbo.Database.Entities.Room
 {
-    [Table("security_tickets")]
-    public class SecurityTicketEntity : Entity
+    [Table("room_bans")]
+    public class RoomBanEntity : Entity
     {
+        [Column("room_id")]
+        public int RoomEntityId { get; set; }
+
+        public RoomEntity RoomEntity { get; set; }
+
         [Column("player_id")]
         public int PlayerEntityId { get; set; }
 
         public PlayerEntity PlayerEntity { get; set; }
-
-        [Column("ticket")]
-        public string Ticket { get; set; }
-
-        [Column("ip_address")]
-        public string IpAddress { get; set; }
-
-        [Column("is_locked")]
-        public bool IsLocked { get; set; }
     }
 }

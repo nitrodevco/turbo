@@ -60,5 +60,7 @@ namespace Turbo.Database.Entities.Furniture
 
         [Column("extra_data")]
         public bool ExtraData { get; set; }
+
+        public List<FurnitureEntity> Furnitures { get; set; }
     }
 }

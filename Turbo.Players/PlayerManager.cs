@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace Turbo.Players
 
         private readonly Dictionary<int, IPlayer> _players;
 
-        public PlayerManager(IPlayerRepository playerRepository)
+        public PlayerManager(IPlayerRepository playerRepository, ILogger<IPlayerManager> logger)
         {
             _playerRepository = playerRepository;
 

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Context;
 
 namespace Turbo.Database.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    partial class TurboContextModelSnapshot : ModelSnapshot
+    [Migration("20210304085235_test")]
+    partial class test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -229,8 +231,7 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("id");
 
                     b.Property<bool>("Custom")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("custom");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)")
@@ -241,28 +242,22 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("date_updated");
 
                     b.Property<int>("DoorDirection")
-                        .HasColumnType("int")
-                        .HasColumnName("door_direction");
+                        .HasColumnType("int");
 
                     b.Property<int>("DoorX")
-                        .HasColumnType("int")
-                        .HasColumnName("door_x");
+                        .HasColumnType("int");
 
                     b.Property<int>("DoorY")
-                        .HasColumnType("int")
-                        .HasColumnName("door_y");
+                        .HasColumnType("int");
 
                     b.Property<bool>("Enabled")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("enabled");
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Model")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4")
-                        .HasColumnName("model");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4")
-                        .HasColumnName("name");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
 
                     b.HasKey("Id");
 

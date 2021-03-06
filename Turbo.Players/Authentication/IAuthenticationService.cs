@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Rooms.Mapping
+namespace Turbo.Players.Authentication
 {
-    public interface IRoomMap : IDisposable
+    public interface IAuthenticationService
     {
-        public void GenerateMap();
     }
 }

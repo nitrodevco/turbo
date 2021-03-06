@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
 
@@ -10,7 +11,8 @@ namespace Turbo.Rooms
 {
     public class Room : IRoom
     {
-        public IRoomManager RoomManager { get; private set; }
+        private readonly IRoomManager _roomManager;
+
         public RoomDetails RoomDetails { get; private set; }
 
         public readonly RoomSecurityManager RoomSecurityManager;
@@ -22,10 +24,11 @@ namespace Turbo.Rooms
 
         public bool IsDisposing { get; private set; }
 
-        public Room(IRoomManager roomManager, RoomDetails roomDetails)
+        public Room(IRoomManager roomManager, RoomEntity roomEntity)
         {
-            RoomManager = roomManager;
-            RoomDetails = roomDetails;
+            _roomManager = roomManager;
+
+            RoomDetails = new RoomDetails(roomEntity);
 
             RoomSecurityManager = new RoomSecurityManager(this);
             RoomFurnitureManager = new RoomFurnitureManager(this);
@@ -49,9 +52,9 @@ namespace Turbo.Rooms
 
             CancelDispose();
 
-            if(RoomManager != null)
+            if(_roomManager != null)
             {
-                await RoomManager.RemoveRoom(Id);
+                await _roomManager.RemoveRoom(Id);
             }
 
             if (RoomUserManager != null) await RoomUserManager.DisposeAsync();
@@ -79,6 +82,15 @@ namespace Turbo.Rooms
             }
 
             RoomModel = null;
+
+            IRoomModel roomModel = _roomManager.GetModel(RoomDetails.ModelId);
+
+            if ((roomModel == null) || (!roomModel.DidGenerate)) return;
+
+            RoomModel = roomModel;
+            RoomMap = new RoomMap(this);
+
+            RoomMap.GenerateMap();
         }
 
         public int Id
