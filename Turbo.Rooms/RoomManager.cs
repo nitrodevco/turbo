@@ -55,6 +55,8 @@ namespace Turbo.Rooms
 
         public IRoom GetOnlineRoom(int id)
         {
+            if((id <= 0) || !_rooms.ContainsKey(id)) return null;
+
             IRoom room = _rooms[id];
 
             if (room == null) return null;
@@ -128,6 +130,8 @@ namespace Turbo.Rooms
 
         public IRoomModel GetModel(int id)
         {
+            if ((id <= 0) || !_models.ContainsKey(id)) return null;
+
             return _models[id];
         }
 

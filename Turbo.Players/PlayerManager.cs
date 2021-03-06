@@ -30,7 +30,7 @@ namespace Turbo.Players
 
         public IPlayer GetPlayerById(int id)
         {
-            if ((id <= 0)) return null;
+            if ((id <= 0) || !_players.ContainsKey(id)) return null;
 
             return _players[id];
         }
