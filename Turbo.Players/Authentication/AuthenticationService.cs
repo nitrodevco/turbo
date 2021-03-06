@@ -27,7 +27,6 @@ namespace Turbo.Players.Authentication
 
         public async Task OnSSOTicket(SSOTicketMessage message, ISession session)
         {
-            _logger.LogDebug($"Attempting to authenticate {message.SSO}");
             int userId = await _securityManager.GetPlayerIdFromTicket(message.SSO);
 
             if (userId <= 0) return;
