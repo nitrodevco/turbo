@@ -6,7 +6,7 @@ using Turbo.Packets.Incoming;
 
 namespace Turbo.Networking.Game.Codec
 {
-    class GameDecoder : MessageToMessageDecoder<IByteBuffer>
+    public class GameDecoder : MessageToMessageDecoder<IByteBuffer>
     {
         protected override void Decode(IChannelHandlerContext context, IByteBuffer message, List<object> output)
         {

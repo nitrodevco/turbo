@@ -4,8 +4,7 @@ using DotNetty.Transport.Channels;
 
 namespace Turbo.Networking.Game.Codec
 {
-    class FrameLengthFieldEncoder
-        : MessageToByteEncoder<IByteBuffer>
+    public class FrameLengthFieldEncoder : MessageToByteEncoder<IByteBuffer>
     {
         protected override void Encode(IChannelHandlerContext context, IByteBuffer message, IByteBuffer output)
         {

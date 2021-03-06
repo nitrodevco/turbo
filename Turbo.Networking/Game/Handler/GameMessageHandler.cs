@@ -12,7 +12,7 @@ using Turbo.Packets.Sessions;
 
 namespace Turbo.Networking.Game.Handler
 {
-    class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
+    public class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
     {
         private readonly IPacketMessageHub _messageHub;
         private readonly ISessionManager _sessionManager;
