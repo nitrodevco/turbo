@@ -41,7 +41,7 @@ namespace Turbo.Security
                 // check timestamp for expiration, if time now is greater than expiration, return 0;
             }
 
-            return securityTicketEntity.PlayerEntity.Id;
+            return securityTicketEntity.PlayerEntityId;
         }
     }
 }
