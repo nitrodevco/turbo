@@ -27,7 +27,11 @@ namespace Turbo.Database.Tests.Repositories.Player
             _turboContextMock = new Mock<IEmulatorContext>();
             _dbSetMock = new Mock<DbSet<PlayerEntity>>();
             _turboContextMock.Setup(x => x.Players).Returns(_dbSetMock.Object);
+
             _fixture = new Fixture();
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                .ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             _sut = new PlayerRepository(_turboContextMock.Object);
         }
