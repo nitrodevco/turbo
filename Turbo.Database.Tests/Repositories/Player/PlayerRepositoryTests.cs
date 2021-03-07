@@ -1,14 +1,9 @@
 ﻿using AutoFixture;
 using Microsoft.EntityFrameworkCore;
 using Moq;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Turbo.Database.Context;
-using Turbo.Database.Entities;
 using Turbo.Database.Entities.Players;
-using Turbo.Database.Repositories;
 using Turbo.Database.Repositories.Player;
 using Xunit;
 

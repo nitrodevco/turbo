@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
@@ -52,7 +48,7 @@ namespace Turbo.Rooms
 
             CancelDispose();
 
-            if(_roomManager != null)
+            if (_roomManager != null)
             {
                 await _roomManager.RemoveRoom(Id);
             }
@@ -74,7 +70,7 @@ namespace Turbo.Rooms
 
         private async ValueTask LoadMapping()
         {
-            if(RoomMap != null)
+            if (RoomMap != null)
             {
                 RoomMap.Dispose();
 

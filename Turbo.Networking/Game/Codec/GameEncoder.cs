@@ -1,7 +1,6 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
-using System;
 using Turbo.Packets.Outgoing;
 
 namespace Turbo.Networking.Game.Codec

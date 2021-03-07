@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Turbo.Furniture.Definition
+﻿namespace Turbo.Furniture.Definition
 {
     public interface IFurnitureDefinition
     {

@@ -1,8 +1,5 @@
-﻿using DotNetty.Transport.Channels;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Turbo.Core.Configuration;
 using Turbo.Networking.EventLoop;
 using Turbo.Networking.Game;
 using Turbo.Networking.Game.WebSocket;
@@ -28,7 +25,7 @@ namespace Turbo.Networking
 
         public async Task StartServersAsync()
         {
-            foreach(IServer server in Servers)
+            foreach (IServer server in Servers)
             {
                 await server.StartAsync();
             }
@@ -36,7 +33,7 @@ namespace Turbo.Networking
 
         public async Task ShutdownServersAsync()
         {
-            foreach(IServer server in Servers)
+            foreach (IServer server in Servers)
             {
                 await server.ShutdownAsync();
             }

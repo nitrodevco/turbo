@@ -15,7 +15,7 @@ namespace Turbo.Networking.REST.Handler
 
         protected override void ChannelRead0(IChannelHandlerContext ctx, IFullHttpRequest msg)
         {
-            if(msg.Method.Equals(HttpMethod.Get))
+            if (msg.Method.Equals(HttpMethod.Get))
             {
 
             }

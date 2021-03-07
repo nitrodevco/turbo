@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Turbo.Database.Entities;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Entities.Room;

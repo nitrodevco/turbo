@@ -1,13 +1,13 @@
 ﻿using DotNetty.Transport.Channels;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
 using Turbo.Networking.Clients;
 using Turbo.Networking.Game.Clients;
 using Turbo.Networking.Game.Codec;
 using Turbo.Networking.Game.Handler;
 using Turbo.Packets;
 using Turbo.Packets.Revisions;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using Microsoft.Extensions.Logging;
 
 namespace Turbo.Networking.Game
 {

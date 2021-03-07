@@ -36,7 +36,7 @@ namespace Turbo.Networking.Game.Clients
 
             await _channel.CloseAsync();
         }
-        
+
         public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
         {
             if ((SessionPlayer != null) && (SessionPlayer != sessionPlayer)) return false;

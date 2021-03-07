@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Database.Entities.Room;
@@ -55,7 +54,7 @@ namespace Turbo.Rooms
 
         public IRoom GetOnlineRoom(int id)
         {
-            if((id <= 0) || !_rooms.ContainsKey(id)) return null;
+            if ((id <= 0) || !_rooms.ContainsKey(id)) return null;
 
             IRoom room = _rooms[id];
 
@@ -87,7 +86,7 @@ namespace Turbo.Rooms
 
             IRoom existing = GetOnlineRoom(room.Id);
 
-            if(existing != null)
+            if (existing != null)
             {
                 if (room != existing) await room.DisposeAsync();
 
@@ -114,7 +113,7 @@ namespace Turbo.Rooms
         {
             if (_rooms.Count == 0) return;
 
-            foreach(int id in _rooms.Keys)
+            foreach (int id in _rooms.Keys)
             {
                 await RemoveRoom(id);
             }
@@ -122,7 +121,7 @@ namespace Turbo.Rooms
 
         public void TryDisposeAllRooms()
         {
-            foreach(var room in _rooms.Values)
+            foreach (var room in _rooms.Values)
             {
                 room.TryDispose();
             }
@@ -141,7 +140,7 @@ namespace Turbo.Rooms
 
             if (_models.Count == 0) return null;
 
-            foreach(IRoomModel roomModel in _models.Values)
+            foreach (IRoomModel roomModel in _models.Values)
             {
                 if ((roomModel == null) || !roomModel.Name.Equals(name)) continue;
 

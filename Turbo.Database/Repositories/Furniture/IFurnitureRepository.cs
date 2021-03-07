@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Turbo.Database.Entities;
-using Turbo.Database.Entities.Furniture;
-using Turbo.Database.Entities.Players;
+﻿using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Database.Repositories.Furniture
 {

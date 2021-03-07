@@ -33,13 +33,13 @@ namespace Turbo.Packets
             bool cancelled = false;
             foreach (ICallable<T> callable in GetCallables<T>())
             {
-                if(!callable.Call(message, session))
+                if (!callable.Call(message, session))
                 {
                     cancelled = true;
                 }
             }
 
-            if(!cancelled)
+            if (!cancelled)
             {
                 foreach (IListener listener in GetAliveHandlers<T>())
                 {
@@ -67,7 +67,7 @@ namespace Turbo.Packets
                 }
             }
 
-            if(!cancelled)
+            if (!cancelled)
             {
                 foreach (IListener listener in GetAliveHandlers<T>())
                 {
@@ -101,10 +101,10 @@ namespace Turbo.Packets
                 this._callables.Add(callable);
             }
         }
-        
+
         public void UnRegisterCallable<T>(ICallable<T> callable) where T : IMessageEvent
         {
-            lock(_callableLock)
+            lock (_callableLock)
             {
                 this._callables.Remove(callable);
             }
@@ -174,7 +174,7 @@ namespace Turbo.Packets
 
         public List<ICallable<T>> GetCallables<T>() where T : IMessageEvent
         {
-            return _callables.Where( c => c.GetType().IsAssignableTo(typeof(ICallable<T>))).Cast<ICallable<T>>().ToList();
+            return _callables.Where(c => c.GetType().IsAssignableTo(typeof(ICallable<T>))).Cast<ICallable<T>>().ToList();
         }
 
         private void PruneHandlers()

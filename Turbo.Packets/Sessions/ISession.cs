@@ -1,8 +1,8 @@
-﻿using System.Threading.Tasks;
-using Turbo.Packets.Revisions;
+﻿using System;
+using System.Threading.Tasks;
 using Turbo.Core;
-using System;
 using Turbo.Packets.Outgoing;
+using Turbo.Packets.Revisions;
 
 namespace Turbo.Packets.Sessions
 {

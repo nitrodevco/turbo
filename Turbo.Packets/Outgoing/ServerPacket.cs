@@ -7,7 +7,7 @@ namespace Turbo.Packets.Outgoing
     {
         public ServerPacket(int header, IByteBuffer body) : base(header, body)
         {
-            
+
         }
 
         public void WriteByte(byte b) =>

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Turbo.Database.Entities.Security;
 using Turbo.Database.Repositories.Security;
 
@@ -18,12 +14,12 @@ namespace Turbo.Security
 
         public async ValueTask InitAsync()
         {
-            
+
         }
 
         public async ValueTask DisposeAsync()
         {
-            
+
         }
 
         public async Task<int> GetPlayerIdFromTicket(string ticket)
@@ -34,7 +30,7 @@ namespace Turbo.Security
 
             if (securityTicketEntity == null) return 0;
 
-            if(!securityTicketEntity.IsLocked)
+            if (!securityTicketEntity.IsLocked)
             {
                 _securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);
 

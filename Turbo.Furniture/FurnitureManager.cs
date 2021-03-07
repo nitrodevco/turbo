@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
@@ -42,9 +40,9 @@ namespace Turbo.Furniture
 
             List<FurnitureDefinitionEntity> entities = await _furnitureDefinitionRepository.FindAllAsync();
 
-            if(entities.Count > 0)
+            if (entities.Count > 0)
             {
-                foreach(FurnitureDefinitionEntity entity in entities)
+                foreach (FurnitureDefinitionEntity entity in entities)
                 {
                     IFurnitureDefinition definition = new FurnitureDefinition(entity);
 

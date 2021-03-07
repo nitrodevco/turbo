@@ -36,7 +36,8 @@ namespace Turbo.Networking.Clients
 
         public void DisconnectSession(IChannelId id)
         {
-            if(this._clients.TryRemove(id, out ISession session)) {
+            if (this._clients.TryRemove(id, out ISession session))
+            {
                 session.DisposeAsync();
             }
         }
@@ -48,11 +49,11 @@ namespace Turbo.Networking.Clients
         /// <param name="state"></param>
         private void ProcessPing(object state)
         {
-            foreach(ISession session in _clients.Values)
+            foreach (ISession session in _clients.Values)
             {
                 long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-                if(timeNow - session.LastPongTimestamp > 60)
+                if (timeNow - session.LastPongTimestamp > 60)
                 {
                     session.DisposeAsync();
                     return;

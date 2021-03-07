@@ -1,5 +1,4 @@
-﻿using System;
-namespace Turbo.Rooms.Utils
+﻿namespace Turbo.Rooms.Utils
 {
     public class Point : IPoint
     {

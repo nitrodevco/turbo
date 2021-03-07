@@ -1,9 +1,9 @@
 ﻿using DotNetty.Codecs.Http;
 using DotNetty.Transport.Channels;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using Turbo.Networking.REST.Handler;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Turbo.Networking.REST
 {
