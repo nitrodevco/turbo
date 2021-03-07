@@ -1,11 +1,12 @@
-﻿using DotNetty.Transport.Bootstrapping;
+﻿using DotNetty.Buffers;
+using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
-using DotNetty.Buffers;
-using Microsoft.Extensions.Logging;
-using Turbo.Core.Configuration;
 using DotNetty.Transport.Channels.Sockets;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Net;
+using System.Threading.Tasks;
+using Turbo.Core.Configuration;
 using Turbo.Networking.EventLoop;
 
 namespace Turbo.Networking.Game
@@ -15,6 +16,7 @@ namespace Turbo.Networking.Game
         private readonly ILogger<GameServer> _logger;
         private readonly IEmulatorConfig _config;
         private readonly INetworkEventLoopGroup _eventLoopGroup;
+        private readonly IServiceProvider _provider;
 
         protected readonly ServerBootstrap _serverBootstrap;
         protected IChannel ServerChannel { get; private set; }
@@ -25,11 +27,13 @@ namespace Turbo.Networking.Game
         public GameServer(
             ILogger<GameServer> logger,
             IEmulatorConfig config,
-            INetworkEventLoopGroup eventLoopGroup)
+            INetworkEventLoopGroup eventLoopGroup,
+            IServiceProvider provider)
         {
             _logger = logger;
             _config = config;
             _eventLoopGroup = eventLoopGroup;
+            _provider = provider;
 
             Host = _config.GameHost;
             Port = _config.GameTCPPort;
@@ -48,7 +52,7 @@ namespace Turbo.Networking.Game
             _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
             _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
             _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
-            _serverBootstrap.ChildHandler(new GameChannelInitializer());
+            _serverBootstrap.ChildHandler(new GameChannelInitializer(_provider));
         }
 
         public async Task StartAsync()
@@ -60,7 +64,6 @@ namespace Turbo.Networking.Game
         public async Task ShutdownAsync()
         {
             await ServerChannel.CloseAsync();
-            await _eventLoopGroup.Group.ShutdownGracefullyAsync();
         }
     }
 }

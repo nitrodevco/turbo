@@ -1,46 +1,62 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Turbo.Database.Entities.Room;
+using Turbo.Database.Repositories.Room;
 using Turbo.Rooms.Mapping;
 
 namespace Turbo.Rooms
 {
     public class RoomManager : IRoomManager
     {
-        private Dictionary<int, IRoom> Rooms { get; set; }
-        private Dictionary<string, IRoomModel> Models { get; set; }
+        private readonly ILogger<IRoomManager> _logger;
+        private readonly IRoomRepository _roomRepository;
+        private readonly IRoomModelRepository _roomModelRepository;
 
-        public RoomManager()
+        private readonly Dictionary<int, IRoom> _rooms;
+        private readonly Dictionary<int, IRoomModel> _models;
+
+        public RoomManager(
+            ILogger<IRoomManager> logger,
+            IRoomRepository roomRepository,
+            IRoomModelRepository roomModelRepository)
         {
-            Rooms = new Dictionary<int, IRoom>();
-            Models = new Dictionary<string, IRoomModel>();
+            _logger = logger;
+            _roomRepository = roomRepository;
+            _roomModelRepository = roomModelRepository;
+
+            _rooms = new Dictionary<int, IRoom>();
+            _models = new Dictionary<int, IRoomModel>();
         }
 
-        public void OnInit()
+        public async ValueTask InitAsync()
         {
-            LoadModels();
+            await LoadModels();
 
             // set a interval for TryDisposeAllRooms()
         }
 
-        public void OnDispose()
+        public async ValueTask DisposeAsync()
         {
-            // cancel the dispose interval
+            // cancel the TryDisposeAllRooms interval
 
-            RemoveAllRooms();
+            await RemoveAllRooms();
         }
 
-        public IRoom GetRoom(int id)
+        public async Task<IRoom> GetRoom(int id)
         {
             IRoom room = GetOnlineRoom(id);
 
             if (room != null) return room;
 
-            return GetOfflineRoom(id);
+            return await GetOfflineRoom(id);
         }
 
         public IRoom GetOnlineRoom(int id)
         {
-            IRoom room = Rooms[id];
+            if ((id <= 0) || !_rooms.ContainsKey(id)) return null;
+
+            IRoom room = _rooms[id];
 
             if (room == null) return null;
 
@@ -49,75 +65,108 @@ namespace Turbo.Rooms
             return room;
         }
 
-        public IRoom GetOfflineRoom(int id)
+        public async Task<IRoom> GetOfflineRoom(int id)
         {
             IRoom room = GetOnlineRoom(id);
 
             if (room != null) return room;
 
-            // room details should be populated from the RoomRepository where roomId = id
-            
-            RoomDetails roomDetails = new RoomDetails();
+            RoomEntity roomEntity = await _roomRepository.FindAsync(id);
 
-            room = new Room(this, roomDetails);
+            if (roomEntity == null) return null;
 
-            return AddRoom(room);
+            room = new Room(this, roomEntity);
+
+            return await AddRoom(room);
         }
 
-        public IRoom AddRoom(IRoom room)
+        public async Task<IRoom> AddRoom(IRoom room)
         {
             if (room == null) return null;
 
             IRoom existing = GetOnlineRoom(room.Id);
 
-            if(existing != null)
+            if (existing != null)
             {
-                if (room != existing) room.Dispose();
+                if (room != existing) await room.DisposeAsync();
 
                 return existing;
             }
 
-            Rooms.Add(room.Id, room);
+            _rooms.Add(room.Id, room);
 
             return room;
         }
 
-        public void RemoveRoom(int id)
+        public async ValueTask RemoveRoom(int id)
         {
             IRoom room = GetOnlineRoom(id);
 
             if (room == null) return;
 
-            Rooms.Remove(room.Id);
+            _rooms.Remove(room.Id);
 
-            room.Dispose();
+            await room.DisposeAsync();
         }
 
-        public void RemoveAllRooms()
+        public async ValueTask RemoveAllRooms()
         {
-            if (Rooms.Count == 0) return;
+            if (_rooms.Count == 0) return;
 
-            foreach(int id in Rooms.Keys)
+            foreach (int id in _rooms.Keys)
             {
-                Rooms.Remove(id);
-
-                RemoveRoom(id);
+                await RemoveRoom(id);
             }
         }
 
         public void TryDisposeAllRooms()
         {
-            foreach(var room in Rooms.Values)
+            foreach (var room in _rooms.Values)
             {
                 room.TryDispose();
             }
         }
 
-
-
-        private void LoadModels()
+        public IRoomModel GetModel(int id)
         {
+            if ((id <= 0) || !_models.ContainsKey(id)) return null;
 
+            return _models[id];
+        }
+
+        public IRoomModel GetModelByName(string name)
+        {
+            if ((name == null) || (name.Length == 0)) return null;
+
+            if (_models.Count == 0) return null;
+
+            foreach (IRoomModel roomModel in _models.Values)
+            {
+                if ((roomModel == null) || !roomModel.Name.Equals(name)) continue;
+
+                return roomModel;
+            }
+
+            return null;
+        }
+
+        private async ValueTask LoadModels()
+        {
+            _models.Clear();
+
+            List<RoomModelEntity> entities = await _roomModelRepository.FindAllAsync();
+
+            if (entities.Count > 0)
+            {
+                foreach (RoomModelEntity entity in entities)
+                {
+                    IRoomModel roomModel = new RoomModel(entity);
+
+                    _models.Add(roomModel.Id, roomModel);
+                }
+            }
+
+            _logger.LogInformation("Loaded {0} room models", _models.Count);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using Turbo.Rooms.Utils;
+﻿using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object
 {

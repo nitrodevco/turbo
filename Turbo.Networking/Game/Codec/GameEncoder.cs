@@ -1,17 +1,15 @@
 ﻿using DotNetty.Buffers;
 using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
-using System;
-using Turbo.Packets;
-using Turbo.Packets.Composers;
+using Turbo.Packets.Outgoing;
 
 namespace Turbo.Networking.Game.Codec
 {
-    class GameEncoder : MessageToByteEncoder<Composer>
+    public class GameEncoder : MessageToByteEncoder<ServerPacket>
     {
-        protected override void Encode(IChannelHandlerContext context, Composer message, IByteBuffer output)
+        protected override void Encode(IChannelHandlerContext context, ServerPacket message, IByteBuffer output)
         {
-            message.WriteTo(output);
+            output.WriteBytes(message.Content);
         }
     }
 }

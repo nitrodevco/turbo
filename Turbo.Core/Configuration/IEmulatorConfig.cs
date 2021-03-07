@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Turbo.Core.Configuration
 {
@@ -22,6 +20,7 @@ namespace Turbo.Core.Configuration
         public string DatabaseUser { get; }
         public string DatabasePassword { get; }
         public string DatabaseName { get; }
+        public bool DatabaseLoggingEnabled { get; }
 
         public int NetworkWorkerThreads { get; }
     }

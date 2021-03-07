@@ -1,31 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core;
 using Turbo.Rooms.Object;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomUserManager
+    public class RoomUserManager : IAsyncInitialisable, IAsyncDisposable
     {
-        private IRoom Room { get; set; }
+        private readonly IRoom _room;
 
-        private IRoomObjectManager _roomObjectManager { get; set; }
+        private readonly IRoomObjectManager _roomObjectManager;
 
         public RoomUserManager(IRoom room)
         {
-            Room = room;
+            _room = room;
 
             _roomObjectManager = new RoomObjectManager();
         }
 
-        public void Init()
+        public async ValueTask InitAsync()
         {
 
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
 
         }

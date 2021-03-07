@@ -1,0 +1,23 @@
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Turbo.Database.Entities.Room
+{
+    [Table("rooms")]
+    public class RoomEntity : Entity
+    {
+        [Column("name")]
+        public string Name { get; set; }
+
+        public List<RoomBanEntity> RoomBans { get; set; }
+
+        [Column("model_id")]
+        public int RoomModelEntityId { get; set; }
+
+        public RoomModelEntity RoomModelEntity { get; set; }
+
+        public List<RoomMuteEntity> RoomMutes { get; set; }
+
+        public List<RoomRightEntity> RoomRights { get; set; }
+    }
+}

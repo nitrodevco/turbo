@@ -1,36 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Turbo.Rooms.Mapping
 {
     public class RoomMap : IRoomMap
     {
-        private IRoom Room { get; set; }
+        private readonly IRoom _room;
 
-        private List<List<IRoomTile>> Map;
-        private List<IRoomTile> Tiles;
+        private readonly List<List<IRoomTile>> _map;
+        private readonly List<IRoomTile> _tiles;
 
 
         public RoomMap(IRoom room)
         {
-            Room = room;
+            _room = room;
 
-            Map = new List<List<IRoomTile>>();
-            Tiles = new List<IRoomTile>();
+            _map = new List<List<IRoomTile>>();
+            _tiles = new List<IRoomTile>();
         }
 
         public void Dispose()
         {
-            Map.Clear();
-            Tiles.Clear();
+            _map.Clear();
+            _tiles.Clear();
         }
 
         public void GenerateMap()
         {
-            //IRoomModel roomModel = Room
+            IRoomModel roomModel = _room.RoomModel;
+
+            if (roomModel == null) return;
         }
     }
 }

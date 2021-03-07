@@ -3,6 +3,7 @@ using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using Turbo.Core.Configuration;
@@ -15,6 +16,7 @@ namespace Turbo.Networking.REST
         private readonly ILogger<RestServer> _logger;
         private readonly IEmulatorConfig _config;
         private readonly INetworkEventLoopGroup _eventLoopGroup;
+        private readonly IServiceProvider _provider;
 
         protected readonly ServerBootstrap _serverBootstrap;
         protected IChannel ServerChannel { get; private set; }
@@ -26,11 +28,13 @@ namespace Turbo.Networking.REST
         public RestServer(
            ILogger<RestServer> logger,
            IEmulatorConfig config,
-           INetworkEventLoopGroup eventLoopGroup)
+           INetworkEventLoopGroup eventLoopGroup,
+           IServiceProvider provider)
         {
             _logger = logger;
             _config = config;
             _eventLoopGroup = eventLoopGroup;
+            _provider = provider;
 
             Host = _config.RCONHost;
             Port = _config.RCONPort;
@@ -49,7 +53,7 @@ namespace Turbo.Networking.REST
             _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
             _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
             _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
-            _serverBootstrap.ChildHandler(new RestChannelInitializer());
+            _serverBootstrap.ChildHandler(new RestChannelInitializer(_provider));
         }
 
         public async Task ShutdownAsync()
@@ -60,7 +64,7 @@ namespace Turbo.Networking.REST
         public async Task StartAsync()
         {
             ServerChannel = await _serverBootstrap.BindAsync(IPAddress.Parse(Host), Port);
-            _logger.LogInformation("{Context} -> Listening on {Host}:{Port}", nameof(RestServer), Host, Port);
+            _logger.LogInformation("{Context} -> Listening on http://{Host}:{Port}", nameof(RestServer), Host, Port);
         }
     }
 }

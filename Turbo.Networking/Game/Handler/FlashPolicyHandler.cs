@@ -1,7 +1,7 @@
-﻿using System.Text;
-using DotNetty.Buffers;
+﻿using DotNetty.Buffers;
 using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
+using System.Text;
 
 namespace Turbo.Networking.Game.Handler
 {

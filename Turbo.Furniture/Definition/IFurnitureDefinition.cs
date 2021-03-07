@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Turbo.Furniture.Definition
+﻿namespace Turbo.Furniture.Definition
 {
     public interface IFurnitureDefinition
     {
@@ -11,9 +7,9 @@ namespace Turbo.Furniture.Definition
         public string PublicName { get; }
         public string ProductName { get; }
         public string Type { get; }
-        public string LogicType { get; }
+        public string Logic { get; }
         public int X { get; }
         public int Y { get; }
-        public int Z { get; }
+        public double Z { get; }
     }
 }

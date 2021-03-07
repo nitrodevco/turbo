@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core;
-using Turbo.Networking.EventLoop;
-using Turbo.Networking.Game;
-using Turbo.Networking.Game.WebSocket;
-using Turbo.Networking.REST;
+using Turbo.Furniture;
+using Turbo.Networking;
+using Turbo.Players;
+using Turbo.Players.Authentication;
 using Turbo.Plugins;
+using Turbo.Rooms;
+using Turbo.Security;
 
 namespace Turbo.Main
 {
@@ -23,27 +25,32 @@ namespace Turbo.Main
         private readonly IHostApplicationLifetime _appLifetime;
         private readonly ILogger<TurboEmulator> _logger;
         private readonly IPluginManager _pluginManager;
-        private readonly INetworkEventLoopGroup _networkEventLoopGroup;
-        private readonly IGameServer _gameServer;
-        private readonly IWSGameServer _wsGameServer;
-        private readonly IRestServer _restServer;
+        private readonly IServerManager _serverManager;
+
+        private readonly ISecurityManager _securityManager;
+        private readonly IFurnitureManager _furnitureManager;
+        private readonly IRoomManager _roomManager;
+        private readonly IPlayerManager _playerManager;
 
         public TurboEmulator(
             IHostApplicationLifetime appLifetime,
             ILogger<TurboEmulator> logger,
             IPluginManager pluginManager,
-            INetworkEventLoopGroup eventLoop,
-            IGameServer gameServer,
-            IWSGameServer wSGameServer,
-            IRestServer restServer)
+            IServerManager serverManager,
+            ISecurityManager securityManager,
+            IFurnitureManager furnitureManager,
+            IRoomManager roomManager,
+            IPlayerManager playerManager,
+            IAuthenticationService authenticationService)
         {
             _appLifetime = appLifetime;
             _logger = logger;
             _pluginManager = pluginManager;
-            _networkEventLoopGroup = eventLoop;
-            _gameServer = gameServer;
-            _wsGameServer = wSGameServer;
-            _restServer = restServer;
+            _serverManager = serverManager;
+            _securityManager = securityManager;
+            _furnitureManager = furnitureManager;
+            _roomManager = roomManager;
+            _playerManager = playerManager;
         }
 
         /// <summary>
@@ -52,7 +59,7 @@ namespace Turbo.Main
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
             Console.WriteLine(@"
                 ████████╗██╗   ██╗██████╗ ██████╗  ██████╗ 
@@ -62,6 +69,7 @@ namespace Turbo.Main
                    ██║   ╚██████╔╝██║  ██║██████╔╝╚██████╔╝
                    ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ 
             ");
+
             Console.WriteLine("Running {0}", GetVersion());
             Console.WriteLine();
 
@@ -74,11 +82,11 @@ namespace Turbo.Main
 
             // Start services
             _pluginManager.LoadPlugins();
-            _gameServer.StartAsync().Wait();
-            _wsGameServer.StartAsync().Wait();
-            _restServer.StartAsync().Wait();
+            await _serverManager.StartServersAsync();
 
-            return Task.CompletedTask;
+            await _securityManager.InitAsync();
+            await _furnitureManager.InitAsync();
+            await _roomManager.InitAsync();
         }
 
         /// <summary>
@@ -97,13 +105,15 @@ namespace Turbo.Main
         /// This method is called by the .NET Generic Host.
         /// See https://docs.microsoft.com/en-us/aspnet/core/fundamentals/host/generic-host?view=aspnetcore-5.0 for more information.
         /// </summary>
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Shutting down. Disposing services...");
 
             // Todo: Dispose all services here
-
-            return Task.CompletedTask;
+            await _roomManager.DisposeAsync();
+            await _furnitureManager.DisposeAsync();
+            await _roomManager.DisposeAsync();
+            await _playerManager.DisposeAsync();
         }
 
         /// <summary>

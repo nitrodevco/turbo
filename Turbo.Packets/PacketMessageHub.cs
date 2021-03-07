@@ -33,13 +33,13 @@ namespace Turbo.Packets
             bool cancelled = false;
             foreach (ICallable<T> callable in GetCallables<T>())
             {
-                if(!callable.Call(message, session))
+                if (!callable.Call(message, session))
                 {
                     cancelled = true;
                 }
             }
 
-            if(!cancelled)
+            if (!cancelled)
             {
                 foreach (IListener listener in GetAliveHandlers<T>())
                 {
@@ -67,7 +67,7 @@ namespace Turbo.Packets
                 }
             }
 
-            if(!cancelled)
+            if (!cancelled)
             {
                 foreach (IListener listener in GetAliveHandlers<T>())
                 {
@@ -101,10 +101,10 @@ namespace Turbo.Packets
                 this._callables.Add(callable);
             }
         }
-        
+
         public void UnRegisterCallable<T>(ICallable<T> callable) where T : IMessageEvent
         {
-            lock(_callableLock)
+            lock (_callableLock)
             {
                 this._callables.Remove(callable);
             }
@@ -122,6 +122,21 @@ namespace Turbo.Packets
         }
 
         public void Unsubscribe<T>(object subscriber, Action<T, ISession> handler = null) where T : IMessageEvent
+        {
+            lock (_listenerLock)
+            {
+                IEnumerable<IListener> query = _listeners.Where(a => !a.Sender.IsAlive ||
+                                                a.Sender.Target.Equals(subscriber) && a.Type == typeof(T));
+
+                if (handler != null)
+                    query = query.Where(a => a.Action.Equals(handler));
+
+                foreach (IListener h in query.ToList())
+                    _listeners.Remove(h);
+            }
+        }
+
+        public void Unsubscribe<T>(object subscriber, Func<T, ISession, Task> handler) where T : IMessageEvent
         {
             lock (_listenerLock)
             {
@@ -159,7 +174,7 @@ namespace Turbo.Packets
 
         public List<ICallable<T>> GetCallables<T>() where T : IMessageEvent
         {
-            return _callables.Where( c => c.GetType().IsAssignableTo(typeof(ICallable<T>))).Cast<ICallable<T>>().ToList();
+            return _callables.Where(c => c.GetType().IsAssignableTo(typeof(ICallable<T>))).Cast<ICallable<T>>().ToList();
         }
 
         private void PruneHandlers()
@@ -208,6 +223,24 @@ namespace Turbo.Packets
         }
 
         public bool Exists<T>(object subscriber, Action<T, ISession> handler) where T : IMessageEvent
+        {
+            lock (_listenerLock)
+            {
+                foreach (IListener h in _listeners)
+                {
+                    if (Equals(h.Sender.Target, subscriber) &&
+                         typeof(T) == h.Type &&
+                         h.Action.Equals(handler))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool Exists<T>(object subscriber, Func<T, ISession, Task> handler) where T : IMessageEvent
         {
             lock (_listenerLock)
             {

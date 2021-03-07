@@ -4,7 +4,7 @@ using DotNetty.Transport.Channels;
 
 namespace Turbo.Networking.Game.Codec
 {
-    class FrameLengthFieldDecoder : LengthFieldBasedFrameDecoder
+    public class FrameLengthFieldDecoder : LengthFieldBasedFrameDecoder
     {
         private static readonly int MAX_LENGTH = 500000;
         private static readonly int LENGTH_FIELD_OFFSET = 0;
