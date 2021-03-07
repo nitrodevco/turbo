@@ -1,7 +1,9 @@
-﻿namespace Turbo.Packets.Incoming.Room.Action
+﻿using System.Collections.Generic;
+
+namespace Turbo.Packets.Incoming.Room.Action
 {
     public record RemoveRightsMessage : IMessageEvent
     {
-        public int[] UserIds { get; init; }
+        public List<int> UserIds { get; init; }
     }
 }
