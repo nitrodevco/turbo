@@ -13,6 +13,8 @@ namespace Turbo.Database.Entities.Room
         [Column("name")]
         public string Name { get; set; }
 
+        public bool AllowWalkThrough { get; set; }
+
         public List<RoomBanEntity> RoomBans { get; set; }
 
         [Column("model_id")]
