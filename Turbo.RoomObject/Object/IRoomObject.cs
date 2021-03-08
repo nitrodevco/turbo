@@ -1,7 +1,7 @@
 ﻿using System;
-using Turbo.Rooms.Utils;
+using Turbo.RoomObject.Utils;
 
-namespace Turbo.Rooms.Object
+namespace Turbo.RoomObject.Object
 {
     public interface IRoomObject : IDisposable
     {

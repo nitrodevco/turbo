@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Turbo.Rooms.Object;
-using Turbo.Rooms.Utils;
+using Turbo.RoomObject.Object;
+using Turbo.RoomObject.Utils;
 
 namespace Turbo.Rooms.Mapping
 {

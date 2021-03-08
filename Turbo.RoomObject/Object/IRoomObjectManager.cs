@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Rooms.Object
+namespace Turbo.RoomObject.Object
 {
     public interface IRoomObjectManager : IDisposable
     {

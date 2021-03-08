@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using Turbo.Rooms.Utils;
+using Turbo.RoomObject.Utils;
 using Xunit;
 
-namespace Turbo.Rooms.Tests.Utils
+namespace Turbo.RoomObject.Tests.Utils
 {
     public class PointTests
     {

@@ -1,10 +1,11 @@
 ﻿using Turbo.Core;
 using System;
 using Turbo.Packets.Sessions;
+using Turbo.RoomObject.Object;
 
 namespace Turbo.Players
 {
-    public interface IPlayer : ISessionPlayer, IAsyncInitialisable, IAsyncDisposable
+    public interface IPlayer : ISessionPlayer, IRoomObjectHolder, IAsyncInitialisable, IAsyncDisposable
     {
         public PlayerDetails PlayerDetails { get; }
 

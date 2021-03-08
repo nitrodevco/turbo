@@ -14,6 +14,7 @@ namespace Turbo.Rooms
         public RoomDetails RoomDetails { get; }
 
         public IRoomModel RoomModel { get; }
+        public IRoomMap RoomMap { get; }
 
         public void TryDispose();
         public void CancelDispose();

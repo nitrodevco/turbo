@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turbo.Rooms.Object;
-using Turbo.Rooms.Utils;
+using Turbo.RoomObject.Object;
+using Turbo.RoomObject.Utils;
 
 namespace Turbo.Rooms.Mapping
 {

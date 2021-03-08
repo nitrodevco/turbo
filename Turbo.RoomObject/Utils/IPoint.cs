@@ -1,5 +1,6 @@
 ﻿using System;
-namespace Turbo.Rooms.Utils
+
+namespace Turbo.RoomObject.Utils
 {
     public interface IPoint
     {

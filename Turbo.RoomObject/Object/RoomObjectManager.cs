@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Turbo.Rooms.Object;
+using Turbo.RoomObject.Object;
 
-namespace Turbo.Rooms.Managers
+namespace Turbo.RoomObject.Object
 {
     public class RoomObjectManager : IRoomObjectManager
     {
