@@ -20,6 +20,11 @@ namespace Turbo.Rooms.Object
             Direction = new Point();
         }
 
+        public void Dispose()
+        {
+
+        }
+
         public void SetLocation(IPoint point)
         {
             if (point == null) return;

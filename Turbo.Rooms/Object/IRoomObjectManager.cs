@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Turbo.Rooms.Object
 {
-    public interface IRoomObjectManager
+    public interface IRoomObjectManager : IDisposable
     {
+        public Dictionary<int, IRoomObject> RoomObjects { get; }
+        public Dictionary<string, Dictionary<int, IRoomObject>> RoomObjectsPerType { get; }
+
+        public IRoomObject GetRoomObject(int id);
+        public IRoomObject CreateRoomObject(int id, string type);
+        public void RemoveRoomObject(int id);
+        public void RemoveAllRoomObjects();
     }
 }

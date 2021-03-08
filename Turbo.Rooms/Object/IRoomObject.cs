@@ -3,7 +3,7 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object
 {
-    public interface IRoomObject
+    public interface IRoomObject : IDisposable
     {
         public int Id { get; }
         public string Type { get; }

@@ -13,7 +13,7 @@ namespace Turbo.Database.Entities.Room
     {
         [Column("room_id")]
         public int RoomEntityId { get; set; }
-
+         
         public RoomEntity RoomEntity { get; set; }
 
         [Column("player_id")]
