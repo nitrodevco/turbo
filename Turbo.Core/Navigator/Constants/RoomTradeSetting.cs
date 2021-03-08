@@ -1,4 +1,4 @@
-﻿namespace Turbo.Core.Navigator.Enums
+﻿namespace Turbo.Core.Navigator.Constants
 {
     public enum RoomTradeSetting
     {
