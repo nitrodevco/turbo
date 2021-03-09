@@ -2,11 +2,10 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using Turbo.Core;
-using Turbo.Packets.Outgoing;
-using Turbo.Packets.Revisions;
-using Turbo.Packets.Serializers;
-using Turbo.Packets.Sessions;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets.Messages;
+using Turbo.Core.Packets.Revisions;
 
 namespace Turbo.Networking.Game.Clients
 {
@@ -16,7 +15,7 @@ namespace Turbo.Networking.Game.Clients
         private readonly ILogger<Session> _logger;
 
         public IRevision Revision { get; set; }
-        public ISessionPlayer SessionPlayer { get; private set; }
+        public IPlayer Player { get; private set; }
 
         public string IPAddress { get; private set; }
         public long LastPongTimestamp { get; set; }
@@ -32,16 +31,16 @@ namespace Turbo.Networking.Game.Clients
 
         public async ValueTask DisposeAsync()
         {
-            if (SessionPlayer != null) await SessionPlayer.DisposeAsync();
+            if (Player != null) await Player.DisposeAsync();
 
             await _channel.CloseAsync();
         }
 
-        public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
+        public bool SetPlayer(IPlayer sessionPlayer)
         {
-            if ((SessionPlayer != null) && (SessionPlayer != sessionPlayer)) return false;
+            if ((Player != null) && (Player != sessionPlayer)) return false;
 
-            SessionPlayer = sessionPlayer;
+            Player = sessionPlayer;
 
             return true;
         }
@@ -60,9 +59,10 @@ namespace Turbo.Networking.Game.Clients
         {
             if (Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
             {
-                IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(2), composer);
+                IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(), composer);
                 if (queue) await _channel.WriteAsync(packet);
                 else await _channel.WriteAndFlushAsync(packet);
+                _logger.LogDebug($"Sent message {composer.GetType().Name}");
             }
             else
             {

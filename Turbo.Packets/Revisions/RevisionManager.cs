@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets;
+using Turbo.Core.Packets.Revisions;
 using Turbo.Packets.Incoming.Handshake;
-using Turbo.Packets.Sessions;
 
 namespace Turbo.Packets.Revisions
 {

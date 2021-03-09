@@ -1,4 +1,5 @@
-﻿using Turbo.Database.Entities.Furniture;
+﻿using Turbo.Core.Game.Furniture.Definition;
+using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Definition
 {

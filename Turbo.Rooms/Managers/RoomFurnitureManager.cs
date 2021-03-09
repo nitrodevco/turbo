@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Turbo.Core;
+using Turbo.Core.Game.Rooms;
 using Turbo.Rooms.Object;
 
 namespace Turbo.Rooms.Managers

@@ -1,12 +1,9 @@
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using System;
-using System.Threading.Tasks;
-using Turbo.Core;
-using Turbo.Packets.Incoming;
-using Turbo.Packets.Outgoing;
-using Turbo.Packets.Revisions;
-using Turbo.Packets.Sessions;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets;
+using Turbo.Core.Packets.Messages;
 using Xunit;
 
 namespace Turbo.Packets.Tests
@@ -215,64 +212,6 @@ namespace Turbo.Packets.Tests
             public bool Call(MockEvent message, ISession session)
             {
                 return false;
-            }
-        }
-
-        internal class MockSession : ISession
-        {
-            public IRevision Revision
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public ISessionPlayer SessionPlayer => throw new NotImplementedException();
-
-            public string IPAddress => throw new NotImplementedException();
-
-            public long LastPongTimestamp
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ValueTask DisposeAsync()
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task Send(IComposer composer)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task SendQueue(IComposer composer)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Flush()
-            {
-                throw new NotImplementedException();
             }
         }
 

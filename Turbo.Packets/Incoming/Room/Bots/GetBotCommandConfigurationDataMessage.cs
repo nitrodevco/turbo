@@ -1,4 +1,6 @@
-﻿namespace Turbo.Packets.Incoming.Room.Bots
+﻿using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Incoming.Room.Bots
 {
     public record GetBotCommandConfigurationDataMessage : IMessageEvent
     {

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
-using Turbo.Packets.Sessions;
 
 namespace Turbo.Players
 {
@@ -10,7 +11,7 @@ namespace Turbo.Players
         private ISession _session { get; set; }
         private bool _isDisposing { get; set; }
 
-        public PlayerDetails PlayerDetails { get; private set; }
+        public IPlayerDetails PlayerDetails { get; private set; }
 
         public Player(IPlayerContainer playerContainer, PlayerEntity playerEntity)
         {
@@ -23,7 +24,7 @@ namespace Turbo.Players
         {
             if ((_session != null) && (_session != session)) return false;
 
-            if (!session.SetSessionPlayer(this)) return false;
+            if (!session.SetPlayer(this)) return false;
 
             _session = session;
 

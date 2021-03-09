@@ -1,4 +1,6 @@
-﻿namespace Turbo.Rooms.Utils
+﻿using Turbo.Core.Game.Rooms.Utils;
+
+namespace Turbo.Rooms.Utils
 {
     public class Point : IPoint
     {
