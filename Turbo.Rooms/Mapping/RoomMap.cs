@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Mapping;
 
 namespace Turbo.Rooms.Mapping
 {

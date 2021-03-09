@@ -1,4 +1,6 @@
-﻿namespace Turbo.Packets.Incoming.Room.Avatar
+﻿using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Incoming.Room.Avatar
 {
     public record AvatarExpressionMessage : IMessageEvent
     {

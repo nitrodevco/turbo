@@ -1,4 +1,6 @@
-﻿namespace Turbo.Packets.Incoming.Handshake
+﻿using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Incoming.Handshake
 {
     public record SSOTicketMessage : IMessageEvent
     {

@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
-using Turbo.Packets.Incoming;
-using Turbo.Packets.Sessions;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Parsers
 {

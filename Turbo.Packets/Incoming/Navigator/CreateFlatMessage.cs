@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Navigator.Constants;
+﻿using Turbo.Core.Game.Navigator.Constants;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Incoming.Navigator
 {

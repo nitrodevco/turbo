@@ -1,4 +1,6 @@
-﻿namespace Turbo.Packets.Incoming.Navigator
+﻿using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Incoming.Navigator
 {
     public record NavigatorRemoveCollapsedCategoryMessage : IMessageEvent
     {

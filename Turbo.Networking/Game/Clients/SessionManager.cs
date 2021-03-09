@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using Turbo.Packets;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
-using Turbo.Packets.Sessions;
 
 namespace Turbo.Networking.Clients
 {

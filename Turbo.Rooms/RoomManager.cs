@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
 using Turbo.Rooms.Mapping;

@@ -1,6 +1,6 @@
 ﻿using System;
 using Turbo.Core;
-using Turbo.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Mapping;
 
 namespace Turbo.Rooms
 {
