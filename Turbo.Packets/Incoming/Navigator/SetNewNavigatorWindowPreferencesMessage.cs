@@ -1,4 +1,4 @@
-﻿using Turbo.Core.Navigator.Enums;
+﻿using Turbo.Core.Navigator.Constants;
 
 namespace Turbo.Packets.Incoming.Navigator
 {
