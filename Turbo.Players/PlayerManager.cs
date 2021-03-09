@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
-using Turbo.Packets.Sessions;
 
 namespace Turbo.Players
 {

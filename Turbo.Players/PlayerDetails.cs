@@ -1,9 +1,10 @@
 ﻿using System;
+using Turbo.Core.Game.Players;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Players
 {
-    public class PlayerDetails
+    public class PlayerDetails : IPlayerDetails
     {
         private IPlayer _player { get; set; }
         private PlayerEntity _playerEntity { get; set; }

@@ -3,13 +3,13 @@ using DotNetty.Codecs.Http.WebSockets;
 using DotNetty.Transport.Channels;
 using Moq;
 using System;
+using Turbo.Core.Packets;
 using Turbo.Networking.Clients;
 using Turbo.Networking.Game.Clients;
 using Turbo.Networking.Game.Codec;
 using Turbo.Networking.Game.Handler;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.Game.WebSocket.Codec;
-using Turbo.Packets;
 using Turbo.Packets.Revisions;
 using Xunit;
 

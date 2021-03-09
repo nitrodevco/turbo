@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
@@ -9,7 +11,7 @@ namespace Turbo.Rooms
     {
         private readonly IRoomManager _roomManager;
 
-        public RoomDetails RoomDetails { get; private set; }
+        public IRoomDetails RoomDetails { get; private set; }
 
         public readonly RoomSecurityManager RoomSecurityManager;
         public readonly RoomFurnitureManager RoomFurnitureManager;

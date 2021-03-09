@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Packets;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
@@ -14,10 +16,10 @@ using Turbo.Networking.REST;
 using Turbo.Packets;
 using Turbo.Packets.Revisions;
 using Turbo.Players;
-using Turbo.Players.Authentication;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Security;
+using Turbo.Security.Authentication;
 
 namespace Turbo.Main.Extensions
 {

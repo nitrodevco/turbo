@@ -1,8 +1,9 @@
-﻿using Turbo.Database.Entities.Room;
+﻿using Turbo.Core.Game.Rooms;
+using Turbo.Database.Entities.Room;
 
 namespace Turbo.Rooms
 {
-    public class RoomDetails
+    public class RoomDetails : IRoomDetails
     {
         private readonly RoomEntity _roomEntity;
 
