@@ -98,7 +98,7 @@ namespace Turbo.Players
             get
             {
                 return "user";
-            }
+ ;          }
         }
 
         public int Id

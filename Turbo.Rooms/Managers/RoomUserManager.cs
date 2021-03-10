@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Turbo.Core;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
@@ -12,22 +13,23 @@ using Turbo.Rooms.Object;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomUserManager : IAsyncInitialisable, IAsyncDisposable
+    public class RoomUserManager : IRoomUserManager
     {
         private readonly IRoom _room;
 
         private readonly IList<IPlayer> _roomObservers;
-        private readonly IDictionary<int, IRoomObject> _roomObjects;
         private int _roomObjectCounter;
+
+        public IDictionary<int, IRoomObject> RoomObjects { get; private set; }
 
         public RoomUserManager(IRoom room)
         {
             _room = room;
 
             _roomObservers = new List<IPlayer>();
-            _roomObjects = new Dictionary<int, IRoomObject>();
-
             _roomObjectCounter = -1;
+
+            RoomObjects = new Dictionary<int, IRoomObject>();
         }
 
         public async ValueTask InitAsync()
@@ -48,7 +50,7 @@ namespace Turbo.Rooms.Managers
             {
                 IRoomObject roomObject;
 
-                if (_roomObjects.TryGetValue(id, out roomObject)) return roomObject;
+                if (RoomObjects.TryGetValue(id, out roomObject)) return roomObject;
 
                 return null;
             }
@@ -112,6 +114,30 @@ namespace Turbo.Rooms.Managers
             if (!roomObjectHolder.SetRoomObject(roomObject)) return null;
 
             return AddRoomObject(roomObject, location, direction);
+        }
+
+        public void RemoveRoomObject(int id)
+        {
+            IRoomObject roomObject = GetRoomObject(id);
+
+            if (roomObject == null) return;
+
+            // send composer, RemoveRoomUser(roomObject.Id)
+
+            RoomObjects.Remove(id);
+
+            // if the room object was playing a game, remove it from that game
+
+            UpdateTotalUsers();
+
+            roomObject.Dispose();
+
+            _room.TryDispose();
+        }
+
+        public void RemoveAllRoomObjects()
+        {
+            foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
         }
 
         public void EnterRoom()

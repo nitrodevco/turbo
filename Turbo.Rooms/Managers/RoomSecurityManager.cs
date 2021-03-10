@@ -2,10 +2,11 @@
 using System.Threading.Tasks;
 using Turbo.Core;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Managers;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomSecurityManager : IAsyncInitialisable, IAsyncDisposable
+    public class RoomSecurityManager : IRoomSecurityManager
     {
         private readonly IRoom _room;
 
