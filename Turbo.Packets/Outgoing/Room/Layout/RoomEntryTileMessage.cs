@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Packets.Messages;
+﻿using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Room.Layout
 {
@@ -6,6 +7,6 @@ namespace Turbo.Packets.Outgoing.Room.Layout
     {
         public int X { get; init; }
         public int Y { get; init; }
-        public int Direction { get; init; }
+        public RotationEnum Direction { get; init; }
     }
 }

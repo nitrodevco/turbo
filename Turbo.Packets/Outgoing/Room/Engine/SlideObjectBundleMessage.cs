@@ -18,8 +18,8 @@ namespace Turbo.Packets.Outgoing.Room.Engine
         public int? AvatarId { get; init; }
 
         /// <summary>
-        /// Options are {1 = MOVE, 2 = SLIDE}
+        /// Optional, applies to Avatar
         /// </summary>
-        public int? MoveType { get; init; }
+        public SlideObjectMoveTypeEnum? MoveType { get; init; }
     }
 }

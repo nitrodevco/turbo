@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Packets.Messages;
+﻿using Turbo.Core.Game.Groups;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Room.Engine
 {
@@ -6,7 +7,7 @@ namespace Turbo.Packets.Outgoing.Room.Engine
     {
         public int RoomIndex { get; init; }
         public int GroupId { get; init; }
-        public int Status { get; init; }
+        public GroupStateEnum Status { get; init; }
         public string GroupName { get; init; }
     }
 }
