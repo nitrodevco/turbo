@@ -107,7 +107,7 @@ namespace Turbo.Rooms.Managers
         {
             if (roomObjectHolder == null) return null;
 
-            IRoomObject roomObject = new RoomObject(_roomObjectCounter++, roomObjectHolder.Type);
+            IRoomObject roomObject = new RoomObject(this, _roomObjectCounter++, roomObjectHolder.Type);
 
             if (roomObject == null) return null;
 

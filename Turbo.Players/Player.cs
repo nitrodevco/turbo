@@ -9,11 +9,12 @@ namespace Turbo.Players
     public class Player : IPlayer
     {
         private IPlayerContainer _playerContainer { get; set; }
-        private ISession _session { get; set; }
-        private bool _isDisposing { get; set; }
 
+        public ISession Session { get; set; }
         public IPlayerDetails PlayerDetails { get; private set; }
         public IRoomObject RoomObject { get; private set; }
+
+        private bool _isDisposing { get; set; }
 
         public Player(IPlayerContainer playerContainer, PlayerEntity playerEntity)
         {
@@ -48,18 +49,18 @@ namespace Turbo.Players
             // dispose inventory
             // dispose roles
 
-            await _session.DisposeAsync();
+            await Session.DisposeAsync();
 
             PlayerDetails.SaveNow();
         }
 
         public bool SetSession(ISession session)
         {
-            if ((_session != null) && (_session != session)) return false;
+            if ((Session != null) && (Session != session)) return false;
 
             if (!session.SetPlayer(this)) return false;
 
-            _session = session;
+            Session = session;
 
             return true;
         }
@@ -68,7 +69,7 @@ namespace Turbo.Players
         {
             ClearRoomObject();
 
-            // room object set holder this
+            if (!roomObject.SetHolder(this)) return false;
 
             RoomObject = roomObject;
 
