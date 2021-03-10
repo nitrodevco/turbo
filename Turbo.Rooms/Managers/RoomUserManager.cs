@@ -17,7 +17,7 @@ namespace Turbo.Rooms.Managers
         private readonly IRoom _room;
 
         private readonly List<IPlayer> _roomObservers;
-        private readonly IRoomObjectManager _roomObjectManager;
+        private readonly Dictionary<int, IRoomObject> _roomObjects;
         private int _roomObjectCounter;
 
         public RoomUserManager(IRoom room)
@@ -25,7 +25,7 @@ namespace Turbo.Rooms.Managers
             _room = room;
 
             _roomObservers = new List<IPlayer>();
-            _roomObjectManager = new RoomObjectManager();
+            _roomObjects = new Dictionary<int, IRoomObject>();
 
             _roomObjectCounter = -1;
         }
@@ -42,7 +42,21 @@ namespace Turbo.Rooms.Managers
 
         public IRoomObject GetRoomObject(int id)
         {
-            return _roomObjectManager.GetRoomObject(id);
+            if (id < 0) return null;
+
+            try
+            {
+                IRoomObject roomObject;
+
+                if (_roomObjects.TryGetValue(id, out roomObject)) return roomObject;
+
+                return null;
+            }
+
+            catch(Exception e)
+            {
+                return null;
+            }
         }
 
         public IRoomObject GetRoomObjectByUserId(int userId)
@@ -59,7 +73,7 @@ namespace Turbo.Rooms.Managers
         {
             if (roomObject == null) return null;
 
-            IRoomObject existingRoomObject = _roomObjectManager.GetRoomObject(roomObject.Id);
+            IRoomObject existingRoomObject = GetRoomObject(roomObject.Id);
 
             if(existingRoomObject != null)
             {
@@ -91,7 +105,7 @@ namespace Turbo.Rooms.Managers
         {
             if (roomObjectHolder == null) return null;
 
-            IRoomObject roomObject = _roomObjectManager.CreateRoomObject(_roomObjectCounter++, roomObjectHolder.Type);
+            IRoomObject roomObject = new RoomObject.Object.RoomObject(_roomObjectCounter++, roomObjectHolder.Type);
 
             if (roomObject == null) return null;
 
