@@ -16,8 +16,8 @@ namespace Turbo.Rooms.Managers
     {
         private readonly IRoom _room;
 
-        private readonly List<IPlayer> _roomObservers;
-        private readonly Dictionary<int, IRoomObject> _roomObjects;
+        private readonly IList<IPlayer> _roomObservers;
+        private readonly IDictionary<int, IRoomObject> _roomObjects;
         private int _roomObjectCounter;
 
         public RoomUserManager(IRoom room)

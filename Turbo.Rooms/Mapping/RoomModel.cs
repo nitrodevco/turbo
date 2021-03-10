@@ -4,6 +4,7 @@ using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Utils;
+using System.Linq;
 
 namespace Turbo.Rooms.Mapping
 {
@@ -19,8 +20,8 @@ namespace Turbo.Rooms.Mapping
         public IPoint DoorLocation { get; private set; }
         public IPoint DoorDirection { get; private set; }
 
-        private List<List<RoomTileState>> _tileStates;
-        private List<List<int>> _tileHeights;
+        private IList<IList<RoomTileState>> _tileStates;
+        private IList<IList<int>> _tileHeights;
 
         public bool DidGenerate { get; private set; }
 
@@ -49,8 +50,8 @@ namespace Turbo.Rooms.Mapping
             DoorLocation = null;
             DoorDirection = null;
 
-            _tileStates = new List<List<RoomTileState>>();
-            _tileHeights = new List<List<int>>();
+            _tileStates = new List<IList<RoomTileState>>();
+            _tileHeights = new List<IList<int>>();
 
             DidGenerate = false;
 
@@ -139,7 +140,7 @@ namespace Turbo.Rooms.Mapping
 
         public RoomTileState GetTileState(int x, int y)
         {
-            List<RoomTileState> rowStates = _tileStates[x];
+            IList<RoomTileState> rowStates = _tileStates.ElementAtOrDefault(x);
 
             if (rowStates == null) return RoomTileState.CLOSED;
 
@@ -150,7 +151,7 @@ namespace Turbo.Rooms.Mapping
 
         public int GetTileHeight(int x, int y)
         {
-            List<int> rowHeights = _tileHeights[x];
+            IList<int> rowHeights = _tileHeights.ElementAtOrDefault(x);
 
             if ((rowHeights == null) || (rowHeights[y] <= 0)) return 0;
 

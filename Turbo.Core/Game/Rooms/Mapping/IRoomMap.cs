@@ -6,6 +6,8 @@ namespace Turbo.Core.Game.Rooms.Mapping
 {
     public interface IRoomMap : IDisposable
     {
+        public IPathFinder PathFinder { get; }
+
         public void GenerateMap();
         public IRoomTile GetTile(IPoint point);
         public IRoomTile GetValidTile(IRoomObject roomObject, IPoint point, bool isGoal = true);

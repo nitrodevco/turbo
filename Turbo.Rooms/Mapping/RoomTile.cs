@@ -22,8 +22,8 @@ namespace Turbo.Rooms.Mapping
         public RoomTileState State { get; private set; }
         public IRoomObject HighestObject { get; private set; }
 
-        public Dictionary<int, IRoomObject> Users { get; private set; }
-        public Dictionary<int, IRoomObject> Furniture { get; private set; }
+        public IDictionary<int, IRoomObject> Users { get; private set; }
+        public IDictionary<int, IRoomObject> Furniture { get; private set; }
     
         public bool IsDoor { get; set; }
 

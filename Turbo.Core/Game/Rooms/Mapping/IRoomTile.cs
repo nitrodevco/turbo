@@ -14,8 +14,8 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public RoomTileState State { get; }
         public IRoomObject HighestObject { get; }
 
-        public Dictionary<int, IRoomObject> Users { get; }
-        public Dictionary<int, IRoomObject> Furniture { get; }
+        public IDictionary<int, IRoomObject> Users { get; }
+        public IDictionary<int, IRoomObject> Furniture { get; }
 
         public bool IsDoor { get; }
 
@@ -25,6 +25,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public void RemoveFurniture(IRoomObject roomObject);
         public void ResetTileHeight();
 
+        public double GetWalkingHeight();
         public bool CanWalk();
         public bool CanSit();
         public bool CanLay();

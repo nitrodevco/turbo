@@ -5,14 +5,14 @@ namespace Turbo.Rooms.Object
 {
     public class RoomObjectManager : IRoomObjectManager
     {
-        public Dictionary<int, IRoomObject> RoomObjects { get; private set; }
+        public IDictionary<int, IRoomObject> RoomObjects { get; private set; }
 
-        public Dictionary<string, Dictionary<int, IRoomObject>> RoomObjectsPerType { get; private set; }
+        public IDictionary<string, IDictionary<int, IRoomObject>> RoomObjectsPerType { get; private set; }
 
         public RoomObjectManager()
         {
             RoomObjects = new Dictionary<int, IRoomObject>();
-            RoomObjectsPerType = new Dictionary<string, Dictionary<int, IRoomObject>>();
+            RoomObjectsPerType = new Dictionary<string, IDictionary<int, IRoomObject>>();
         }
 
         public void Dispose()
@@ -49,7 +49,7 @@ namespace Turbo.Rooms.Object
 
             RoomObjects.Add(roomObject.Id, roomObject);
 
-            Dictionary<int, IRoomObject> typeMap = GetTypeMap(roomObject.Type);
+            IDictionary<int, IRoomObject> typeMap = GetTypeMap(roomObject.Type);
 
             if (typeMap != null) typeMap.Add(roomObject.Id, roomObject);
 
@@ -64,7 +64,7 @@ namespace Turbo.Rooms.Object
 
             RoomObjects.Remove(id);
 
-            Dictionary<int, IRoomObject> typeMap = GetTypeMap(roomObject.Type);
+            IDictionary<int, IRoomObject> typeMap = GetTypeMap(roomObject.Type);
 
             if (typeMap != null) typeMap.Remove(roomObject.Id);
 
@@ -85,9 +85,9 @@ namespace Turbo.Rooms.Object
             RoomObjectsPerType.Clear();
         }
 
-        private Dictionary<int, IRoomObject> GetTypeMap(string type)
+        private IDictionary<int, IRoomObject> GetTypeMap(string type)
         {
-            Dictionary<int, IRoomObject> typeMap = null;
+            IDictionary<int, IRoomObject> typeMap = null;
 
             if(RoomObjectsPerType.ContainsKey(type))
             {

@@ -5,8 +5,8 @@ namespace Turbo.Core.Game.Rooms.Object
 {
     public interface IRoomObjectManager : IDisposable
     {
-        public Dictionary<int, IRoomObject> RoomObjects { get; }
-        public Dictionary<string, Dictionary<int, IRoomObject>> RoomObjectsPerType { get; }
+        public IDictionary<int, IRoomObject> RoomObjects { get; }
+        public IDictionary<string, IDictionary<int, IRoomObject>> RoomObjectsPerType { get; }
 
         public IRoomObject GetRoomObject(int id);
         public IRoomObject CreateRoomObject(int id, string type);

@@ -15,8 +15,8 @@ namespace Turbo.Rooms
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomModelRepository _roomModelRepository;
 
-        private readonly Dictionary<int, IRoom> _rooms;
-        private readonly Dictionary<int, IRoomModel> _models;
+        private readonly IDictionary<int, IRoom> _rooms;
+        private readonly IDictionary<int, IRoomModel> _models;
 
         public RoomManager(
             ILogger<IRoomManager> logger,
