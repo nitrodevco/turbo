@@ -3,6 +3,6 @@
     public enum SlideObjectMoveType
     {
         Move = 1,
-        Slide
+        Slide = 2
     }
 }
