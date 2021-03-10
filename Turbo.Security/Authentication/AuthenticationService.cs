@@ -23,6 +23,7 @@ namespace Turbo.Security.Authentication
             _logger = logger;
 
             _messageHub.Subscribe<SSOTicketMessage>(this, OnSSOTicket);
+            _messageHub.Subscribe<InfoRetrieveMessage>(this, OnInfoRetrieve);
         }
 
         public async Task OnSSOTicket(SSOTicketMessage message, ISession session)
@@ -42,6 +43,14 @@ namespace Turbo.Security.Authentication
             // set player online
             // send required composers for hotel view
             await session.Send(new AuthenticationOKMessage());
+        }
+
+        public async Task OnInfoRetrieve(InfoRetrieveMessage message, ISession session)
+        {
+            await session.Send(new UserObjectMessage
+            {
+                Player = session.Player
+            });
         }
     }
 }

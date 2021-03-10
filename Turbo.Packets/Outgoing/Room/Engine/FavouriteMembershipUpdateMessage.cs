@@ -1,4 +1,6 @@
-﻿namespace Turbo.Packets.Outgoing.Room.Engine
+﻿using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Outgoing.Room.Engine
 {
     public record FavouriteMembershipUpdateMessage : IComposer
     {

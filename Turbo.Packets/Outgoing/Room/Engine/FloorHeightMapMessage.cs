@@ -1,9 +1,10 @@
-﻿namespace Turbo.Packets.Outgoing.Room.Engine
+﻿using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Outgoing.Room.Engine
 {
     public record FloorHeightMapMessage : IComposer
     {
-        public bool IsNormalZoom { get; init; }
-        public int WallHeight { get; init; }
-        public string HeightMap { get; init; }
+        public IRoomMap RoomMap { get; init; }
     }
 }

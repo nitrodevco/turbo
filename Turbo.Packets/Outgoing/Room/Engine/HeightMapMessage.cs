@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Room.Engine
 {
     public record HeightMapMessage : IComposer
     {
-        public int Width { get; init; }
-        public int Area { get; init; }
-        public List<short> HeightMap { get; init; }
-
-        // i should have IRoomMap here or w/e so that it's generic enough for different revision serializers
-        // but i would need to reference Turbo.Rooms, creating circular dependency
+        public IRoomMap RoomMap { get; init; }
     }
 }

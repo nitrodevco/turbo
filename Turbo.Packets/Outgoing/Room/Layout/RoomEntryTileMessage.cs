@@ -1,4 +1,6 @@
-﻿namespace Turbo.Packets.Outgoing.Room.Layout
+﻿using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Outgoing.Room.Layout
 {
     public record RoomEntryTileMessage : IComposer
     {

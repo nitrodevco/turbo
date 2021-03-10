@@ -1,15 +1,11 @@
 ﻿using System.Collections.Generic;
+using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Room.Layout
 {
     public record RoomOccupiedTilesMessage : IComposer
     {
-        public List<ITile> OccupiedTiles { get; init; }
-    }
-
-    public interface ITile
-    {
-        int X { get; set; }
-        int Y { get; set; }
+        public List<IRoomTile> OccupiedTiles { get; init; }
     }
 }
