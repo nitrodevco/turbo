@@ -2,7 +2,7 @@
 {
     public enum NavigatorResultsMode
     {
-        ROWS,
-        TILES
+        Rows,
+        Tiles
     }
 }
