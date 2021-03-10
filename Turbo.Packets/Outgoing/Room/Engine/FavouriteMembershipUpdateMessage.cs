@@ -7,7 +7,7 @@ namespace Turbo.Packets.Outgoing.Room.Engine
     {
         public int RoomIndex { get; init; }
         public int GroupId { get; init; }
-        public GroupStateEnum Status { get; init; }
+        public GroupState Status { get; init; }
         public string GroupName { get; init; }
     }
 }

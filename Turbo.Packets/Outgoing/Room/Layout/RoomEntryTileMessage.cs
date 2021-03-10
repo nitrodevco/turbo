@@ -7,6 +7,6 @@ namespace Turbo.Packets.Outgoing.Room.Layout
     {
         public int X { get; init; }
         public int Y { get; init; }
-        public RotationEnum Direction { get; init; }
+        public Rotation Direction { get; init; }
     }
 }

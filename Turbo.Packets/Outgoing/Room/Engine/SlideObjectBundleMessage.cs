@@ -20,6 +20,6 @@ namespace Turbo.Packets.Outgoing.Room.Engine
         /// <summary>
         /// Optional, applies to Avatar
         /// </summary>
-        public SlideObjectMoveTypeEnum? MoveType { get; init; }
+        public SlideObjectMoveType? MoveType { get; init; }
     }
 }
