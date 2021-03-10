@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Players", "Turbo.Play
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Security", "Turbo.Security\Turbo.Security.csproj", "{6BB40E61-F970-4782-B250-372CBEE8660C}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Rooms.Tests", "Turbo.Rooms.Tests\Turbo.Rooms.Tests.csproj", "{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,10 @@ Global
 		{6BB40E61-F970-4782-B250-372CBEE8660C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6BB40E61-F970-4782-B250-372CBEE8660C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6BB40E61-F970-4782-B250-372CBEE8660C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
