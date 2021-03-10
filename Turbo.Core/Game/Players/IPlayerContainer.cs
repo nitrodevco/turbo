@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Turbo.Players
+namespace Turbo.Core.Game.Players
 {
     public interface IPlayerContainer
     {
