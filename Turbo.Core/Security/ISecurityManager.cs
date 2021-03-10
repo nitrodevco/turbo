@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Turbo.Core;
 
-namespace Turbo.Security
+namespace Turbo.Core.Security
 {
     public interface ISecurityManager : IAsyncInitialisable, IAsyncDisposable
     {

@@ -1,4 +1,4 @@
-﻿namespace Turbo.Core.Game.Rooms.Utils
+namespace Turbo.Core.Game.Rooms.Utils
 {
     public interface IPoint
     {
@@ -10,5 +10,7 @@
         public IPoint AddPoint(IPoint point);
         public IPoint SubtractPoint(IPoint point);
         public IPoint AdjustPoint(IPoint point);
+        public int GetDistanceAround(IPoint point);
+        public bool Compare(IPoint point);
     }
 }

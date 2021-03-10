@@ -40,5 +40,22 @@ namespace Turbo.Rooms.Utils
 
             return clone;
         }
+
+        public int GetDistanceAround(IPoint point)
+        {
+            IPoint clone = Clone();
+
+            clone.X -= point.X;
+            clone.Y -= point.Y;
+
+            return ((clone.X * clone.X) + (clone.Y * clone.Y));
+        }
+
+        public bool Compare(IPoint point)
+        {
+            if ((point == null) || (point.X != X) || (point.Y != Y)) return false;
+
+            return true;
+        }
     }
 }

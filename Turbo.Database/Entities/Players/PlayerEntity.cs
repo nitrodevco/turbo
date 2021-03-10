@@ -13,6 +13,12 @@ namespace Turbo.Database.Entities.Players
         [Column("motto")]
         public string Motto { get; set; }
 
+        [Column("figure")]
+        public string Figure { get; set; }
+
+        [Column("gender")]
+        public string Gender { get; set; }
+
         public List<SecurityTicketEntity> SecurityTickets { get; set; }
     }
 }

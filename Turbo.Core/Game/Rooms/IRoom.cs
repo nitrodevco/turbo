@@ -9,6 +9,7 @@ namespace Turbo.Core.Game.Rooms
         public IRoomDetails RoomDetails { get; }
 
         public IRoomModel RoomModel { get; }
+        public IRoomMap RoomMap { get; }
 
         public void TryDispose();
         public void CancelDispose();

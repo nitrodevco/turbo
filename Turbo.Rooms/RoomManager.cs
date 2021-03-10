@@ -15,8 +15,8 @@ namespace Turbo.Rooms
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomModelRepository _roomModelRepository;
 
-        private readonly Dictionary<int, IRoom> _rooms;
-        private readonly Dictionary<int, IRoomModel> _models;
+        private readonly IDictionary<int, IRoom> _rooms;
+        private readonly IDictionary<int, IRoomModel> _models;
 
         public RoomManager(
             ILogger<IRoomManager> logger,
@@ -56,7 +56,7 @@ namespace Turbo.Rooms
 
         public IRoom GetOnlineRoom(int id)
         {
-            if ((id <= 0) || !_rooms.ContainsKey(id)) return null;
+            if (id <= 0 || !_rooms.ContainsKey(id)) return null;
 
             IRoom room = _rooms[id];
 
@@ -131,20 +131,18 @@ namespace Turbo.Rooms
 
         public IRoomModel GetModel(int id)
         {
-            if ((id <= 0) || !_models.ContainsKey(id)) return null;
+            if (id <= 0 || !_models.ContainsKey(id)) return null;
 
             return _models[id];
         }
 
         public IRoomModel GetModelByName(string name)
         {
-            if ((name == null) || (name.Length == 0)) return null;
-
-            if (_models.Count == 0) return null;
+            if (string.IsNullOrWhiteSpace(name) || _models.Count == 0) return null;
 
             foreach (IRoomModel roomModel in _models.Values)
             {
-                if ((roomModel == null) || !roomModel.Name.Equals(name)) continue;
+                if (roomModel == null || !roomModel.Name.Equals(name)) continue;
 
                 return roomModel;
             }
@@ -158,15 +156,12 @@ namespace Turbo.Rooms
 
             List<RoomModelEntity> entities = await _roomModelRepository.FindAllAsync();
 
-            if (entities.Count > 0)
+            entities.ForEach(x =>
             {
-                foreach (RoomModelEntity entity in entities)
-                {
-                    IRoomModel roomModel = new RoomModel(entity);
+                IRoomModel roomModel = new RoomModel(x);
 
-                    _models.Add(roomModel.Id, roomModel);
-                }
-            }
+                _models.Add(roomModel.Id, roomModel);
+            });
 
             _logger.LogInformation("Loaded {0} room models", _models.Count);
         }

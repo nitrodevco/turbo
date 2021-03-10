@@ -20,6 +20,7 @@ namespace Turbo.Rooms
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
 
+        public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
 
         public Room(IRoomManager roomManager, RoomEntity roomEntity)
@@ -62,12 +63,20 @@ namespace Turbo.Rooms
 
         public void TryDispose()
         {
+            if (IsDisposed || IsDisposing) return;
 
+            // if dispose already scheduled, return
+
+            // if has users, return
+
+            // clear the users waiting at the door
+
+            // schedule the dispose to run in 1 minute
         }
 
         public void CancelDispose()
         {
-
+            // if dispose already scheduled, cancel it
         }
 
         private async ValueTask LoadMapping()

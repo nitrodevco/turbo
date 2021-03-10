@@ -44,6 +44,22 @@ namespace Turbo.Players
             }
         }
 
+        public string Figure
+        {
+            get
+            {
+                return _playerEntity.Figure;
+            }
+        }
+
+        public string Gender
+        {
+            get
+            {
+                return _playerEntity.Gender;
+            }
+        }
+
         public DateTime DateCreated
         {
             get

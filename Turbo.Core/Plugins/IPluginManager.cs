@@ -1,4 +1,4 @@
-﻿namespace Turbo.Plugins
+﻿namespace Turbo.Core.Plugins
 {
     public interface IPluginManager
     {

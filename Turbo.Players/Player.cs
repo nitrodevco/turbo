@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
 
@@ -12,23 +13,13 @@ namespace Turbo.Players
         private bool _isDisposing { get; set; }
 
         public IPlayerDetails PlayerDetails { get; private set; }
+        public IRoomObject RoomObject { get; private set; }
 
         public Player(IPlayerContainer playerContainer, PlayerEntity playerEntity)
         {
             _playerContainer = playerContainer;
 
             PlayerDetails = new PlayerDetails(this, playerEntity);
-        }
-
-        public bool SetSession(ISession session)
-        {
-            if ((_session != null) && (_session != session)) return false;
-
-            if (!session.SetPlayer(this)) return false;
-
-            _session = session;
-
-            return true;
         }
 
         public async ValueTask InitAsync()
@@ -44,7 +35,7 @@ namespace Turbo.Players
 
             _isDisposing = true;
 
-            // remove assigned RoomObject
+            ClearRoomObject();
 
             if (_playerContainer != null)
             {
@@ -62,6 +53,54 @@ namespace Turbo.Players
             PlayerDetails.SaveNow();
         }
 
+        public bool SetSession(ISession session)
+        {
+            if ((_session != null) && (_session != session)) return false;
+
+            if (!session.SetPlayer(this)) return false;
+
+            _session = session;
+
+            return true;
+        }
+
+        public bool SetRoomObject(IRoomObject roomObject)
+        {
+            ClearRoomObject();
+
+            // room object set holder this
+
+            RoomObject = roomObject;
+
+            // update all messenger friends
+
+            return true;
+        }
+
+        public void ClearRoomObject()
+        {
+            if(RoomObject != null)
+            {
+                RoomObject.Dispose();
+
+                RoomObject = null;
+
+                // update all messenger friends
+            }
+
+            // clear pending doorbell
+            // if pending room return
+            // send hotel view composer
+        }
+
+        public string Type
+        {
+            get
+            {
+                return "user";
+            }
+        }
+
         public int Id
         {
             get
@@ -75,6 +114,30 @@ namespace Turbo.Players
             get
             {
                 return PlayerDetails.Name;
+            }
+        }
+
+        public string Motto
+        {
+            get
+            {
+                return PlayerDetails.Motto;
+            }
+        }
+
+        public string Figure
+        {
+            get
+            {
+                return PlayerDetails.Figure;
+            }
+        }
+
+        public string Gender
+        {
+            get
+            {
+                return PlayerDetails.Gender;
             }
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System;
-using Turbo.Core;
 
-namespace Turbo.Furniture
+namespace Turbo.Core.Game.Furniture
 {
     public interface IFurnitureManager : IAsyncInitialisable, IAsyncDisposable
     {

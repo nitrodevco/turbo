@@ -39,5 +39,13 @@ namespace Turbo.Rooms
                 return roomModel.Id;
             }
         }
+
+        public bool AllowWalkThrough
+        {
+            get
+            {
+                return _roomEntity.AllowWalkThrough;
+            }
+        }
     }
 }

@@ -1,8 +1,7 @@
 ﻿using System;
-using Turbo.Core;
 using Turbo.Core.Game.Rooms.Mapping;
 
-namespace Turbo.Rooms
+namespace Turbo.Core.Game.Rooms
 {
     public interface IRoomManager : IRoomContainer, IAsyncInitialisable, IAsyncDisposable
     {

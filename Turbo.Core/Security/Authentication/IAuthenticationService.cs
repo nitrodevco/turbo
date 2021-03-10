@@ -1,4 +1,4 @@
-﻿namespace Turbo.Security.Authentication
+﻿namespace Turbo.Core.Security.Authentication
 {
     public interface IAuthenticationService
     {
