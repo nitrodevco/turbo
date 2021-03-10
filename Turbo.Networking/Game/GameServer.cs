@@ -1,13 +1,13 @@
-﻿using DotNetty.Transport.Bootstrapping;
+﻿using DotNetty.Buffers;
+using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
-using DotNetty.Buffers;
-using Microsoft.Extensions.Logging;
-using Turbo.Core.Configuration;
 using DotNetty.Transport.Channels.Sockets;
-using System.Threading.Tasks;
-using System.Net;
-using Turbo.Networking.EventLoop;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Net;
+using System.Threading.Tasks;
+using Turbo.Core.Configuration;
+using Turbo.Networking.EventLoop;
 
 namespace Turbo.Networking.Game
 {

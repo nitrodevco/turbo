@@ -6,13 +6,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core;
-using Turbo.Networking;
+using Turbo.Core.Game.Players;
 using Turbo.Furniture;
-using Turbo.Players;
+using Turbo.Networking;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Security;
-using Turbo.Players.Authentication;
+using Turbo.Security.Authentication;
 
 namespace Turbo.Main
 {

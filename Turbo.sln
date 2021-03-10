@@ -12,8 +12,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Utils", "Turbo.Utils\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Packets", "Turbo.Packets\Turbo.Packets.csproj", "{93456A3C-8D1D-4841-BDC2-F8376C84044F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Core.Tests", "Turbo.Core.Tests\Turbo.Core.Tests.csproj", "{3AAF87E9-242D-4D0C-8687-97994D2BD9C8}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Main.Tests", "Turbo.Main.Tests\Turbo.Main.Tests.csproj", "{FFBBAD93-8A5B-46A5-AAA5-F278351D3EED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Networking.Tests", "Turbo.Networking.Tests\Turbo.Networking.Tests.csproj", "{004DBD1D-EBD6-42D1-9DBA-6212E6E9AAF6}"
@@ -66,10 +64,6 @@ Global
 		{93456A3C-8D1D-4841-BDC2-F8376C84044F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93456A3C-8D1D-4841-BDC2-F8376C84044F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93456A3C-8D1D-4841-BDC2-F8376C84044F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3AAF87E9-242D-4D0C-8687-97994D2BD9C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3AAF87E9-242D-4D0C-8687-97994D2BD9C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3AAF87E9-242D-4D0C-8687-97994D2BD9C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3AAF87E9-242D-4D0C-8687-97994D2BD9C8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{FFBBAD93-8A5B-46A5-AAA5-F278351D3EED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{FFBBAD93-8A5B-46A5-AAA5-F278351D3EED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FFBBAD93-8A5B-46A5-AAA5-F278351D3EED}.Release|Any CPU.ActiveCfg = Release|Any CPU

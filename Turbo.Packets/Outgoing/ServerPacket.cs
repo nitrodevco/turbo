@@ -1,5 +1,6 @@
 ﻿using DotNetty.Buffers;
 using System.Text;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing
 {
@@ -7,7 +8,7 @@ namespace Turbo.Packets.Outgoing
     {
         public ServerPacket(int header, IByteBuffer body) : base(header, body)
         {
-            
+
         }
 
         public void WriteByte(byte b) =>

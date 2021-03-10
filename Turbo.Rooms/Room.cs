@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
@@ -13,7 +11,7 @@ namespace Turbo.Rooms
     {
         private readonly IRoomManager _roomManager;
 
-        public RoomDetails RoomDetails { get; private set; }
+        public IRoomDetails RoomDetails { get; private set; }
 
         public readonly RoomSecurityManager RoomSecurityManager;
         public readonly RoomFurnitureManager RoomFurnitureManager;
@@ -53,7 +51,7 @@ namespace Turbo.Rooms
 
             CancelDispose();
 
-            if(_roomManager != null)
+            if (_roomManager != null)
             {
                 await _roomManager.RemoveRoom(Id);
             }
@@ -83,7 +81,7 @@ namespace Turbo.Rooms
 
         private async ValueTask LoadMapping()
         {
-            if(RoomMap != null)
+            if (RoomMap != null)
             {
                 RoomMap.Dispose();
 

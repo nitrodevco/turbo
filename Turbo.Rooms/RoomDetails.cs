@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Turbo.Core.Game.Rooms;
 using Turbo.Database.Entities.Room;
 
 namespace Turbo.Rooms
 {
-    public class RoomDetails
+    public class RoomDetails : IRoomDetails
     {
         private readonly RoomEntity _roomEntity;
 

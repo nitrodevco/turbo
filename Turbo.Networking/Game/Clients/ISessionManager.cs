@@ -1,5 +1,5 @@
 ﻿using DotNetty.Transport.Channels;
-using Turbo.Packets.Sessions;
+using Turbo.Core.Networking.Game.Clients;
 
 namespace Turbo.Networking.Clients
 {

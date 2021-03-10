@@ -1,13 +1,10 @@
 using Microsoft.Extensions.Logging.Abstractions;
-using System;
-using System.Threading.Tasks;
-using Turbo.Core;
-using Turbo.Packets.Incoming;
-using Turbo.Packets.Sessions;
-using Xunit;
 using Moq;
-using Turbo.Packets.Outgoing;
-using Turbo.Packets.Revisions;
+using System;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets;
+using Turbo.Core.Packets.Messages;
+using Xunit;
 
 namespace Turbo.Packets.Tests
 {
@@ -30,10 +27,10 @@ namespace Turbo.Packets.Tests
         public void Publish_CallsAllRegisteredActions()
         {
             int callCount = 0;
-            _hub.Subscribe(new object(), new Action<MockEvent, ISession>( (a, b) => callCount++));
-            _hub.Subscribe(new object(), new Action<MockEvent, ISession>( (a, b) => callCount++));
+            _hub.Subscribe(new object(), new Action<MockEvent, ISession>((a, b) => callCount++));
+            _hub.Subscribe(new object(), new Action<MockEvent, ISession>((a, b) => callCount++));
 
-            
+
             _hub.Publish(new MockEvent(), this._mockSession.Object);
 
             Assert.Equal(2, callCount);
@@ -44,7 +41,7 @@ namespace Turbo.Packets.Tests
         {
             int callCount = 0;
             _hub.Subscribe<MockEvent>(_subscriber, (a, b) => callCount++);
-            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a,b) => callCount++));
+            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>((a, b) => callCount++));
 
             _hub.Publish(new MockEvent2("data"), this._mockSession.Object);
 
@@ -55,8 +52,8 @@ namespace Turbo.Packets.Tests
         public void Publish_BaseEvent_NotCaughtBySpecial()
         {
             int callCount = 0;
-            _hub.Subscribe(_subscriber, new Action<MockEvent2, ISession>( (a, b) => callCount++));
-            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a, b) => callCount++));
+            _hub.Subscribe(_subscriber, new Action<MockEvent2, ISession>((a, b) => callCount++));
+            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>((a, b) => callCount++));
 
             _hub.Publish(new MockEvent(), this._mockSession.Object);
 
@@ -109,8 +106,8 @@ namespace Turbo.Packets.Tests
             bool subscr2 = false;
             bool subscr1 = false;
 
-            _hub.Subscribe(_subscriber2, new Action<MockEvent, ISession>( (a, b) => { subscr2 = true; }));
-            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a,b) => { subscr1 = true; }));
+            _hub.Subscribe(_subscriber2, new Action<MockEvent, ISession>((a, b) => { subscr2 = true; }));
+            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>((a, b) => { subscr1 = true; }));
             _hub.Subscribe(_subscriber, new Action<MockEvent2, ISession>((a, b) => { subscr1 = true; }));
             _hub.Unsubscribe(_subscriber);
 
@@ -127,9 +124,9 @@ namespace Turbo.Packets.Tests
         [Fact]
         public void Unsubscribe_RemovesAllHandlers_OfSpecificType_ForSender()
         {
-            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a, b) => { }));
-            _hub.Subscribe(_subscriber, new Action<MockEvent2, ISession>( (a, b) => { }));
-            _hub.Subscribe(_subscriber2, new Action<MockEvent, ISession>( (a, b) => { }));
+            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>((a, b) => { }));
+            _hub.Subscribe(_subscriber, new Action<MockEvent2, ISession>((a, b) => { }));
+            _hub.Subscribe(_subscriber2, new Action<MockEvent, ISession>((a, b) => { }));
 
             _hub.Unsubscribe<MockEvent>(_subscriber);
 
@@ -141,10 +138,10 @@ namespace Turbo.Packets.Tests
         [Fact]
         public void Unsubscribe_RemovesSpecificHandler_ForSender()
         {
-            Action<MockEvent, ISession> actionToDie = new Action<MockEvent, ISession>( (a,b) => { });
+            Action<MockEvent, ISession> actionToDie = new Action<MockEvent, ISession>((a, b) => { });
             _hub.Subscribe(_subscriber, actionToDie);
-            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a, b) => { }));
-            _hub.Subscribe(_subscriber2, new Action<MockEvent, ISession>( (a, b) => { }));
+            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>((a, b) => { }));
+            _hub.Subscribe(_subscriber2, new Action<MockEvent, ISession>((a, b) => { }));
 
             _hub.Unsubscribe(_subscriber, actionToDie);
 
@@ -156,7 +153,7 @@ namespace Turbo.Packets.Tests
         [Fact]
         public void Exists_EventDoesExist()
         {
-            var action = new Action<MockEvent, ISession>( (a, b) => { });
+            var action = new Action<MockEvent, ISession>((a, b) => { });
 
             _hub.Subscribe(_subscriber, action);
 
@@ -166,8 +163,8 @@ namespace Turbo.Packets.Tests
         [Fact]
         public void Unsubscribe_CleanUps()
         {
-            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a, b) => { }));
-            _hub.Subscribe(_subscriber2, new Action<MockEvent, ISession>( (a, b) => { }));
+            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>((a, b) => { }));
+            _hub.Subscribe(_subscriber2, new Action<MockEvent, ISession>((a, b) => { }));
 
             _subscriber2 = null;
 
@@ -182,7 +179,7 @@ namespace Turbo.Packets.Tests
         [Fact]
         public void Publish_NoExceptionRaisedWhenHandlerCreatesNewSubscriber()
         {
-            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>( (a, b) => new MockListener(_hub)));
+            _hub.Subscribe(_subscriber, new Action<MockEvent, ISession>((a, b) => new MockListener(_hub)));
 
             try
             {
@@ -215,64 +212,6 @@ namespace Turbo.Packets.Tests
             public bool Call(MockEvent message, ISession session)
             {
                 return false;
-            }
-        }
-
-        internal class MockSession : ISession
-        {
-            public IRevision Revision
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public ISessionPlayer SessionPlayer => throw new NotImplementedException();
-
-            public string IPAddress => throw new NotImplementedException();
-
-            public long LastPongTimestamp
-            {
-                get
-                {
-                    throw new NotImplementedException();
-                }
-
-                set
-                {
-                    throw new NotImplementedException();
-                }
-            }
-
-            public bool SetSessionPlayer(ISessionPlayer sessionPlayer)
-            {
-                throw new NotImplementedException();
-            }
-
-            public ValueTask DisposeAsync()
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task Send(IComposer composer)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task SendQueue(IComposer composer)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Flush()
-            {
-                throw new NotImplementedException();
             }
         }
 

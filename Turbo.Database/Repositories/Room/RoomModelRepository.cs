@@ -1,13 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Turbo.Database.Context;
-using Turbo.Database.Entities;
-using Turbo.Database.Entities.Security;
-using Turbo.Database.Repositories.Player;
-using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Entities.Room;
 
 namespace Turbo.Database.Repositories.Room
@@ -25,7 +19,7 @@ namespace Turbo.Database.Repositories.Room
             .FindAsync(id);
 
         public async Task<RoomModelEntity> FindByNameAsync(string name) => await _context.RoomModels
-            .FirstAsync(roomModel => roomModel.Name == name);
+            .FirstOrDefaultAsync(roomModel => roomModel.Name == name);
 
         public async Task<List<RoomModelEntity>> FindAllAsync() => await _context.RoomModels
             .ToListAsync();

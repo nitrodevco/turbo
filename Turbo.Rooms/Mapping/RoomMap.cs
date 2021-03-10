@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Turbo.RoomObject.Object;
+﻿using System.Collections.Generic;
+using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Utils;
 using Turbo.RoomObject.Utils;
 
 namespace Turbo.Rooms.Mapping

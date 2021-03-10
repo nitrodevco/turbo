@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Turbo.Core;
-using Turbo.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Mapping;
 
 namespace Turbo.Rooms
 {

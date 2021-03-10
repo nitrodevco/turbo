@@ -2,10 +2,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
-using Turbo.Packets;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
-using Turbo.Packets.Sessions;
 
 namespace Turbo.Networking.Clients
 {
@@ -36,7 +36,8 @@ namespace Turbo.Networking.Clients
 
         public void DisconnectSession(IChannelId id)
         {
-            if(this._clients.TryRemove(id, out ISession session)) {
+            if (this._clients.TryRemove(id, out ISession session))
+            {
                 session.DisposeAsync();
             }
         }
@@ -48,11 +49,11 @@ namespace Turbo.Networking.Clients
         /// <param name="state"></param>
         private void ProcessPing(object state)
         {
-            foreach(ISession session in _clients.Values)
+            foreach (ISession session in _clients.Values)
             {
                 long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
 
-                if(timeNow - session.LastPongTimestamp > 60)
+                if (timeNow - session.LastPongTimestamp > 60)
                 {
                     session.DisposeAsync();
                     return;

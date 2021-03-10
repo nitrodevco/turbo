@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Turbo.RoomObject.Object;
-using Turbo.RoomObject.Utils;
+using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Rooms.Mapping
 {

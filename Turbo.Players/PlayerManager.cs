@@ -1,12 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using Turbo.Database.Context;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
-using Turbo.Packets.Sessions;
 
 namespace Turbo.Players
 {
@@ -84,7 +82,7 @@ namespace Turbo.Players
 
             if (player == null) return null;
 
-            if(!player.SetSession(session))
+            if (!player.SetSession(session))
             {
                 await player.DisposeAsync();
                 await session.DisposeAsync();
@@ -114,7 +112,7 @@ namespace Turbo.Players
 
         public async ValueTask RemoveAllPlayers()
         {
-            foreach(int id in _players.Keys)
+            foreach (int id in _players.Keys)
             {
                 await RemovePlayer(id);
             }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Turbo.Core;
-using Turbo.Packets.Outgoing;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Core.Packets.Messages;
 using Turbo.RoomObject.Object;
-using Turbo.RoomObject.Utils;
-using Turbo.Rooms.Mapping;
 
 namespace Turbo.Rooms.Managers
 {
@@ -15,7 +16,7 @@ namespace Turbo.Rooms.Managers
     {
         private readonly IRoom _room;
 
-        private readonly List<ISessionPlayer> _roomObservers;
+        private readonly List<IPlayer> _roomObservers;
         private readonly IRoomObjectManager _roomObjectManager;
         private int _roomObjectCounter;
 
@@ -23,7 +24,7 @@ namespace Turbo.Rooms.Managers
         {
             _room = room;
 
-            _roomObservers = new List<ISessionPlayer>();
+            _roomObservers = new List<IPlayer>();
             _roomObjectManager = new RoomObjectManager();
 
             _roomObjectCounter = -1;
@@ -113,7 +114,7 @@ namespace Turbo.Rooms.Managers
         {
             if (composer == null) return;
 
-            foreach(ISessionPlayer sessionPlayer in _roomObservers)
+            foreach(IPlayer sessionPlayer in _roomObservers)
             {
                 // send packet
             }

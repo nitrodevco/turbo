@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -6,28 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using Turbo.Core.Configuration;
 using Turbo.Database.Context;
 using Turbo.Main.Configuration;
-using Turbo.Plugins;
-using Microsoft.EntityFrameworkCore;
-using Turbo.Players;
-using Turbo.Rooms;
-using Turbo.Database.Repositories;
-using Turbo.Networking;
-using Turbo.Networking.Game;
-using Turbo.Networking.Game.WebSocket;
-using Turbo.Networking.REST;
-using Turbo.Networking.EventLoop;
-using Turbo.Packets.Revisions;
-using Turbo.Networking.Clients;
-using Turbo.Packets;
-using Turbo.Networking.Game.Clients;
-using Turbo.Database.Repositories.Player;
-using System.Reflection;
-using System.Linq;
-using Turbo.Database.Repositories.Furniture;
-using Turbo.Furniture;
-using Turbo.Security;
-using Turbo.Database.Repositories.Security;
-using Turbo.Database.Entities.Security;
 using Turbo.Main.Extensions;
 
 namespace Turbo.Main

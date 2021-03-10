@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using Turbo.Database.Context;
-using Turbo.Database.Entities;
 using Turbo.Database.Entities.Security;
-using Turbo.Database.Repositories.Player;
-using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Repositories.Security
 {

@@ -1,6 +1,6 @@
 ﻿using DotNetty.Transport.Channels;
-using Turbo.Packets.Revisions;
-using Turbo.Packets.Sessions;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets.Revisions;
 
 namespace Turbo.Networking.Game.Clients
 {

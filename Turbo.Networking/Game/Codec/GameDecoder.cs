@@ -2,6 +2,7 @@
 using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
 using System.Collections.Generic;
+using Turbo.Core.Packets.Messages;
 using Turbo.Packets.Incoming;
 
 namespace Turbo.Networking.Game.Codec

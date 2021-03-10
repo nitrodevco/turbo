@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using Turbo.Core.Plugins;
 
 namespace Turbo.Plugins
 {
@@ -32,7 +30,7 @@ namespace Turbo.Plugins
             {
                 Directory.CreateDirectory("plugins");
             }
-            
+
             var plugins = Directory.GetFiles("plugins", "*.dll");
 
             foreach (var plugin in plugins)
@@ -47,7 +45,7 @@ namespace Turbo.Plugins
                     .Where(t => t.IsClass && !t.IsAbstract && t.IsPublic && !t.IsGenericType)
                     .ToList();
 
-                if (pluginTypes.Any()) 
+                if (pluginTypes.Any())
                 {
                     // Create instances
                     foreach (var pluginType in pluginTypes)

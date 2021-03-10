@@ -1,5 +1,7 @@
 ﻿using DotNetty.Buffers;
+using System;
 using System.Text;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Incoming
 {
@@ -17,25 +19,25 @@ namespace Turbo.Packets.Incoming
             return Encoding.UTF8.GetString(data.Array);
         }
 
-        public int PopInt() =>
-            Content.ReadInt();
+        public int PopInt() => Content.ReadInt();
 
-        public bool PopBoolean() =>
-            Content.ReadByte() == 1;
+        public bool PopBoolean() => Content.ReadByte() == 1;
 
-        public int RemainingLength() =>
-            Content.ReadableBytes;
+        public int RemainingLength() => Content.ReadableBytes;
 
-        public long PopLong() =>
-            Content.ReadLong();
+        public long PopLong() => Content.ReadLong();
 
-        public short PopShort() =>
-            Content.ReadShort();
+        public short PopShort() => Content.ReadShort();
 
         public double PopDouble()
         {
-            double.TryParse(PopString(), out double result);
-            return result;
+            var doubleString = PopString();
+            var parsed = double.TryParse(doubleString, out double result);
+
+            if (parsed)
+                return result;
+
+            throw new FormatException($"'{doubleString}' is not a valid double!");
         }
     }
 }

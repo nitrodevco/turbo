@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Definition
