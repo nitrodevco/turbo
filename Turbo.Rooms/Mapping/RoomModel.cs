@@ -96,14 +96,14 @@ namespace Turbo.Rooms.Mapping
 
                     if (square.Equals("x"))
                     {
-                        _tileStates[x][y] = RoomTileState.CLOSED;
+                        _tileStates[x][y] = RoomTileState.Closed;
                         _tileHeights[x][y] = 0;
                     }
                     else
                     {
                         int index = "abcdefghijklmnopqrstuvwxyz".IndexOf(square);
 
-                        _tileStates[x][y] = RoomTileState.OPEN;
+                        _tileStates[x][y] = RoomTileState.Open;
                         _tileHeights[x][y] = ((index == -1) ? Int32.Parse(square) : (index + 10));
                     }
 
@@ -124,7 +124,7 @@ namespace Turbo.Rooms.Mapping
             RoomTileState doorTileState = GetTileState(_modelEntity.DoorX, _modelEntity.DoorY);
             int doorTileHeight = GetTileHeight(_modelEntity.DoorX, _modelEntity.DoorY);
 
-            if (doorTileState == RoomTileState.CLOSED)
+            if (doorTileState == RoomTileState.Closed)
             {
                 ResetModel(false);
 
@@ -141,11 +141,11 @@ namespace Turbo.Rooms.Mapping
         {
             List<RoomTileState> rowStates = _tileStates[x];
 
-            if (rowStates == null) return RoomTileState.CLOSED;
+            if (rowStates == null) return RoomTileState.Closed;
 
-            if (rowStates[y] != RoomTileState.OPEN) return RoomTileState.CLOSED;
+            if (rowStates[y] != RoomTileState.Open) return RoomTileState.Closed;
 
-            return RoomTileState.OPEN;
+            return RoomTileState.Open;
         }
 
         public int GetTileHeight(int x, int y)
