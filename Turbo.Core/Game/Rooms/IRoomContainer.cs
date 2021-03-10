@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Turbo.Rooms
+namespace Turbo.Core.Game.Rooms
 {
     public interface IRoomContainer
     {

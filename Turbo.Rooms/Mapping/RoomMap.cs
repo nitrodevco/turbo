@@ -3,7 +3,7 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
-using Turbo.RoomObject.Utils;
+using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Mapping
 {
@@ -124,7 +124,5 @@ namespace Turbo.Rooms.Mapping
 
             return roomTile;
         }
-
-
     }
 }

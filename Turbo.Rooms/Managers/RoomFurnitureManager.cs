@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Turbo.Core;
 using Turbo.Core.Game.Rooms;
-using Turbo.RoomObject.Object;
 
 namespace Turbo.Rooms.Managers
 {
@@ -10,13 +9,9 @@ namespace Turbo.Rooms.Managers
     {
         private readonly IRoom _room;
 
-        private readonly IRoomObjectManager _roomObjectManager;
-
         public RoomFurnitureManager(IRoom room)
         {
             _room = room;
-
-            _roomObjectManager = new RoomObjectManager();
         }
 
         public async ValueTask InitAsync()

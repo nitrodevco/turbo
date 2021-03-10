@@ -8,7 +8,7 @@ using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Packets.Messages;
-using Turbo.RoomObject.Object;
+using Turbo.Rooms.Object;
 
 namespace Turbo.Rooms.Managers
 {
@@ -105,7 +105,7 @@ namespace Turbo.Rooms.Managers
         {
             if (roomObjectHolder == null) return null;
 
-            IRoomObject roomObject = new RoomObject.Object.RoomObject(_roomObjectCounter++, roomObjectHolder.Type);
+            IRoomObject roomObject = new RoomObject(_roomObjectCounter++, roomObjectHolder.Type);
 
             if (roomObject == null) return null;
 

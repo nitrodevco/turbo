@@ -1,6 +1,6 @@
 ﻿using Turbo.Core.Game.Rooms.Utils;
 
-namespace Turbo.RoomObject.Utils
+namespace Turbo.Rooms.Utils
 {
     public class Point : IPoint
     {

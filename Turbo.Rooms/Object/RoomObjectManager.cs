@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Object;
 
-namespace Turbo.RoomObject.Object
+namespace Turbo.Rooms.Object
 {
     public class RoomObjectManager : IRoomObjectManager
     {

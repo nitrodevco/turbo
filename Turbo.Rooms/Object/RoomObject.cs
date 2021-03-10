@@ -1,8 +1,8 @@
 ﻿using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
-using Turbo.RoomObject.Utils;
+using Turbo.Rooms.Utils;
 
-namespace Turbo.RoomObject.Object
+namespace Turbo.Rooms.Object
 {
     public class RoomObject : IRoomObject
     {

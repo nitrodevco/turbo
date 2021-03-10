@@ -62,7 +62,7 @@ namespace Turbo.Players
             return player;
         }
 
-        public IPlayer GetOfflinePlayerByUsername(string username)
+        public async Task<IPlayer> GetOfflinePlayerByUsername(string username)
         {
             IPlayer player = GetPlayerByUsername(username);
 

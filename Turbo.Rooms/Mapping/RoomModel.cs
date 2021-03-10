@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Database.Entities.Room;
-using Turbo.RoomObject.Utils;
+using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Mapping
 {

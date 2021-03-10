@@ -3,6 +3,8 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;
+using Turbo.Core.Security;
+using Turbo.Core.Security.Authentication;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
 

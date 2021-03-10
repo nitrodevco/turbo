@@ -1,6 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms;
 using Turbo.Core.Packets;
+using Turbo.Core.Plugins;
+using Turbo.Core.Security;
+using Turbo.Core.Security.Authentication;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
