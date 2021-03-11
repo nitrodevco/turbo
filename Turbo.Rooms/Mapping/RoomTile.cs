@@ -123,7 +123,7 @@ namespace Turbo.Rooms.Mapping
         {
             RelativeHeight = TILE_HEIGHT_DEFAULT;
 
-            if ((State == RoomTileState.CLOSED) || !CanStack()) return;
+            if ((State == RoomTileState.Closed) || !CanStack()) return;
 
             RelativeHeight = (int) Math.Ceiling((decimal) (_hasStackHelper ? _stackHelperHeight : Height) * TILE_HEIGHT_MULTIPLIER);
         }
