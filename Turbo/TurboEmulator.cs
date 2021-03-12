@@ -14,6 +14,7 @@ using Turbo.Core.Plugins;
 using Turbo.Core.Security;
 using Turbo.Core.Security.Authentication;
 using Turbo.Networking;
+using Turbo.Networking.Clients;
 
 namespace Turbo.Main
 {
@@ -32,6 +33,7 @@ namespace Turbo.Main
         private readonly IFurnitureManager _furnitureManager;
         private readonly IRoomManager _roomManager;
         private readonly IPlayerManager _playerManager;
+        private readonly ISessionManager _sessionManager;
 
         private Task _gameCycle;
         private bool _cycleStarted = false;
@@ -46,7 +48,8 @@ namespace Turbo.Main
             IFurnitureManager furnitureManager,
             IRoomManager roomManager,
             IPlayerManager playerManager,
-            IAuthenticationService authenticationService)
+            IAuthenticationService authenticationService,
+            ISessionManager sessionManager)
         {
             _appLifetime = appLifetime;
             _logger = logger;
@@ -56,6 +59,7 @@ namespace Turbo.Main
             _furnitureManager = furnitureManager;
             _roomManager = roomManager;
             _playerManager = playerManager;
+            _sessionManager = sessionManager;
         }
 
         /// <summary>
@@ -156,7 +160,7 @@ namespace Turbo.Main
                     {
                         Task.WaitAll(
                             Task.Run(async () => await _roomManager.Cycle()),
-                            Task.Run(async () => await _playerManager.Cycle())
+                            Task.Run(async () => await _sessionManager.Cycle())
                         );
                     }
                     catch (Exception ex)

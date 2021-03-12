@@ -118,7 +118,5 @@ namespace Turbo.Players
                 await RemovePlayer(id);
             }
         }
-
-        public Task Cycle() => Task.CompletedTask;
     }
 }
