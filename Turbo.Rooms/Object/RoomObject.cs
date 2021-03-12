@@ -1,4 +1,6 @@
-﻿using Turbo.Core.Game.Rooms.Object;
+﻿using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Utils;
 
@@ -6,7 +8,7 @@ namespace Turbo.Rooms.Object
 {
     public class RoomObject : IRoomObject
     {
-        private readonly IRoomObjectContainer _roomObjectContainer;
+        public IRoom Room { get; private set; }
         public IRoomObjectHolder RoomObjectHolder { get; private set; }
 
         public int Id { get; private set; }
@@ -15,11 +17,15 @@ namespace Turbo.Rooms.Object
         public IPoint Location { get; private set; }
         public IPoint Direction { get; private set; }
 
+        public IRoomObjectLogic Logic { get; private set; }
+
+        public bool NeedsUpdate { get; set; }
+
         private bool _isDisposing { get; set; }
 
-        public RoomObject(IRoomObjectContainer roomObjectContainer, int id, string type)
+        public RoomObject(IRoom room, int id, string type)
         {
-            _roomObjectContainer = roomObjectContainer;
+            Room = room;
 
             Id = id;
             Type = type;
@@ -34,7 +40,7 @@ namespace Turbo.Rooms.Object
 
             _isDisposing = true;
 
-            if (_roomObjectContainer != null) _roomObjectContainer.RemoveRoomObject(Id);
+            //if (Room != null) Room.RemoveRoomObject(Id);
         }
 
         public void SetLocation(IPoint point)
@@ -46,6 +52,8 @@ namespace Turbo.Rooms.Object
             Location.X = point.X;
             Location.Y = point.Y;
             Location.Z = point.Z;
+
+            NeedsUpdate = true;
         }
 
         public void SetDirection(IPoint point)
@@ -57,6 +65,8 @@ namespace Turbo.Rooms.Object
             Direction.X = point.X;
             Direction.Y = point.Y;
             Direction.Z = point.Z;
+
+            NeedsUpdate = true;
         }
 
         public bool SetHolder(IRoomObjectHolder roomObjectHolder)
@@ -68,6 +78,27 @@ namespace Turbo.Rooms.Object
             RoomObjectHolder = roomObjectHolder;
 
             return true;
+        }
+
+        public void SetLogic(IRoomObjectLogic logic)
+        {
+            if (logic == Logic) return;
+
+            IRoomObjectLogic currentLogic = Logic;
+
+            if(currentLogic != null)
+            {
+                Logic = null;
+
+                currentLogic.SetRoomObject(null);
+            }
+
+            Logic = logic;
+
+            if(Logic != null)
+            {
+                Logic.SetRoomObject(this);
+            }
         }
     }
 }

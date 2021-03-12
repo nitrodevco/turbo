@@ -1,4 +1,5 @@
 using System;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Core.Game.Rooms.Object
@@ -11,8 +12,13 @@ namespace Turbo.Core.Game.Rooms.Object
         public IPoint Location { get; }
         public IPoint Direction { get; }
 
+        public IRoomObjectLogic Logic { get; }
+
+        public bool NeedsUpdate { get; set; }
+
         public void SetLocation(IPoint point);
         public void SetDirection(IPoint point);
         public bool SetHolder(IRoomObjectHolder roomObjectHolder);
+        public void SetLogic(IRoomObjectLogic logic);
     }
 }
