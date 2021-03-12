@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -170,15 +172,8 @@ namespace Turbo.Rooms
 
         public Task Cycle()
         {
-            try
-            {
-
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e.ToString());
-            }
-            return Task.CompletedTask;
+            _logger.LogInformation("Roommanager cycle " + DateTime.Now);
+            return Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
         }
     }
 }

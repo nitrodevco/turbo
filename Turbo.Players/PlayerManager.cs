@@ -119,17 +119,6 @@ namespace Turbo.Players
             }
         }
 
-        public Task Cycle()
-        {
-            try
-            {
-
-            }
-            catch (Exception e)
-            {
-                
-            }
-            return Task.CompletedTask;
-        }
+        public Task Cycle() => Task.CompletedTask;
     }
 }

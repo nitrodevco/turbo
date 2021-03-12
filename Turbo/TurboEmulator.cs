@@ -94,13 +94,6 @@ namespace Turbo.Main
             await _roomManager.InitAsync();
 
             StartGameCycle();
-
-            while(true)
-            {
-                var text = ReadLine.Read("TURBO >");
-                if (text.Equals("q"))
-                    break;
-            }
         }
 
         /// <summary>
@@ -113,7 +106,11 @@ namespace Turbo.Main
         /// Perform on-stopping activities here.
         /// This function is called before <see cref="StopAsync(CancellationToken)"/>
         /// </summary>
-        private void OnStopping() => _logger.LogInformation("OnStopping has been called.");
+        private void OnStopping()
+        {
+            _cycleStarted = false;
+            _logger.LogInformation("OnStopping has been called.");
+        }
 
         /// <summary>
         /// This method is called by the .NET Generic Host.
@@ -124,7 +121,6 @@ namespace Turbo.Main
             _logger.LogInformation("Shutting down. Disposing services...");
 
             _cycleStarted = false;
-            Thread.Sleep(3000);
 
             // Todo: Dispose all services here
             await _roomManager.DisposeAsync();
@@ -156,10 +152,17 @@ namespace Turbo.Main
                 {
                     _cycleRunningNow = true;
 
-                    Task.WaitAll(
-                        new Task(() => _roomManager.Cycle()),
-                        new Task(() => _playerManager.Cycle())
-                    );
+                    try
+                    {
+                        Task.WaitAll(
+                            Task.Run(async () => await _roomManager.Cycle()),
+                            Task.Run(async () => await _playerManager.Cycle())
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError("Exception caught! " + ex.ToString());
+                    }
 
                     _cycleRunningNow = false;
                     await Task.Delay(500);
