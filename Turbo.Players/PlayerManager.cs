@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
@@ -116,6 +117,19 @@ namespace Turbo.Players
             {
                 await RemovePlayer(id);
             }
+        }
+
+        public Task Cycle()
+        {
+            try
+            {
+
+            }
+            catch (Exception e)
+            {
+                
+            }
+            return Task.CompletedTask;
         }
     }
 }

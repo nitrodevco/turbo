@@ -100,6 +100,11 @@ namespace Turbo.Rooms
             RoomMap.GenerateMap();
         }
 
+        public Task Cycle()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public int Id
         {
             get

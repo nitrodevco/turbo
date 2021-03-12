@@ -5,7 +5,7 @@ using Turbo.Core.Networking.Game.Clients;
 
 namespace Turbo.Core.Game.Players
 {
-    public interface IPlayerManager : IAsyncDisposable
+    public interface IPlayerManager : IAsyncDisposable, ICyclable
     {
         public IPlayer GetPlayerById(int id);
         public IPlayer GetPlayerByUsername(string username);

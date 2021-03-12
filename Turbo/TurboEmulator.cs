@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
@@ -31,6 +32,10 @@ namespace Turbo.Main
         private readonly IFurnitureManager _furnitureManager;
         private readonly IRoomManager _roomManager;
         private readonly IPlayerManager _playerManager;
+
+        private Task _gameCycle;
+        private bool _cycleStarted = false;
+        private bool _cycleRunningNow = false;
 
         public TurboEmulator(
             IHostApplicationLifetime appLifetime,
@@ -87,6 +92,15 @@ namespace Turbo.Main
             await _securityManager.InitAsync();
             await _furnitureManager.InitAsync();
             await _roomManager.InitAsync();
+
+            StartGameCycle();
+
+            while(true)
+            {
+                var text = ReadLine.Read("TURBO >");
+                if (text.Equals("q"))
+                    break;
+            }
         }
 
         /// <summary>
@@ -109,6 +123,9 @@ namespace Turbo.Main
         {
             _logger.LogInformation("Shutting down. Disposing services...");
 
+            _cycleStarted = false;
+            Thread.Sleep(3000);
+
             // Todo: Dispose all services here
             await _roomManager.DisposeAsync();
             await _furnitureManager.DisposeAsync();
@@ -127,6 +144,27 @@ namespace Turbo.Main
             CultureInfo.DefaultThreadCurrentUICulture = culture;
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+        }
+
+        private void StartGameCycle()
+        {
+            _cycleStarted = true;
+
+            _gameCycle = Task.Run(async () =>
+            {
+                while (_cycleStarted)
+                {
+                    _cycleRunningNow = true;
+
+                    Task.WaitAll(
+                        new Task(() => _roomManager.Cycle()),
+                        new Task(() => _playerManager.Cycle())
+                    );
+
+                    _cycleRunningNow = false;
+                    await Task.Delay(500);
+                }
+            });
         }
 
         public string GetVersion()
