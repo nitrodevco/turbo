@@ -170,10 +170,6 @@ namespace Turbo.Rooms
             _logger.LogInformation("Loaded {0} room models", _models.Count);
         }
 
-        public Task Cycle()
-        {
-            _logger.LogInformation("Roommanager cycle " + DateTime.Now);
-            return Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
-        }
+        public Task Cycle() => Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
     }
 }
