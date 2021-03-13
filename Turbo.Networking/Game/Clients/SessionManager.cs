@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Threading.Tasks;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Handshake;
@@ -12,8 +13,9 @@ namespace Turbo.Networking.Clients
     public class SessionManager : ISessionManager
     {
         private readonly ConcurrentDictionary<IChannelId, ISession> _clients;
-        private readonly Timer _timer;
         private readonly IPacketMessageHub _packetHub;
+        private const int _pingIntervalSeconds = 30;
+        private long _lastPingSeconds = 0;
 
         public SessionManager(IPacketMessageHub packetHub)
         {
@@ -21,7 +23,6 @@ namespace Turbo.Networking.Clients
             _clients = new ConcurrentDictionary<IChannelId, ISession>();
 
             _packetHub.Subscribe<PongMessage>(this, OnPongMessage);
-            _timer = new Timer(new TimerCallback(ProcessPing), null, 0, 30000);
         }
 
         public bool TryGetSession(IChannelId id, out ISession session)
@@ -46,26 +47,34 @@ namespace Turbo.Networking.Clients
         /// Pings sessions every 30 seconds and disconnects sessions
         /// that have timed out for 60 seconds.
         /// </summary>
-        /// <param name="state"></param>
-        private void ProcessPing(object state)
+        private void ProcessPing()
         {
+            long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
+
+            if (timeNow - _lastPingSeconds < _pingIntervalSeconds) return;
+
             foreach (ISession session in _clients.Values)
             {
-                long timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
-
                 if (timeNow - session.LastPongTimestamp > 60)
                 {
                     session.DisposeAsync();
-                    return;
+                    continue;
                 }
 
                 session.Send(new PingMessage());
             }
+            _lastPingSeconds = timeNow;
         }
 
         public static void OnPongMessage(PongMessage message, ISession session)
         {
             session.LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+        }
+
+        public Task Cycle()
+        {
+            ProcessPing();
+            return Task.CompletedTask;
         }
     }
 }

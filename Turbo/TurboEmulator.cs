@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
@@ -13,6 +14,7 @@ using Turbo.Core.Plugins;
 using Turbo.Core.Security;
 using Turbo.Core.Security.Authentication;
 using Turbo.Networking;
+using Turbo.Networking.Clients;
 
 namespace Turbo.Main
 {
@@ -31,6 +33,11 @@ namespace Turbo.Main
         private readonly IFurnitureManager _furnitureManager;
         private readonly IRoomManager _roomManager;
         private readonly IPlayerManager _playerManager;
+        private readonly ISessionManager _sessionManager;
+
+        private Task _gameCycle;
+        private bool _cycleStarted = false;
+        private bool _cycleRunningNow = false;
 
         public TurboEmulator(
             IHostApplicationLifetime appLifetime,
@@ -41,7 +48,8 @@ namespace Turbo.Main
             IFurnitureManager furnitureManager,
             IRoomManager roomManager,
             IPlayerManager playerManager,
-            IAuthenticationService authenticationService)
+            IAuthenticationService authenticationService,
+            ISessionManager sessionManager)
         {
             _appLifetime = appLifetime;
             _logger = logger;
@@ -51,6 +59,7 @@ namespace Turbo.Main
             _furnitureManager = furnitureManager;
             _roomManager = roomManager;
             _playerManager = playerManager;
+            _sessionManager = sessionManager;
         }
 
         /// <summary>
@@ -87,6 +96,8 @@ namespace Turbo.Main
             await _securityManager.InitAsync();
             await _furnitureManager.InitAsync();
             await _roomManager.InitAsync();
+
+            StartGameCycle();
         }
 
         /// <summary>
@@ -99,7 +110,11 @@ namespace Turbo.Main
         /// Perform on-stopping activities here.
         /// This function is called before <see cref="StopAsync(CancellationToken)"/>
         /// </summary>
-        private void OnStopping() => _logger.LogInformation("OnStopping has been called.");
+        private void OnStopping()
+        {
+            _cycleStarted = false;
+            _logger.LogInformation("OnStopping has been called.");
+        }
 
         /// <summary>
         /// This method is called by the .NET Generic Host.
@@ -108,6 +123,8 @@ namespace Turbo.Main
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Shutting down. Disposing services...");
+
+            _cycleStarted = false;
 
             // Todo: Dispose all services here
             await _roomManager.DisposeAsync();
@@ -127,6 +144,34 @@ namespace Turbo.Main
             CultureInfo.DefaultThreadCurrentUICulture = culture;
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = culture;
+        }
+
+        private void StartGameCycle()
+        {
+            _cycleStarted = true;
+
+            _gameCycle = Task.Run(async () =>
+            {
+                while (_cycleStarted)
+                {
+                    _cycleRunningNow = true;
+
+                    try
+                    {
+                        Task.WaitAll(
+                            Task.Run(async () => await _roomManager.Cycle()),
+                            Task.Run(async () => await _sessionManager.Cycle())
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError("Exception caught! " + ex.ToString());
+                    }
+
+                    _cycleRunningNow = false;
+                    await Task.Delay(500);
+                }
+            });
         }
 
         public string GetVersion()
