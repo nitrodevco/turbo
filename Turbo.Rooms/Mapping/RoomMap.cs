@@ -70,7 +70,7 @@ namespace Turbo.Rooms.Mapping
 
             IRoomTile roomTile = _map[point.X][point.Y];
 
-            if ((roomTile == null) || (roomTile.State == RoomTileState.CLOSED)) return null;
+            if ((roomTile == null) || (roomTile.State == RoomTileState.Closed)) return null;
 
             return roomTile;
         }

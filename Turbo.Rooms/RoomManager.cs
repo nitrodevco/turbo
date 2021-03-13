@@ -1,5 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -15,7 +19,7 @@ namespace Turbo.Rooms
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomModelRepository _roomModelRepository;
 
-        private readonly IDictionary<int, IRoom> _rooms;
+        private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
 
         public RoomManager(
@@ -27,7 +31,7 @@ namespace Turbo.Rooms
             _roomRepository = roomRepository;
             _roomModelRepository = roomModelRepository;
 
-            _rooms = new Dictionary<int, IRoom>();
+            _rooms = new ConcurrentDictionary<int, IRoom>();
             _models = new Dictionary<int, IRoomModel>();
         }
 
@@ -95,7 +99,7 @@ namespace Turbo.Rooms
                 return existing;
             }
 
-            _rooms.Add(room.Id, room);
+            _rooms.TryAdd(room.Id, room);
 
             return room;
         }
@@ -106,7 +110,7 @@ namespace Turbo.Rooms
 
             if (room == null) return;
 
-            _rooms.Remove(room.Id);
+            _rooms.TryRemove(new KeyValuePair<int, IRoom>(room.Id, room));
 
             await room.DisposeAsync();
         }
@@ -165,5 +169,7 @@ namespace Turbo.Rooms
 
             _logger.LogInformation("Loaded {0} room models", _models.Count);
         }
+
+        public Task Cycle() => Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
     }
 }
