@@ -1,0 +1,11 @@
+﻿using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Incoming.Room.Pets
+{
+    public record OpenFlatConnectionMessage : IMessageEvent
+    {
+        public int RoomId { get; init; }
+        public string Password { get; init; }
+        public int UnknownInt { get; init; }
+    }
+}
