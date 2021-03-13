@@ -4,6 +4,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
 {
     public interface IRoomModel
     {
+        public string Model { get; }
         public int TotalX { get; }
         public int TotalY { get; }
         public int TotalSize { get; }
