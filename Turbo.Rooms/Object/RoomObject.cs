@@ -1,4 +1,5 @@
 ﻿using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
@@ -15,7 +16,6 @@ namespace Turbo.Rooms.Object
         public string Type { get; private set; }
 
         public IPoint Location { get; private set; }
-        public IPoint Direction { get; private set; }
 
         public IRoomObjectLogic Logic { get; private set; }
 
@@ -31,7 +31,6 @@ namespace Turbo.Rooms.Object
             Type = type;
 
             Location = new Point();
-            Direction = new Point();
         }
 
         public void Dispose()
@@ -47,24 +46,13 @@ namespace Turbo.Rooms.Object
         {
             if (point == null) return;
 
-            if ((point.X == Location.X) && (point.Y == Location.Y) && (point.Z == Location.Z)) return;
+            if ((point.X == Location.X) && (point.Y == Location.Y) && (point.Z == Location.Z) && (point.Rotation == Location.Rotation) && (point.HeadRotation == Location.HeadRotation)) return;
 
             Location.X = point.X;
             Location.Y = point.Y;
             Location.Z = point.Z;
-
-            NeedsUpdate = true;
-        }
-
-        public void SetDirection(IPoint point)
-        {
-            if (point == null) return;
-
-            if ((point.X == Direction.X) && (point.Y == Direction.Y) && (point.Z == Direction.Z)) return;
-
-            Direction.X = point.X;
-            Direction.Y = point.Y;
-            Direction.Z = point.Z;
+            Location.Rotation = point.Rotation;
+            Location.HeadRotation = point.HeadRotation;
 
             NeedsUpdate = true;
         }
@@ -99,6 +87,13 @@ namespace Turbo.Rooms.Object
             {
                 Logic.SetRoomObject(this);
             }
+        }
+
+        public void ProcessUpdateMessage(RoomObjectUpdateMessage updateMessage)
+        {
+            if ((updateMessage == null) || (Logic == null)) return;
+
+            Logic.ProcessUpdateMessage(updateMessage);
         }
     }
 }

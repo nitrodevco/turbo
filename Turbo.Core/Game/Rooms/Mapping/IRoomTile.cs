@@ -26,6 +26,14 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public void ResetTileHeight();
 
         public double GetWalkingHeight();
+
+        public void OnEnter(IRoomObject roomObject);
+        public void OnLeave(IRoomObject roomObject);
+        public void BeforeStep(IRoomObject roomObject);
+        public void OnStep(IRoomObject roomObject);
+        public void OnStop(IRoomObject roomObject);
+
+        public bool IsOpen();
         public bool CanWalk();
         public bool CanSit();
         public bool CanLay();

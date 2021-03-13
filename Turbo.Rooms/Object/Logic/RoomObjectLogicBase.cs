@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 
@@ -45,6 +46,13 @@ namespace Turbo.Rooms.Object.Logic
             RoomObject.SetLogic(this);
 
             return true;
+        }
+
+        public virtual void ProcessUpdateMessage(RoomObjectUpdateMessage updateMessage)
+        {
+            if ((updateMessage == null) || (RoomObject == null)) return;
+
+            RoomObject.SetLocation(updateMessage.Location);
         }
     }
 }

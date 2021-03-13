@@ -71,7 +71,7 @@ namespace Turbo.Rooms.Managers
             return null;
         }
 
-        public IRoomObject AddRoomObject(IRoomObject roomObject, IPoint location, IPoint direction)
+        public IRoomObject AddRoomObject(IRoomObject roomObject, IPoint location)
         {
             if (roomObject == null) return null;
 
@@ -85,7 +85,6 @@ namespace Turbo.Rooms.Managers
             }
 
             roomObject.SetLocation(location);
-            roomObject.SetDirection(direction);
 
             IRoomTile roomTile = _room.RoomMap.GetTile(roomObject.Location);
 
@@ -103,7 +102,7 @@ namespace Turbo.Rooms.Managers
             return roomObject;
         }
 
-        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectHolder roomObjectHolder, IPoint location, IPoint direction)
+        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectHolder roomObjectHolder, IPoint location)
         {
             if (roomObjectHolder == null) return null;
 
@@ -113,7 +112,7 @@ namespace Turbo.Rooms.Managers
 
             if (!roomObjectHolder.SetRoomObject(roomObject)) return null;
 
-            return AddRoomObject(roomObject, location, direction);
+            return AddRoomObject(roomObject, location);
         }
 
         public void RemoveRoomObject(int id)

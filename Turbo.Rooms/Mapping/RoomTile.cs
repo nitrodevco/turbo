@@ -140,6 +140,40 @@ namespace Turbo.Rooms.Mapping
             return height;
         }
 
+        public void OnEnter(IRoomObject roomObject)
+        {
+            return;
+        }
+
+        public void OnLeave(IRoomObject roomObject)
+        {
+            return;
+        }
+
+        public void BeforeStep(IRoomObject roomObject)
+        {
+            return;
+        }
+
+        public void OnStep(IRoomObject roomObject)
+        {
+            return;
+        }
+
+        public void OnStop(IRoomObject roomObject)
+        {
+            return;
+        }
+
+        public bool IsOpen()
+        {
+            if (State == RoomTileState.Closed) return false;
+
+            //if highest object is not open return false;
+
+            return true;
+        }
+
         public bool CanWalk()
         {
             return true;
