@@ -129,7 +129,7 @@ namespace Turbo.Packets
                 if (handler != null)
                     query = query.Where(a => a.Action.Equals(handler));
 
-                foreach (IListener h in query)
+                foreach (IListener h in query.ToList())
                     _listeners.Remove(h);
             }
         }
@@ -144,7 +144,7 @@ namespace Turbo.Packets
                 if (handler != null)
                     query = query.Where(a => a.Action.Equals(handler));
 
-                foreach (IListener h in query)
+                foreach (IListener h in query.ToList())
                     _listeners.Remove(h);
             }
         }
@@ -203,7 +203,7 @@ namespace Turbo.Packets
         {
             lock (_listenerLock)
             {
-                return _listeners.Any(x => Equals(x.Sender, subscriber) && typeof(T).Equals(x.Type) && x.Action.Equals(handler));
+                return _listeners.Any(x => Equals(x.Sender.Target, subscriber) && typeof(T).Equals(x.Type) && x.Action.Equals(handler));
             }
         }
 
