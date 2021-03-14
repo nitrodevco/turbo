@@ -10,6 +10,7 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Packets.Messages;
 using Turbo.Rooms.Object;
+using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Managers
 {
@@ -84,18 +85,23 @@ namespace Turbo.Rooms.Managers
                 return null;
             }
 
+            if (!(roomObject.Logic is MovingAvatarLogic avatarLogic)) return null;
+
             roomObject.SetLocation(location);
 
-            IRoomTile roomTile = _room.RoomMap.GetTile(roomObject.Location);
+            IRoomTile roomTile = avatarLogic.GetCurrentTile();
 
-            if(roomTile != null)
-            {
-                roomTile.AddUser(roomObject);
-            }
+            if (roomTile != null) roomTile.AddRoomObject(roomObject);
 
-            // invoke the users location
+            avatarLogic.InvokeCurrentLocation();
 
+            roomObject.NeedsUpdate = false;
+
+            // here we are only sending this roomObject to the room
+            // the session player is not watching the room yet
             // COMPOSER: SendComposer(RoomUserComposer(roomObject), RoomUserStatusComposer(roomObject))
+
+            RoomObjects.Add(roomObject.Id, roomObject);
 
             UpdateTotalUsers();
 

@@ -8,6 +8,7 @@ using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
@@ -112,7 +113,10 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             UpdateHeight(roomTile);
 
-            roomTile.OnStep(RoomObject);
+            if ((roomTile.HighestObject != null) && (roomTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic))
+            {
+                furnitureLogic.OnStep(RoomObject);
+            }
 
             RoomObject.NeedsUpdate = true;
         }
@@ -139,15 +143,16 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (roomTile == null) return;
 
-            IRoomObject highestObject = roomTile.HighestObject;
-
-            if(highestObject == null) // if the highest object cant sit / lay, clear these
+            if(!roomTile.CanSit() || !roomTile.CanLay())
             {
                 Sit(false);
                 Lay(false);
             }
 
-            roomTile.OnStop(RoomObject);
+            if((roomTile.HighestObject != null) && (roomTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic))
+            {
+                furnitureLogic.OnStop(RoomObject);
+            }
 
             UpdateHeight();
         }
@@ -213,18 +218,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             RoomObject.NeedsUpdate = true;
         }
 
-        public IRoomTile GetCurrentTile()
-        {
-            if ((RoomObject == null) || (RoomObject.Room == null) || (RoomObject.Room.RoomMap == null)) return null;
+        public IRoomTile GetCurrentTile() => RoomObject?.Room?.RoomMap?.GetTile(RoomObject.Location);
 
-            return RoomObject.Room.RoomMap.GetTile(RoomObject.Location);
-        }
-
-        public IRoomTile GetNextTile()
-        {
-            if ((LocationNext == null) || (RoomObject == null) || (RoomObject.Room == null) || (RoomObject.Room.RoomMap == null)) return null;
-
-            return RoomObject.Room.RoomMap.GetTile(LocationNext);
-        }
+        public IRoomTile GetNextTile() => RoomObject?.Room?.RoomMap?.GetTile(LocationNext);
     }
 }
