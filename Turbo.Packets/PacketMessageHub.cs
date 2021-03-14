@@ -99,7 +99,7 @@ namespace Turbo.Packets
         {
             lock (_callableLock)
             {
-                this._callables.Add(callable);
+                _callables.Add(callable);
             }
         }
 
@@ -107,7 +107,7 @@ namespace Turbo.Packets
         {
             lock (_callableLock)
             {
-                this._callables.Remove(callable);
+                _callables.Remove(callable);
             }
         }
 
@@ -115,10 +115,7 @@ namespace Turbo.Packets
         {
             lock (_listenerLock)
             {
-                foreach (IListener listener in _listeners.Where(a => !a.Sender.IsAlive || a.Sender.Target.Equals(subscriber)).ToList())
-                {
-                    _listeners.Remove(listener);
-                }
+                _listeners.RemoveAll(x => !x.Sender.IsAlive || x.Sender.Target.Equals(subscriber));
             }
         }
 
@@ -132,7 +129,7 @@ namespace Turbo.Packets
                 if (handler != null)
                     query = query.Where(a => a.Action.Equals(handler));
 
-                foreach (IListener h in query.ToList())
+                foreach (IListener h in query)
                     _listeners.Remove(h);
             }
         }
@@ -147,7 +144,7 @@ namespace Turbo.Packets
                 if (handler != null)
                     query = query.Where(a => a.Action.Equals(handler));
 
-                foreach (IListener h in query.ToList())
+                foreach (IListener h in query)
                     _listeners.Remove(h);
             }
         }
@@ -182,11 +179,7 @@ namespace Turbo.Packets
         {
             lock (_listenerLock)
             {
-                for (int i = _listeners.Count - 1; i >= 0; --i)
-                {
-                    if (!_listeners[i].Sender.IsAlive)
-                        _listeners.RemoveAt(i);
-                }
+                _listeners.RemoveAll(x => !x.Sender.IsAlive);
             }
         }
 
@@ -194,69 +187,32 @@ namespace Turbo.Packets
         {
             lock (_listenerLock)
             {
-                foreach (IListener h in _listeners)
-                {
-                    if (Equals(h.Sender.Target, subscriber))
-                    {
-                        return true;
-                    }
-                }
+                return _listeners.Any(x => Equals(x.Sender.Target, subscriber));
             }
-
-            return false;
         }
 
         public bool Exists<T>(object subscriber) where T : IMessageEvent
         {
             lock (_listenerLock)
             {
-                foreach (IListener h in _listeners)
-                {
-                    if (Equals(h.Sender.Target, subscriber) &&
-                         typeof(T) == h.Type)
-                    {
-                        return true;
-                    }
-                }
+                return _listeners.Any(x => Equals(x.Sender.Target, subscriber) && typeof(T).Equals(x.Type));
             }
-
-            return false;
         }
 
         public bool Exists<T>(object subscriber, Action<T, ISession> handler) where T : IMessageEvent
         {
             lock (_listenerLock)
             {
-                foreach (IListener h in _listeners)
-                {
-                    if (Equals(h.Sender.Target, subscriber) &&
-                         typeof(T) == h.Type &&
-                         h.Action.Equals(handler))
-                    {
-                        return true;
-                    }
-                }
+                return _listeners.Any(x => Equals(x.Sender, subscriber) && typeof(T).Equals(x.Type) && x.Action.Equals(handler));
             }
-
-            return false;
         }
 
         public bool Exists<T>(object subscriber, Func<T, ISession, Task> handler) where T : IMessageEvent
         {
             lock (_listenerLock)
             {
-                foreach (IListener h in _listeners)
-                {
-                    if (Equals(h.Sender.Target, subscriber) &&
-                         typeof(T) == h.Type &&
-                         h.Action.Equals(handler))
-                    {
-                        return true;
-                    }
-                }
+                return _listeners.Any(x => Equals(x.Sender, subscriber) && typeof(T).Equals(x.Type) && x.Action.Equals(handler));
             }
-
-            return false;
         }
 
         internal class Listener : IListener

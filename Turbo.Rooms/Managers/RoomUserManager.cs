@@ -49,14 +49,12 @@ namespace Turbo.Rooms.Managers
                 IRoomObject roomObject;
 
                 if (_roomObjects.TryGetValue(id, out roomObject)) return roomObject;
-
-                return null;
             }
-
             catch(Exception e)
             {
-                return null;
             }
+
+            return null;
         }
 
         public IRoomObject GetRoomObjectByUserId(int userId)
