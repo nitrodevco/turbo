@@ -13,8 +13,8 @@ namespace Turbo.Rooms.Mapping
 
         private readonly IList<IList<IRoomTile>> _map;
         
-        public IList<IRoomTile> Tiles { get; private set; }
-        public IPathFinder PathFinder { get; private set; }
+        public IList<IRoomTile> Tiles { get; init; }
+        public IPathFinder PathFinder { get; init; }
 
         public RoomMap(IRoom room)
         {
