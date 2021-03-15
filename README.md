@@ -30,7 +30,7 @@ Turbo is released under the [GNU General Public License v3](https://www.gnu.org/
 
 ## Download
 
-Compiled Download: https://git.krews.org/turbo/turbo-emulator/releases
+Compiled Download: https://git.krews.org/turbo/turbo-emulator/-/releases
 
 ## Branches
 There will be 2 branches of the Arcturus Morningstar emulator:
