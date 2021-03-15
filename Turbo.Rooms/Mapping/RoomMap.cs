@@ -12,16 +12,16 @@ namespace Turbo.Rooms.Mapping
         private readonly IRoom _room;
 
         private readonly IList<IList<IRoomTile>> _map;
-        private readonly IList<IRoomTile> _tiles;
         
-        public IPathFinder PathFinder { get; private set; }
+        public IList<IRoomTile> Tiles { get; init; }
+        public IPathFinder PathFinder { get; init; }
 
         public RoomMap(IRoom room)
         {
             _room = room;
 
             _map = new List<IList<IRoomTile>>();
-            _tiles = new List<IRoomTile>();
+            Tiles = new List<IRoomTile>();
 
             PathFinder = new PathFinder(this);
         }
@@ -29,7 +29,7 @@ namespace Turbo.Rooms.Mapping
         public void Dispose()
         {
             _map.Clear();
-            _tiles.Clear();
+            Tiles.Clear();
         }
 
         public void GenerateMap()
@@ -39,7 +39,7 @@ namespace Turbo.Rooms.Mapping
             if (roomModel == null) return;
 
             _map.Clear();
-            _tiles.Clear();
+            Tiles.Clear();
 
             int totalX = roomModel.TotalX;
             int totalY = roomModel.TotalY;
@@ -59,7 +59,7 @@ namespace Turbo.Rooms.Mapping
 
                     _map[x][y] = roomTile;
 
-                    _tiles.Add(roomTile);
+                    Tiles.Add(roomTile);
                 }
             }
         }

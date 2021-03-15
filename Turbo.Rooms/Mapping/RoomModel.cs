@@ -160,18 +160,12 @@ namespace Turbo.Rooms.Mapping
 
         public int Id
         {
-            get
-            {
-                return _modelEntity.Id;
-            }
+            get => _modelEntity.Id;
         }
 
         public string Name
         {
-            get
-            {
-                return _modelEntity.Name;
-            }
+            get => _modelEntity.Name;
         }
     }
 }
