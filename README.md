@@ -5,12 +5,12 @@
 [![image](https://img.shields.io/badge/STATUS-UNSTABLE-red.svg?style=for-the-badge)](#)
 [![image](https://img.shields.io/discord/557240155040251905?style=for-the-badge&logo=discord&color=7289DA&label=DISCORD&logoColor=fff)](https://discord.gg/BzfFsTp)
 
-## What is Turbo?
-Turbo is a brand new Habbo Emulator by Krews written in .NET 5!
+# What is Turbo?
+Turbo is a brand new Habbo Emulator by [Krews](https://krews.org) written in .NET 5!
 
 We created Turbo because we felt other emulators were outdated. The current emulators are based on years old code and are far behind the current coding standards. We see that they are difficult to maintain and things quickly break down.
 
-Turbo focuses on the SOLID principles. This increases maintainability, flexibility and testability, which is very important.
+Turbo focuses on the [SOLID principles](https://medium.com/backticks-tildes/the-s-o-l-i-d-principles-in-pictures-b34ce2f1e898). This increases maintainability, flexibility and testability, which is very important.
 
 ## Core Features
 - Multi-revision support (we provide a default revision plugin for **PRODUCTION-201611291003-338511768**)
@@ -52,4 +52,4 @@ There is no set timeframe on when new versions will be released or when the stab
 ### Official plugins ##
 You can find official plugins (including the default revision plugin) at the following URL: 
 
-[View the respository here.](https://git.krews.org/turbo/official-plugins)
+[View the respository here.](https://git.krews.org/turbo)
