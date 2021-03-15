@@ -6,7 +6,7 @@
 [![image](https://img.shields.io/discord/557240155040251905?style=for-the-badge&logo=discord&color=7289DA&label=DISCORD&logoColor=fff)](https://discord.gg/BzfFsTp)
 
 # What is Turbo?
-Turbo is a brand new Habbo Emulator by [Krews](https://krews.org) written in .NET 5!
+Turbo is a brand new Habbo Emulator by [Krews](https://krews.org), written in .NET 5!
 
 We created Turbo because we felt other emulators were outdated. The current emulators are based on years old code and are far behind the current coding standards. We see that they are difficult to maintain and things quickly break down.
 
@@ -35,7 +35,7 @@ Turbo is released under the [GNU General Public License v3](https://www.gnu.org/
 Compiled Download: https://git.krews.org/turbo/turbo-emulator/-/releases
 
 ## Branches
-There will be 2 branches of the Arcturus Morningstar emulator:
+There will be 2 branches of the Turbo emulator:
 
 `master` - The master branch will be the stable branch. Everything here has been tested on a live hotel and contains no known problems.
 
