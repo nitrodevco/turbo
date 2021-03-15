@@ -3,7 +3,7 @@
 
 [![image](https://img.shields.io/badge/VERSION-0.0.1-success.svg?style=for-the-badge)](#)
 [![image](https://img.shields.io/badge/STATUS-UNSTABLE-red.svg?style=for-the-badge)](#)
-[![image](https://img.shields.io/discord/557240155040251905?label=Discord&style=for-the-badge)](https://discord.gg/BzfFsTp)
+[![image](https://img.shields.io/discord/557240155040251905?style=for-the-badge&logo=discord&color=7289DA&label=DISCORD&logoColor=fff)](https://discord.gg/BzfFsTp)
 
 ## What is Turbo?
 Turbo is a brand new Habbo Emulator by Krews written in .NET 5!
