@@ -5,6 +5,7 @@ using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Utils;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Turbo.Rooms.Mapping
 {
@@ -23,6 +24,8 @@ namespace Turbo.Rooms.Mapping
         private IList<IList<RoomTileState>> _tileStates;
         private IList<IList<int>> _tileHeights;
 
+        private static readonly Regex regex = new(@"\r\n|\r|\n");
+
         public bool DidGenerate { get; private set; }
 
         public RoomModel(RoomModelEntity modelEntity)
@@ -37,8 +40,7 @@ namespace Turbo.Rooms.Mapping
         public static string CleanModel(string model)
         {
             if (model == null) return null;
-
-            return model.Trim().ToLower().Replace("/\r\n|\r|\n/g", "\r");
+            return regex.Replace(model.ToLower(), "\r").Trim();
         }
 
         public void ResetModel(bool generate = true)
@@ -81,15 +83,15 @@ namespace Turbo.Rooms.Mapping
 
                 if (rowLength == 0) continue;
 
+                if (rowLength != totalX)
+                {
+                    ResetModel(false);
+
+                    return;
+                }
+
                 for (int x = 0; x < totalX; x++)
                 {
-                    if (rowLength != totalX)
-                    {
-                        ResetModel(false);
-
-                        return;
-                    }
-
                     char square = rows[y][x];
 
                     if (_tileStates.Count - 1 <  x) _tileStates.Add(new List<RoomTileState>());
