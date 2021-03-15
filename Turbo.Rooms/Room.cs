@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Database.Entities.Room;
+using Turbo.Rooms.Factories;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
 
@@ -13,9 +15,10 @@ namespace Turbo.Rooms
 
         public IRoomDetails RoomDetails { get; private set; }
 
-        public readonly RoomSecurityManager RoomSecurityManager;
-        public readonly RoomFurnitureManager RoomFurnitureManager;
-        public readonly RoomUserManager RoomUserManager;
+        public readonly IRoomSecurityManager RoomSecurityManager;
+        public readonly IRoomFurnitureManager RoomFurnitureManager;
+        public readonly IRoomUserManager RoomUserManager;
+        private readonly ILogger<IRoom> _logger;
 
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
@@ -23,15 +26,17 @@ namespace Turbo.Rooms
         public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
 
-        public Room(IRoomManager roomManager, RoomEntity roomEntity)
+        public Room(IRoomManager roomManager, ILogger<IRoom> logger, IRoomSecurityManager securityManager, 
+            IRoomFurnitureManager furnitureManager, IRoomUserManager roomUserManager, IRoomDetails roomDetails)
         {
             _roomManager = roomManager;
+            _logger = logger;
 
-            RoomDetails = new RoomDetails(roomEntity);
+            RoomDetails = roomDetails;
 
-            RoomSecurityManager = new RoomSecurityManager(this);
-            RoomFurnitureManager = new RoomFurnitureManager(this);
-            RoomUserManager = new RoomUserManager(this);
+            RoomSecurityManager = securityManager;
+            RoomFurnitureManager = furnitureManager;
+            RoomUserManager = roomUserManager;
         }
 
         public async ValueTask InitAsync()

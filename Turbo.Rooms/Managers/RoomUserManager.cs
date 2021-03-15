@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Turbo.Core;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -12,17 +11,18 @@ using Turbo.Rooms.Object;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomUserManager : IAsyncInitialisable, IAsyncDisposable
+    public class RoomUserManager : IRoomUserManager
     {
-        private readonly IRoom _room;
+        private IRoom _room;
 
         private readonly IList<IPlayer> _roomObservers;
         private readonly IDictionary<int, IRoomObject> _roomObjects;
         private int _roomObjectCounter;
 
-        public RoomUserManager(IRoom room)
+        public IRoom Room { set => _room = value; }
+
+        public RoomUserManager()
         {
-            _room = room;
 
             _roomObservers = new List<IPlayer>();
             _roomObjects = new Dictionary<int, IRoomObject>();

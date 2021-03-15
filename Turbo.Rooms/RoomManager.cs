@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
+using Turbo.Rooms.Factories;
 using Turbo.Rooms.Mapping;
 
 namespace Turbo.Rooms
@@ -18,6 +17,7 @@ namespace Turbo.Rooms
         private readonly ILogger<IRoomManager> _logger;
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomModelRepository _roomModelRepository;
+        private readonly IRoomFactory _roomFactory;
 
         private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
@@ -25,11 +25,13 @@ namespace Turbo.Rooms
         public RoomManager(
             ILogger<IRoomManager> logger,
             IRoomRepository roomRepository,
-            IRoomModelRepository roomModelRepository)
+            IRoomModelRepository roomModelRepository,
+            IRoomFactory roomFactory)
         {
             _logger = logger;
             _roomRepository = roomRepository;
             _roomModelRepository = roomModelRepository;
+            _roomFactory = roomFactory;
 
             _rooms = new ConcurrentDictionary<int, IRoom>();
             _models = new Dictionary<int, IRoomModel>();
@@ -79,7 +81,7 @@ namespace Turbo.Rooms
 
             if (roomEntity == null) return null;
 
-            room = new Room(this, roomEntity);
+            room = _roomFactory.Create(roomEntity);
 
             return await AddRoom(room);
         }
