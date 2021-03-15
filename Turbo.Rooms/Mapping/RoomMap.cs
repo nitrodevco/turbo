@@ -55,9 +55,9 @@ namespace Turbo.Rooms.Mapping
 
                     IRoomTile roomTile = new RoomTile(_room, new Point(x, y), height, state);
 
-                    if (_map[x] == null) _map[x] = new List<IRoomTile>();
-
-                    _map[x][y] = roomTile;
+                    if (_map.Count - 1 < x) _map.Add(new List<IRoomTile>());
+                    
+                    _map[x].Add(roomTile);
 
                     Tiles.Add(roomTile);
                 }

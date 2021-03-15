@@ -11,5 +11,6 @@ namespace Turbo.Core.Game.Players
 
         public int Id { get; }
         public string Name { get; }
+        public ISession Session { get; }
     }
 }
