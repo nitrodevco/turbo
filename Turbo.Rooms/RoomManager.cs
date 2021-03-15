@@ -135,9 +135,11 @@ namespace Turbo.Rooms
 
         public IRoomModel GetModel(int id)
         {
-            if (id <= 0 || !_models.ContainsKey(id)) return null;
-
-            return _models[id];
+            if(_models.TryGetValue(id, out IRoomModel model))
+            {
+                return model;
+            }
+            return null;
         }
 
         public IRoomModel GetModelByName(string name)

@@ -30,6 +30,8 @@ namespace Turbo.Rooms.Mapping
             _modelEntity = modelEntity;
 
             Model = CleanModel(modelEntity.Model);
+
+            ResetModel();
         }
 
         public static string CleanModel(string model)
@@ -39,10 +41,8 @@ namespace Turbo.Rooms.Mapping
             return model.Trim().ToLower().Replace("/\r\n|\r|\n/g", "\r");
         }
 
-        public void ResetModel(bool generate)
+        public void ResetModel(bool generate = true)
         {
-            Model = null;
-
             TotalX = 0;
             TotalY = 0;
             TotalSize = 0;
@@ -90,10 +90,13 @@ namespace Turbo.Rooms.Mapping
                         return;
                     }
 
-                    string square = rows[y].Substring(x, (x + 1)).Trim();
+                    char square = rows[y][x];
 
-                    if (_tileStates[x] == null) _tileStates[x] = new List<RoomTileState>();
-                    if (_tileHeights[x] == null) _tileHeights[x] = new List<int>();
+                    if (_tileStates.Count - 1 <  x) _tileStates.Add(new List<RoomTileState>());
+                    if (_tileHeights.Count - 1 < x) _tileHeights.Add(new List<int>());
+
+                    if (_tileStates[x].Count - 1 < y) _tileStates[x].Add(RoomTileState.Open);
+                    if (_tileHeights[x].Count - 1 < y) _tileHeights[x].Add(0);
 
                     if (square.Equals("x"))
                     {
@@ -105,7 +108,7 @@ namespace Turbo.Rooms.Mapping
                         int index = "abcdefghijklmnopqrstuvwxyz".IndexOf(square);
 
                         _tileStates[x][y] = RoomTileState.Open;
-                        _tileHeights[x][y] = ((index == -1) ? Int32.Parse(square) : (index + 10));
+                        _tileHeights[x][y] = (index == -1) ? square : (index + 10);
                     }
 
                     TotalSize++;
