@@ -1,4 +1,6 @@
 # Turbo Emulator
+![image](https://i.imgur.com/h5avArD.png)
+
 [![image](https://img.shields.io/badge/VERSION-0.0.1-success.svg?style=for-the-badge)](#)
 [![image](https://img.shields.io/badge/STATUS-UNSTABLE-red.svg?style=for-the-badge)](#)
 [![image](https://img.shields.io/discord/557240155040251905?label=Discord&style=for-the-badge)](https://discord.gg/BzfFsTp)
