@@ -29,29 +29,41 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             Statuses = new Dictionary<string, string>();
         }
 
-        public override void ProcessUpdateMessage(RoomObjectUpdateMessage updateMessage)
+        public virtual void WalkTo(IPoint location)
         {
-            base.ProcessUpdateMessage(updateMessage);
+            if (location == null) return;
 
-            if(updateMessage is RoomObjectAvatarWalkPathMessage walkPathMessage)
-            {
-                HandleRoomObjectAvatarWalkPath(walkPathMessage);
+            location = location.Clone();
 
-                return;
-            }
-        }
+            // clear roller data
 
-        private void HandleRoomObjectAvatarWalkPath(RoomObjectAvatarWalkPathMessage message)
-        {
-            if((message.Goal == null) || (message.Path == null) || (message.Path.Count == 0))
+            ProcessNextLocation();
+
+            if (RoomObject.Location.Compare(location)) return;
+
+            if(RoomObject.Room.RoomMap.GetValidTile(RoomObject, location) == null)
             {
                 StopWalking();
 
                 return;
             }
 
-            LocationGoal = message.Goal;
-            CurrentPath = message.Path;
+            IList<IPoint> path = RoomObject.Room.RoomMap.PathFinder.MakePath(RoomObject, location);
+
+            WalkPath(location, path);
+        }
+
+        private void WalkPath(IPoint goal, IList<IPoint> path)
+        {
+            if ((goal == null) || (path == null) || (path.Count == 0))
+            {
+                StopWalking();
+
+                return;
+            }
+
+            LocationGoal = goal;
+            CurrentPath = path;
             IsWalking = true;
         }
 

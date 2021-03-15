@@ -58,25 +58,24 @@ namespace Turbo.Rooms.Tasks
         {
             if (roomObject == null) return;
 
-            if (roomObject.Logic is MovingAvatarLogic avatarLogic)
+            MovingAvatarLogic avatarLogic = (MovingAvatarLogic) roomObject.Logic;
+            
+            if (!avatarLogic.IsWalking) return; // or is rolling
+
+            if (avatarLogic.CurrentPath.Count == 0)
             {
-                if (!avatarLogic.IsWalking) return; // or is rolling
+                avatarLogic.StopWalking();
 
-                if (avatarLogic.CurrentPath.Count == 0)
-                {
-                    avatarLogic.StopWalking();
-
-                    return;
-                }
-
-                avatarLogic.ProcessNextLocation();
-
-                IPoint nextLocation = avatarLogic.CurrentPath[0];
-
-                avatarLogic.CurrentPath.RemoveAt(0);
-
-                CheckStep(roomObject, roomObject.Location, nextLocation);
+                return;
             }
+
+            avatarLogic.ProcessNextLocation();
+
+            IPoint nextLocation = avatarLogic.CurrentPath[0];
+
+            avatarLogic.CurrentPath.RemoveAt(0);
+
+            CheckStep(roomObject, roomObject.Location, nextLocation);
         }
 
         private void CheckStep(IRoomObject roomObject, IPoint location, IPoint locationNext)
@@ -105,7 +104,7 @@ namespace Turbo.Rooms.Tasks
             {
                 avatarLogic.ClearPath();
 
-                // try path finding the goal again
+                avatarLogic.WalkTo(avatarLogic.LocationGoal);
 
                 ProcessRoomObject(roomObject);
 
@@ -174,7 +173,7 @@ namespace Turbo.Rooms.Tasks
             {
                 if (nextTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic)
                 {
-                    furnitureLogic.OnLeave(roomObject);
+                    furnitureLogic.BeforeStep(roomObject);
 
                     if (nextTile.HighestObject != currentTile.HighestObject) furnitureLogic.OnEnter(roomObject);
                 }

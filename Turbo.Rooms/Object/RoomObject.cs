@@ -39,6 +39,8 @@ namespace Turbo.Rooms.Object
 
             _isDisposing = true;
 
+            SetLogic(null);
+
             //if (Room != null) Room.RemoveRoomObject(Id);
         }
 
@@ -87,13 +89,6 @@ namespace Turbo.Rooms.Object
             {
                 Logic.SetRoomObject(this);
             }
-        }
-
-        public void ProcessUpdateMessage(RoomObjectUpdateMessage updateMessage)
-        {
-            if ((updateMessage == null) || (Logic == null)) return;
-
-            Logic.ProcessUpdateMessage(updateMessage);
         }
     }
 }

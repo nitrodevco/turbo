@@ -11,38 +11,21 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 {
     public class AvatarLogic : MovingAvatarLogic
     {
-        public int DanceType { get; private set; }
+        public RoomObjectAvatarDanceType DanceType { get; private set; }
+        public bool IsIdle { get; private set; }
 
-        public override void ProcessUpdateMessage(RoomObjectUpdateMessage updateMessage)
+        public override void WalkTo(IPoint location)
         {
-            base.ProcessUpdateMessage(updateMessage);
+            base.WalkTo(location);
 
-            if (updateMessage is RoomObjectAvatarDanceMessage danceMessage)
-            {
-                HandleRoomObjectAvatarDanceMessage(danceMessage);
-
-                return;
-            }
-        }
-
-        private void HandleRoomObjectAvatarDanceMessage(RoomObjectAvatarDanceMessage danceMessage)
-        {
-            if (danceMessage == null) return;
-
-
-        }
-
-        public void Dance(RoomObjectAvatarDanceType danceType)
-        {
-
+            Idle(false);
         }
 
         public override void Sit(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
-            if(flag)
+            if (flag)
             {
                 Dance(RoomObjectAvatarDanceType.NONE);
-
             }
 
             base.Sit(flag, height, rotation);
@@ -53,10 +36,35 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             if (flag)
             {
                 Dance(RoomObjectAvatarDanceType.NONE);
-
             }
 
-            base.Sit(flag, height, rotation);
+            base.Lay(flag, height, rotation);
+        }
+
+        public void Dance(RoomObjectAvatarDanceType danceType)
+        {
+            if (danceType == DanceType) return;
+
+            if (HasStatus(RoomObjectAvatarStatus.Sit, RoomObjectAvatarStatus.Lay)) return;
+
+            // check if the dance type is valid
+            // check if the dance is hc only and validate subscription status
+
+            DanceType = danceType;
+
+            // COMPOSER: ROOM USER DANCE (RoomObject.Id, DanceType)
+        }
+
+        public void Idle(bool flag)
+        {
+            // if false, start the timer
+            // else stop the timer
+
+            if (flag == IsIdle) return;
+
+            IsIdle = flag;
+
+            // COMPOSER: ROOM USER IDLE (RoomObject.Id, IsIdle)
         }
     }
 }

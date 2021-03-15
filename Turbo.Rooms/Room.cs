@@ -105,12 +105,6 @@ namespace Turbo.Rooms
             throw new System.NotImplementedException();
         }
 
-        public int Id
-        {
-            get
-            {
-                return RoomDetails.Id;
-            }
-        }
+        public int Id => RoomDetails.Id;
     }
 }

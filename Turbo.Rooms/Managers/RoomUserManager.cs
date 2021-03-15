@@ -85,7 +85,7 @@ namespace Turbo.Rooms.Managers
                 return null;
             }
 
-            if (!(roomObject.Logic is MovingAvatarLogic avatarLogic)) return null;
+            if (roomObject.Logic is not MovingAvatarLogic avatarLogic) return null;
 
             roomObject.SetLocation(location);
 
@@ -97,11 +97,11 @@ namespace Turbo.Rooms.Managers
 
             roomObject.NeedsUpdate = false;
 
+            RoomObjects.Add(roomObject.Id, roomObject);
+
             // here we are only sending this roomObject to the room
             // the session player is not watching the room yet
             // COMPOSER: SendComposer(RoomUserComposer(roomObject), RoomUserStatusComposer(roomObject))
-
-            RoomObjects.Add(roomObject.Id, roomObject);
 
             UpdateTotalUsers();
 

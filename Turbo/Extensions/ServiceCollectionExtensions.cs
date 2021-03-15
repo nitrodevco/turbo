@@ -2,6 +2,8 @@
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Packets;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
@@ -23,6 +25,8 @@ using Turbo.Packets.Revisions;
 using Turbo.Players;
 using Turbo.Plugins;
 using Turbo.Rooms;
+using Turbo.Rooms.Object;
+using Turbo.Rooms.Object.Logic;
 using Turbo.Security;
 using Turbo.Security.Authentication;
 
@@ -40,6 +44,8 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IFurnitureManager, FurnitureManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
+            services.AddSingleton<IRoomObjectLogicFactory, RoomObjectLogicFactory>();
+            services.AddSingleton<IRoomObjectFactory, RoomObjectFactory>();
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
         }
 
