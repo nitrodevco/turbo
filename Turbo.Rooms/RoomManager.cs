@@ -60,15 +60,13 @@ namespace Turbo.Rooms
 
         public IRoom GetOnlineRoom(int id)
         {
-            if (id <= 0 || !_rooms.ContainsKey(id)) return null;
+            if(_rooms.TryGetValue(id, out IRoom room))
+            {
+                room.CancelDispose();
+                return room;
+            }
 
-            IRoom room = _rooms[id];
-
-            if (room == null) return null;
-
-            room.CancelDispose();
-
-            return room;
+            return null;
         }
 
         public async Task<IRoom> GetOfflineRoom(int id)

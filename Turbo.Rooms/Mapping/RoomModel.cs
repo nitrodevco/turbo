@@ -24,7 +24,7 @@ namespace Turbo.Rooms.Mapping
         private IList<IList<RoomTileState>> _tileStates;
         private IList<IList<int>> _tileHeights;
 
-        private static readonly Regex regex = new(@"\r\n|\r|\n");
+        private static readonly Regex _regex = new(@"\r\n|\r|\n");
 
         public bool DidGenerate { get; private set; }
 
@@ -40,7 +40,7 @@ namespace Turbo.Rooms.Mapping
         public static string CleanModel(string model)
         {
             if (model == null) return null;
-            return regex.Replace(model.ToLower(), "\r").Trim();
+            return _regex.Replace(model.ToLower(), "\r").Trim();
         }
 
         public void ResetModel(bool generate = true)
