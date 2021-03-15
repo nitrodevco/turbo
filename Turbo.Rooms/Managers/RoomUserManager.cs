@@ -128,9 +128,9 @@ namespace Turbo.Rooms.Managers
         {
             if (composer == null) return;
 
-            foreach(IPlayer sessionPlayer in _roomObservers)
+            foreach(IPlayer player in _roomObservers)
             {
-                // send packet
+                player.Session.Send(composer);
             }
         }
     }
