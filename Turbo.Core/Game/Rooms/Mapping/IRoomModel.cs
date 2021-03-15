@@ -10,7 +10,6 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public int TotalSize { get; }
 
         public IPoint DoorLocation { get; }
-        public IPoint DoorDirection { get; }
 
         public bool DidGenerate { get; }
 
