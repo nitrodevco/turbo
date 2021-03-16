@@ -199,24 +199,14 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public void AddStatus(string type, string value)
         {
-            if((type == null) || (type.Length == 0)) return;
+            if(string.IsNullOrWhiteSpace(type)) return;
 
             Statuses.Add(type, value);
 
             RoomObject.NeedsUpdate = true;
         }
 
-        public bool HasStatus(params string[] types)
-        {
-            if ((types == null) || (types.Length == 0)) return false;
-
-            foreach (string type in types)
-            {
-                if (Statuses.ContainsKey(type)) return true;
-            }
-
-            return false;
-        }
+        public bool HasStatus(params string[] types) => types == null || types.Length == 0 ? false : types.Any(x => Statuses.ContainsKey(x));
 
         public void RemoveStatus(params string[] types)
         {
