@@ -1,6 +1,6 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Handshake
+namespace Turbo.Packets.Outgoing.Room.Furniture
 {
     public record GuildFurniContextMenuInfoMessage : IComposer
     {
@@ -9,6 +9,6 @@ namespace Turbo.Packets.Outgoing.Handshake
         public string GuildName { get; init; }
         public int RoomId { get; init; }
         public bool IsMember { get; init; }
-        public bool hasForum { get; init; }
+        public bool HasForum { get; init; }
     }
 }

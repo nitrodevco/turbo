@@ -1,6 +1,6 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Handshake
+namespace Turbo.Packets.Outgoing.Room.Bots
 {
     public record BotCommandConfigurationMessage : IComposer
     {
