@@ -49,5 +49,21 @@ namespace Turbo.Database.Tests.Repositories.Player
             _turboContextMock.Verify(x => x.Players.FindAsync(playerId), Times.Once);
             Assert.Equal(player, result);
         }
+
+        [Fact]
+        private async void Find_WhenPlayerDoesntExist_ReturnsNull()
+        {
+            // Arrange
+            var playerId = _fixture.Create<int>();
+
+            _dbSetMock.Setup(x => x.FindAsync(It.IsAny<int>())).Returns(null);
+
+            // Act
+            var result = await _sut.FindAsync(playerId);
+
+            // Assert
+            _turboContextMock.Verify(x => x.Players.FindAsync(playerId), Times.Once);
+            Assert.Null(result);
+        }
     }
 }
