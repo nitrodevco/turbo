@@ -9,16 +9,19 @@ namespace Turbo.Database.Entities.Players
     [Table("players")]
     public class PlayerEntity : Entity
     {
+        [Required]
         [Column("name")]
         public string Name { get; set; }
 
         [Column("motto")]
         public string Motto { get; set; }
 
-        [Column("figure"), Required]
+        [Required]
+        [Column("figure")]
         public string Figure { get; set; }
 
-        [Column("gender"), Required]
+        [Required]
+        [Column("gender")]
         public string Gender { get; set; }
 
         public List<SecurityTicketEntity> SecurityTickets { get; set; }

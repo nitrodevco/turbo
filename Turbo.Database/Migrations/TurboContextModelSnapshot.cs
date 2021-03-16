@@ -69,14 +69,17 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("extra_data");
 
                     b.Property<string>("Logic")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("logic");
 
                     b.Property<string>("ProductName")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("product_name");
 
                     b.Property<string>("PublicName")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("public_name");
 
@@ -89,6 +92,7 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("total_states");
 
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("type");
 
@@ -151,10 +155,12 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("date_updated");
 
                     b.Property<string>("Figure")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("figure");
 
                     b.Property<string>("Gender")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("gender");
 
@@ -163,6 +169,7 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("motto");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("name");
 

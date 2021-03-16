@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
 
 namespace Turbo.Database.Migrations
 {
-    public partial class test : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,10 +15,11 @@ namespace Turbo.Database.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     sprite_id = table.Column<int>(type: "int", nullable: false),
-                    public_name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    product_name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    type = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    logic = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    public_name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
+                    product_name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
+                    type = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
+                    logic = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
+                    total_states = table.Column<int>(type: "int", nullable: false),
                     x = table.Column<int>(type: "int", nullable: false),
                     y = table.Column<int>(type: "int", nullable: false),
                     z = table.Column<double>(type: "double", nullable: false),
@@ -30,7 +31,7 @@ namespace Turbo.Database.Migrations
                     can_trade = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     can_group = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     can_sell = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    extra_data = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    extra_data = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -45,8 +46,10 @@ namespace Turbo.Database.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
                     motto = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    figure = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
+                    gender = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -61,13 +64,13 @@ namespace Turbo.Database.Migrations
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    DoorX = table.Column<int>(type: "int", nullable: false),
-                    DoorY = table.Column<int>(type: "int", nullable: false),
-                    DoorDirection = table.Column<int>(type: "int", nullable: false),
-                    Model = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
-                    Enabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Custom = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    door_x = table.Column<int>(type: "int", nullable: false),
+                    door_y = table.Column<int>(type: "int", nullable: false),
+                    door_direction = table.Column<int>(type: "int", nullable: false),
+                    model = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    enabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    custom = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -128,6 +131,7 @@ namespace Turbo.Database.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    AllowWalkThrough = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     model_id = table.Column<int>(type: "int", nullable: false),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
