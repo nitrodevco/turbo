@@ -1,27 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
+using Turbo.Core.Game.Rooms.Cycles;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
 
-namespace Turbo.Rooms.Tasks
+namespace Turbo.Rooms.Cycles
 {
-    public class RoomUserStatusTask
+    public class RoomUserStatusCycle : IRoomCycle
     {
         private static readonly int MAX_WALKING_HEIGHT = 2;
         private static readonly bool ALLOW_DIAGONALS = true;
 
         private readonly IRoom _room;
 
-        public RoomUserStatusTask(IRoom room)
+        public RoomUserStatusCycle(IRoom room)
         {
             _room = room;
+        }
+
+        public void Dispose()
+        {
+
         }
 
         public void Run()
@@ -36,7 +43,7 @@ namespace Turbo.Rooms.Tasks
 
             if (roomObjects.Count == 0) return;
 
-            foreach(IRoomObject roomObject in roomObjects.Values)
+            foreach (IRoomObject roomObject in roomObjects.Values)
             {
                 if (!(roomObject.Logic is MovingAvatarLogic)) continue;
 

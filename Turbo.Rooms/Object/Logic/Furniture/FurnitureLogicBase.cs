@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
@@ -11,97 +12,76 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 {
     public class FurnitureLogicBase : RoomObjectLogicBase, IFurnitureLogic
     {
-        public void OnEnter(IRoomObject roomObject)
+        public IFurnitureDefinition FurnitureDefinition { get; private set; }
+
+        public void Setup(IFurnitureDefinition furnitureDefinition)
+        {
+            if (furnitureDefinition == null) return;
+
+            FurnitureDefinition = furnitureDefinition;
+        }
+
+        public virtual void OnEnter(IRoomObject roomObject)
         {
             return;
         }
 
-        public void OnLeave(IRoomObject roomObject)
+        public virtual void OnLeave(IRoomObject roomObject)
         {
             return;
         }
 
-        public void BeforeStep(IRoomObject roomObject)
+        public virtual void BeforeStep(IRoomObject roomObject)
         {
             return;
         }
 
-        public void OnStep(IRoomObject roomObject)
+        public virtual void OnStep(IRoomObject roomObject)
         {
             return;
         }
 
-        public void OnStop(IRoomObject roomObject)
+        public virtual void OnStop(IRoomObject roomObject)
         {
             return;
         }
 
-        public void OnInteract(IRoomObject roomObject)
+        public virtual void OnInteract(IRoomObject roomObject)
         {
             return;
         }
 
-        public void OnPlace(IRoomManipulator roomManipulator)
+        public virtual void OnPlace(IRoomManipulator roomManipulator)
         {
             return;
         }
 
-        public void OnMove(IRoomManipulator roomManipulator)
+        public virtual void OnMove(IRoomManipulator roomManipulator)
         {
             return;
         }
 
-        public void OnPickup(IRoomManipulator roomManipulator)
+        public virtual void OnPickup(IRoomManipulator roomManipulator)
         {
             return;
         }
 
-        public bool CanStack()
-        {
-            return false;
-        }
+        public virtual bool CanStack() => FurnitureDefinition.CanStack;
 
-        public bool CanWalk()
-        {
-            return false;
-        }
+        public virtual bool CanWalk() => FurnitureDefinition.CanWalk;
 
-        public bool CanSit()
-        {
-            return false;
-        }
+        public virtual bool CanSit() => FurnitureDefinition.CanSit;
 
-        public bool CanLay()
-        {
-            return false;
-        }
+        public virtual bool CanLay() => FurnitureDefinition.CanLay;
 
-        public bool CanRoll()
-        {
-            return false;
-        }
+        public virtual bool CanRoll() => true;
 
-        public bool CanToggle()
-        {
-            return false;
-        }
+        public virtual bool CanToggle() => true;
 
-        public bool IsOpen()
-        {
-            return false;
-        }
+        public virtual bool IsOpen() => CanWalk() || CanSit() || CanLay();
 
-        public double StackHeight()
-        {
-            return 0;
-        }
+        public virtual double StackHeight() => FurnitureDefinition.Z;
 
-        public double Height
-        {
-            get
-            {
-                return RoomObject.Location.Z + StackHeight();
-            }
-        }
+        public double Height => RoomObject.Location.Z + StackHeight();
     }
 }

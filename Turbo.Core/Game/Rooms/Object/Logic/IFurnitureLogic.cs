@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Furniture.Definition;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
 {
     public interface IFurnitureLogic
     {
+        public void Setup(IFurnitureDefinition furnitureDefinition);
+
         public void OnEnter(IRoomObject roomObject);
         public void OnLeave(IRoomObject roomObject);
         public void BeforeStep(IRoomObject roomObject);

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
 using Turbo.Rooms.Mapping;
@@ -25,7 +26,8 @@ namespace Turbo.Rooms
         public RoomManager(
             ILogger<IRoomManager> logger,
             IRoomRepository roomRepository,
-            IRoomModelRepository roomModelRepository)
+            IRoomModelRepository roomModelRepository,
+            IRoomObjectFactory roomObjectFactory)
         {
             _logger = logger;
             _roomRepository = roomRepository;

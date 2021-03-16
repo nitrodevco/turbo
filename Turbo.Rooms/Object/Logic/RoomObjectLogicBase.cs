@@ -18,9 +18,19 @@ namespace Turbo.Rooms.Object.Logic
 
         }
 
-        public void Dispose()
+        public virtual void Dispose()
+        {
+            CleanUp();
+        }
+
+        protected virtual void CleanUp()
         {
 
+        }
+
+        protected virtual bool OnReady()
+        {
+            return true;
         }
 
         public bool SetRoomObject(IRoomObject roomObject)

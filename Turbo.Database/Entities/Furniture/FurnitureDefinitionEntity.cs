@@ -21,6 +21,9 @@ namespace Turbo.Database.Entities.Furniture
         [Column("logic")]
         public string Logic { get; set; }
 
+        [Column("total_states")]
+        public int TotalStates { get; set; }
+
         [Column("x")]
         public int X { get; set; }
 
@@ -55,7 +58,7 @@ namespace Turbo.Database.Entities.Furniture
         public bool CanSell { get; set; }
 
         [Column("extra_data")]
-        public bool ExtraData { get; set; }
+        public string ExtraData { get; set; }
 
         public List<FurnitureEntity> Furnitures { get; set; }
     }

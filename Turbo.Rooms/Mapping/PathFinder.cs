@@ -63,8 +63,10 @@ namespace Turbo.Rooms.Mapping
             int cost;
             int difference;
 
-            currentNode = new PathFinderNode(roomObject.Location);
-            currentNode.Cost = 0;
+            currentNode = new PathFinderNode(roomObject.Location)
+            {
+                Cost = 0
+            };
 
             if (nodeMap.ElementAtOrDefault(currentNode.Location.X) == null) nodeMap[currentNode.Location.X] = new List<IPathFinderNode>();
 

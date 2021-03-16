@@ -16,6 +16,7 @@ namespace Turbo.Rooms
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
 
+        public IRoomCycleManager RoomTaskManager { get; private set; }
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
@@ -29,6 +30,7 @@ namespace Turbo.Rooms
 
             RoomDetails = new RoomDetails(roomEntity);
 
+            RoomTaskManager = new RoomCycleManager(this);
             RoomSecurityManager = new RoomSecurityManager(this);
             RoomFurnitureManager = new RoomFurnitureManager(this);
             RoomUserManager = new RoomUserManager(this);
@@ -56,6 +58,7 @@ namespace Turbo.Rooms
                 await _roomManager.RemoveRoom(Id);
             }
 
+            if (RoomTaskManager != null) RoomTaskManager.Dispose();
             if (RoomUserManager != null) await RoomUserManager.DisposeAsync();
             if (RoomFurnitureManager != null) await RoomFurnitureManager.DisposeAsync();
             if (RoomSecurityManager != null) await RoomSecurityManager.DisposeAsync();
@@ -102,7 +105,9 @@ namespace Turbo.Rooms
 
         public Task Cycle()
         {
-            throw new System.NotImplementedException();
+            RoomTaskManager.RunCycles();
+
+            return null;
         }
 
         public int Id => RoomDetails.Id;
