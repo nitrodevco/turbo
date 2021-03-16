@@ -60,6 +60,9 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<INetworkEventLoopGroup, NetworkEventLoopGroup>();
             services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
             services.AddSingleton<ISessionFactory, SessionFactory>();
+
+            // Packet Handlers
+            services.AddTransient<IRoomMessageHandler, RoomMessageHandler>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
