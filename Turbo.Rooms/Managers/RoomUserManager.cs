@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Turbo.Core;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic.Avatar;
@@ -18,7 +17,7 @@ namespace Turbo.Rooms.Managers
     {
         private readonly IRoom _room;
 
-        private readonly IList<IPlayer> _roomObservers;
+        private readonly IList<ISession> _roomObservers;
         private int _roomObjectCounter;
 
         public IDictionary<int, IRoomObject> RoomObjects { get; private set; }
@@ -27,7 +26,7 @@ namespace Turbo.Rooms.Managers
         {
             _room = room;
 
-            _roomObservers = new List<IPlayer>();
+            _roomObservers = new List<ISession>();
             _roomObjectCounter = -1;
 
             RoomObjects = new Dictionary<int, IRoomObject>();
@@ -140,9 +139,9 @@ namespace Turbo.Rooms.Managers
             foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
         }
 
-        public void EnterRoom()
+        public void EnterRoom(IPlayer player, IPoint location)
         {
-
+            //
         }
 
         private void UpdateTotalUsers()
@@ -152,11 +151,9 @@ namespace Turbo.Rooms.Managers
 
         public void SendComposer(IComposer composer)
         {
-            if (composer == null) return;
-
-            foreach(IPlayer sessionPlayer in _roomObservers)
+            foreach(ISession session in _roomObservers)
             {
-                // send packet
+                session.Send(composer);
             }
         }
     }

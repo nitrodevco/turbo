@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Cycles;
 using Turbo.Core.Game.Rooms.Managers;
@@ -14,28 +15,23 @@ namespace Turbo.Rooms.Managers
     {
         private readonly IRoom _room;
 
-        public IList<IRoomCycle> _tasks;
+        public IList<ICyclable> _cycles;
 
         public RoomCycleManager(IRoom room)
         {
             _room = room;
 
-            _tasks.Add(new RoomUserStatusCycle(_room));
+            _cycles.Add(new RoomUserStatusCycle(_room));
         }
 
-        public void RunCycles()
+        public async Task RunCycles()
         {
-            foreach (IRoomCycle roomTask in _tasks) roomTask.Run();
+            foreach (ICyclable cycle in _cycles) await cycle.Cycle();
         }
 
-        public void Dispose()
+        public async ValueTask DisposeAsync()
         {
-            foreach(IRoomCycle roomTask in _tasks)
-            {
-                roomTask.Dispose();
-            }
-
-            _tasks.Clear();
+            _cycles.Clear();
         }
     }
 }

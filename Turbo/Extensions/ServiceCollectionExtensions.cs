@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
@@ -13,6 +14,7 @@ using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
 using Turbo.Database.Repositories.Security;
 using Turbo.Furniture;
+using Turbo.Navigator;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
 using Turbo.Networking.EventLoop;
@@ -41,6 +43,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRevisionManager, RevisionManager>();
             services.AddSingleton<ISessionManager, SessionManager>();
             services.AddSingleton<ISecurityManager, SecurityManager>();
+            services.AddSingleton<INavigatorManager, NavigatorManager>();
             services.AddSingleton<IFurnitureManager, FurnitureManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
@@ -62,6 +65,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<ISessionFactory, SessionFactory>();
 
             // Packet Handlers
+            services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();
             services.AddTransient<IRoomMessageHandler, RoomMessageHandler>();
         }
 

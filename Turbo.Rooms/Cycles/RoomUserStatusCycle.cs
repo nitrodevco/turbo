@@ -11,10 +11,11 @@ using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
+using Turbo.Core.Game;
 
 namespace Turbo.Rooms.Cycles
 {
-    public class RoomUserStatusCycle : IRoomCycle
+    public class RoomUserStatusCycle : ICyclable
     {
         private static readonly int MAX_WALKING_HEIGHT = 2;
         private static readonly bool ALLOW_DIAGONALS = true;
@@ -26,12 +27,7 @@ namespace Turbo.Rooms.Cycles
             _room = room;
         }
 
-        public void Dispose()
-        {
-
-        }
-
-        public void Run()
+        public async Task Cycle()
         {
             IRoomUserManager roomUserManager = _room.RoomUserManager;
 

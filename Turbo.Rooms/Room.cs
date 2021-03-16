@@ -16,7 +16,7 @@ namespace Turbo.Rooms
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
 
-        public IRoomCycleManager RoomTaskManager { get; private set; }
+        public IRoomCycleManager RoomCycleManager { get; private set; }
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
@@ -30,7 +30,7 @@ namespace Turbo.Rooms
 
             RoomDetails = new RoomDetails(roomEntity);
 
-            RoomTaskManager = new RoomCycleManager(this);
+            RoomCycleManager = new RoomCycleManager(this);
             RoomSecurityManager = new RoomSecurityManager(this);
             RoomFurnitureManager = new RoomFurnitureManager(this);
             RoomUserManager = new RoomUserManager(this);
@@ -58,7 +58,7 @@ namespace Turbo.Rooms
                 await _roomManager.RemoveRoom(Id);
             }
 
-            if (RoomTaskManager != null) RoomTaskManager.Dispose();
+            if (RoomCycleManager != null) await RoomCycleManager.DisposeAsync();
             if (RoomUserManager != null) await RoomUserManager.DisposeAsync();
             if (RoomFurnitureManager != null) await RoomFurnitureManager.DisposeAsync();
             if (RoomSecurityManager != null) await RoomSecurityManager.DisposeAsync();
@@ -82,7 +82,7 @@ namespace Turbo.Rooms
             // if dispose already scheduled, cancel it
         }
 
-        private async ValueTask LoadMapping()
+        private async Task LoadMapping()
         {
             if (RoomMap != null)
             {
@@ -103,11 +103,9 @@ namespace Turbo.Rooms
             RoomMap.GenerateMap();
         }
 
-        public Task Cycle()
+        public async Task Cycle()
         {
-            RoomTaskManager.RunCycles();
-
-            return null;
+            await RoomCycleManager.RunCycles();
         }
 
         public int Id => RoomDetails.Id;
