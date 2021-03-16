@@ -25,7 +25,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             if (flag)
             {
-                Dance(RoomObjectAvatarDanceType.NONE);
+                Dance(RoomObjectAvatarDanceType.None);
             }
 
             base.Sit(flag, height, rotation);
@@ -35,7 +35,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             if (flag)
             {
-                Dance(RoomObjectAvatarDanceType.NONE);
+                Dance(RoomObjectAvatarDanceType.None);
             }
 
             base.Lay(flag, height, rotation);
