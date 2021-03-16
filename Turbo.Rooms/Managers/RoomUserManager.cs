@@ -139,9 +139,9 @@ namespace Turbo.Rooms.Managers
             foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
         }
 
-        public void EnterRoom(IPlayer player, IPoint location)
+        public void EnterRoom(IPlayer player, IPoint location = null)
         {
-            //
+            
         }
 
         private void UpdateTotalUsers()

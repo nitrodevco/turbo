@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object;
 using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
@@ -103,6 +104,11 @@ namespace Turbo.Rooms
             RoomMap = new RoomMap(this);
 
             RoomMap.GenerateMap();
+        }
+
+        public void EnterRoom(IRoomObjectHolder objectHolder)
+        {
+            if (objectHolder == null) return;
         }
 
         public async Task Cycle()

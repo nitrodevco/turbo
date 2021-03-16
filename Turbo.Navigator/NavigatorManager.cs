@@ -96,5 +96,34 @@ namespace Turbo.Navigator
             // send room enter
             // send room model name
         }
+
+        public async Task ContinueEnteringRoom(IPlayer player)
+        {
+            if (player == null) return;
+
+            int roomId = GetPendingRoomId(player.Id);
+
+            if(roomId == -1)
+            {
+                //room enter error composer
+
+                return;
+            }
+
+            IRoom room = await _roomManager.GetRoom(roomId);
+
+            if (room != null) await room.InitAsync();
+
+            if (room == null)
+            {
+                ClearPendingRoomId(player.Id);
+
+                // enter error, no entry
+
+                return;
+            }
+
+
+        }
     }
 }

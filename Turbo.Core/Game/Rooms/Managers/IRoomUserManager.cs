@@ -1,5 +1,7 @@
 ﻿using System;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Core.Game.Rooms.Managers
 {
@@ -7,5 +9,6 @@ namespace Turbo.Core.Game.Rooms.Managers
     {
         public IRoomObject GetRoomObjectByUserId(int userId);
         public IRoomObject GetRoomObjectByUsername(string username);
+        public void EnterRoom(IPlayer player, IPoint location = null);
     }
 }
