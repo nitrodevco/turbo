@@ -25,12 +25,11 @@ namespace Turbo.Navigator
             _messageHub = messageHub;
 
             _messageHub.Subscribe<GetGuestRoomMessage>(this, OnGetGuestRoomMessage);
-
-            Trace.WriteLine("registered");
         }
 
         private void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
         {
+            Trace.WriteLine(message.RoomId);
             if (session.Player == null) return;
 
             Trace.WriteLine(message.RoomId);
