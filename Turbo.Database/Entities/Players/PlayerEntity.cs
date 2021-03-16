@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Database.Entities.Security;
 
@@ -13,10 +15,10 @@ namespace Turbo.Database.Entities.Players
         [Column("motto")]
         public string Motto { get; set; }
 
-        [Column("figure")]
+        [Column("figure"), Required]
         public string Figure { get; set; }
 
-        [Column("gender")]
+        [Column("gender"), Required]
         public string Gender { get; set; }
 
         public List<SecurityTicketEntity> SecurityTickets { get; set; }
