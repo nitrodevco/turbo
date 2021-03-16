@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Networking;
 using Turbo.Networking.EventLoop;
@@ -24,20 +25,11 @@ namespace Turbo.Networking
             Servers.Add(restServer);
         }
 
-        public async Task StartServersAsync()
-        {
-            foreach (IServer server in Servers)
-            {
-                await server.StartAsync();
-            }
-        }
+        public async Task StartServersAsync() => await Task.WhenAll(Servers.Select(x => x.StartAsync()));
 
         public async Task ShutdownServersAsync()
         {
-            foreach (IServer server in Servers)
-            {
-                await server.ShutdownAsync();
-            }
+            await Task.WhenAll(Servers.Select(x => x.ShutdownAsync()));
             await EventLoopGroup.Group.ShutdownGracefullyAsync();
         }
     }

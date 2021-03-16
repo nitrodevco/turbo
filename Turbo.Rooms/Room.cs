@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -20,14 +21,15 @@ namespace Turbo.Rooms
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
+        private readonly ILogger<IRoom> _logger;
 
         public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
 
-        public Room(IRoomManager roomManager, RoomEntity roomEntity)
+        public Room(IRoomManager roomManager, ILogger<IRoom> logger, RoomEntity roomEntity)
         {
             _roomManager = roomManager;
-
+            _logger = logger;
             RoomDetails = new RoomDetails(roomEntity);
 
             RoomCycleManager = new RoomCycleManager(this);

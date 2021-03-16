@@ -25,6 +25,8 @@ namespace Turbo.Rooms.Mapping
         private IList<IList<RoomTileState>> _tileStates;
         private IList<IList<int>> _tileHeights;
 
+        private static readonly Regex _regex = new(@"\r\n|\r|\n");
+
         public bool DidGenerate { get; private set; }
 
         public RoomModel(RoomModelEntity modelEntity)

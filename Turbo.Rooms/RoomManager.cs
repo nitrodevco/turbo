@@ -1,9 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
@@ -11,6 +9,7 @@ using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
+using Turbo.Rooms.Factories;
 using Turbo.Rooms.Mapping;
 
 namespace Turbo.Rooms
@@ -21,6 +20,8 @@ namespace Turbo.Rooms
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomModelRepository _roomModelRepository;
         private readonly IRoomMessageHandler _roomMessageHandler;
+        private readonly IRoomFactory _roomFactory;
+        private readonly IRoomObjectFactory _roomObjectFactory;
 
         private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
@@ -30,12 +31,15 @@ namespace Turbo.Rooms
             IRoomRepository roomRepository,
             IRoomModelRepository roomModelRepository,
             IRoomObjectFactory roomObjectFactory,
-            IRoomMessageHandler roomMessageHandler)
+            IRoomMessageHandler roomMessageHandler,
+            IRoomFactory roomFactory)
         {
             _logger = logger;
             _roomRepository = roomRepository;
             _roomModelRepository = roomModelRepository;
             _roomMessageHandler = roomMessageHandler;
+            _roomFactory = roomFactory;
+            _roomObjectFactory = roomObjectFactory;
 
             _rooms = new ConcurrentDictionary<int, IRoom>();
             _models = new Dictionary<int, IRoomModel>();
@@ -66,15 +70,13 @@ namespace Turbo.Rooms
 
         public IRoom GetOnlineRoom(int id)
         {
-            if (id <= 0 || !_rooms.ContainsKey(id)) return null;
+            if(_rooms.TryGetValue(id, out IRoom room))
+            {
+                room.CancelDispose();
+                return room;
+            }
 
-            IRoom room = _rooms[id];
-
-            if (room == null) return null;
-
-            room.CancelDispose();
-
-            return room;
+            return null;
         }
 
         public async Task<IRoom> GetOfflineRoom(int id)
@@ -87,7 +89,7 @@ namespace Turbo.Rooms
 
             if (roomEntity == null) return null;
 
-            room = new Room(this, roomEntity);
+            room = _roomFactory.Create(roomEntity);
 
             return await AddRoom(room);
         }

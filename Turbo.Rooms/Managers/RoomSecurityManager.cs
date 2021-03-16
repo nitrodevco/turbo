@@ -8,7 +8,7 @@ namespace Turbo.Rooms.Managers
 {
     public class RoomSecurityManager : IRoomSecurityManager
     {
-        private readonly IRoom _room;
+        private IRoom _room;
 
         public RoomSecurityManager(IRoom room)
         {

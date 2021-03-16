@@ -8,7 +8,7 @@ namespace Turbo.Rooms.Managers
 {
     public class RoomFurnitureManager : IRoomFurnitureManager
     {
-        private readonly IRoom _room;
+        private IRoom _room;
 
         public RoomFurnitureManager(IRoom room)
         {

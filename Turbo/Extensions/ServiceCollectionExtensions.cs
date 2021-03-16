@@ -27,6 +27,7 @@ using Turbo.Packets.Revisions;
 using Turbo.Players;
 using Turbo.Plugins;
 using Turbo.Rooms;
+using Turbo.Rooms.Factories;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic;
 using Turbo.Security;
@@ -50,6 +51,9 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomObjectLogicFactory, RoomObjectLogicFactory>();
             services.AddSingleton<IRoomObjectFactory, RoomObjectFactory>();
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
+
+            services.AddSingleton<IRoomFactory, RoomFactory>();
+            services.AddSingleton<IRoomDetailsFactory, RoomDetailsFactory>();
         }
 
         public static void AddNetworking(this IServiceCollection services)

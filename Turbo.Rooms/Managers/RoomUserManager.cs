@@ -15,7 +15,7 @@ namespace Turbo.Rooms.Managers
 {
     public class RoomUserManager : IRoomUserManager
     {
-        private readonly IRoom _room;
+        private IRoom _room;
 
         private readonly IList<ISession> _roomObservers;
         private int _roomObjectCounter;
@@ -24,10 +24,10 @@ namespace Turbo.Rooms.Managers
 
         public RoomUserManager(IRoom room)
         {
-            _room = room;
 
             _roomObservers = new List<ISession>();
             _roomObjectCounter = -1;
+            _room = room;
 
             RoomObjects = new Dictionary<int, IRoomObject>();
         }
