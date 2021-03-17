@@ -2,11 +2,12 @@ image: mcr.microsoft.com/dotnet/sdk:5.0
 
 stages:
   - test
-  
+
 Test Turbo:
     stage: test
     script:
         - dotnet tool install --global dotnet-sonarscanner
+        - export PATH="$PATH:/root/.dotnet/tools"
         - dotnet sonarscanner begin /d:sonar.host.url=$SONAR_HOST /d:sonar.login=$SONAR_LOGIN_KEY /k:”Turbo”
         - dotnet test
         - dotnet sonarscanner end /d:sonar.host.url=$SONAR_HOST /d:sonar.login=$SONAR_LOGIN_KEY
