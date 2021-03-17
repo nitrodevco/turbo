@@ -1,10 +1,16 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets.Messages;
 using Turbo.Database.Entities.Room;
+using Turbo.Packets.Outgoing.Navigator;
+using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
 
@@ -13,30 +19,39 @@ namespace Turbo.Rooms
     public class Room : IRoom
     {
         public IRoomManager RoomManager { get; private set; }
+        public ILogger<IRoom> Logger { get; private set; }
+        private readonly IRoomObjectFactory _roomObjectFactory;
 
         public IRoomDetails RoomDetails { get; private set; }
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
-
         public IRoomCycleManager RoomCycleManager { get; private set; }
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
-        private readonly ILogger<IRoom> _logger;
+
+        private readonly IList<ISession> _roomObservers;
 
         public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
 
-        public Room(IRoomManager roomManager, ILogger<IRoom> logger, RoomEntity roomEntity)
+        public Room(
+            IRoomManager roomManager,
+            IRoomObjectFactory roomObjectFactory,
+            ILogger<IRoom> logger,
+            RoomEntity roomEntity)
         {
             RoomManager = roomManager;
-            _logger = logger;
-            RoomDetails = new RoomDetails(roomEntity);
+            Logger = logger;
+            _roomObjectFactory = roomObjectFactory;
 
+            RoomDetails = new RoomDetails(roomEntity);
             RoomCycleManager = new RoomCycleManager(this);
             RoomSecurityManager = new RoomSecurityManager(this);
             RoomFurnitureManager = new RoomFurnitureManager(this);
             RoomUserManager = new RoomUserManager(this);
+
+            _roomObservers = new List<ISession>();
         }
 
         public async ValueTask InitAsync()
@@ -106,14 +121,70 @@ namespace Turbo.Rooms
             RoomMap.GenerateMap();
         }
 
-        public void EnterRoom(IRoomObjectHolder objectHolder)
+        public void EnterRoom(IPlayer player)
         {
-            if (objectHolder == null) return;
+            if (player == null) return;
+
+            player.Session.SendQueue(new HeightMapMessage
+            {
+                RoomModel = RoomModel,
+                RoomMap = RoomMap
+            });
+
+            player.Session.SendQueue(new FloorHeightMapMessage
+            {
+                IsZoomedIn = true,
+                WallHeight = 1,
+                RoomModel = RoomModel
+            });
+
+            //player.Session.SendQueue(new RoomVisualizationSettingsMessage
+            //{
+            //    WallsHidden = false,
+            //    FloorThickness = 1,
+            //    WallThickness = 1
+            //});
+
+            // send the paint
+
+            // would be nice to send this from the navigator so we aren't duplicating code
+            player.Session.SendQueue(new GetGuestRoomResultMessage
+            {
+                EnterRoom = false,
+                Room = this,
+                IsRoomForward = false,
+                IsStaffPick = false,
+                IsGroupMember = false,
+                AllInRoomMuted = false,
+                CanMute = false
+            });
+
+            player.Session.Flush();
+
+            RoomUserManager.EnterRoom(_roomObjectFactory, player);
+
+            // send furniture
+            // refresh rights
+            // apply muted from security
+
+            player.Session.Flush();
+
+            _roomObservers.Add(player.Session);
+
+            // process wired triggers for entering room
         }
 
         public async Task Cycle()
         {
             await RoomCycleManager.RunCycles();
+        }
+
+        public void SendComposer(IComposer composer)
+        {
+            foreach (ISession session in _roomObservers)
+            {
+                session.Send(composer);
+            }
         }
 
         public int Id => RoomDetails.Id;

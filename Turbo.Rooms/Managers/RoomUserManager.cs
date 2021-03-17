@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
-using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
-using Turbo.Packets.Outgoing.Room.Session;
-using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Managers
@@ -20,19 +20,17 @@ namespace Turbo.Rooms.Managers
     {
         private IRoom _room;
 
-        private readonly IList<ISession> _roomObservers;
-        private int _roomObjectCounter;
-
         public IDictionary<int, IRoomObject> RoomObjects { get; private set; }
+
+        private int _roomObjectCounter;
 
         public RoomUserManager(IRoom room)
         {
-
-            _roomObservers = new List<ISession>();
-            _roomObjectCounter = -1;
             _room = room;
 
             RoomObjects = new Dictionary<int, IRoomObject>();
+
+            _roomObjectCounter = -1;
         }
 
         public async ValueTask InitAsync()
@@ -100,12 +98,12 @@ namespace Turbo.Rooms.Managers
 
             SendComposer(new UsersMessage
             {
-
+                RoomObjects = new List<IRoomObject> { roomObject }
             });
 
             SendComposer(new UserUpdateMessage
             {
-
+                RoomObjects = new List<IRoomObject> { roomObject }
             });
 
             UpdateTotalUsers();
@@ -157,53 +155,36 @@ namespace Turbo.Rooms.Managers
         {
             if ((objectFactory == null) || (player == null)) return;
 
-            // set the pending room id
-
             IRoomObject roomObject = CreateRoomObjectAndAssign(objectFactory, player, location);
 
-            if(roomObject == null)
-            {
-                player.Session.Send(new CantConnectMessage
-                {
-                    Reason = CantConnectReason.Closed
-                });
+            IList<IRoomObject> roomObjects = new List<IRoomObject>();
+            IList<IComposer> composers = new List<IComposer>();
 
-                return;
+            foreach (IRoomObject existingObject in RoomObjects.Values)
+            {
+                roomObjects.Add(existingObject);
+
+                if(existingObject.Logic is AvatarLogic avatarLogic)
+                {
+                    RoomObjectAvatarDanceType danceType = avatarLogic.DanceType;
+                    bool isIdle = avatarLogic.IsIdle;
+
+                    // if(danceType > RoomObjectAvatarDanceType.None)
+                    // if(idIdle)
+                }
             }
 
-            player.Session.SendQueue(new HeightMapMessage
+            player.Session.Send(new UsersMessage
             {
-                RoomModel = _room.RoomModel,
-                RoomMap = _room.RoomMap
+                RoomObjects = roomObjects
             });
 
-            player.Session.SendQueue(new FloorHeightMapMessage
+            player.Session.SendQueue(new UserUpdateMessage
             {
-                IsZoomedIn = true,
-                WallHeight = 1,
-                RoomModel = _room.RoomModel
+                RoomObjects = roomObjects
             });
 
-            player.Session.SendQueue(new RoomVisualizationSettingsMessage
-            {
-                WallsHidden = false,
-                FloorThickness = 1,
-                WallThickness = 1
-            });
-
-            // would be nice to send this from the navigator so we aren't duplicating code
-            player.Session.SendQueue(new GetGuestRoomResultMessage
-            {
-                EnterRoom = false,
-                Room = _room,
-                IsRoomForward = false,
-                IsStaffPick = false,
-                IsGroupMember = false,
-                AllInRoomMuted = false,
-                CanMute = false
-            });
-
-            player.Session.Flush();
+            foreach (IComposer composer in composers) player.Session.SendQueue(composer);
         }
 
         private void UpdateTotalUsers()
@@ -213,10 +194,7 @@ namespace Turbo.Rooms.Managers
 
         public void SendComposer(IComposer composer)
         {
-            foreach(ISession session in _roomObservers)
-            {
-                session.Send(composer);
-            }
+            _room.SendComposer(composer);
         }
     }
 }

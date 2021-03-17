@@ -15,18 +15,15 @@ namespace Turbo.Navigator
     public class NavigatorManager : INavigatorManager
     {
         private readonly IRoomManager _roomManager;
-        private readonly IRoomObjectFactory _roomObjectFactory;
         private readonly ILogger<INavigatorManager> _logger;
 
         private readonly IDictionary<int, int> _pendingRoomIds;
 
         public NavigatorManager(
             IRoomManager roomManager,
-            IRoomObjectFactory roomObjectFactory,
             ILogger<INavigatorManager> logger)
         {
             _roomManager = roomManager;
-            _roomObjectFactory = roomObjectFactory;
             _logger = logger;
 
             _pendingRoomIds = new Dictionary<int, int>();
@@ -89,8 +86,6 @@ namespace Turbo.Navigator
 
             if (pendingRoomId == roomId) return;
 
-            SetPendingRoomId(player.Id, roomId);
-
             player.ClearRoomObject();
 
             IRoom room = await _roomManager.GetRoom(roomId);
@@ -99,8 +94,6 @@ namespace Turbo.Navigator
 
             if (room == null || (room.RoomModel == null))
             {
-                ClearPendingRoomId(player.Id);
-
                 await player.Session.Send(new CantConnectMessage
                 {
                     Reason = CantConnectReason.Closed
@@ -123,6 +116,8 @@ namespace Turbo.Navigator
             // check rights
 
             // if locked state clear the doorbell
+
+            SetPendingRoomId(player.Id, roomId);
 
             await player.Session.Send(new OpenConnectionMessage());
             await player.Session.Send(new RoomReadyMessage
@@ -150,21 +145,22 @@ namespace Turbo.Navigator
 
             IRoom room = await _roomManager.GetRoom(roomId);
 
-            if (room != null) await room.InitAsync();
-
             if (room == null)
             {
-                ClearPendingRoomId(player.Id);
-
                 await player.Session.Send(new CantConnectMessage
                 {
                     Reason = CantConnectReason.Closed
                 });
-
-                return;
             }
 
-            room.RoomUserManager.EnterRoom(_roomObjectFactory, player);
+            if (room != null)
+            {
+                await room.InitAsync();
+
+                room.EnterRoom(player);
+            }
+
+            ClearPendingRoomId(player.Id);
         }
     }
 }
