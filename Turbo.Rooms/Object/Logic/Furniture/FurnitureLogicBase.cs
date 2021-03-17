@@ -10,7 +10,7 @@ using Turbo.Core.Game.Rooms.Object.Logic;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
-    public class FurnitureLogicBase : RoomObjectLogicBase, IFurnitureLogic
+    public class FurnitureLogicBase : RollingObjectLogic, IFurnitureLogic
     {
         public IFurnitureDefinition FurnitureDefinition { get; private set; }
 

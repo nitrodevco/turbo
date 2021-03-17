@@ -13,7 +13,7 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
-    public class MovingAvatarLogic : RoomObjectLogicBase
+    public class MovingAvatarLogic : RollingObjectLogic
     {
         public IDictionary<string, string> Statuses { get; private set; }
 
