@@ -55,7 +55,6 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
             services.AddSingleton<IRoomFactory, RoomFactory>();
-            services.AddSingleton<IRoomDetailsFactory, RoomDetailsFactory>();
         }
 
         public static void AddNetworking(this IServiceCollection services)
