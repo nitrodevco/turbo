@@ -62,6 +62,10 @@ namespace Turbo.Rooms.Mapping
                     Tiles.Add(roomTile);
                 }
             }
+
+            IRoomTile doorTile = GetTile(roomModel.DoorLocation);
+
+            if (doorTile != null) doorTile.IsDoor = true;
         }
 
         public IRoomTile GetTile(IPoint point)
