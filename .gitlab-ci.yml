@@ -11,5 +11,5 @@ Test Turbo:
         - dotnet tool install --global dotnet-sonarscanner
         - export PATH="$PATH:/root/.dotnet/tools"
         - dotnet sonarscanner begin /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY" /k:"Turbo" /d:sonar.cs.xunit.reportsPaths="**\coverage.cobertura.xml"
-        - dotnet test
+        - dotnet test --collect:"XPlat Code Coverage"
         - dotnet sonarscanner end /d:sonar.login="$SONAR_LOGIN_KEY"
