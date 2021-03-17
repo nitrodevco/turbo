@@ -68,9 +68,9 @@ namespace Turbo.Rooms.Mapping
                 Cost = 0
             };
 
-            if (nodeMap.ElementAtOrDefault(currentNode.Location.X) == null) nodeMap[currentNode.Location.X] = new List<IPathFinderNode>();
+            if (nodeMap.ElementAtOrDefault(currentNode.Location.X) is null) nodeMap.Insert(currentNode.Location.X, new List<IPathFinderNode>());
 
-            nodeMap[currentNode.Location.X][currentNode.Location.Y] = currentNode;
+            nodeMap[currentNode.Location.X].Insert(currentNode.Location.Y, currentNode);
 
             nodes.Add(currentNode);
 
@@ -92,12 +92,12 @@ namespace Turbo.Rooms.Mapping
 
                     if (!IsValidStep(roomObject, currentNode.Location, tempPoint, nodeGoal.Location)) continue;
 
-                    if (nodeMap.ElementAtOrDefault(tempPoint.X) == null) nodeMap[tempPoint.X] = new List<IPathFinderNode>();
+                    if (nodeMap.ElementAtOrDefault(tempPoint.X) == null) nodeMap.Insert(tempPoint.X, new List<IPathFinderNode>());
 
                     if(nodeMap[tempPoint.X].ElementAtOrDefault(tempPoint.Y) == null)
                     {
                         tempNode = new PathFinderNode(tempPoint);
-                        nodeMap[tempPoint.X][tempPoint.Y] = tempNode;
+                        nodeMap[tempPoint.X].Insert(tempPoint.Y, tempNode);
                     }
                     else
                     {
