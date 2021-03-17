@@ -162,5 +162,16 @@ namespace Turbo.Navigator
 
             ClearPendingRoomId(player.Id);
         }
+
+        public async Task SendNavigatorMetaData(IPlayer player) => await player.Session.Send(new NavigatorMetaDataMessage
+        {
+            TopLevelContexts = new List<TopLevelContext>
+            {
+                new TopLevelContext { SearchCode = "official_view" },
+                new TopLevelContext { SearchCode = "hotel_view" },
+                new TopLevelContext { SearchCode = "roomads_view" },
+                new TopLevelContext { SearchCode = "myworld_view" }
+            }
+        });
     }
 }
