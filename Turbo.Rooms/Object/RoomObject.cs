@@ -12,6 +12,8 @@ namespace Turbo.Rooms.Object
         public IRoom Room { get; private set; }
         public IRoomObjectHolder RoomObjectHolder { get; private set; }
 
+        private IRoomObjectContainer _roomObjectContainer;
+
         public int Id { get; private set; }
         public string Type { get; private set; }
 
@@ -23,9 +25,11 @@ namespace Turbo.Rooms.Object
 
         private bool _isDisposing { get; set; }
 
-        public RoomObject(IRoom room, int id, string type)
+        public RoomObject(IRoom room, IRoomObjectContainer roomObjectContainer, int id, string type)
         {
             Room = room;
+
+            _roomObjectContainer = roomObjectContainer;
 
             Id = id;
             Type = type;
@@ -39,9 +43,22 @@ namespace Turbo.Rooms.Object
 
             _isDisposing = true;
 
+            if (_roomObjectContainer != null) _roomObjectContainer.RemoveRoomObject(Id);
+
             SetLogic(null);
 
-            //if (Room != null) Room.RemoveRoomObject(Id);
+            if (RoomObjectHolder != null)
+            {
+                RoomObjectHolder.ClearRoomObject();
+
+                RoomObjectHolder = null;
+            }
+
+            Id = -1;
+            Room = null;
+            _roomObjectContainer = null;
+
+            _isDisposing = false;
         }
 
         public void SetLocation(IPoint point)

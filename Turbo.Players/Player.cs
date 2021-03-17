@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
@@ -10,16 +11,22 @@ namespace Turbo.Players
     {
         private IPlayerContainer _playerContainer { get; set; }
 
+        public ILogger<IPlayer> Logger { get; private set; }
+
         public ISession Session { get; set; }
         public IPlayerDetails PlayerDetails { get; private set; }
         public IRoomObject RoomObject { get; private set; }
 
         private bool _isDisposing { get; set; }
 
-        public Player(IPlayerContainer playerContainer, PlayerEntity playerEntity)
+        public Player(
+            IPlayerContainer playerContainer,
+            ILogger<IPlayer> logger,
+            PlayerEntity playerEntity)
         {
             _playerContainer = playerContainer;
 
+            Logger = logger;
             PlayerDetails = new PlayerDetails(this, playerEntity);
         }
 
@@ -28,6 +35,8 @@ namespace Turbo.Players
             // load roles
             // load inventory
             // load messenger
+
+            Logger.LogInformation("Player initialized");
         }
 
         public async ValueTask DisposeAsync()
@@ -52,6 +61,8 @@ namespace Turbo.Players
             await Session.DisposeAsync();
 
             PlayerDetails.SaveNow();
+
+            Logger.LogInformation("Player disposed");
         }
 
         public bool SetSession(ISession session)
@@ -69,7 +80,7 @@ namespace Turbo.Players
         {
             ClearRoomObject();
 
-            if (!roomObject.SetHolder(this)) return false;
+            if ((roomObject == null) || !roomObject.SetHolder(this)) return false;
 
             RoomObject = roomObject;
 

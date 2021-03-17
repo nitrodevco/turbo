@@ -8,6 +8,6 @@ namespace Turbo.Core.Game.Rooms.Object
 {
     public interface IRoomObjectFactory
     {
-        public IRoomObject CreateRoomObject(IRoom room, int id, string type, string logicType);
+        public IRoomObject Create(IRoom room, IRoomObjectContainer roomObjectContainer, int id, string type, string logicType);
     }
 }

@@ -61,6 +61,8 @@ namespace Turbo.Rooms
             if (RoomSecurityManager != null) await RoomSecurityManager.InitAsync();
             if (RoomFurnitureManager != null) await RoomFurnitureManager.InitAsync();
             if (RoomUserManager != null) await RoomUserManager.InitAsync();
+
+            Logger.LogInformation("Room loaded");
         }
 
         public async ValueTask DisposeAsync()
@@ -71,15 +73,14 @@ namespace Turbo.Rooms
 
             CancelDispose();
 
-            if (RoomManager != null)
-            {
-                await RoomManager.RemoveRoom(Id);
-            }
+            if (RoomManager != null) await RoomManager.RemoveRoom(Id);
 
             if (RoomCycleManager != null) await RoomCycleManager.DisposeAsync();
             if (RoomUserManager != null) await RoomUserManager.DisposeAsync();
             if (RoomFurnitureManager != null) await RoomFurnitureManager.DisposeAsync();
             if (RoomSecurityManager != null) await RoomSecurityManager.DisposeAsync();
+
+            Logger.LogInformation("Room disposed");
         }
 
         public void TryDispose()
@@ -143,7 +144,7 @@ namespace Turbo.Rooms
             //    WallsHidden = false,
             //    FloorThickness = 1,
             //    WallThickness = 1
-            //});
+            ////});
 
             // send the paint
 

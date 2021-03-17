@@ -18,11 +18,11 @@ namespace Turbo.Rooms.Object
             _logicFactory = logicFactory;
         }
 
-        public IRoomObject CreateRoomObject(IRoom room, int id, string type, string logicType)
+        public IRoomObject Create(IRoom room, IRoomObjectContainer roomObjectContainer, int id, string type, string logicType)
         {
             IRoomObjectLogic logic = _logicFactory.GetLogic(logicType);
 
-            IRoomObject roomObject = new RoomObject(room, id, type);
+            IRoomObject roomObject = new RoomObject(room, roomObjectContainer, id, type);
 
             roomObject.SetLogic(logic);
 

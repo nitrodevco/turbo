@@ -139,25 +139,25 @@ namespace Turbo.Navigator
                 {
                     Reason = CantConnectReason.Closed
                 });
-
-                return;
             }
-
-            IRoom room = await _roomManager.GetRoom(roomId);
-
-            if (room == null)
+            else
             {
-                await player.Session.Send(new CantConnectMessage
+                IRoom room = await _roomManager.GetRoom(roomId);
+
+                if (room == null)
                 {
-                    Reason = CantConnectReason.Closed
-                });
-            }
+                    await player.Session.Send(new CantConnectMessage
+                    {
+                        Reason = CantConnectReason.Closed
+                    });
+                }
 
-            if (room != null)
-            {
-                await room.InitAsync();
+                if (room != null)
+                {
+                    await room.InitAsync();
 
-                room.EnterRoom(player);
+                    room.EnterRoom(player);
+                }
             }
 
             ClearPendingRoomId(player.Id);

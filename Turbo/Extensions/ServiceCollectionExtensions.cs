@@ -27,6 +27,7 @@ using Turbo.Networking.REST;
 using Turbo.Packets;
 using Turbo.Packets.Revisions;
 using Turbo.Players;
+using Turbo.Players.Factories;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Rooms.Factories;
@@ -50,11 +51,13 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IFurnitureManager, FurnitureManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
-            services.AddSingleton<IRoomObjectLogicFactory, RoomObjectLogicFactory>();
-            services.AddSingleton<IRoomObjectFactory, RoomObjectFactory>();
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
+            // Factories
             services.AddSingleton<IRoomFactory, RoomFactory>();
+            services.AddSingleton<IPlayerFactory, PlayerFactory>();
+            services.AddSingleton<IRoomObjectFactory, RoomObjectFactory>();
+            services.AddSingleton<IRoomObjectLogicFactory, RoomObjectLogicFactory>();
         }
 
         public static void AddNetworking(this IServiceCollection services)
