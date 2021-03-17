@@ -110,7 +110,8 @@ namespace Turbo.Navigator
             {
                 await player.Session.Send(new CantConnectMessage
                 {
-                    Reason = CantConnectReason.Closed
+                    Reason = CantConnectReason.Closed,
+                    Parameter = ""
                 });
 
                 return;
