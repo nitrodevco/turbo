@@ -8,6 +8,6 @@ Test Turbo:
     script:
         - dotnet tool install --global dotnet-sonarscanner
         - export PATH="$PATH:/root/.dotnet/tools"
-        - dotnet sonarscanner begin /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY" /k:"Turbo"
+        - dotnet sonarscanner begin /d:sonar.host.url="$env:SONAR_HOST" /d:sonar.login="$env:SONAR_LOGIN_KEY" /k:"Turbo"
         - dotnet test
-        - dotnet sonarscanner end /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY"
+        - dotnet sonarscanner end /d:sonar.host.url="$env:SONAR_HOST" /d:sonar.login="$env:SONAR_LOGIN_KEY"
