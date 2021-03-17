@@ -6,6 +6,7 @@ stages:
 Test Turbo:
     stage: test
     script:
+        - apt update && apt install default-jre -y
         - dotnet tool install --global dotnet-sonarscanner
         - export PATH="$PATH:/root/.dotnet/tools"
         - dotnet sonarscanner begin /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY" /k:"Turbo"
