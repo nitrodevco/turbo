@@ -6,6 +6,7 @@ stages:
 Test Turbo:
     stage: test
     script:
+        - mkdir -p /usr/share/man/man1
         - apt update && apt install default-jre -y
         - dotnet tool install --global dotnet-sonarscanner
         - export PATH="$PATH:/root/.dotnet/tools"
