@@ -22,6 +22,7 @@ namespace Turbo.Main.PacketHandlers
 
             _messageHub.Subscribe<GetGuestRoomMessage>(this, OnGetGuestRoomMessage);
             _messageHub.Subscribe<GetRoomEntryDataMessage>(this, OnGetRoomEntryDataMessage);
+            _messageHub.Subscribe<NewNavigatorInitMessage>(this, OnNewNavigatorInitMessage);
         }
 
         private async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
@@ -36,6 +37,13 @@ namespace Turbo.Main.PacketHandlers
             if (session.Player == null) return;
 
             await _navigatorManager.ContinueEnteringRoom(session.Player);
+        }
+
+        private async void OnNewNavigatorInitMessage(NewNavigatorInitMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            await _navigatorManager.SendNavigatorMetaData(session.Player);
         }
     }
 }
