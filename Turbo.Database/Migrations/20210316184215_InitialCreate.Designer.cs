@@ -9,8 +9,8 @@ using Turbo.Database.Context;
 namespace Turbo.Database.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    [Migration("20210304085235_test")]
-    partial class test
+    [Migration("20210316184215_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -66,19 +66,22 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_updated");
 
-                    b.Property<bool>("ExtraData")
-                        .HasColumnType("tinyint(1)")
+                    b.Property<string>("ExtraData")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("extra_data");
 
                     b.Property<string>("Logic")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("logic");
 
                     b.Property<string>("ProductName")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("product_name");
 
                     b.Property<string>("PublicName")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("public_name");
 
@@ -86,7 +89,12 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("sprite_id");
 
+                    b.Property<int>("TotalStates")
+                        .HasColumnType("int")
+                        .HasColumnName("total_states");
+
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("type");
 
@@ -148,11 +156,22 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_updated");
 
+                    b.Property<string>("Figure")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("figure");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("gender");
+
                     b.Property<string>("Motto")
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("motto");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("name");
 
@@ -200,6 +219,9 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    b.Property<bool>("AllowWalkThrough")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_created");
@@ -231,7 +253,8 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("id");
 
                     b.Property<bool>("Custom")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("custom");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)")
@@ -242,22 +265,28 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("date_updated");
 
                     b.Property<int>("DoorDirection")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("door_direction");
 
                     b.Property<int>("DoorX")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("door_x");
 
                     b.Property<int>("DoorY")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("door_y");
 
                     b.Property<bool>("Enabled")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("enabled");
 
                     b.Property<string>("Model")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("model");
 
                     b.Property<string>("Name")
-                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 

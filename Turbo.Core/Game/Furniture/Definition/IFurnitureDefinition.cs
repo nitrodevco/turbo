@@ -11,5 +11,14 @@
         public int X { get; }
         public int Y { get; }
         public double Z { get; }
+        public bool CanStack { get; }
+        public bool CanWalk { get; }
+        public bool CanSit { get; }
+        public bool CanLay { get; }
+        public bool CanRecycle { get; }
+        public bool CanTrade { get; }
+        public bool CanGroup { get; }
+        public bool CanSell { get; }
+        public string ExtraData { get; }
     }
 }

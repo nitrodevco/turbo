@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Players;
+using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Repositories.Player
 {
@@ -13,7 +14,6 @@ namespace Turbo.Database.Repositories.Player
             _context = context;
         }
 
-        public async Task<PlayerEntity> FindAsync(int id) => await _context.Players
-            .FindAsync(id);
+        public async Task<PlayerEntity> FindAsync(int id) => await _context.Players.FindAsync(id);
     }
 }

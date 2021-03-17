@@ -6,6 +6,5 @@ namespace Turbo.Packets.Incoming.Room.Session
     {
         public int RoomId { get; init; }
         public string Password { get; init; }
-        public int UnknownInt { get; init; }
     }
 }

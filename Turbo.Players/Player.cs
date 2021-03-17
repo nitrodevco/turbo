@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
@@ -9,16 +10,23 @@ namespace Turbo.Players
     public class Player : IPlayer
     {
         private IPlayerContainer _playerContainer { get; set; }
-        private ISession _session { get; set; }
-        private bool _isDisposing { get; set; }
 
+        public ILogger<IPlayer> Logger { get; private set; }
+
+        public ISession Session { get; set; }
         public IPlayerDetails PlayerDetails { get; private set; }
         public IRoomObject RoomObject { get; private set; }
 
-        public Player(IPlayerContainer playerContainer, PlayerEntity playerEntity)
+        private bool _isDisposing { get; set; }
+
+        public Player(
+            IPlayerContainer playerContainer,
+            ILogger<IPlayer> logger,
+            PlayerEntity playerEntity)
         {
             _playerContainer = playerContainer;
 
+            Logger = logger;
             PlayerDetails = new PlayerDetails(this, playerEntity);
         }
 
@@ -27,6 +35,8 @@ namespace Turbo.Players
             // load roles
             // load inventory
             // load messenger
+
+            Logger.LogInformation("Player initialized");
         }
 
         public async ValueTask DisposeAsync()
@@ -48,18 +58,20 @@ namespace Turbo.Players
             // dispose inventory
             // dispose roles
 
-            await _session.DisposeAsync();
+            await Session.DisposeAsync();
 
             PlayerDetails.SaveNow();
+
+            Logger.LogInformation("Player disposed");
         }
 
         public bool SetSession(ISession session)
         {
-            if ((_session != null) && (_session != session)) return false;
+            if ((Session != null) && (Session != session)) return false;
 
             if (!session.SetPlayer(this)) return false;
 
-            _session = session;
+            Session = session;
 
             return true;
         }
@@ -68,7 +80,7 @@ namespace Turbo.Players
         {
             ClearRoomObject();
 
-            // room object set holder this
+            if (!roomObject.SetHolder(this)) return false;
 
             RoomObject = roomObject;
 
@@ -98,7 +110,7 @@ namespace Turbo.Players
             get
             {
                 return "user";
-            }
+ ;          }
         }
 
         public int Id
@@ -138,14 +150,6 @@ namespace Turbo.Players
             get
             {
                 return PlayerDetails.Gender;
-            }
-        }
-
-        public ISession Session
-        {
-            get
-            {
-                return _session;
             }
         }
     }

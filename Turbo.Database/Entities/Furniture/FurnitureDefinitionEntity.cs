@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Turbo.Database.Entities.Furniture
@@ -9,17 +10,20 @@ namespace Turbo.Database.Entities.Furniture
         [Column("sprite_id")]
         public int SpriteId { get; set; }
 
-        [Column("public_name")]
+        [Column("public_name"), Required]
         public string PublicName { get; set; }
 
-        [Column("product_name")]
+        [Column("product_name"), Required]
         public string ProductName { get; set; }
 
-        [Column("type")]
+        [Column("type"), Required]
         public string Type { get; set; }
 
-        [Column("logic")]
+        [Column("logic"), Required]
         public string Logic { get; set; }
+
+        [Column("total_states")]
+        public int TotalStates { get; set; }
 
         [Column("x")]
         public int X { get; set; }
@@ -55,7 +59,7 @@ namespace Turbo.Database.Entities.Furniture
         public bool CanSell { get; set; }
 
         [Column("extra_data")]
-        public bool ExtraData { get; set; }
+        public string ExtraData { get; set; }
 
         public List<FurnitureEntity> Furnitures { get; set; }
     }

@@ -6,17 +6,23 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
+using Turbo.Players.Factories;
 
 namespace Turbo.Players
 {
     public class PlayerManager : IPlayerManager, IPlayerContainer
     {
+        private readonly IPlayerFactory _playerFactory;
         private readonly IPlayerRepository _playerRepository;
 
         private readonly Dictionary<int, IPlayer> _players;
 
-        public PlayerManager(IPlayerRepository playerRepository, ILogger<IPlayerManager> logger)
+        public PlayerManager(
+            IPlayerFactory playerFactory,
+            IPlayerRepository playerRepository,
+            ILogger<IPlayerManager> logger)
         {
+            _playerFactory = playerFactory;
             _playerRepository = playerRepository;
 
             _players = new Dictionary<int, IPlayer>();
@@ -58,7 +64,7 @@ namespace Turbo.Players
 
             if (playerEntity == null) return null;
 
-            player = new Player(this, playerEntity);
+            player = _playerFactory.Create(this, playerEntity);
 
             return player;
         }

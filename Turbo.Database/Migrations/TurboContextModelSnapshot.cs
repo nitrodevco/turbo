@@ -64,19 +64,22 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_updated");
 
-                    b.Property<bool>("ExtraData")
-                        .HasColumnType("tinyint(1)")
+                    b.Property<string>("ExtraData")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("extra_data");
 
                     b.Property<string>("Logic")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("logic");
 
                     b.Property<string>("ProductName")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("product_name");
 
                     b.Property<string>("PublicName")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("public_name");
 
@@ -84,7 +87,12 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("sprite_id");
 
+                    b.Property<int>("TotalStates")
+                        .HasColumnType("int")
+                        .HasColumnName("total_states");
+
                     b.Property<string>("Type")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("type");
 
@@ -146,11 +154,22 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_updated");
 
+                    b.Property<string>("Figure")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("figure");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("gender");
+
                     b.Property<string>("Motto")
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("motto");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("name");
 
@@ -197,6 +216,9 @@ namespace Turbo.Database.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
+
+                    b.Property<bool>("AllowWalkThrough")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)")

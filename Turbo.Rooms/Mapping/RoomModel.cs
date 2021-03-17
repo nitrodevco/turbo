@@ -6,11 +6,14 @@ using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Utils;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace Turbo.Rooms.Mapping
 {
     public class RoomModel : IRoomModel
     {
+        private static readonly Regex regex = new(@"\r\n|\r|\n");
+
         private readonly RoomModelEntity _modelEntity;
         public string Model { get; private set; }
 
@@ -19,7 +22,6 @@ namespace Turbo.Rooms.Mapping
         public int TotalSize { get; private set; }
 
         public IPoint DoorLocation { get; private set; }
-        public IPoint DoorDirection { get; private set; }
 
         private IList<IList<RoomTileState>> _tileStates;
         private IList<IList<int>> _tileHeights;
@@ -40,7 +42,8 @@ namespace Turbo.Rooms.Mapping
         public static string CleanModel(string model)
         {
             if (model == null) return null;
-            return _regex.Replace(model.ToLower(), "\r").Trim();
+
+            return regex.Replace(model.ToLower(), "\r").Trim();
         }
 
         public void ResetModel(bool generate = true)
@@ -50,7 +53,6 @@ namespace Turbo.Rooms.Mapping
             TotalSize = 0;
 
             DoorLocation = null;
-            DoorDirection = null;
 
             _tileStates = new List<IList<RoomTileState>>();
             _tileHeights = new List<IList<int>>();
@@ -94,7 +96,7 @@ namespace Turbo.Rooms.Mapping
                 {
                     char square = rows[y][x];
 
-                    if (_tileStates.Count - 1 <  x) _tileStates.Add(new List<RoomTileState>());
+                    if (_tileStates.Count - 1 < x) _tileStates.Add(new List<RoomTileState>());
                     if (_tileHeights.Count - 1 < x) _tileHeights.Add(new List<int>());
 
                     if (_tileStates[x].Count - 1 < y) _tileStates[x].Add(RoomTileState.Open);
@@ -137,9 +139,7 @@ namespace Turbo.Rooms.Mapping
                 return;
             }
 
-            DoorLocation = new Point(_modelEntity.DoorX, _modelEntity.DoorY, (double)doorTileHeight);
-            DoorDirection = new Point(_modelEntity.DoorDirection);
-
+            DoorLocation = new Point(_modelEntity.DoorX, _modelEntity.DoorY, (double)doorTileHeight, (Rotation)_modelEntity.DoorDirection);
             DidGenerate = true;
         }
 
@@ -149,7 +149,7 @@ namespace Turbo.Rooms.Mapping
 
             if (rowStates == null) return RoomTileState.Closed;
 
-            if (rowStates[y] != RoomTileState.Open) return RoomTileState.Closed;
+            if (rowStates.ElementAtOrDefault(y) != RoomTileState.Open) return RoomTileState.Closed;
 
             return RoomTileState.Open;
         }
@@ -158,19 +158,13 @@ namespace Turbo.Rooms.Mapping
         {
             IList<int> rowHeights = _tileHeights.ElementAtOrDefault(x);
 
-            if ((rowHeights == null) || (rowHeights[y] <= 0)) return 0;
+            if (rowHeights == null) return 0;
 
-            return rowHeights[y];
+            return rowHeights.ElementAtOrDefault(y);
         }
 
-        public int Id
-        {
-            get => _modelEntity.Id;
-        }
+        public int Id => _modelEntity.Id;
 
-        public string Name
-        {
-            get => _modelEntity.Name;
-        }
+        public string Name => _modelEntity.Name;
     }
 }

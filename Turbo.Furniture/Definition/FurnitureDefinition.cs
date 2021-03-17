@@ -12,76 +12,23 @@ namespace Turbo.Furniture.Definition
             _entity = entity;
         }
 
-        public int Id
-        {
-            get
-            {
-                return _entity.Id;
-            }
-        }
-
-        public int SpriteId
-        {
-            get
-            {
-                return _entity.SpriteId;
-            }
-        }
-
-        public string PublicName
-        {
-            get
-            {
-                return _entity.PublicName;
-            }
-        }
-
-        public string ProductName
-        {
-            get
-            {
-                return _entity.ProductName;
-            }
-        }
-
-        public string Type
-        {
-            get
-            {
-                return _entity.Type;
-            }
-        }
-
-        public string Logic
-        {
-            get
-            {
-                return _entity.Logic;
-            }
-        }
-
-        public int X
-        {
-            get
-            {
-                return _entity.X;
-            }
-        }
-
-        public int Y
-        {
-            get
-            {
-                return _entity.Y;
-            }
-        }
-
-        public double Z
-        {
-            get
-            {
-                return _entity.Z;
-            }
-        }
+        public int Id => _entity.Id;
+        public int SpriteId => _entity.SpriteId;
+        public string PublicName => _entity.PublicName;
+        public string ProductName => _entity.ProductName;
+        public string Type => _entity.Type;
+        public string Logic => _entity.Logic;
+        public int X => _entity.X;
+        public int Y => _entity.Y;
+        public double Z => _entity.Z;
+        public bool CanStack => _entity.CanStack;
+        public bool CanWalk => _entity.CanWalk;
+        public bool CanSit => _entity.CanSit;
+        public bool CanLay => _entity.CanLay;
+        public bool CanRecycle => _entity.CanRecycle;
+        public bool CanTrade => _entity.CanTrade;
+        public bool CanGroup => _entity.CanGroup;
+        public bool CanSell => _entity.CanSell;
+        public string ExtraData => _entity.ExtraData;
     }
 }

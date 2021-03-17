@@ -1,7 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
@@ -11,6 +15,8 @@ using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
 using Turbo.Database.Repositories.Security;
 using Turbo.Furniture;
+using Turbo.Main.PacketHandlers;
+using Turbo.Navigator;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
 using Turbo.Networking.EventLoop;
@@ -21,10 +27,12 @@ using Turbo.Networking.REST;
 using Turbo.Packets;
 using Turbo.Packets.Revisions;
 using Turbo.Players;
+using Turbo.Players.Factories;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Rooms.Factories;
-using Turbo.Rooms.Managers;
+using Turbo.Rooms.Object;
+using Turbo.Rooms.Object.Logic;
 using Turbo.Security;
 using Turbo.Security.Authentication;
 
@@ -39,17 +47,17 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRevisionManager, RevisionManager>();
             services.AddSingleton<ISessionManager, SessionManager>();
             services.AddSingleton<ISecurityManager, SecurityManager>();
+            services.AddSingleton<INavigatorManager, NavigatorManager>();
             services.AddSingleton<IFurnitureManager, FurnitureManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
             services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
+            // Factories
             services.AddSingleton<IRoomFactory, RoomFactory>();
-            services.AddSingleton<IRoomDetailsFactory, RoomDetailsFactory>();
-
-            services.AddTransient<IRoomFurnitureManager, RoomFurnitureManager>();
-            services.AddTransient<IRoomSecurityManager, RoomSecurityManager>();
-            services.AddTransient<IRoomUserManager, RoomUserManager>();
+            services.AddSingleton<IPlayerFactory, PlayerFactory>();
+            services.AddSingleton<IRoomObjectFactory, RoomObjectFactory>();
+            services.AddSingleton<IRoomObjectLogicFactory, RoomObjectLogicFactory>();
         }
 
         public static void AddNetworking(this IServiceCollection services)
@@ -63,6 +71,11 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<INetworkEventLoopGroup, NetworkEventLoopGroup>();
             services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
             services.AddSingleton<ISessionFactory, SessionFactory>();
+
+            // Packet Handlers
+            services.AddTransient<IPacketHandlerManager, PacketHandlerManager>();
+            services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();
+            services.AddTransient<IRoomMessageHandler, RoomMessageHandler>();
         }
 
         public static void AddRepositories(this IServiceCollection services)

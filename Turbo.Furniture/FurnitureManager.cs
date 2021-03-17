@@ -42,16 +42,12 @@ namespace Turbo.Furniture
 
             List<FurnitureDefinitionEntity> entities = await _furnitureDefinitionRepository.FindAllAsync();
 
-            if (entities.Count > 0)
+            entities.ForEach(entity =>
             {
-                foreach (FurnitureDefinitionEntity entity in entities)
-                {
-                    IFurnitureDefinition definition = new FurnitureDefinition(entity);
+                IFurnitureDefinition definition = new FurnitureDefinition(entity);
 
-                    _furnitureDefinitions.Add(definition.Id, definition);
-                }
-            }
-
+                _furnitureDefinitions.Add(definition.Id, definition);
+            });
         }
     }
 }

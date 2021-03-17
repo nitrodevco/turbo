@@ -19,13 +19,13 @@ namespace Turbo.Core.Game.Rooms.Mapping
 
         public bool IsDoor { get; }
 
-        public void AddUser(IRoomObject roomObject);
-        public void RemoveUser(IRoomObject roomObject);
-        public void AddFurniture(IRoomObject roomObject);
-        public void RemoveFurniture(IRoomObject roomObject);
-        public void ResetTileHeight();
+        public void AddRoomObject(IRoomObject roomObject);
+        public void RemoveRoomObject(IRoomObject roomObject);
 
+        public void ResetTileHeight();
         public double GetWalkingHeight();
+
+        public bool IsOpen();
         public bool CanWalk();
         public bool CanSit();
         public bool CanLay();

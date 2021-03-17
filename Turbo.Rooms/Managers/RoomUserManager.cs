@@ -1,13 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
-using Turbo.Rooms.Object;
+using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Managers
 {
@@ -15,17 +20,15 @@ namespace Turbo.Rooms.Managers
     {
         private IRoom _room;
 
-        private readonly IList<IPlayer> _roomObservers;
-        private readonly IDictionary<int, IRoomObject> _roomObjects;
+        public IDictionary<int, IRoomObject> RoomObjects { get; private set; }
+
         private int _roomObjectCounter;
 
-        public IRoom Room { set => _room = value; }
-
-        public RoomUserManager()
+        public RoomUserManager(IRoom room)
         {
+            _room = room;
 
-            _roomObservers = new List<IPlayer>();
-            _roomObjects = new Dictionary<int, IRoomObject>();
+            RoomObjects = new Dictionary<int, IRoomObject>();
 
             _roomObjectCounter = -1;
         }
@@ -37,6 +40,7 @@ namespace Turbo.Rooms.Managers
 
         public async ValueTask DisposeAsync()
         {
+            RemoveAllRoomObjects();
 
         }
 
@@ -44,14 +48,11 @@ namespace Turbo.Rooms.Managers
         {
             if (id < 0) return null;
 
-            try
-            {
-                IRoomObject roomObject;
+            IRoomObject roomObject;
 
-                if (_roomObjects.TryGetValue(id, out roomObject)) return roomObject;
-            }
-            catch(Exception e)
+            if (RoomObjects.TryGetValue(id, out roomObject))
             {
+                return roomObject;
             }
 
             return null;
@@ -67,7 +68,7 @@ namespace Turbo.Rooms.Managers
             return null;
         }
 
-        public IRoomObject AddRoomObject(IRoomObject roomObject, IPoint location, IPoint direction)
+        public IRoomObject AddRoomObject(IRoomObject roomObject, IPoint location = null)
         {
             if (roomObject == null) return null;
 
@@ -80,41 +81,111 @@ namespace Turbo.Rooms.Managers
                 return null;
             }
 
+            if (roomObject.Logic is not MovingAvatarLogic avatarLogic) return null;
+
+            if (location == null) location = _room.RoomModel.DoorLocation.Clone();
+
             roomObject.SetLocation(location);
-            roomObject.SetDirection(direction);
 
-            IRoomTile roomTile = _room.RoomMap.GetTile(roomObject.Location);
+            IRoomTile roomTile = avatarLogic.GetCurrentTile();
 
-            if(roomTile != null)
+            if (roomTile != null) roomTile.AddRoomObject(roomObject);
+
+            avatarLogic.InvokeCurrentLocation();
+
+            roomObject.NeedsUpdate = false;
+
+            RoomObjects.Add(roomObject.Id, roomObject);
+
+            SendComposer(new UsersMessage
             {
-                roomTile.AddUser(roomObject);
-            }
+                RoomObjects = new List<IRoomObject> { roomObject }
+            });
 
-            // invoke the users location
-
-            // COMPOSER: SendComposer(RoomUserComposer(roomObject), RoomUserStatusComposer(roomObject))
+            SendComposer(new UserUpdateMessage
+            {
+                RoomObjects = new List<IRoomObject> { roomObject }
+            });
 
             UpdateTotalUsers();
 
             return roomObject;
         }
 
-        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectHolder roomObjectHolder, IPoint location, IPoint direction)
+        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectFactory objectFactory, IRoomObjectHolder roomObjectHolder, IPoint location)
         {
             if (roomObjectHolder == null) return null;
 
-            IRoomObject roomObject = new RoomObject(_roomObjectCounter++, roomObjectHolder.Type);
+            IRoomObject roomObject = objectFactory.Create(_room, this, ++_roomObjectCounter, roomObjectHolder.Type, roomObjectHolder.Type);
 
             if (roomObject == null) return null;
 
             if (!roomObjectHolder.SetRoomObject(roomObject)) return null;
 
-            return AddRoomObject(roomObject, location, direction);
+            return AddRoomObject(roomObject, location);
         }
 
-        public void EnterRoom()
+        public void RemoveRoomObject(int id)
         {
+            IRoomObject roomObject = GetRoomObject(id);
 
+            if (roomObject == null) return;
+
+            SendComposer(new UserRemoveMessage
+            {
+                Id = id
+            });
+
+            RoomObjects.Remove(id);
+
+            // if the room object was playing a game, remove it from that game
+
+            UpdateTotalUsers();
+
+            roomObject.Dispose();
+
+            _room.TryDispose();
+        }
+
+        public void RemoveAllRoomObjects()
+        {
+            foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
+        }
+
+        public void EnterRoom(IRoomObjectFactory objectFactory, IPlayer player, IPoint location = null)
+        {
+            if ((objectFactory == null) || (player == null)) return;
+
+            IRoomObject roomObject = CreateRoomObjectAndAssign(objectFactory, player, location);
+
+            IList<IRoomObject> roomObjects = new List<IRoomObject>();
+            IList<IComposer> composers = new List<IComposer>();
+
+            foreach (IRoomObject existingObject in RoomObjects.Values)
+            {
+                roomObjects.Add(existingObject);
+
+                if(existingObject.Logic is AvatarLogic avatarLogic)
+                {
+                    RoomObjectAvatarDanceType danceType = avatarLogic.DanceType;
+                    bool isIdle = avatarLogic.IsIdle;
+
+                    // if(danceType > RoomObjectAvatarDanceType.None)
+                    // if(idIdle)
+                }
+            }
+
+            player.Session.Send(new UsersMessage
+            {
+                RoomObjects = roomObjects
+            });
+
+            player.Session.Send(new UserUpdateMessage
+            {
+                RoomObjects = roomObjects
+            });
+
+            foreach (IComposer composer in composers) player.Session.SendQueue(composer);
         }
 
         private void UpdateTotalUsers()
@@ -124,12 +195,7 @@ namespace Turbo.Rooms.Managers
 
         public void SendComposer(IComposer composer)
         {
-            if (composer == null) return;
-
-            foreach(IPlayer player in _roomObservers)
-            {
-                player.Session.Send(composer);
-            }
+            _room.SendComposer(composer);
         }
     }
 }

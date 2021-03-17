@@ -8,8 +8,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core;
 using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.PacketHandlers;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
 using Turbo.Core.Security.Authentication;
@@ -31,9 +33,11 @@ namespace Turbo.Main
 
         private readonly ISecurityManager _securityManager;
         private readonly IFurnitureManager _furnitureManager;
+        private readonly INavigatorManager _navigatorManager;
         private readonly IRoomManager _roomManager;
         private readonly IPlayerManager _playerManager;
         private readonly ISessionManager _sessionManager;
+        private readonly IPacketHandlerManager _packetHandlers;
 
         private Task _gameCycle;
         private bool _cycleStarted = false;
@@ -47,9 +51,11 @@ namespace Turbo.Main
             ISecurityManager securityManager,
             IFurnitureManager furnitureManager,
             IRoomManager roomManager,
+            INavigatorManager navigatorManager,
             IPlayerManager playerManager,
             IAuthenticationService authenticationService,
-            ISessionManager sessionManager)
+            ISessionManager sessionManager,
+            IPacketHandlerManager packetHandlers)
         {
             _appLifetime = appLifetime;
             _logger = logger;
@@ -58,8 +64,10 @@ namespace Turbo.Main
             _securityManager = securityManager;
             _furnitureManager = furnitureManager;
             _roomManager = roomManager;
+            _navigatorManager = navigatorManager;
             _playerManager = playerManager;
             _sessionManager = sessionManager;
+            _packetHandlers = packetHandlers;
         }
 
         /// <summary>
@@ -96,6 +104,7 @@ namespace Turbo.Main
             await _securityManager.InitAsync();
             await _furnitureManager.InitAsync();
             await _roomManager.InitAsync();
+            await _navigatorManager.InitAsync();
 
             StartGameCycle();
         }
@@ -128,6 +137,7 @@ namespace Turbo.Main
 
             // Todo: Dispose all services here
             await _roomManager.DisposeAsync();
+            await _navigatorManager.DisposeAsync();
             await _furnitureManager.DisposeAsync();
             await _roomManager.DisposeAsync();
             await _playerManager.DisposeAsync();
