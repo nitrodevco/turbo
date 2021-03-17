@@ -80,7 +80,7 @@ namespace Turbo.Players
         {
             ClearRoomObject();
 
-            if (!roomObject.SetHolder(this)) return false;
+            if ((roomObject == null) || !roomObject.SetHolder(this)) return false;
 
             RoomObject = roomObject;
 
