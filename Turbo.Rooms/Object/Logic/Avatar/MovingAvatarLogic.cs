@@ -7,13 +7,14 @@ using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
-    public class MovingAvatarLogic : RollingObjectLogic
+    public class MovingAvatarLogic : RollingObjectLogic, IMovingAvatarLogic
     {
         public IDictionary<string, string> Statuses { get; private set; }
 
