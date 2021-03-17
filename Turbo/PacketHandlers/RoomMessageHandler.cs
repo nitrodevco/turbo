@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Rooms;
+﻿using System.Collections.Generic;
+using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Networking.Game.Clients;
@@ -34,7 +35,7 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            session.Send(new FurnitureAliasesMessage());
+            session.Send(new FurnitureAliasesMessage { Aliases = new Dictionary<string, string>()});
         }
 
         private void OnAvatarExpressionMessage(AvatarExpressionMessage message, ISession session)
