@@ -40,6 +40,7 @@ namespace Turbo.Rooms.Managers
 
         public async ValueTask DisposeAsync()
         {
+            RemoveAllRoomObjects();
 
         }
 
@@ -115,7 +116,7 @@ namespace Turbo.Rooms.Managers
         {
             if (roomObjectHolder == null) return null;
 
-            IRoomObject roomObject = objectFactory.CreateRoomObject(_room, _roomObjectCounter++, roomObjectHolder.Type, roomObjectHolder.Type);
+            IRoomObject roomObject = objectFactory.CreateRoomObject(_room, this, _roomObjectCounter++, roomObjectHolder.Type, roomObjectHolder.Type);
 
             if (roomObject == null) return null;
 
@@ -179,7 +180,7 @@ namespace Turbo.Rooms.Managers
                 RoomObjects = roomObjects
             });
 
-            player.Session.SendQueue(new UserUpdateMessage
+            player.Session.Send(new UserUpdateMessage
             {
                 RoomObjects = roomObjects
             });
