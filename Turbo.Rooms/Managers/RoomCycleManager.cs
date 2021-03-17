@@ -18,6 +18,8 @@ namespace Turbo.Rooms.Managers
             _room = room;
             _cycles = new List<ICyclable>();
 
+            _cycles = new List<ICyclable>();
+
             _cycles.Add(new RoomUserStatusCycle(_room));
         }
 

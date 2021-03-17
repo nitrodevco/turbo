@@ -8,6 +8,9 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
+using Turbo.Packets.Outgoing.Navigator;
+using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic.Avatar;
 
@@ -66,7 +69,7 @@ namespace Turbo.Rooms.Managers
             return null;
         }
 
-        public IRoomObject AddRoomObject(IRoomObject roomObject, IPoint location)
+        public IRoomObject AddRoomObject(IRoomObject roomObject, IPoint location = null)
         {
             if (roomObject == null) return null;
 
@@ -81,6 +84,8 @@ namespace Turbo.Rooms.Managers
 
             if (roomObject.Logic is not MovingAvatarLogic avatarLogic) return null;
 
+            if (location == null) location = _room.RoomModel.DoorLocation.Clone();
+
             roomObject.SetLocation(location);
 
             IRoomTile roomTile = avatarLogic.GetCurrentTile();
@@ -93,20 +98,26 @@ namespace Turbo.Rooms.Managers
 
             RoomObjects.Add(roomObject.Id, roomObject);
 
-            // here we are only sending this roomObject to the room
-            // the session player is not watching the room yet
-            // COMPOSER: SendComposer(RoomUserComposer(roomObject), RoomUserStatusComposer(roomObject))
+            SendComposer(new UsersMessage
+            {
+
+            });
+
+            SendComposer(new UserUpdateMessage
+            {
+
+            });
 
             UpdateTotalUsers();
 
             return roomObject;
         }
 
-        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectHolder roomObjectHolder, IPoint location)
+        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectFactory objectFactory, IRoomObjectHolder roomObjectHolder, IPoint location)
         {
             if (roomObjectHolder == null) return null;
 
-            IRoomObject roomObject = new RoomObject(_room, _roomObjectCounter++, roomObjectHolder.Type);
+            IRoomObject roomObject = objectFactory.CreateRoomObject(_room, _roomObjectCounter++, roomObjectHolder.Type, roomObjectHolder.Type);
 
             if (roomObject == null) return null;
 
@@ -121,7 +132,10 @@ namespace Turbo.Rooms.Managers
 
             if (roomObject == null) return;
 
-            // send composer, RemoveRoomUser(roomObject.Id)
+            SendComposer(new UserRemoveMessage
+            {
+                Id = id
+            });
 
             RoomObjects.Remove(id);
 
@@ -139,9 +153,57 @@ namespace Turbo.Rooms.Managers
             foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
         }
 
-        public void EnterRoom(IPlayer player, IPoint location = null)
+        public void EnterRoom(IRoomObjectFactory objectFactory, IPlayer player, IPoint location = null)
         {
-            
+            if ((objectFactory == null) || (player == null)) return;
+
+            // set the pending room id
+
+            IRoomObject roomObject = CreateRoomObjectAndAssign(objectFactory, player, location);
+
+            if(roomObject == null)
+            {
+                player.Session.Send(new CantConnectMessage
+                {
+                    Reason = CantConnectReason.Closed
+                });
+
+                return;
+            }
+
+            player.Session.SendQueue(new HeightMapMessage
+            {
+                RoomModel = _room.RoomModel,
+                RoomMap = _room.RoomMap
+            });
+
+            player.Session.SendQueue(new FloorHeightMapMessage
+            {
+                IsZoomedIn = true,
+                WallHeight = 1,
+                RoomModel = _room.RoomModel
+            });
+
+            player.Session.SendQueue(new RoomVisualizationSettingsMessage
+            {
+                WallsHidden = false,
+                FloorThickness = 1,
+                WallThickness = 1
+            });
+
+            // would be nice to send this from the navigator so we aren't duplicating code
+            player.Session.SendQueue(new GetGuestRoomResultMessage
+            {
+                EnterRoom = false,
+                Room = _room,
+                IsRoomForward = false,
+                IsStaffPick = false,
+                IsGroupMember = false,
+                AllInRoomMuted = false,
+                CanMute = false
+            });
+
+            player.Session.Flush();
         }
 
         private void UpdateTotalUsers()
