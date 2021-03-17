@@ -11,6 +11,7 @@ using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.PacketHandlers;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
 using Turbo.Core.Security.Authentication;
@@ -36,6 +37,7 @@ namespace Turbo.Main
         private readonly IRoomManager _roomManager;
         private readonly IPlayerManager _playerManager;
         private readonly ISessionManager _sessionManager;
+        private readonly IPacketHandlerManager _packetHandlers;
 
         private Task _gameCycle;
         private bool _cycleStarted = false;
@@ -52,7 +54,8 @@ namespace Turbo.Main
             INavigatorManager navigatorManager,
             IPlayerManager playerManager,
             IAuthenticationService authenticationService,
-            ISessionManager sessionManager)
+            ISessionManager sessionManager,
+            IPacketHandlerManager packetHandlers)
         {
             _appLifetime = appLifetime;
             _logger = logger;
@@ -64,6 +67,7 @@ namespace Turbo.Main
             _navigatorManager = navigatorManager;
             _playerManager = playerManager;
             _sessionManager = sessionManager;
+            _packetHandlers = packetHandlers;
         }
 
         /// <summary>

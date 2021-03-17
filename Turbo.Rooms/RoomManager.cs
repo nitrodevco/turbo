@@ -19,7 +19,6 @@ namespace Turbo.Rooms
         private readonly ILogger<IRoomManager> _logger;
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomModelRepository _roomModelRepository;
-        private readonly IRoomMessageHandler _roomMessageHandler;
         private readonly IRoomFactory _roomFactory;
         private readonly IRoomObjectFactory _roomObjectFactory;
 
@@ -31,13 +30,11 @@ namespace Turbo.Rooms
             IRoomRepository roomRepository,
             IRoomModelRepository roomModelRepository,
             IRoomObjectFactory roomObjectFactory,
-            IRoomMessageHandler roomMessageHandler,
             IRoomFactory roomFactory)
         {
             _logger = logger;
             _roomRepository = roomRepository;
             _roomModelRepository = roomModelRepository;
-            _roomMessageHandler = roomMessageHandler;
             _roomFactory = roomFactory;
             _roomObjectFactory = roomObjectFactory;
 

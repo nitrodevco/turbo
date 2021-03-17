@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Core.Game.Navigator
+namespace Turbo.Core.PacketHandlers
 {
-    public interface INavigatorMessageHandler
+    public interface IPacketHandlerManager
     {
     }
 }

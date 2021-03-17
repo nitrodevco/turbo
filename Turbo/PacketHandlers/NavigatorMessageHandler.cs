@@ -1,0 +1,31 @@
+﻿using Turbo.Core.Game.Navigator;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.PacketHandlers;
+using Turbo.Core.Packets;
+using Turbo.Packets.Incoming.Navigator;
+
+namespace Turbo.Main.PacketHandlers
+{
+    public class NavigatorMessageHandler : INavigatorMessageHandler
+    {
+        private readonly IPacketMessageHub _messageHub;
+        private readonly INavigatorManager _navigatorManager;
+
+        public NavigatorMessageHandler(
+            IPacketMessageHub messageHub,
+            INavigatorManager navigatorManager)
+        {
+            _messageHub = messageHub;
+            _navigatorManager = navigatorManager;
+
+            _messageHub.Subscribe<GetGuestRoomMessage>(this, OnGetGuestRoomMessage);
+        }
+
+        private async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            await _navigatorManager.EnterRoom(session.Player, message.RoomId);
+        }
+    }
+}

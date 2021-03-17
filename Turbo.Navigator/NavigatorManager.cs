@@ -1,25 +1,27 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Packets.Outgoing.Room.Session;
 
 namespace Turbo.Navigator
 {
     public class NavigatorManager : INavigatorManager
     {
         private readonly IRoomManager _roomManager;
-        private readonly INavigatorMessageHandler _navigatorMessageHandler;
+        private readonly ILogger<INavigatorManager> _logger;
 
         private readonly IDictionary<int, int> _pendingRoomIds;
 
         public NavigatorManager(
             IRoomManager roomManager,
-            INavigatorMessageHandler navigatorMessageHandler)
+            ILogger<INavigatorManager> logger)
         {
             _roomManager = roomManager;
-            _navigatorMessageHandler = navigatorMessageHandler;
+            _logger = logger;
 
             _pendingRoomIds = new Dictionary<int, int>();
         }
@@ -69,7 +71,7 @@ namespace Turbo.Navigator
 
             if (room != null) await room.InitAsync();
 
-            if (room == null)
+            if (room == null || (room.RoomModel == null))
             {
                 ClearPendingRoomId(player.Id);
 
@@ -82,19 +84,25 @@ namespace Turbo.Navigator
 
             // if not owner
 
-                // if usersNow >= usersMax
-                // if !skipsState
-                    // if locked
-                        // request doorbell
-                    // if password
-                        // test the password
-                    // if invisible
-                        // check rights
+            // if usersNow >= usersMax
+            // if !skipsState
+            // if locked
+            // request doorbell
+            // if password
+            // test the password
+            // if invisible
+            // check rights
 
             // if locked state clear the doorbell
 
-            // send room enter
-            // send room model name
+
+            //_logger.LogInformation(room.Id.ToString());
+            await player.Session.Send(new OpenConnectionMessage());
+            await player.Session.Send(new RoomReadyMessage
+            {
+                RoomId = room.Id,
+                RoomType = room.RoomModel.Name
+            });
         }
 
         public async Task ContinueEnteringRoom(IPlayer player)

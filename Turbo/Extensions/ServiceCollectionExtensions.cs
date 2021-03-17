@@ -5,6 +5,7 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
@@ -14,6 +15,7 @@ using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
 using Turbo.Database.Repositories.Security;
 using Turbo.Furniture;
+using Turbo.Main.PacketHandlers;
 using Turbo.Navigator;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
@@ -69,6 +71,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<ISessionFactory, SessionFactory>();
 
             // Packet Handlers
+            services.AddTransient<IPacketHandlerManager, PacketHandlerManager>();
             services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();
             services.AddTransient<IRoomMessageHandler, RoomMessageHandler>();
         }
