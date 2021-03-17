@@ -4,6 +4,7 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
+using Turbo.Packets.Outgoing.Room.Session;
 
 namespace Turbo.Players
 {
@@ -91,7 +92,7 @@ namespace Turbo.Players
 
         public void ClearRoomObject()
         {
-            if(RoomObject != null)
+            if (RoomObject != null)
             {
                 RoomObject.Dispose();
 
@@ -100,6 +101,7 @@ namespace Turbo.Players
                 // update all messenger friends
             }
 
+            // clear doorbell
             // clear pending doorbell
             // if pending room return
             // send hotel view composer

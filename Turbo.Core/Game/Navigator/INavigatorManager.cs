@@ -12,6 +12,7 @@ namespace Turbo.Core.Game.Navigator
         public int GetPendingRoomId(int userId);
         public void SetPendingRoomId(int userId, int roomId);
         public void ClearPendingRoomId(int userId);
+        public void ClearRoomStatus(IPlayer player);
         public Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool isRoomForward = false);
         public Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false);
         public Task ContinueEnteringRoom(IPlayer player);
