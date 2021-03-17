@@ -5,6 +5,8 @@ namespace Turbo.Packets.Outgoing.Room.Engine
 {
     public record FloorHeightMapMessage : IComposer
     {
-        public IRoomMap RoomMap { get; init; }
+        public bool IsZoomedIn { get; init; }
+        public int WallHeight { get; init; }
+        public IRoomModel RoomModel { get; init; }
     }
 }

@@ -1,14 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
+using Turbo.Rooms.Factories;
 using Turbo.Rooms.Mapping;
 
 namespace Turbo.Rooms
@@ -18,6 +17,7 @@ namespace Turbo.Rooms
         private readonly ILogger<IRoomManager> _logger;
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomModelRepository _roomModelRepository;
+        private readonly IRoomFactory _roomFactory;
 
         private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
@@ -25,11 +25,13 @@ namespace Turbo.Rooms
         public RoomManager(
             ILogger<IRoomManager> logger,
             IRoomRepository roomRepository,
-            IRoomModelRepository roomModelRepository)
+            IRoomModelRepository roomModelRepository,
+            IRoomFactory roomFactory)
         {
             _logger = logger;
             _roomRepository = roomRepository;
             _roomModelRepository = roomModelRepository;
+            _roomFactory = roomFactory;
 
             _rooms = new ConcurrentDictionary<int, IRoom>();
             _models = new Dictionary<int, IRoomModel>();
@@ -60,15 +62,13 @@ namespace Turbo.Rooms
 
         public IRoom GetOnlineRoom(int id)
         {
-            if (id <= 0 || !_rooms.ContainsKey(id)) return null;
+            if(_rooms.TryGetValue(id, out IRoom room))
+            {
+                room.CancelDispose();
+                return room;
+            }
 
-            IRoom room = _rooms[id];
-
-            if (room == null) return null;
-
-            room.CancelDispose();
-
-            return room;
+            return null;
         }
 
         public async Task<IRoom> GetOfflineRoom(int id)
@@ -81,7 +81,7 @@ namespace Turbo.Rooms
 
             if (roomEntity == null) return null;
 
-            room = new Room(this, roomEntity);
+            room = _roomFactory.Create(roomEntity);
 
             return await AddRoom(room);
         }
@@ -135,9 +135,11 @@ namespace Turbo.Rooms
 
         public IRoomModel GetModel(int id)
         {
-            if (id <= 0 || !_models.ContainsKey(id)) return null;
-
-            return _models[id];
+            if(_models.TryGetValue(id, out IRoomModel model))
+            {
+                return model;
+            }
+            return null;
         }
 
         public IRoomModel GetModelByName(string name)

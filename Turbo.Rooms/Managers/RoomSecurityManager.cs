@@ -5,13 +5,15 @@ using Turbo.Core.Game.Rooms;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomSecurityManager : IAsyncInitialisable, IAsyncDisposable
+    public class RoomSecurityManager : IRoomSecurityManager
     {
-        private readonly IRoom _room;
+        private IRoom _room;
 
-        public RoomSecurityManager(IRoom room)
+        public IRoom Room { set => _room = value; }
+
+        public RoomSecurityManager()
         {
-            _room = room;
+   
         }
 
         public async ValueTask InitAsync()

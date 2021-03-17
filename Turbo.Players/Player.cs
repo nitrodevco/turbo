@@ -140,5 +140,13 @@ namespace Turbo.Players
                 return PlayerDetails.Gender;
             }
         }
+
+        public ISession Session
+        {
+            get
+            {
+                return _session;
+            }
+        }
     }
 }

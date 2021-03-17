@@ -3,5 +3,6 @@
 namespace Turbo.Packets.Incoming.Room.Session
 {
     public record QuitMessage : IMessageEvent
-    {}
+    {
+    }
 }
