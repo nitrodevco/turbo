@@ -11,7 +11,9 @@ namespace Turbo.Main.PacketHandlers
     {
         public PacketHandlerManager(
             INavigatorMessageHandler navigatorMessageHandler,
-            IRoomMessageHandler roomMessageHandler)
+            IRoomAvatarMessageHandler roomAvatarMessageHandler,
+            IRoomEngineMessageHandler roomMessageHandler,
+            IRoomSessionMessageHandler roomSessionMessageHandler)
         {
 
         }
