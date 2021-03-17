@@ -12,20 +12,11 @@ namespace Turbo.Rooms
             _roomEntity = roomEntity;
         }
 
-        public int Id
-        {
-            get
-            {
-                return _roomEntity.Id;
-            }
-        }
+        public int Id => _roomEntity.Id;
 
         public string Name
         {
-            get
-            {
-                return _roomEntity.Name;
-            }
+            get => _roomEntity.Name;
         }
 
         public int ModelId
@@ -42,10 +33,7 @@ namespace Turbo.Rooms
 
         public bool AllowWalkThrough
         {
-            get
-            {
-                return _roomEntity.AllowWalkThrough;
-            }
+            get => _roomEntity.AllowWalkThrough;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Turbo.Database.Repositories.Room
         }
 
         public async Task<RoomModelEntity> FindAsync(int id) => await _context.RoomModels
-            .FindAsync(id);
+            .FirstOrDefaultAsync(roomModel => roomModel.Id == id);
 
         public async Task<RoomModelEntity> FindByNameAsync(string name) => await _context.RoomModels
             .FirstOrDefaultAsync(roomModel => roomModel.Name == name);

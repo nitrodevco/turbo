@@ -36,6 +36,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Security", "Turbo.Sec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Rooms.Tests", "Turbo.Rooms.Tests\Turbo.Rooms.Tests.csproj", "{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turbo.Navigator", "Turbo.Navigator\Turbo.Navigator.csproj", "{0E90AE4D-4EE2-4729-8CF8-446CED0B615B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +112,10 @@ Global
 		{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06FC2F8F-AD8A-4A25-94E4-56B6000779E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E90AE4D-4EE2-4729-8CF8-446CED0B615B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E90AE4D-4EE2-4729-8CF8-446CED0B615B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E90AE4D-4EE2-4729-8CF8-446CED0B615B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E90AE4D-4EE2-4729-8CF8-446CED0B615B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

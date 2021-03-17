@@ -32,13 +32,19 @@ namespace Turbo.Security.Authentication
         {
             int userId = await _securityManager.GetPlayerIdFromTicket(message.SSO);
 
-            if (userId <= 0) return;
+            if (userId <= 0)
+            {
+                await session.DisposeAsync();
+
+                return;
+            }
 
             IPlayer player = await _playerManager.CreatePlayer(userId, session);
 
             if (player == null)
             {
                 await session.DisposeAsync();
+
                 return;
             }
 

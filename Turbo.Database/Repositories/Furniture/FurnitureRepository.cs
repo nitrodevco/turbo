@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Furniture;
+using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Repositories.Furniture
 {
@@ -14,6 +15,6 @@ namespace Turbo.Database.Repositories.Furniture
         }
 
         public async Task<FurnitureEntity> FindAsync(int id) => await _context.Furnitures
-            .FindAsync(id);
+            .FirstOrDefaultAsync(furniture => furniture.Id == id);
     }
 }

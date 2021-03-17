@@ -31,7 +31,12 @@ namespace Turbo.Networking.Game.Clients
 
         public async ValueTask DisposeAsync()
         {
-            if (Player != null) await Player.DisposeAsync();
+            if (Player != null)
+            {
+                await Player.DisposeAsync();
+
+                Player = null;
+            }
 
             await _channel.CloseAsync();
         }

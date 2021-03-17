@@ -15,10 +15,10 @@ namespace Turbo.Database.Repositories.Security
         }
 
         public async Task<SecurityTicketEntity> FindAsync(int id) => await _context.SecurityTickets
-            .FindAsync(id);
+            .FirstOrDefaultAsync(securityTicket => securityTicket.Id == id);
 
         public async Task<SecurityTicketEntity> FindByTicketAsync(string ticket) => await _context.SecurityTickets
-            .FirstAsync(securityTicket => securityTicket.Ticket == ticket);
+            .FirstOrDefaultAsync(securityTicket => securityTicket.Ticket == ticket);
 
         public void DeleteBySecurityTicketEntity(SecurityTicketEntity entity)
         {
