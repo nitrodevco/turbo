@@ -6,6 +6,7 @@ namespace Turbo.Core.Game.Rooms
 {
     public interface IRoom : IAsyncInitialisable, IAsyncDisposable, ICyclable
     {
+        public IRoomManager RoomManager { get; }
         public IRoomDetails RoomDetails { get; }
         public IRoomModel RoomModel { get; }
         public IRoomMap RoomMap { get; }

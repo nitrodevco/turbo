@@ -12,7 +12,7 @@ namespace Turbo.Rooms
 {
     public class Room : IRoom
     {
-        private readonly IRoomManager _roomManager;
+        public IRoomManager RoomManager { get; private set; }
 
         public IRoomDetails RoomDetails { get; private set; }
         public IRoomModel RoomModel { get; private set; }
@@ -29,7 +29,7 @@ namespace Turbo.Rooms
 
         public Room(IRoomManager roomManager, ILogger<IRoom> logger, RoomEntity roomEntity)
         {
-            _roomManager = roomManager;
+            RoomManager = roomManager;
             _logger = logger;
             RoomDetails = new RoomDetails(roomEntity);
 
@@ -56,9 +56,9 @@ namespace Turbo.Rooms
 
             CancelDispose();
 
-            if (_roomManager != null)
+            if (RoomManager != null)
             {
-                await _roomManager.RemoveRoom(Id);
+                await RoomManager.RemoveRoom(Id);
             }
 
             if (RoomCycleManager != null) await RoomCycleManager.DisposeAsync();
@@ -96,7 +96,7 @@ namespace Turbo.Rooms
 
             RoomModel = null;
 
-            IRoomModel roomModel = _roomManager.GetModel(RoomDetails.ModelId);
+            IRoomModel roomModel = RoomManager.GetModel(RoomDetails.ModelId);
 
             if ((roomModel == null) || (!roomModel.DidGenerate)) return;
 
