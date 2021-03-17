@@ -10,4 +10,4 @@ Test Turbo:
         - export PATH="$PATH:/root/.dotnet/tools"
         - dotnet sonarscanner begin /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY" /k:"Turbo"
         - dotnet test
-        - dotnet sonarscanner end /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY"
+        - dotnet sonarscanner end /d:sonar.login="$SONAR_LOGIN_KEY"
