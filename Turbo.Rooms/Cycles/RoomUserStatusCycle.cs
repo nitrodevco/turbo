@@ -55,7 +55,7 @@ namespace Turbo.Rooms.Cycles
 
             if (updatedRoomObjects.Count == 0) return;
 
-            await _room.SendComposer(new UserUpdateMessage
+            _room.SendComposer(new UserUpdateMessage
             {
                 RoomObjects = updatedRoomObjects
             });
