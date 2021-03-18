@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Mapping.Constants;
 using Turbo.Core.Game.Rooms.Object;
@@ -30,7 +29,7 @@ namespace Turbo.Rooms.Mapping
 
             if ((node == null) || (node.NextNode == null)) return null;
 
-            while(node.NextNode != null)
+            while (node.NextNode != null)
             {
                 points.Add(node.Location);
 
@@ -74,11 +73,11 @@ namespace Turbo.Rooms.Mapping
 
             nodes.Add(currentNode);
 
-            IList<IPoint> walkingPoints = ALLOW_DIAGONALS ? MovePoints.MovingPoints : MovePoints.StandardPoints;
+            IReadOnlyCollection<IPoint> walkingPoints = ALLOW_DIAGONALS ? MovePoints.MovingPoints : MovePoints.StandardPoints;
 
             if (walkingPoints.Count == 0) return null;
 
-            while(nodes.Count > 0)
+            while (nodes.Count > 0)
             {
                 currentNode = nodes.ElementAtOrDefault(0);
 
@@ -86,7 +85,7 @@ namespace Turbo.Rooms.Mapping
 
                 currentNode.State = PathFinderNodeState.CLOSED;
 
-                foreach(IPoint walkingPoint in walkingPoints)
+                foreach (IPoint walkingPoint in walkingPoints)
                 {
                     tempPoint = currentNode.Location.AddPoint(walkingPoint);
 
@@ -94,7 +93,7 @@ namespace Turbo.Rooms.Mapping
 
                     if (nodeMap.ElementAtOrDefault(tempPoint.X) == null) nodeMap[tempPoint.X] = new List<IPathFinderNode>();
 
-                    if(nodeMap[tempPoint.X].ElementAtOrDefault(tempPoint.Y) == null)
+                    if (nodeMap[tempPoint.X].ElementAtOrDefault(tempPoint.Y) == null)
                     {
                         tempNode = new PathFinderNode(tempPoint);
                         nodeMap[tempPoint.X][tempPoint.Y] = tempNode;
@@ -115,13 +114,13 @@ namespace Turbo.Rooms.Mapping
 
                     if (tempNode.State == PathFinderNodeState.OPEN) continue;
 
-                    if(cost < tempNode.Cost)
+                    if (cost < tempNode.Cost)
                     {
                         tempNode.Cost = cost;
                         tempNode.NextNode = currentNode;
                     }
 
-                    if(tempNode.Location.Compare(nodeGoal.Location))
+                    if (tempNode.Location.Compare(nodeGoal.Location))
                     {
                         tempNode.NextNode = currentNode;
 
@@ -152,7 +151,7 @@ namespace Turbo.Rooms.Mapping
 
             if (Math.Abs(nextHeight - currentHeight) > Math.Abs(MAX_WALKING_HEIGHT)) return false;
 
-            if(ALLOW_DIAGONALS && !location.Compare(nextLocation))
+            if (ALLOW_DIAGONALS && !location.Compare(nextLocation))
             {
                 bool isSideValid = (_roomMap.GetValidDiagonalTile(roomObject, new Point(nextLocation.X, location.Y)) != null);
                 bool isOtherSideValid = (_roomMap.GetValidDiagonalTile(roomObject, new Point(location.X, nextLocation.Y)) != null);

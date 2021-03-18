@@ -3,7 +3,7 @@ using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Core.Packets
 {
-    public interface ICallable<T> where T : IMessageEvent
+    public interface ICallable<in T> where T : IMessageEvent
     {
         /// <summary>
         /// Executes callable logic and returns true to continue 
