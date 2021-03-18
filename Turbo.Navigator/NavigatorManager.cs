@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -184,5 +184,16 @@ namespace Turbo.Navigator
 
             // remove user from pending doorbells
         }
+
+        public async Task SendNavigatorMetaData(IPlayer player) => await player.Session.Send(new NavigatorMetaDataMessage
+        {
+            TopLevelContexts = new List<TopLevelContext>
+            {
+                new TopLevelContext { SearchCode = "official_view" },
+                new TopLevelContext { SearchCode = "hotel_view" },
+                new TopLevelContext { SearchCode = "roomads_view" },
+                new TopLevelContext { SearchCode = "myworld_view" }
+            }
+        });
     }
 }

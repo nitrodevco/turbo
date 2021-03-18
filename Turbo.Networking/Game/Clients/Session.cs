@@ -67,7 +67,7 @@ namespace Turbo.Networking.Game.Clients
                 IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(), composer);
                 if (queue) await _channel.WriteAsync(packet);
                 else await _channel.WriteAndFlushAsync(packet);
-                _logger.LogDebug($"Sent message {composer.GetType().Name}");
+                _logger.LogDebug($"Sent {packet.Header}: {composer.GetType().Name}");
             }
             else
             {
