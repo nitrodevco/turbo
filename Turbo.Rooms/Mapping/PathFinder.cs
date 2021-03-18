@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -28,7 +28,7 @@ namespace Turbo.Rooms.Mapping
 
             if ((node == null) || (node.NextNode == null)) return null;
 
-            while(node.NextNode != null)
+            while (node.NextNode != null)
             {
                 points.Add(node.Location);
 
@@ -74,11 +74,11 @@ namespace Turbo.Rooms.Mapping
 
             nodes.Add(currentNode);
 
-            IList<IPoint> walkingPoints = ALLOW_DIAGONALS ? MovePoints.MovingPoints : MovePoints.StandardPoints;
+            IReadOnlyCollection<IPoint> walkingPoints = ALLOW_DIAGONALS ? MovePoints.MovingPoints : MovePoints.StandardPoints;
 
             if (walkingPoints.Count == 0) return null;
 
-            while(nodes.Count > 0)
+            while (nodes.Count > 0)
             {
                 currentNode = nodes[0];
 
@@ -86,14 +86,14 @@ namespace Turbo.Rooms.Mapping
 
                 currentNode.IsClosed = true;
 
-                foreach(IPoint walkingPoint in walkingPoints)
+                foreach (IPoint walkingPoint in walkingPoints)
                 {
                     tempPoint = currentNode.Location.AddPoint(walkingPoint);
 
                     if (!IsValidStep(roomObject, currentNode.Location, tempPoint, nodeGoal.Location)) continue;
 
                     if (!nodeMap.ContainsKey(tempPoint.X)) nodeMap.Add(tempPoint.X, new Dictionary<int, IPathFinderNode>());
-
+                    
                     if (!nodeMap[tempPoint.X].ContainsKey(tempPoint.Y))
                     {
                         tempNode = new PathFinderNode(tempPoint);
@@ -121,7 +121,7 @@ namespace Turbo.Rooms.Mapping
                         tempNode.NextNode = currentNode;
                     }
 
-                    if(tempNode.Location.Compare(nodeGoal.Location))
+                    if (tempNode.Location.Compare(nodeGoal.Location))
                     {
                         tempNode.NextNode = currentNode;
 
