@@ -11,7 +11,7 @@ namespace Turbo.Rooms.Mapping
     {
         private readonly IRoom _room;
 
-        private readonly IList<IList<IRoomTile>> _map;
+        private readonly IDictionary<int, IDictionary<int, IRoomTile>> _map;
         
         public IList<IRoomTile> Tiles { get; init; }
         public IPathFinder PathFinder { get; init; }
@@ -20,7 +20,7 @@ namespace Turbo.Rooms.Mapping
         {
             _room = room;
 
-            _map = new List<IList<IRoomTile>>();
+            _map = new Dictionary<int, IDictionary<int, IRoomTile>>();
             Tiles = new List<IRoomTile>();
 
             PathFinder = new PathFinder(this);
@@ -55,9 +55,9 @@ namespace Turbo.Rooms.Mapping
 
                     IRoomTile roomTile = new RoomTile(_room, new Point(x, y), height, state);
 
-                    if (_map.Count - 1 < x) _map.Add(new List<IRoomTile>());
-                    
-                    _map[x].Add(roomTile);
+                    if (_map.Count - 1 < x) _map.Add(x, new Dictionary<int, IRoomTile>());
+
+                    _map[x].Add(y, roomTile);
 
                     Tiles.Add(roomTile);
                 }
@@ -70,11 +70,11 @@ namespace Turbo.Rooms.Mapping
 
         public IRoomTile GetTile(IPoint point)
         {
-            if ((point == null) || (_map[point.X] == null) || (_map[point.X][point.Y] == null)) return null;
+            if ((point == null) || !_map.ContainsKey(point.X) || !_map[point.X].ContainsKey(point.Y)) return null;
 
             IRoomTile roomTile = _map[point.X][point.Y];
 
-            if ((roomTile == null) || (roomTile.State == RoomTileState.Closed)) return null;
+            if (roomTile.State == RoomTileState.Closed) return null;
 
             return roomTile;
         }

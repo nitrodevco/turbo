@@ -22,7 +22,7 @@ namespace Turbo.Rooms.Mapping
 
         public IList<IPoint> MakePath(IRoomObject roomObject, IPoint location)
         {
-            IList<IPoint> points = new List<IPoint>();
+            List<IPoint> points = new List<IPoint>();
 
             IPathFinderNode node = CalculatePathFinderNode(roomObject, location);
 
