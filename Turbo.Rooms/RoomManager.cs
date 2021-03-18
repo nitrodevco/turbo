@@ -19,7 +19,6 @@ namespace Turbo.Rooms
         private readonly IRoomRepository _roomRepository;
         private readonly IRoomModelRepository _roomModelRepository;
         private readonly IRoomFactory _roomFactory;
-        private readonly IRoomObjectFactory _roomObjectFactory;
 
         private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
@@ -28,14 +27,12 @@ namespace Turbo.Rooms
             ILogger<IRoomManager> logger,
             IRoomRepository roomRepository,
             IRoomModelRepository roomModelRepository,
-            IRoomObjectFactory roomObjectFactory,
             IRoomFactory roomFactory)
         {
             _logger = logger;
             _roomRepository = roomRepository;
             _roomModelRepository = roomModelRepository;
             _roomFactory = roomFactory;
-            _roomObjectFactory = roomObjectFactory;
 
             _rooms = new ConcurrentDictionary<int, IRoom>();
             _models = new Dictionary<int, IRoomModel>();

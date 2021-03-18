@@ -140,12 +140,12 @@ namespace Turbo.Rooms
                 RoomModel = RoomModel
             });
 
-            //player.Session.SendQueue(new RoomVisualizationSettingsMessage
-            //{
-            //    WallsHidden = false,
-            //    FloorThickness = 1,
-            //    WallThickness = 1
-            ////});
+            player.Session.SendQueue(new RoomVisualizationSettingsMessage
+            {
+                WallsHidden = false,
+                FloorThickness = 1,
+                WallThickness = 1
+            });
 
             // send the paint
 
@@ -171,12 +171,25 @@ namespace Turbo.Rooms
 
             player.Session.Flush();
 
-            lock(_roomObserverLock)
-            {
-                _roomObservers.Add(player.Session);
-            }
+            AddObserver(player.Session);
 
             // process wired triggers for entering room
+        }
+
+        public void AddObserver(ISession session)
+        {
+            lock (_roomObserverLock)
+            {
+                _roomObservers.Add(session);
+            }
+        }
+
+        public void RemoveObserver(ISession session)
+        {
+            lock (_roomObserverLock)
+            {
+                _roomObservers.Remove(session);
+            }
         }
 
         public async Task Cycle()
