@@ -31,6 +31,7 @@ namespace Turbo.Rooms
         public IRoomUserManager RoomUserManager { get; private set; }
 
         private readonly IList<ISession> _roomObservers;
+        private object _roomObserverLock = new();
 
         public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
@@ -170,7 +171,10 @@ namespace Turbo.Rooms
 
             player.Session.Flush();
 
-            _roomObservers.Add(player.Session);
+            lock(_roomObserverLock)
+            {
+                _roomObservers.Add(player.Session);
+            }
 
             // process wired triggers for entering room
         }
@@ -180,11 +184,14 @@ namespace Turbo.Rooms
             await RoomCycleManager.RunCycles();
         }
 
-        public async ValueTask SendComposer(IComposer composer)
+        public void SendComposer(IComposer composer)
         {
-            foreach (ISession session in _roomObservers)
+            lock(_roomObserverLock)
             {
-                await session.Send(composer);
+                foreach (ISession session in _roomObservers)
+                {
+                    session.Send(composer);
+                }
             }
         }
 

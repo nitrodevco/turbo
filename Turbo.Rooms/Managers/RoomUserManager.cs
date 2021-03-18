@@ -193,9 +193,9 @@ namespace Turbo.Rooms.Managers
 
         }
 
-        public async void SendComposer(IComposer composer)
+        public void SendComposer(IComposer composer)
         {
-            await _room.SendComposer(composer);
+            _room.SendComposer(composer);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Turbo.Core.Game.Rooms
         public void CancelDispose();
 
         public void EnterRoom(IPlayer player);
-        public ValueTask SendComposer(IComposer composer);
+        public void SendComposer(IComposer composer);
 
         public int Id { get; }
     }
