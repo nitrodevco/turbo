@@ -1,6 +1,5 @@
 ﻿using System;
 using Turbo.Core.Game.Rooms.Mapping;
-using Turbo.Core.Game.Rooms.Mapping.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Rooms.Mapping
@@ -11,7 +10,8 @@ namespace Turbo.Rooms.Mapping
         public IPathFinderNode NextNode { get; set; }
 
         public int Cost { get; set; }
-        public PathFinderNodeState State { get; set; }
+        public bool IsOpen { get; set; }
+        public bool IsClosed { get; set; }
 
         public PathFinderNode(IPoint location)
         {

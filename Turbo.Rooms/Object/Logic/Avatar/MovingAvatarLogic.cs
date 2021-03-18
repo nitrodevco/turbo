@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -202,6 +203,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             if(string.IsNullOrWhiteSpace(type)) return;
 
+            Statuses.Remove(type);
             Statuses.Add(type, value);
 
             RoomObject.NeedsUpdate = true;

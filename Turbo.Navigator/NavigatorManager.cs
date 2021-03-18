@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -58,6 +58,20 @@ namespace Turbo.Navigator
             _pendingRoomIds.Remove(userId);
         }
 
+        public void ClearRoomStatus(IPlayer player)
+        {
+            if (player == null) return;
+
+            ClearPendingDoorbell(player);
+
+            int pendingRoomId = GetPendingRoomId(player.Id);
+
+            if (pendingRoomId == -1)
+            {
+                if (player.Session != null) player.Session.Send(new CloseConnectionMessage());
+            }
+        }
+
         public async Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool isRoomForward = false)
         {
             if (player == null) return;
@@ -96,7 +110,8 @@ namespace Turbo.Navigator
             {
                 await player.Session.Send(new CantConnectMessage
                 {
-                    Reason = CantConnectReason.Closed
+                    Reason = CantConnectReason.Closed,
+                    Parameter = ""
                 });
 
                 return;
@@ -161,6 +176,13 @@ namespace Turbo.Navigator
             }
 
             ClearPendingRoomId(player.Id);
+        }
+
+        public void ClearPendingDoorbell(IPlayer player)
+        {
+            if (player == null) return;
+
+            // remove user from pending doorbells
         }
 
         public async Task SendNavigatorMetaData(IPlayer player) => await player.Session.Send(new NavigatorMetaDataMessage

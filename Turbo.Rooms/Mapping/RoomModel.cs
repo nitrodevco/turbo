@@ -79,22 +79,22 @@ namespace Turbo.Rooms.Mapping
             {
                 string row = rows[y];
 
-                if ((row == null) || (row == "\r")) continue;
+                if ((row == null) || row.Equals("\r")) continue;
 
                 int rowLength = row.Length;
 
                 if (rowLength == 0) continue;
 
-                if (rowLength != totalX)
-                {
-                    ResetModel(false);
-
-                    return;
-                }
-
                 for (int x = 0; x < totalX; x++)
                 {
-                    char square = rows[y][x];
+                    if (rowLength != totalX)
+                    {
+                        ResetModel(false);
+
+                        return;
+                    }
+
+                    string square = rows[y].Substring(x, 1).Trim();
 
                     if (_tileStates.Count - 1 < x) _tileStates.Add(new List<RoomTileState>());
                     if (_tileHeights.Count - 1 < x) _tileHeights.Add(new List<int>());
@@ -112,7 +112,7 @@ namespace Turbo.Rooms.Mapping
                         int index = "abcdefghijklmnopqrstuvwxyz".IndexOf(square);
 
                         _tileStates[x][y] = RoomTileState.Open;
-                        _tileHeights[x][y] = (index == -1) ? square : (index + 10);
+                        _tileHeights[x][y] = (index == -1) ? Int32.Parse(square) : (index + 10);
                     }
 
                     TotalSize++;
@@ -129,6 +129,8 @@ namespace Turbo.Rooms.Mapping
             TotalX = totalX;
             TotalY = totalY;
 
+            IRoomModel roomModel = this;
+
             RoomTileState doorTileState = GetTileState(_modelEntity.DoorX, _modelEntity.DoorY);
             int doorTileHeight = GetTileHeight(_modelEntity.DoorX, _modelEntity.DoorY);
 
@@ -139,7 +141,7 @@ namespace Turbo.Rooms.Mapping
                 return;
             }
 
-            DoorLocation = new Point(_modelEntity.DoorX, _modelEntity.DoorY, (double)doorTileHeight, (Rotation)_modelEntity.DoorDirection);
+            DoorLocation = new Point(_modelEntity.DoorX, _modelEntity.DoorY, (double)doorTileHeight, (Rotation)_modelEntity.DoorDirection, (Rotation)_modelEntity.DoorDirection);
             DidGenerate = true;
         }
 

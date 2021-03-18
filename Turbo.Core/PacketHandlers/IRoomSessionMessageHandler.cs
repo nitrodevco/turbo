@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Turbo.Core.PacketHandlers
 {
-    public interface IRoomMessageHandler
+    public interface IRoomSessionMessageHandler
     {
     }
 }
