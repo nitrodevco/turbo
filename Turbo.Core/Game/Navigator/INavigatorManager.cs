@@ -10,7 +10,7 @@ namespace Turbo.Core.Game.Navigator
     public interface INavigatorManager : IAsyncInitialisable, IAsyncDisposable
     {
         public int GetPendingRoomId(int userId);
-        public void SetPendingRoomId(int userId, int roomId);
+        public void SetPendingRoomId(int userId, int roomId, bool approved = false);
         public void ClearPendingRoomId(int userId);
         public void ClearRoomStatus(IPlayer player);
         public Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool isRoomForward = false);

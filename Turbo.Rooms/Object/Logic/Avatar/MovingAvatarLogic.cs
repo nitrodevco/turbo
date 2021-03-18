@@ -88,9 +88,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             LocationNext = null;
             LocationGoal = null;
 
-            RemoveStatus(RoomObjectAvatarStatus.Move);
-
-            RoomObject.NeedsUpdate = true;
+            if(RoomObject != null) RemoveStatus(RoomObjectAvatarStatus.Move);
         }
 
         public void ClearPath()
@@ -111,16 +109,11 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             IRoomTile roomTile = GetCurrentTile();
 
-            if(roomTile == null)
+            if(roomTile == null || roomTile.IsDoor)
             {
                 StopWalking();
 
-                return;
-            }
-
-            if(roomTile.IsDoor)
-            {
-                RoomObject.Dispose();
+                if(roomTile.IsDoor) RoomObject.Dispose();
 
                 return;
             }

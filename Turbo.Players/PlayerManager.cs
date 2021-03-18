@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
@@ -14,16 +15,19 @@ namespace Turbo.Players
     {
         private readonly IPlayerFactory _playerFactory;
         private readonly IPlayerRepository _playerRepository;
+        private readonly INavigatorManager _navigatorManager;
 
         private readonly Dictionary<int, IPlayer> _players;
 
         public PlayerManager(
             IPlayerFactory playerFactory,
             IPlayerRepository playerRepository,
+            INavigatorManager navigatorManager,
             ILogger<IPlayerManager> logger)
         {
             _playerFactory = playerFactory;
             _playerRepository = playerRepository;
+            _navigatorManager = navigatorManager;
 
             _players = new Dictionary<int, IPlayer>();
         }
@@ -115,6 +119,8 @@ namespace Turbo.Players
             _players.Remove(id);
 
             await player.DisposeAsync();
+
+
         }
 
         public async ValueTask RemoveAllPlayers()
@@ -123,6 +129,13 @@ namespace Turbo.Players
             {
                 await RemovePlayer(id);
             }
+        }
+
+        public void ClearPlayerRoomStatus(IPlayer player)
+        {
+            if (player == null) return;
+
+            _navigatorManager.ClearRoomStatus(player);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -22,7 +23,7 @@ namespace Turbo.Core.Game.Rooms
         public void CancelDispose();
 
         public void EnterRoom(IPlayer player);
-        public void SendComposer(IComposer composer);
+        public ValueTask SendComposer(IComposer composer);
 
         public int Id { get; }
     }

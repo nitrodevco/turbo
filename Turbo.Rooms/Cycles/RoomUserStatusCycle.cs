@@ -55,7 +55,7 @@ namespace Turbo.Rooms.Cycles
 
             if (updatedRoomObjects.Count == 0) return;
 
-            _room.SendComposer(new UserUpdateMessage
+            await _room.SendComposer(new UserUpdateMessage
             {
                 RoomObjects = updatedRoomObjects
             });
@@ -63,8 +63,6 @@ namespace Turbo.Rooms.Cycles
 
         private void ProcessRoomObject(IRoomObject roomObject)
         {
-            if (roomObject == null) return;
-
             MovingAvatarLogic avatarLogic = (MovingAvatarLogic) roomObject.Logic;
             
             if (!avatarLogic.IsWalking) return; // or is rolling

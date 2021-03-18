@@ -6,5 +6,6 @@ namespace Turbo.Core.Game.Players
     {
         public ValueTask RemovePlayer(int id);
         public ValueTask RemoveAllPlayers();
+        public void ClearPlayerRoomStatus(IPlayer player);
     }
 }

@@ -44,6 +44,8 @@ namespace Turbo.Main.PacketHandlers
         private async void OnQuitMessage(QuitMessage message, ISession session)
         {
             if (session.Player == null) return;
+
+            session.Player.ClearRoomObject();
         }
     }
 }

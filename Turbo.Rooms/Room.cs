@@ -180,11 +180,11 @@ namespace Turbo.Rooms
             await RoomCycleManager.RunCycles();
         }
 
-        public void SendComposer(IComposer composer)
+        public async ValueTask SendComposer(IComposer composer)
         {
             foreach (ISession session in _roomObservers)
             {
-                session.Send(composer);
+                await session.Send(composer);
             }
         }
 

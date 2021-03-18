@@ -22,5 +22,6 @@ namespace Turbo.Core.Game.Rooms.Object
         public void SetLocation(IPoint point);
         public bool SetHolder(IRoomObjectHolder roomObjectHolder);
         public void SetLogic(IRoomObjectLogic logic);
+        public bool Disposed { get; }
     }
 }

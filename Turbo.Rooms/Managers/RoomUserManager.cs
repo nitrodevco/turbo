@@ -156,7 +156,7 @@ namespace Turbo.Rooms.Managers
         {
             if ((objectFactory == null) || (player == null)) return;
 
-            IRoomObject roomObject = CreateRoomObjectAndAssign(objectFactory, player, location);
+            CreateRoomObjectAndAssign(objectFactory, player, location);
 
             IList<IRoomObject> roomObjects = new List<IRoomObject>();
             IList<IComposer> composers = new List<IComposer>();
@@ -193,9 +193,9 @@ namespace Turbo.Rooms.Managers
 
         }
 
-        public void SendComposer(IComposer composer)
+        public async void SendComposer(IComposer composer)
         {
-            _room.SendComposer(composer);
+            await _room.SendComposer(composer);
         }
     }
 }
