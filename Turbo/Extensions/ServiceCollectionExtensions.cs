@@ -75,7 +75,9 @@ namespace Turbo.Main.Extensions
             // Packet Handlers
             services.AddTransient<IPacketHandlerManager, PacketHandlerManager>();
             services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();
-            services.AddTransient<IRoomMessageHandler, RoomMessageHandler>();
+            services.AddTransient<IRoomAvatarMessageHandler, RoomAvatarMessageHandler>();
+            services.AddTransient<IRoomEngineMessageHandler, RoomEngineMessageHandler>();
+            services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
         }
 
         public static void AddRepositories(this IServiceCollection services)

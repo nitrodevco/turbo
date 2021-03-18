@@ -17,7 +17,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public IDictionary<int, IRoomObject> Users { get; }
         public IDictionary<int, IRoomObject> Furniture { get; }
 
-        public bool IsDoor { get; }
+        public bool IsDoor { get; set; }
 
         public void AddRoomObject(IRoomObject roomObject);
         public void RemoveRoomObject(IRoomObject roomObject);

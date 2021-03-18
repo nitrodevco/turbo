@@ -49,7 +49,7 @@ namespace Turbo.Rooms.Object
 
             if (RoomObjectHolder != null)
             {
-                RoomObjectHolder.SetRoomObject(null);
+                RoomObjectHolder.ClearRoomObject();
 
                 RoomObjectHolder = null;
             }

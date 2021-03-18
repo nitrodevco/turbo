@@ -12,6 +12,7 @@ using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
 using Turbo.Core.Game;
+using Turbo.Packets.Outgoing.Room.Engine;
 
 namespace Turbo.Rooms.Cycles
 {
@@ -54,7 +55,10 @@ namespace Turbo.Rooms.Cycles
 
             if (updatedRoomObjects.Count == 0) return;
 
-            // COMPOSER: USER STATUS UPDATE
+            _room.SendComposer(new UserUpdateMessage
+            {
+                RoomObjects = updatedRoomObjects
+            });
         }
 
         private void ProcessRoomObject(IRoomObject roomObject)
