@@ -74,11 +74,7 @@ namespace Turbo.Rooms.Cycles
                 return;
             }
 
-            avatarLogic.GetCurrentTile().RemoveRoomObject(roomObject);
-
             avatarLogic.ProcessNextLocation();
-
-            avatarLogic.GetCurrentTile().AddRoomObject(roomObject);
 
             IPoint nextLocation = avatarLogic.CurrentPath[0];
 
@@ -162,8 +158,8 @@ namespace Turbo.Rooms.Cycles
                 }
             }
 
-            //currentTile.RemoveRoomObject(roomObject);
-           /// nextTile.AddRoomObject(roomObject);
+            currentTile.RemoveRoomObject(roomObject);
+            nextTile.AddRoomObject(roomObject);
 
             if (currentTile.HighestObject != null)
             {
