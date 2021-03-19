@@ -33,6 +33,7 @@ namespace Turbo.Rooms
         private readonly IList<ISession> _roomObservers;
         private object _roomObserverLock = new();
 
+        public bool IsInitialized { get; private set; }
         public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
 
@@ -57,6 +58,8 @@ namespace Turbo.Rooms
 
         public async ValueTask InitAsync()
         {
+            if (IsInitialized) return;
+
             await LoadMapping();
 
             if (RoomSecurityManager != null) await RoomSecurityManager.InitAsync();
@@ -64,6 +67,8 @@ namespace Turbo.Rooms
             if (RoomUserManager != null) await RoomUserManager.InitAsync();
 
             Logger.LogInformation("Room loaded");
+
+            IsInitialized = true;
         }
 
         public async ValueTask DisposeAsync()
