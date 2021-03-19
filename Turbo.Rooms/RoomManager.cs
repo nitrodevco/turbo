@@ -27,13 +27,11 @@ namespace Turbo.Rooms
             ILogger<IRoomManager> logger,
             IServiceScopeFactory scopeFactory,
             IRoomObjectFactory roomObjectFactory,
-            IRoomModelRepository roomModelRepository,
             IRoomFactory roomFactory)
         {
             _logger = logger;
-            _roomFactory = roomFactory;
-            _roomObjectFactory = roomObjectFactory;
             _serviceScopeFactory = scopeFactory;
+            _roomFactory = roomFactory;
 
             _rooms = new ConcurrentDictionary<int, IRoom>();
             _models = new Dictionary<int, IRoomModel>();
