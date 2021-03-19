@@ -2,22 +2,22 @@
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Core.Security;
-using Turbo.Core.Security.Authentication;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
 
-namespace Turbo.Security.Authentication
+namespace Turbo.Main.PacketHandlers
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationMessageHandler : IAuthenticationMessageHandler
     {
         private readonly IPacketMessageHub _messageHub;
         private readonly ISecurityManager _securityManager;
         private readonly IPlayerManager _playerManager;
-        private readonly ILogger<IAuthenticationService> _logger;
+        private readonly ILogger<AuthenticationMessageHandler> _logger;
 
-        public AuthenticationService(IPacketMessageHub messageHub, ISecurityManager securityManager, IPlayerManager playerManager, ILogger<IAuthenticationService> logger)
+        public AuthenticationMessageHandler(IPacketMessageHub messageHub, ISecurityManager securityManager, IPlayerManager playerManager, ILogger<AuthenticationMessageHandler> logger)
         {
             _messageHub = messageHub;
             _securityManager = securityManager;

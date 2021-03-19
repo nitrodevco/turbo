@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
 using Turbo.Core.Security;
 using Turbo.Database.Entities.Security;
 using Turbo.Database.Repositories.Security;
@@ -7,10 +8,10 @@ namespace Turbo.Security
 {
     public class SecurityManager : ISecurityManager
     {
-        private readonly ISecurityTicketRepository _securityTicketRepository;
-        public SecurityManager(ISecurityTicketRepository securityTicketRepository)
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        public SecurityManager(IServiceScopeFactory scopeFactory)
         {
-            _securityTicketRepository = securityTicketRepository;
+            _serviceScopeFactory = scopeFactory;
         }
 
         public async ValueTask InitAsync()
@@ -27,15 +28,22 @@ namespace Turbo.Security
         {
             if ((ticket == null) || (ticket.Length == 0)) return 0;
 
-            SecurityTicketEntity securityTicketEntity = await _securityTicketRepository.FindByTicketAsync(ticket);
+            SecurityTicketEntity securityTicketEntity;
 
-            if (securityTicketEntity == null) return 0;
-
-            if (!securityTicketEntity.IsLocked)
+            using (var scope = _serviceScopeFactory.CreateScope())
             {
-                _securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);
+                var securityTicketRepository = scope.ServiceProvider.GetService<ISecurityTicketRepository>();
 
-                // check timestamp for expiration, if time now is greater than expiration, return 0;
+                securityTicketEntity = await securityTicketRepository.FindByTicketAsync(ticket);
+
+                if (securityTicketEntity == null) return 0;
+
+                if (!securityTicketEntity.IsLocked)
+                {
+                    securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);
+
+                    // check timestamp for expiration, if time now is greater than expiration, return 0;
+                }
             }
 
             return securityTicketEntity.PlayerEntityId;
