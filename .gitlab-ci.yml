@@ -10,6 +10,6 @@ Test Turbo:
         - apt update && apt install default-jre -y
         - dotnet tool install --global dotnet-sonarscanner
         - export PATH="$PATH:/root/.dotnet/tools"
-        - dotnet sonarscanner begin /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY" /k:"Turbo" /d:sonar.coverage.exclusions="**Tests*.cs" /d:sonar.flex.cobertura.reportPaths="**\coverage.cobertura.xml"
-        - dotnet test --collect:"XPlat Code Coverage"
+        - dotnet sonarscanner begin /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY" /k:"Turbo" /d:sonar.coverage.exclusions="**Tests*.cs" /d:sonar.cs.opencover.reportsPaths="**\coverage.opencover.xml"
+        - dotnet test --settings coverlet.runsettings
         - dotnet sonarscanner end /d:sonar.login="$SONAR_LOGIN_KEY"
