@@ -32,6 +32,10 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
+[Tt]est[Rr]esults/
 
 # Visual Studio 2015
 .vs/
+
+# Appsettings
+**/appsettings.*.json
