@@ -14,7 +14,6 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
-using Turbo.Core.Security.Authentication;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
 
@@ -53,7 +52,6 @@ namespace Turbo.Main
             IRoomManager roomManager,
             INavigatorManager navigatorManager,
             IPlayerManager playerManager,
-            IAuthenticationService authenticationService,
             ISessionManager sessionManager,
             IPacketHandlerManager packetHandlers)
         {

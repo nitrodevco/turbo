@@ -1,21 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Turbo.Core.PacketHandlers;
+﻿using Turbo.Core.PacketHandlers;
 
 namespace Turbo.Main.PacketHandlers
 {
     public class PacketHandlerManager : IPacketHandlerManager
     {
+        private readonly IAuthenticationMessageHandler _authenticationMessageHandler;
+        private readonly INavigatorMessageHandler _navigatorMessageHandler;
+        private readonly IRoomAvatarMessageHandler _roomAvatarMessageHandler;
+        private readonly IRoomEngineMessageHandler _roomEngineMessageHandler;
+        private readonly IRoomSessionMessageHandler _roomSessionMessageHandler;
         public PacketHandlerManager(
             INavigatorMessageHandler navigatorMessageHandler,
             IRoomAvatarMessageHandler roomAvatarMessageHandler,
-            IRoomEngineMessageHandler roomMessageHandler,
-            IRoomSessionMessageHandler roomSessionMessageHandler)
+            IRoomEngineMessageHandler roomEngineMessageHandler,
+            IRoomSessionMessageHandler roomSessionMessageHandler,
+            IAuthenticationMessageHandler authenticationMessageHandler)
         {
-
+            _authenticationMessageHandler = authenticationMessageHandler;
+            _navigatorMessageHandler = navigatorMessageHandler;
+            _roomAvatarMessageHandler = roomAvatarMessageHandler;
+            _roomEngineMessageHandler = roomEngineMessageHandler;
+            _roomSessionMessageHandler = roomSessionMessageHandler;
         }
     }
 }

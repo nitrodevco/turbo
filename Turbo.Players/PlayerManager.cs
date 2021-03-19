@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Navigator;
@@ -14,20 +14,22 @@ namespace Turbo.Players
     public class PlayerManager : IPlayerManager, IPlayerContainer
     {
         private readonly IPlayerFactory _playerFactory;
-        private readonly IPlayerRepository _playerRepository;
         private readonly INavigatorManager _navigatorManager;
+        private readonly ILogger<PlayerManager> _logger;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly Dictionary<int, IPlayer> _players;
 
         public PlayerManager(
             IPlayerFactory playerFactory,
-            IPlayerRepository playerRepository,
+            IServiceScopeFactory scopeFactory,
             INavigatorManager navigatorManager,
-            ILogger<IPlayerManager> logger)
+            ILogger<PlayerManager> logger)
         {
             _playerFactory = playerFactory;
-            _playerRepository = playerRepository;
+            _logger = logger;
             _navigatorManager = navigatorManager;
+            _serviceScopeFactory = scopeFactory;
 
             _players = new Dictionary<int, IPlayer>();
         }
@@ -64,7 +66,12 @@ namespace Turbo.Players
 
             if (player != null) return player;
 
-            PlayerEntity playerEntity = await _playerRepository.FindAsync(id);
+            PlayerEntity playerEntity;
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+                playerEntity = await playerRepository.FindAsync(id);
+            }
 
             if (playerEntity == null) return null;
 
