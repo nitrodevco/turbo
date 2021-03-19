@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,7 +19,6 @@ namespace Turbo.Rooms
         private readonly ILogger<IRoomManager> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IRoomFactory _roomFactory;
-        private readonly IRoomObjectFactory _roomObjectFactory;
 
         private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
@@ -28,6 +27,7 @@ namespace Turbo.Rooms
             ILogger<IRoomManager> logger,
             IServiceScopeFactory scopeFactory,
             IRoomObjectFactory roomObjectFactory,
+            IRoomModelRepository roomModelRepository,
             IRoomFactory roomFactory)
         {
             _logger = logger;

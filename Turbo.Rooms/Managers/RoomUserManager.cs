@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
@@ -9,7 +7,6 @@ using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
-using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Logic.Avatar;
@@ -41,7 +38,6 @@ namespace Turbo.Rooms.Managers
         public async ValueTask DisposeAsync()
         {
             RemoveAllRoomObjects();
-
         }
 
         public IRoomObject GetRoomObject(int id)

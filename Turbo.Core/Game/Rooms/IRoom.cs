@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Core.Game.Rooms
@@ -23,6 +24,8 @@ namespace Turbo.Core.Game.Rooms
         public void CancelDispose();
 
         public void EnterRoom(IPlayer player);
+        public void AddObserver(ISession session);
+        public void RemoveObserver(ISession session);
         public void SendComposer(IComposer composer);
 
         public int Id { get; }
