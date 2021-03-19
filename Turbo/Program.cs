@@ -37,7 +37,7 @@ namespace Turbo.Main
                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
                         .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
                         .EnableDetailedErrors()
-                        //ServiceLifetime.Transient
+                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                     );
 
                     // Repositories, Managers and networking
