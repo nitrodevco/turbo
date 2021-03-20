@@ -23,6 +23,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public IPoint LocationGoal { get; private set; }
         public IList<IPoint> CurrentPath { get; private set; }
         
+        public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; private set; }
         public bool CanWalk { get; private set; }
 
@@ -33,6 +34,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public virtual void WalkTo(IPoint location)
         {
+            NeedsRepathing = false;
+
             if (location == null) return;
 
             location = location.Clone();

@@ -86,6 +86,19 @@ namespace Turbo.Rooms.Cycles
         {
             MovingAvatarLogic avatarLogic = (MovingAvatarLogic) roomObject.Logic;
 
+            if(avatarLogic.NeedsRepathing)
+            {
+                avatarLogic.ClearPath();
+
+                avatarLogic.WalkTo(avatarLogic.LocationGoal);
+
+                ProcessRoomObject(roomObject);
+                
+                return;
+            }
+
+            bool needsNewPath = false;
+
             if (locationNext == null)
             {
                 avatarLogic.StopWalking();
@@ -95,22 +108,11 @@ namespace Turbo.Rooms.Cycles
 
             bool isGoal = avatarLogic.CurrentPath.Count == 0;
             IRoomTile currentTile = avatarLogic.GetCurrentTile();
-            IRoomTile nextTile = _room.RoomMap.GetValidTile(roomObject, locationNext, isGoal);
+            IRoomTile nextTile = _room.RoomMap.GetTile(locationNext);
 
-            if ((currentTile == null) || (currentTile == nextTile))
+            if ((currentTile == null) || (nextTile == null) || (currentTile == nextTile))
             {
                 avatarLogic.StopWalking();
-
-                return;
-            }
-
-            if (nextTile == null)
-            {
-                avatarLogic.ClearPath();
-
-                avatarLogic.WalkTo(avatarLogic.LocationGoal);
-
-                ProcessRoomObject(roomObject);
 
                 return;
             }
@@ -140,7 +142,7 @@ namespace Turbo.Rooms.Cycles
 
             if (isGoal)
             {
-                if (!nextTile.IsOpen())
+                if (!nextTile.IsOpen() || ((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id)))
                 {
                     avatarLogic.StopWalking();
 
@@ -149,9 +151,33 @@ namespace Turbo.Rooms.Cycles
             }
             else
             {
+                if((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id))
+                {
+                    foreach(IRoomObject existingObject in nextTile.Users.Values)
+                    {
+                        MovingAvatarLogic existingAvatarLogic = (MovingAvatarLogic) existingObject.Logic;
+
+                        if (!existingAvatarLogic.IsWalking) continue;
+
+                        existingAvatarLogic.NeedsRepathing = true;
+                    }
+
+                    Console.WriteLine("new path");
+                    needsNewPath = true;
+                }
+
                 if (!nextTile.IsOpen() || nextTile.CanSit() || nextTile.CanLay())
                 {
-                    avatarLogic.StopWalking();
+                    needsNewPath = true;
+                }
+
+                if (needsNewPath)
+                {
+                    avatarLogic.ClearPath();
+
+                    avatarLogic.WalkTo(avatarLogic.LocationGoal);
+
+                    ProcessRoomObject(roomObject);
 
                     return;
                 }
