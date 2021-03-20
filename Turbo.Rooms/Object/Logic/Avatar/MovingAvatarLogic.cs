@@ -99,6 +99,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             if (CurrentPath == null) return;
 
             CurrentPath.Clear();
+            LocationNext = null;
         }
 
         public void ProcessNextLocation()

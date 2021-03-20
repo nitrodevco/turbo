@@ -132,6 +132,13 @@ namespace Turbo.Rooms.Managers
                 Id = id
             });
 
+            if(roomObject.Logic is MovingAvatarLogic avatarLogic)
+            {
+                avatarLogic.StopWalking();
+
+                avatarLogic.GetCurrentTile().RemoveRoomObject(roomObject);
+            }
+
             RoomObjects.Remove(id);
 
             // if the room object was playing a game, remove it from that game

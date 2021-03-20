@@ -84,20 +84,18 @@ namespace Turbo.Rooms.Cycles
 
         private void CheckStep(IRoomObject roomObject, IPoint locationNext)
         {
-            MovingAvatarLogic avatarLogic = (MovingAvatarLogic) roomObject.Logic;
+            MovingAvatarLogic avatarLogic = (MovingAvatarLogic)roomObject.Logic;
 
-            if(avatarLogic.NeedsRepathing)
+            if (avatarLogic.NeedsRepathing)
             {
                 avatarLogic.ClearPath();
 
                 avatarLogic.WalkTo(avatarLogic.LocationGoal);
 
                 ProcessRoomObject(roomObject);
-                
+
                 return;
             }
-
-            bool needsNewPath = false;
 
             if (locationNext == null)
             {
@@ -127,19 +125,6 @@ namespace Turbo.Rooms.Cycles
                 return;
             }
 
-            if (ALLOW_DIAGONALS)
-            {
-                bool isSideValid = _room.RoomMap.GetValidDiagonalTile(roomObject, new Point(nextTile.Location.X, currentTile.Location.Y)) != null;
-                bool isOtherSideValid = _room.RoomMap.GetValidDiagonalTile(roomObject, new Point(currentTile.Location.X, nextTile.Location.Y)) != null;
-
-                if (!isSideValid && !isOtherSideValid)
-                {
-                    avatarLogic.StopWalking();
-
-                    return;
-                }
-            }
-
             if (isGoal)
             {
                 if (!nextTile.IsOpen() || ((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id)))
@@ -151,33 +136,46 @@ namespace Turbo.Rooms.Cycles
             }
             else
             {
-                if((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id))
+                if ((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id))
                 {
-                    foreach(IRoomObject existingObject in nextTile.Users.Values)
+                    foreach (IRoomObject existingObject in nextTile.Users.Values)
                     {
-                        MovingAvatarLogic existingAvatarLogic = (MovingAvatarLogic) existingObject.Logic;
+                        MovingAvatarLogic existingAvatarLogic = (MovingAvatarLogic)existingObject.Logic;
 
-                        if (!existingAvatarLogic.IsWalking) continue;
+                        if (!existingAvatarLogic.IsWalking)
+                        {
+                            avatarLogic.StopWalking();
+
+                            return;
+                        }
 
                         existingAvatarLogic.NeedsRepathing = true;
                     }
 
-                    Console.WriteLine("new path");
-                    needsNewPath = true;
+                    avatarLogic.NeedsRepathing = true;
                 }
 
                 if (!nextTile.IsOpen() || nextTile.CanSit() || nextTile.CanLay())
                 {
-                    needsNewPath = true;
+                    avatarLogic.NeedsRepathing = true;
                 }
 
-                if (needsNewPath)
+                if (avatarLogic.NeedsRepathing)
                 {
-                    avatarLogic.ClearPath();
-
-                    avatarLogic.WalkTo(avatarLogic.LocationGoal);
-
                     ProcessRoomObject(roomObject);
+
+                    return;
+                }
+            }
+
+            if (ALLOW_DIAGONALS)
+            {
+                bool isSideValid = _room.RoomMap.GetValidDiagonalTile(roomObject, new Point(nextTile.Location.X, currentTile.Location.Y)) != null;
+                bool isOtherSideValid = _room.RoomMap.GetValidDiagonalTile(roomObject, new Point(currentTile.Location.X, nextTile.Location.Y)) != null;
+
+                if (!isSideValid && !isOtherSideValid)
+                {
+                    avatarLogic.StopWalking();
 
                     return;
                 }
