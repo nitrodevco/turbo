@@ -15,7 +15,7 @@ namespace Turbo.Furniture
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<FurnitureManager> _logger;
 
-        private Dictionary<int, IFurnitureDefinition> _furnitureDefinitions;
+        private IDictionary<int, IFurnitureDefinition> _furnitureDefinitions;
 
         public FurnitureManager(
             ILogger<FurnitureManager> logger,

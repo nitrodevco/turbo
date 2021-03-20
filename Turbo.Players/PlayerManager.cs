@@ -18,7 +18,7 @@ namespace Turbo.Players
         private readonly ILogger<PlayerManager> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        private readonly Dictionary<int, IPlayer> _players;
+        private readonly IDictionary<int, IPlayer> _players;
 
         public PlayerManager(
             IPlayerFactory playerFactory,

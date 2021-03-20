@@ -139,5 +139,10 @@ namespace Turbo.Rooms.Utils
         {
             return (((int)Rotation % 2) != 0) ? (Rotation - 1) : Rotation;
         }
+
+        public override string ToString()
+        {
+            return X + "," + Y + "," + Z;
+        }
     }
 }
