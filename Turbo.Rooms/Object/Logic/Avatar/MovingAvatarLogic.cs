@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms.Mapping;
-using Turbo.Core.Game.Rooms.Messages;
-using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Furniture;
-using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
@@ -22,7 +15,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public IPoint LocationNext { get; set; }
         public IPoint LocationGoal { get; private set; }
         public IList<IPoint> CurrentPath { get; private set; }
-        
+
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; private set; }
         public bool CanWalk { get; private set; }
@@ -46,7 +39,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (RoomObject.Location.Compare(location)) return;
 
-            if(RoomObject.Room.RoomMap.GetValidTile(RoomObject, location) == null)
+            if (RoomObject.Room.RoomMap.GetValidTile(RoomObject, location) == null)
             {
                 StopWalking();
 
@@ -91,7 +84,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             LocationNext = null;
             LocationGoal = null;
 
-            if(RoomObject != null) RemoveStatus(RoomObjectAvatarStatus.Move);
+            if (RoomObject != null) RemoveStatus(RoomObjectAvatarStatus.Move);
         }
 
         public void ClearPath()
@@ -113,11 +106,11 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             IRoomTile roomTile = GetCurrentTile();
 
-            if(roomTile == null || roomTile.IsDoor)
+            if (roomTile == null || roomTile.IsDoor)
             {
                 StopWalking();
 
-                if(roomTile.IsDoor) RoomObject.Dispose();
+                if (roomTile.IsDoor) RoomObject.Dispose();
 
                 return;
             }
@@ -154,13 +147,13 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (roomTile == null) return;
 
-            if(!roomTile.CanSit() || !roomTile.CanLay())
+            if (!roomTile.CanSit() || !roomTile.CanLay())
             {
                 Sit(false);
                 Lay(false);
             }
 
-            if((roomTile.HighestObject != null) && (roomTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic))
+            if ((roomTile.HighestObject != null) && (roomTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic))
             {
                 furnitureLogic.OnStop(RoomObject);
             }
@@ -172,7 +165,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             RemoveStatus(RoomObjectAvatarStatus.Sit, RoomObjectAvatarStatus.Lay);
 
-            if(flag)
+            if (flag)
             {
                 rotation = (rotation == null) ? RoomObject.Location.CalculateSitDirection() : rotation;
 
@@ -198,7 +191,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public void AddStatus(string type, string value)
         {
-            if(string.IsNullOrWhiteSpace(type)) return;
+            if (string.IsNullOrWhiteSpace(type)) return;
 
             Statuses.Remove(type);
             Statuses.Add(type, value);
@@ -210,9 +203,9 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public void RemoveStatus(params string[] types)
         {
-            if((types == null) || (types.Length == 0)) return;
+            if ((types == null) || (types.Length == 0)) return;
 
-            foreach(string type in types)
+            foreach (string type in types)
             {
                 Statuses.Remove(type);
             }

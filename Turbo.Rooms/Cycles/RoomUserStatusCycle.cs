@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
-using Turbo.Core.Game;
-using Turbo.Packets.Outgoing.Room.Engine;
 
 namespace Turbo.Rooms.Cycles
 {
@@ -62,8 +62,8 @@ namespace Turbo.Rooms.Cycles
 
         private void ProcessRoomObject(IRoomObject roomObject)
         {
-            MovingAvatarLogic avatarLogic = (MovingAvatarLogic) roomObject.Logic;
-            
+            MovingAvatarLogic avatarLogic = (MovingAvatarLogic)roomObject.Logic;
+
             if (!avatarLogic.IsWalking) return; // or is rolling
 
             avatarLogic.ProcessNextLocation();

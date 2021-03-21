@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms.Object.Data;
 
 namespace Turbo.Rooms.Object.Data
@@ -23,7 +19,7 @@ namespace Turbo.Rooms.Object.Data
             int uniqueNumber = 0;
             int uniqueSeries = 0;
 
-            if((uniqueNumber > 0) && (uniqueSeries > 0))
+            if ((uniqueNumber > 0) && (uniqueSeries > 0))
             {
                 Flags += (int)StuffDataFlags.UniqueSet;
             }

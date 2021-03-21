@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Players;
-using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Repositories.Player
 {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
@@ -93,7 +92,7 @@ namespace Turbo.Rooms.Mapping
                     if (!IsValidStep(roomObject, currentNode.Location, tempPoint, nodeGoal.Location)) continue;
 
                     if (!nodeMap.ContainsKey(tempPoint.X)) nodeMap.Add(tempPoint.X, new Dictionary<int, IPathFinderNode>());
-                    
+
                     if (!nodeMap[tempPoint.X].ContainsKey(tempPoint.Y))
                     {
                         tempNode = new PathFinderNode(tempPoint);

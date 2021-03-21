@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Turbo.Core.Game.Rooms.Object.Data;
+﻿using Turbo.Core.Game.Rooms.Object.Data;
 using Turbo.Rooms.Object.Data.Types;
 
 namespace Turbo.Rooms.Object.Data
@@ -14,7 +9,7 @@ namespace Turbo.Rooms.Object.Data
         {
             IStuffData stuffData = null;
 
-            switch(flags & 0xFF)
+            switch (flags & 0xFF)
             {
                 case (int)StuffDataKey.LegacyKey:
                     stuffData = new LegacyStuffData();

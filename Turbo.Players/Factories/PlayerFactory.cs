@@ -1,9 +1,8 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
 using Turbo.Core.Game.Players;
 using Turbo.Database.Entities.Players;
-using Turbo.Database.Entities.Room;
 
 namespace Turbo.Players.Factories
 {

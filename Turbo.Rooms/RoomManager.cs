@@ -62,7 +62,7 @@ namespace Turbo.Rooms
 
         public IRoom GetOnlineRoom(int id)
         {
-            if(_rooms.TryGetValue(id, out IRoom room))
+            if (_rooms.TryGetValue(id, out IRoom room))
             {
                 room.CancelDispose();
                 return room;
@@ -140,7 +140,7 @@ namespace Turbo.Rooms
 
         public IRoomModel GetModel(int id)
         {
-            if(_models.TryGetValue(id, out IRoomModel model))
+            if (_models.TryGetValue(id, out IRoomModel model))
             {
                 return model;
             }
@@ -172,7 +172,7 @@ namespace Turbo.Rooms
                 var roomModelRepository = scope.ServiceProvider.GetService<IRoomModelRepository>();
                 entities = await roomModelRepository.FindAllAsync();
             }
-                 
+
             entities.ForEach(x =>
             {
                 IRoomModel roomModel = new RoomModel(x);
