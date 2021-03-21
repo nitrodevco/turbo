@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,26 +17,21 @@ namespace Turbo.Rooms
     public class RoomManager : IRoomManager
     {
         private readonly ILogger<IRoomManager> _logger;
-        private readonly IRoomRepository _roomRepository;
-        private readonly IRoomModelRepository _roomModelRepository;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IRoomFactory _roomFactory;
-        private readonly IRoomObjectFactory _roomObjectFactory;
 
         private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
 
         public RoomManager(
             ILogger<IRoomManager> logger,
-            IRoomRepository roomRepository,
-            IRoomModelRepository roomModelRepository,
+            IServiceScopeFactory scopeFactory,
             IRoomObjectFactory roomObjectFactory,
             IRoomFactory roomFactory)
         {
             _logger = logger;
-            _roomRepository = roomRepository;
-            _roomModelRepository = roomModelRepository;
+            _serviceScopeFactory = scopeFactory;
             _roomFactory = roomFactory;
-            _roomObjectFactory = roomObjectFactory;
 
             _rooms = new ConcurrentDictionary<int, IRoom>();
             _models = new Dictionary<int, IRoomModel>();
@@ -81,7 +77,12 @@ namespace Turbo.Rooms
 
             if (room != null) return room;
 
-            RoomEntity roomEntity = await _roomRepository.FindAsync(id);
+            RoomEntity roomEntity;
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var roomRepository = scope.ServiceProvider.GetService<IRoomRepository>();
+                roomEntity = await roomRepository.FindAsync(id);
+            }
 
             if (roomEntity == null) return null;
 
@@ -165,8 +166,13 @@ namespace Turbo.Rooms
         {
             _models.Clear();
 
-            List<RoomModelEntity> entities = await _roomModelRepository.FindAllAsync();
-
+            List<RoomModelEntity> entities;
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var roomModelRepository = scope.ServiceProvider.GetService<IRoomModelRepository>();
+                entities = await roomModelRepository.FindAllAsync();
+            }
+                 
             entities.ForEach(x =>
             {
                 IRoomModel roomModel = new RoomModel(x);

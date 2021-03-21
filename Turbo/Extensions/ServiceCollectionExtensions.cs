@@ -9,7 +9,6 @@ using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
-using Turbo.Core.Security.Authentication;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
@@ -34,7 +33,6 @@ using Turbo.Rooms.Factories;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic;
 using Turbo.Security;
-using Turbo.Security.Authentication;
 
 namespace Turbo.Main.Extensions
 {
@@ -51,7 +49,6 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IFurnitureManager, FurnitureManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
-            services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
             // Factories
             services.AddSingleton<IRoomFactory, RoomFactory>();
@@ -78,16 +75,17 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IRoomAvatarMessageHandler, RoomAvatarMessageHandler>();
             services.AddTransient<IRoomEngineMessageHandler, RoomEngineMessageHandler>();
             services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
+            services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
         {
-            services.AddSingleton<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
-            services.AddSingleton<IFurnitureRepository, FurnitureRepository>();
-            services.AddSingleton<IPlayerRepository, PlayerRepository>();
-            services.AddSingleton<IRoomModelRepository, RoomModelRepository>();
-            services.AddSingleton<IRoomRepository, RoomRepository>();
-            services.AddSingleton<ISecurityTicketRepository, SecurityTicketRepository>();
+            services.AddScoped<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
+            services.AddScoped<IFurnitureRepository, FurnitureRepository>();
+            services.AddScoped<IPlayerRepository, PlayerRepository>();
+            services.AddScoped<IRoomModelRepository, RoomModelRepository>();
+            services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Turbo.Rooms.Object
 
         public void Dispose()
         {
-            if (_isDisposing) return;
+            if (Disposed || _isDisposing) return;
 
             _isDisposing = true;
 
@@ -56,6 +56,7 @@ namespace Turbo.Rooms.Object
 
             Id = -1;
             Room = null;
+            NeedsUpdate = false;
             _roomObjectContainer = null;
 
             _isDisposing = false;
@@ -107,5 +108,7 @@ namespace Turbo.Rooms.Object
                 Logic.SetRoomObject(this);
             }
         }
+
+        public bool Disposed => (_roomObjectContainer == null);
     }
 }

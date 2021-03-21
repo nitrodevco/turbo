@@ -57,6 +57,8 @@ namespace Turbo.Rooms.Mapping
             {
                 if (IsDoor) return;
 
+                if (Users.ContainsKey(roomObject.Id)) return;
+
                 Users.Add(roomObject.Id, roomObject);
             }
             else if(roomObject.Logic is FurnitureLogicBase furnitureLogic)

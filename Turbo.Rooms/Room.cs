@@ -31,7 +31,9 @@ namespace Turbo.Rooms
         public IRoomUserManager RoomUserManager { get; private set; }
 
         private readonly IList<ISession> _roomObservers;
+        private object _roomObserverLock = new();
 
+        public bool IsInitialized { get; private set; }
         public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
 
@@ -56,6 +58,8 @@ namespace Turbo.Rooms
 
         public async ValueTask InitAsync()
         {
+            if (IsInitialized) return;
+
             await LoadMapping();
 
             if (RoomSecurityManager != null) await RoomSecurityManager.InitAsync();
@@ -63,6 +67,8 @@ namespace Turbo.Rooms
             if (RoomUserManager != null) await RoomUserManager.InitAsync();
 
             Logger.LogInformation("Room loaded");
+
+            IsInitialized = true;
         }
 
         public async ValueTask DisposeAsync()
@@ -139,12 +145,12 @@ namespace Turbo.Rooms
                 RoomModel = RoomModel
             });
 
-            //player.Session.SendQueue(new RoomVisualizationSettingsMessage
-            //{
-            //    WallsHidden = false,
-            //    FloorThickness = 1,
-            //    WallThickness = 1
-            ////});
+            player.Session.SendQueue(new RoomVisualizationSettingsMessage
+            {
+                WallsHidden = false,
+                FloorThickness = 1,
+                WallThickness = 1
+            });
 
             // send the paint
 
@@ -170,9 +176,25 @@ namespace Turbo.Rooms
 
             player.Session.Flush();
 
-            _roomObservers.Add(player.Session);
+            AddObserver(player.Session);
 
             // process wired triggers for entering room
+        }
+
+        public void AddObserver(ISession session)
+        {
+            lock (_roomObserverLock)
+            {
+                _roomObservers.Add(session);
+            }
+        }
+
+        public void RemoveObserver(ISession session)
+        {
+            lock (_roomObserverLock)
+            {
+                _roomObservers.Remove(session);
+            }
         }
 
         public async Task Cycle()
@@ -182,9 +204,12 @@ namespace Turbo.Rooms
 
         public void SendComposer(IComposer composer)
         {
-            foreach (ISession session in _roomObservers)
+            lock(_roomObserverLock)
             {
-                session.Send(composer);
+                foreach (ISession session in _roomObservers)
+                {
+                    session.Send(composer);
+                }
             }
         }
 

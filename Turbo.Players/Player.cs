@@ -1,10 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
-using Turbo.Packets.Outgoing.Room.Session;
 
 namespace Turbo.Players
 {
@@ -92,19 +92,22 @@ namespace Turbo.Players
 
         public void ClearRoomObject()
         {
+            IRoom room = null;
+
             if (RoomObject != null)
             {
+                room = RoomObject.Room;
+
                 RoomObject.Dispose();
 
                 RoomObject = null;
 
+                if (room != null) room.RemoveObserver(Session);
+
                 // update all messenger friends
             }
 
-            // clear doorbell
-            // clear pending doorbell
-            // if pending room return
-            // send hotel view composer
+            _playerContainer.ClearPlayerRoomStatus(this);
         }
 
         public string Type

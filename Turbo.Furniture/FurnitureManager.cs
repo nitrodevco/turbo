@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
@@ -10,15 +12,17 @@ namespace Turbo.Furniture
 {
     public class FurnitureManager : IFurnitureManager
     {
-        private readonly IFurnitureDefinitionRepository _furnitureDefinitionRepository;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ILogger<FurnitureManager> _logger;
 
-        private Dictionary<int, IFurnitureDefinition> _furnitureDefinitions;
+        private IDictionary<int, IFurnitureDefinition> _furnitureDefinitions;
 
         public FurnitureManager(
-            IFurnitureDefinitionRepository furnitureDefinitionRepository
-        )
+            ILogger<FurnitureManager> logger,
+            IServiceScopeFactory scopeFactory)
         {
-            _furnitureDefinitionRepository = furnitureDefinitionRepository;
+            _logger = logger;
+            _serviceScopeFactory = scopeFactory;
 
             _furnitureDefinitions = new Dictionary<int, IFurnitureDefinition>();
         }
@@ -39,8 +43,13 @@ namespace Turbo.Furniture
             // we need all furniture to reload their definitions
 
             _furnitureDefinitions.Clear();
-
-            List<FurnitureDefinitionEntity> entities = await _furnitureDefinitionRepository.FindAllAsync();
+            
+            List<FurnitureDefinitionEntity> entities;
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var furnitureDefinitionRepository = scope.ServiceProvider.GetService<IFurnitureDefinitionRepository>();
+                entities = await furnitureDefinitionRepository.FindAllAsync();
+            }
 
             entities.ForEach(entity =>
             {

@@ -1,7 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
@@ -13,17 +14,22 @@ namespace Turbo.Players
     public class PlayerManager : IPlayerManager, IPlayerContainer
     {
         private readonly IPlayerFactory _playerFactory;
-        private readonly IPlayerRepository _playerRepository;
+        private readonly INavigatorManager _navigatorManager;
+        private readonly ILogger<PlayerManager> _logger;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        private readonly Dictionary<int, IPlayer> _players;
+        private readonly IDictionary<int, IPlayer> _players;
 
         public PlayerManager(
             IPlayerFactory playerFactory,
-            IPlayerRepository playerRepository,
-            ILogger<IPlayerManager> logger)
+            IServiceScopeFactory scopeFactory,
+            INavigatorManager navigatorManager,
+            ILogger<PlayerManager> logger)
         {
             _playerFactory = playerFactory;
-            _playerRepository = playerRepository;
+            _logger = logger;
+            _navigatorManager = navigatorManager;
+            _serviceScopeFactory = scopeFactory;
 
             _players = new Dictionary<int, IPlayer>();
         }
@@ -60,7 +66,12 @@ namespace Turbo.Players
 
             if (player != null) return player;
 
-            PlayerEntity playerEntity = await _playerRepository.FindAsync(id);
+            PlayerEntity playerEntity;
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+                playerEntity = await playerRepository.FindAsync(id);
+            }
 
             if (playerEntity == null) return null;
 
@@ -115,6 +126,8 @@ namespace Turbo.Players
             _players.Remove(id);
 
             await player.DisposeAsync();
+
+
         }
 
         public async ValueTask RemoveAllPlayers()
@@ -123,6 +136,13 @@ namespace Turbo.Players
             {
                 await RemovePlayer(id);
             }
+        }
+
+        public void ClearPlayerRoomStatus(IPlayer player)
+        {
+            if (player == null) return;
+
+            _navigatorManager.ClearRoomStatus(player);
         }
     }
 }

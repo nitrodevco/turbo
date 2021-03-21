@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
     <ProjectReference Include="..\Turbo.Plugins\Turbo.Plugins.csproj" />
   </ItemGroup>
 

@@ -17,7 +17,7 @@ namespace Turbo.Navigator
         private readonly IRoomManager _roomManager;
         private readonly ILogger<INavigatorManager> _logger;
 
-        private readonly IDictionary<int, int> _pendingRoomIds;
+        private readonly IDictionary<int, IPendingRoomInfo> _pendingRoomIds;
 
         public NavigatorManager(
             IRoomManager roomManager,
@@ -26,7 +26,7 @@ namespace Turbo.Navigator
             _roomManager = roomManager;
             _logger = logger;
 
-            _pendingRoomIds = new Dictionary<int, int>();
+            _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
         }
 
         public async ValueTask InitAsync()
@@ -43,14 +43,19 @@ namespace Turbo.Navigator
         {
             if (!_pendingRoomIds.ContainsKey(userId)) return -1;
 
-            return _pendingRoomIds[userId];
+            return _pendingRoomIds[userId].RoomId;
         }
 
-        public void SetPendingRoomId(int userId, int roomId)
+        public void SetPendingRoomId(int userId, int roomId, bool approved = false)
         {
             if ((userId <= 0) || (roomId <= 0)) return;
 
-            _pendingRoomIds.Add(userId, roomId);
+            _pendingRoomIds.Remove(userId);
+            _pendingRoomIds.Add(userId, new PendingRoomInfo
+            {
+                RoomId = roomId,
+                Approved = approved
+            });
         }
 
         public void ClearPendingRoomId(int userId)
@@ -100,6 +105,8 @@ namespace Turbo.Navigator
 
             if (pendingRoomId == roomId) return;
 
+            SetPendingRoomId(player.Id, roomId);
+
             player.ClearRoomObject();
 
             IRoom room = await _roomManager.GetRoom(roomId);
@@ -108,6 +115,8 @@ namespace Turbo.Navigator
 
             if (room == null || (room.RoomModel == null))
             {
+                ClearPendingRoomId(player.Id);
+
                 await player.Session.Send(new CantConnectMessage
                 {
                     Reason = CantConnectReason.Closed,
@@ -132,7 +141,7 @@ namespace Turbo.Navigator
 
             // if locked state clear the doorbell
 
-            SetPendingRoomId(player.Id, roomId);
+            SetPendingRoomId(player.Id, roomId, true);
 
             await player.Session.Send(new OpenConnectionMessage());
             await player.Session.Send(new RoomReadyMessage
@@ -146,33 +155,33 @@ namespace Turbo.Navigator
         {
             if (player == null) return;
 
-            int roomId = GetPendingRoomId(player.Id);
+            if(!_pendingRoomIds.ContainsKey(player.Id) || !_pendingRoomIds[player.Id].Approved)
+            {
+                await player.Session.Send(new CantConnectMessage
+                {
+                    Reason = CantConnectReason.Closed
+                });
 
-            if(roomId == -1)
+                return;
+            }
+
+            int roomId = _pendingRoomIds[player.Id].RoomId;
+
+            IRoom room = await _roomManager.GetRoom(roomId);
+
+            if (room == null)
             {
                 await player.Session.Send(new CantConnectMessage
                 {
                     Reason = CantConnectReason.Closed
                 });
             }
-            else
+
+            if (room != null)
             {
-                IRoom room = await _roomManager.GetRoom(roomId);
+                await room.InitAsync();
 
-                if (room == null)
-                {
-                    await player.Session.Send(new CantConnectMessage
-                    {
-                        Reason = CantConnectReason.Closed
-                    });
-                }
-
-                if (room != null)
-                {
-                    await room.InitAsync();
-
-                    room.EnterRoom(player);
-                }
+                room.EnterRoom(player);
             }
 
             ClearPendingRoomId(player.Id);

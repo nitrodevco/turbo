@@ -19,17 +19,7 @@ namespace Turbo.Rooms
             get => _roomEntity.Name;
         }
 
-        public int ModelId
-        {
-            get
-            {
-                RoomModelEntity roomModel = _roomEntity.RoomModelEntity;
-
-                if (roomModel == null) return 0;
-
-                return roomModel.Id;
-            }
-        }
+        public int ModelId => _roomEntity.RoomModelEntityId;
 
         public bool AllowWalkThrough
         {
