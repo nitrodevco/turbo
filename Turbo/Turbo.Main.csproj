@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.Production.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.3">
       <PrivateAssets>all</PrivateAssets>
@@ -23,7 +27,7 @@
 	<Content Include="appsettings.json">
 		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</Content>
-	<Content Include="appsettings.Development.json.example;appsettings.Production.json.example;">
+	<Content Include="appsettings.Development.json;appsettings.Production.json">
 		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		<DependentUpon>appsettings.json</DependentUpon>
 	</Content>
@@ -40,14 +44,4 @@
     <ProjectReference Include="..\Turbo.Rooms\Turbo.Rooms.csproj" />
     <ProjectReference Include="..\Turbo.Security\Turbo.Security.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Content Update="appsettings.Development.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.Production.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
 </Project>
