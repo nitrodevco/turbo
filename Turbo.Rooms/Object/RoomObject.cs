@@ -39,7 +39,7 @@ namespace Turbo.Rooms.Object
 
         public void Dispose()
         {
-            if (_isDisposing) return;
+            if (Disposed || _isDisposing) return;
 
             _isDisposing = true;
 

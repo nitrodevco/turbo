@@ -127,17 +127,18 @@ namespace Turbo.Rooms.Managers
 
             if (roomObject == null) return;
 
+            if(roomObject.Logic is MovingAvatarLogic avatarLogic)
+            {
+                avatarLogic.GetCurrentTile()?.RemoveRoomObject(roomObject);
+                avatarLogic.GetNextTile()?.RemoveRoomObject(roomObject);
+
+                avatarLogic.StopWalking();
+            }
+
             SendComposer(new UserRemoveMessage
             {
                 Id = id
             });
-
-            if(roomObject.Logic is MovingAvatarLogic avatarLogic)
-            {
-                avatarLogic.GetCurrentTile().RemoveRoomObject(roomObject);
-
-                avatarLogic.StopWalking();
-            }
 
             RoomObjects.Remove(id);
 
