@@ -57,7 +57,7 @@ namespace Turbo.Main.PacketHandlers
 
             if (roomObject == null) return;
 
-            ((MovingAvatarLogic) roomObject.Logic).WalkTo(new Point(message.X, message.Y));
+            ((MovingAvatarLogic)roomObject.Logic).WalkTo(new Point(message.X, message.Y));
         }
     }
 }

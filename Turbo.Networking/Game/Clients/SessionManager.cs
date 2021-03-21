@@ -1,7 +1,6 @@
 ﻿using DotNetty.Transport.Channels;
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;

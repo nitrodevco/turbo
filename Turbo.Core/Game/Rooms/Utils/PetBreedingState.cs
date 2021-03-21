@@ -2,8 +2,8 @@
 {
     public enum PetBreedingState
     {
-       Start,
-       Cancel,
-       Accept
+        Start,
+        Cancel,
+        Accept
     }
 }

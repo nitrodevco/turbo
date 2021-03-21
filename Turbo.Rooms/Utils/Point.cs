@@ -49,8 +49,8 @@ namespace Turbo.Rooms.Utils
         {
             if (rotation == null) return;
 
-            Rotation = (Rotation) rotation;
-            HeadRotation = (Rotation) rotation;
+            Rotation = (Rotation)rotation;
+            HeadRotation = (Rotation)rotation;
         }
 
         public int GetDistanceAround(IPoint point)

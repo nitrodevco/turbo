@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
@@ -33,7 +30,7 @@ namespace Turbo.Rooms.Object.Logic
 
             if (logicType == null) return null;
 
-            return (IRoomObjectLogic) Activator.CreateInstance(logicType);
+            return (IRoomObjectLogic)Activator.CreateInstance(logicType);
         }
     }
 }

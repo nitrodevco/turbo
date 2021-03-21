@@ -43,7 +43,7 @@ namespace Turbo.Furniture
             // we need all furniture to reload their definitions
 
             _furnitureDefinitions.Clear();
-            
+
             List<FurnitureDefinitionEntity> entities;
             using (var scope = _serviceScopeFactory.CreateScope())
             {

@@ -12,7 +12,7 @@ namespace Turbo.Rooms.Mapping
         private readonly IRoom _room;
 
         private readonly IDictionary<int, IDictionary<int, IRoomTile>> _map;
-        
+
         public IList<IRoomTile> Tiles { get; init; }
         public IPathFinder PathFinder { get; init; }
 
@@ -46,9 +46,9 @@ namespace Turbo.Rooms.Mapping
 
             if ((totalX == 0) || (totalY == 0)) return;
 
-            for(int y = 0; y < totalY; y++)
+            for (int y = 0; y < totalY; y++)
             {
-                for(int x = 0; x < totalX; x++)
+                for (int x = 0; x < totalX; x++)
                 {
                     int height = roomModel.GetTileHeight(x, y);
                     RoomTileState state = roomModel.GetTileState(x, y);
@@ -89,9 +89,9 @@ namespace Turbo.Rooms.Mapping
 
             if (roomTile.IsDoor) return roomTile;
 
-            if(roomTile.Users.Count > 0)
+            if (roomTile.Users.Count > 0)
             {
-                foreach(IRoomObject tileRoomObject in roomTile.Users.Values)
+                foreach (IRoomObject tileRoomObject in roomTile.Users.Values)
                 {
                     if (tileRoomObject == roomObject) return roomTile;
                 }

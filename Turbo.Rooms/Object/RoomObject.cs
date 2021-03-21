@@ -1,5 +1,4 @@
 ﻿using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
@@ -94,7 +93,7 @@ namespace Turbo.Rooms.Object
 
             IRoomObjectLogic currentLogic = Logic;
 
-            if(currentLogic != null)
+            if (currentLogic != null)
             {
                 Logic = null;
 
@@ -103,7 +102,7 @@ namespace Turbo.Rooms.Object
 
             Logic = logic;
 
-            if(Logic != null)
+            if (Logic != null)
             {
                 Logic.SetRoomObject(this);
             }

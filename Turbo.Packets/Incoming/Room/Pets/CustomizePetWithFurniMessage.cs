@@ -1,5 +1,4 @@
-﻿using Turbo.Core.Game.Rooms.Utils;
-using Turbo.Core.Packets.Messages;
+﻿using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Incoming.Room.Pets
 {

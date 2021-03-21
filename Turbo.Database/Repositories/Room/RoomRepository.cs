@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Room;
-using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Repositories.Room
 {

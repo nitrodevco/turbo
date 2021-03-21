@@ -26,7 +26,7 @@ namespace Turbo.Rooms.Mapping
 
         public IDictionary<int, IRoomObject> Users { get; private set; }
         public IDictionary<int, IRoomObject> Furniture { get; private set; }
-    
+
         public bool IsDoor { get; set; }
 
         private bool _hasStackHelper;
@@ -53,7 +53,7 @@ namespace Turbo.Rooms.Mapping
         {
             if (roomObject == null) return;
 
-            if(roomObject.Logic is AvatarLogic avatarLogic)
+            if (roomObject.Logic is AvatarLogic avatarLogic)
             {
                 if (IsDoor) return;
 
@@ -61,7 +61,7 @@ namespace Turbo.Rooms.Mapping
 
                 Users.Add(roomObject.Id, roomObject);
             }
-            else if(roomObject.Logic is FurnitureLogicBase furnitureLogic)
+            else if (roomObject.Logic is FurnitureLogicBase furnitureLogic)
             {
                 Furniture.Add(roomObject.Id, roomObject);
 
@@ -93,7 +93,7 @@ namespace Turbo.Rooms.Mapping
         {
             Height = DefaultHeight;
 
-            if(HighestObject != null)
+            if (HighestObject != null)
             {
                 if (HighestObject.Logic is FurnitureLogicBase furnitureLogic)
                 {
@@ -112,15 +112,15 @@ namespace Turbo.Rooms.Mapping
             _hasStackHelper = false;
             _stackHelperHeight = 0;
 
-            if(Furniture.Count > 0)
+            if (Furniture.Count > 0)
             {
-                foreach(IRoomObject roomObject in Furniture.Values)
+                foreach (IRoomObject roomObject in Furniture.Values)
                 {
                     if (roomObject.Logic is FurnitureLogicBase furnitureLogic)
                     {
                         double height = furnitureLogic.Height;
 
-                        if(furnitureLogic is FurnitureStackHelperLogic)
+                        if (furnitureLogic is FurnitureStackHelperLogic)
                         {
                             _hasStackHelper = true;
                             _stackHelperHeight = height;
@@ -145,7 +145,7 @@ namespace Turbo.Rooms.Mapping
 
             if ((State == RoomTileState.Closed) || !CanStack()) return;
 
-            RelativeHeight = (int) Math.Ceiling((decimal) (_hasStackHelper ? _stackHelperHeight : Height) * TILE_HEIGHT_MULTIPLIER);
+            RelativeHeight = (int)Math.Ceiling((decimal)(_hasStackHelper ? _stackHelperHeight : Height) * TILE_HEIGHT_MULTIPLIER);
         }
 
         public double GetWalkingHeight()
@@ -180,9 +180,9 @@ namespace Turbo.Rooms.Mapping
 
         public bool CanWalk()
         {
-            if(HighestObject != null)
+            if (HighestObject != null)
             {
-                if(HighestObject.Logic is FurnitureLogicBase furnitureLogic)
+                if (HighestObject.Logic is FurnitureLogicBase furnitureLogic)
                 {
                     if (!furnitureLogic.IsOpen()) return false;
 

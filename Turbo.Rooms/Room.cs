@@ -204,7 +204,7 @@ namespace Turbo.Rooms
 
         public void SendComposer(IComposer composer)
         {
-            lock(_roomObserverLock)
+            lock (_roomObserverLock)
             {
                 foreach (ISession session in _roomObservers)
                 {

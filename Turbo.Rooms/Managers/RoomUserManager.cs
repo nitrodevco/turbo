@@ -70,7 +70,7 @@ namespace Turbo.Rooms.Managers
 
             IRoomObject existingRoomObject = GetRoomObject(roomObject.Id);
 
-            if(existingRoomObject != null)
+            if (existingRoomObject != null)
             {
                 roomObject.Dispose();
 
@@ -127,7 +127,7 @@ namespace Turbo.Rooms.Managers
 
             if (roomObject == null) return;
 
-            if(roomObject.Logic is MovingAvatarLogic avatarLogic)
+            if (roomObject.Logic is MovingAvatarLogic avatarLogic)
             {
                 avatarLogic.GetCurrentTile()?.RemoveRoomObject(roomObject);
                 avatarLogic.GetNextTile()?.RemoveRoomObject(roomObject);
@@ -169,7 +169,7 @@ namespace Turbo.Rooms.Managers
             {
                 roomObjects.Add(existingObject);
 
-                if(existingObject.Logic is AvatarLogic avatarLogic)
+                if (existingObject.Logic is AvatarLogic avatarLogic)
                 {
                     RoomObjectAvatarDanceType danceType = avatarLogic.DanceType;
                     bool isIdle = avatarLogic.IsIdle;

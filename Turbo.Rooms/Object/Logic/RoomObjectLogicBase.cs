@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Turbo.Core.Game.Rooms.Messages;
+﻿using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 
@@ -37,12 +32,12 @@ namespace Turbo.Rooms.Object.Logic
         {
             if (roomObject == RoomObject) return true;
 
-            if(RoomObject != null)
+            if (RoomObject != null)
             {
                 RoomObject.SetLogic(null);
             }
 
-            if(roomObject == null)
+            if (roomObject == null)
             {
                 Dispose();
 
