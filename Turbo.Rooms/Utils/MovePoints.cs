@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Turbo.Core.Game.Rooms.Utils;
 
@@ -20,6 +21,6 @@ namespace Turbo.Rooms.Utils
             new Point(1, 1) 
         });
 
-        public static IList<IPoint> MovingPoints = StandardPoints.Concat(DiagonalPoints).ToList();
+        public static IReadOnlyCollection<IPoint> MovingPoints = new ReadOnlyCollection<IPoint>(StandardPoints.Concat(DiagonalPoints).ToList());
     }
 }
