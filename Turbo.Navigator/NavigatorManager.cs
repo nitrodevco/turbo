@@ -195,5 +195,7 @@ namespace Turbo.Navigator
                 new TopLevelContext { SearchCode = "myworld_view" }
             }
         });
+
+        public async Task SendNavigatorLiftedRooms(IPlayer player) => await player.Session.Send(new NavigatorLiftedRoomsMessage());
     }
 }

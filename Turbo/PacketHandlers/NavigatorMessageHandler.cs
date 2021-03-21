@@ -1,10 +1,8 @@
 using Turbo.Core.Game.Navigator;
-using Turbo.Core.Game.Rooms;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Navigator;
-using Turbo.Packets.Incoming.Room.Engine;
 
 namespace Turbo.Main.PacketHandlers
 {
@@ -24,18 +22,19 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<NewNavigatorInitMessage>(this, OnNewNavigatorInitMessage);
         }
 
-        private async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
+        public async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
         {
             if (session.Player == null) return;
 
             await _navigatorManager.GetGuestRoomMessage(session.Player, message.RoomId, message.EnterRoom, message.RoomForward);
         }
 
-        private async void OnNewNavigatorInitMessage(NewNavigatorInitMessage message, ISession session)
+        public async void OnNewNavigatorInitMessage(NewNavigatorInitMessage message, ISession session)
         {
             if (session.Player == null) return;
 
             await _navigatorManager.SendNavigatorMetaData(session.Player);
+            await _navigatorManager.SendNavigatorLiftedRooms(session.Player);
         }
     }
 }

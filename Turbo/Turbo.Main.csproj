@@ -23,7 +23,7 @@
 	<Content Include="appsettings.json">
 		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</Content>
-	<Content Include="appsettings.Development.json;appsettings.Production.json;">
+	<Content Include="appsettings.Development.json.example;appsettings.Production.json.example;">
 		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		<DependentUpon>appsettings.json</DependentUpon>
 	</Content>
@@ -39,6 +39,15 @@
     <ProjectReference Include="..\Turbo.Plugins\Turbo.Plugins.csproj" />
     <ProjectReference Include="..\Turbo.Rooms\Turbo.Rooms.csproj" />
     <ProjectReference Include="..\Turbo.Security\Turbo.Security.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="appsettings.Development.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="appsettings.Production.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
