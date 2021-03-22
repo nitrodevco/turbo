@@ -1,6 +1,6 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants
 {
-    public enum RoomEnterErrorEnum
+    public enum RoomEnterErrorType
     {
         RoomFull = 1,
         NoEntry = 2,

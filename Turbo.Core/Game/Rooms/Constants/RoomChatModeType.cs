@@ -1,6 +1,6 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants
 {
-    public enum RoomChatModeEnum
+    public enum RoomChatModeType
     {
         FreeFlow,
         Old

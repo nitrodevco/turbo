@@ -25,7 +25,7 @@ namespace Turbo.Rooms.Mapping
 
             IPathFinderNode node = CalculatePathFinderNode(roomObject, location);
 
-            if ((node == null) || (node.NextNode == null)) return null;
+            if ((node == null) || (node.NextNode == null)) return points;
 
             while (node.NextNode != null)
             {
@@ -33,8 +33,6 @@ namespace Turbo.Rooms.Mapping
 
                 node = node.NextNode;
             }
-
-            if (points.Count == 0) return null;
 
             points.Reverse();
 

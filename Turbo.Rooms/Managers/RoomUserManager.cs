@@ -15,7 +15,7 @@ namespace Turbo.Rooms.Managers
 {
     public class RoomUserManager : IRoomUserManager
     {
-        private IRoom _room;
+        private readonly IRoom _room;
 
         public IDictionary<int, IRoomObject> RoomObjects { get; private set; }
 

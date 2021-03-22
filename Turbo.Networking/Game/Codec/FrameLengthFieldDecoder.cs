@@ -15,10 +15,5 @@ namespace Turbo.Networking.Game.Codec
         public FrameLengthFieldDecoder() : base(MAX_LENGTH, LENGTH_FIELD_OFFSET, LENGTH_FIELD_LENGTH, LENGTH_ADJUSTMENT, BYTES_TO_STRIP)
         {
         }
-
-        protected override object Decode(IChannelHandlerContext context, IByteBuffer input)
-        {
-            return base.Decode(context, input);
-        }
     }
 }

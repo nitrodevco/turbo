@@ -1,8 +1,9 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants
 {
-    public enum RoomMuteEnum
+    public enum RoomKickType
     {
         None,
-        Rights
+        Rights,
+        All
     }
 }
