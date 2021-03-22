@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Turbo.Core.Game.Rooms.Object.Data;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Rooms.Object.Data
 {
@@ -12,20 +13,18 @@ namespace Turbo.Rooms.Object.Data
 
         public StuffDataBase()
         {
-
+            //if (IsUnique)
+            //{
+            //    Flags += (int)StuffDataFlags.UniqueSet;
+            //}
         }
 
-        public virtual bool InitializeFromFurnitureData(string data)
+        public virtual void WriteToPacket(IServerPacket packet)
         {
-            int uniqueNumber = 0;
-            int uniqueSeries = 0;
+            if (!IsUnique()) return;
 
-            if ((uniqueNumber > 0) && (uniqueSeries > 0))
-            {
-                Flags += (int)StuffDataFlags.UniqueSet;
-            }
-
-            return true;
+            packet.WriteInteger(UniqueNumber);
+            packet.WriteInteger(UniqueSeries);
         }
 
         public virtual string GetLegacyString()
@@ -33,7 +32,7 @@ namespace Turbo.Rooms.Object.Data
             return "";
         }
 
-        public virtual void SetState(string data)
+        public virtual void SetState(string state)
         {
             return;
         }
