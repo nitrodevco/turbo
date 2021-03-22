@@ -11,7 +11,7 @@ namespace Turbo.Rooms.Mapping
 {
     public class RoomModel : IRoomModel
     {
-        private static readonly Regex regex = new(@"\r\n|\r|\n");
+        private static readonly Regex _regex = new(@"\r\n|\r|\n");
 
         private readonly RoomModelEntity _modelEntity;
         public string Model { get; private set; }
@@ -24,8 +24,6 @@ namespace Turbo.Rooms.Mapping
 
         private IList<IList<RoomTileState>> _tileStates;
         private IList<IList<int>> _tileHeights;
-
-        private static readonly Regex _regex = new(@"\r\n|\r|\n");
 
         public bool DidGenerate { get; private set; }
 
@@ -42,7 +40,7 @@ namespace Turbo.Rooms.Mapping
         {
             if (model == null) return null;
 
-            return regex.Replace(model.ToLower(), "\r").Trim();
+            return _regex.Replace(model.ToLower(), "\r").Trim();
         }
 
         public void ResetModel(bool generate = true)
@@ -127,8 +125,6 @@ namespace Turbo.Rooms.Mapping
 
             TotalX = totalX;
             TotalY = totalY;
-
-            IRoomModel roomModel = this;
 
             RoomTileState doorTileState = GetTileState(_modelEntity.DoorX, _modelEntity.DoorY);
             int doorTileHeight = GetTileHeight(_modelEntity.DoorX, _modelEntity.DoorY);

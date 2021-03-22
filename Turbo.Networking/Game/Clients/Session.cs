@@ -41,11 +41,11 @@ namespace Turbo.Networking.Game.Clients
             await _channel.CloseAsync();
         }
 
-        public bool SetPlayer(IPlayer sessionPlayer)
+        public bool SetPlayer(IPlayer player)
         {
-            if ((Player != null) && (Player != sessionPlayer)) return false;
+            if ((Player != null) && (Player != player)) return false;
 
-            Player = sessionPlayer;
+            Player = player;
 
             return true;
         }

@@ -1,9 +1,9 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants
 {
-    public enum RoomChatEnum
+    public enum RoomChatProtectionType
     {
+        Extra,
         Normal,
-        Whisper,
-        Shout
+        Minimal
     }
 }

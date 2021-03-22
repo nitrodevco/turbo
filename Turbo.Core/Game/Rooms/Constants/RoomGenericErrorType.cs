@@ -1,6 +1,6 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants
 {
-    public enum RoomGenericErrorEnum
+    public enum RoomGenericErrorType
     {
         InvalidPassword = -100002,
         RoomKicked = 4008,

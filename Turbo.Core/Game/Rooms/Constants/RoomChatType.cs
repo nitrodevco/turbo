@@ -1,9 +1,9 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants
 {
-    public enum RoomChatWeightEnum
+    public enum RoomChatType
     {
-        Wide,
         Normal,
-        Thin
+        Whisper,
+        Shout
     }
 }
