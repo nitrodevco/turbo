@@ -23,6 +23,10 @@
 	<Content Include="appsettings.json">
 		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	</Content>
+	<Content Include="appsettings.Development.json;appsettings.Production.json">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<DependentUpon>appsettings.json</DependentUpon>
+	</Content>
   </ItemGroup>
 
   <ItemGroup>
