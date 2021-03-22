@@ -1,4 +1,7 @@
-﻿using System;
+﻿using System.IO;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Turbo.Core.Game.Rooms.Object.Data;
 
 namespace Turbo.Rooms.Object.Data
@@ -39,7 +42,7 @@ namespace Turbo.Rooms.Object.Data
 
         public int GetState()
         {
-            int state = Int32.Parse(GetLegacyString());
+            int state = int.Parse(GetLegacyString());
 
             return state;
         }
@@ -47,6 +50,32 @@ namespace Turbo.Rooms.Object.Data
         public bool IsUnique()
         {
             return UniqueSeries > 0;
+        }
+
+        public string ToJson()
+        {
+            string json;
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new Utf8JsonWriter(stream))
+                {
+                    if ((Flags & (int)StuffDataFlags.UniqueSet) > 0)
+                    {
+                        writer.WriteNumber("uniqueNumber", UniqueNumber);
+                        writer.WriteNumber("uniqueSeries", UniqueSeries);
+                    }
+                    SerializeJson(writer, stream);
+                    writer.WriteEndObject();
+                }
+
+                json = Encoding.UTF8.GetString(stream.ToArray());
+            }
+            return json;
+        }
+
+        public virtual void SerializeJson(Utf8JsonWriter writer, MemoryStream stream)
+        {
+
         }
     }
 }
