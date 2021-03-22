@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.Development.json" />
     <None Remove="appsettings.Production.json" />
   </ItemGroup>
 
