@@ -1,9 +1,9 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants
 {
-    public enum RoomChatProtectionEnum
+    public enum RoomChatSpeedType
     {
-        Extra,
+        Fast,
         Normal,
-        Minimal
+        Slow
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants
 {
-    public enum RoomRightsEnum
+    public enum RoomRightsType
     {
         None,
         Rights,

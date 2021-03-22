@@ -11,8 +11,8 @@ namespace Turbo.Networking.Clients
 {
     public class SessionManager : ISessionManager
     {
-        private readonly ConcurrentDictionary<IChannelId, ISession> _clients;
         private readonly IPacketMessageHub _packetHub;
+        private readonly ConcurrentDictionary<IChannelId, ISession> _clients;
         private const int _pingIntervalSeconds = 30;
         private long _lastPingSeconds = 0;
 
@@ -26,17 +26,17 @@ namespace Turbo.Networking.Clients
 
         public bool TryGetSession(IChannelId id, out ISession session)
         {
-            return this._clients.TryGetValue(id, out session);
+            return _clients.TryGetValue(id, out session);
         }
 
         public bool TryRegisterSession(IChannelId id, in ISession session)
         {
-            return this._clients.TryAdd(id, session);
+            return _clients.TryAdd(id, session);
         }
 
         public void DisconnectSession(IChannelId id)
         {
-            if (this._clients.TryRemove(id, out ISession session))
+            if (_clients.TryRemove(id, out ISession session))
             {
                 session.DisposeAsync();
             }
@@ -57,11 +57,13 @@ namespace Turbo.Networking.Clients
                 if (timeNow - session.LastPongTimestamp > 60)
                 {
                     session.DisposeAsync();
+
                     continue;
                 }
 
                 session.Send(new PingMessage());
             }
+
             _lastPingSeconds = timeNow;
         }
 
@@ -73,6 +75,7 @@ namespace Turbo.Networking.Clients
         public Task Cycle()
         {
             ProcessPing();
+
             return Task.CompletedTask;
         }
     }

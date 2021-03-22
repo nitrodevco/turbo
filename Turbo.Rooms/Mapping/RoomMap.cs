@@ -53,7 +53,7 @@ namespace Turbo.Rooms.Mapping
                     int height = roomModel.GetTileHeight(x, y);
                     RoomTileState state = roomModel.GetTileState(x, y);
 
-                    IRoomTile roomTile = new RoomTile(_room, new Point(x, y), height, state);
+                    IRoomTile roomTile = new RoomTile(new Point(x, y), height, state);
 
                     if (_map.Count - 1 < x) _map.Add(x, new Dictionary<int, IRoomTile>());
 
