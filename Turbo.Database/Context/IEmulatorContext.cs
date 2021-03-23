@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Entities.Room;
@@ -20,5 +22,6 @@ namespace Turbo.Database.Context
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
 
         int SaveChanges();
+        EntityEntry Update([NotNull] object entity);
     }
 }
