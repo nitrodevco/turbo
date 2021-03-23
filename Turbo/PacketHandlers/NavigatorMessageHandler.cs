@@ -35,6 +35,7 @@ namespace Turbo.Main.PacketHandlers
 
             await _navigatorManager.SendNavigatorMetaData(session.Player);
             await _navigatorManager.SendNavigatorLiftedRooms(session.Player);
+            await _navigatorManager.SendNavigatorSavedSearches(session.Player);
         }
     }
 }

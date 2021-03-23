@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Turbo.Core.Packets.Messages;
+using Turbo.Packets.Shared.Navigator;
 
 namespace Turbo.Packets.Outgoing.Navigator
 {
@@ -11,14 +12,6 @@ namespace Turbo.Packets.Outgoing.Navigator
     public record TopLevelContext
     {
         public string SearchCode { get; init; }
-        public List<SavedSearch> SavedSearches { get; init; }
-    }
-
-    public record SavedSearch
-    {
-        public int Id { get; init; }
-        public string SearchCode { get; init; }
-        public string Filter { get; init; }
-        public string Localization { get; init; }
+        public List<NavigatorSavedSearch> SavedSearches { get; init; }
     }
 }

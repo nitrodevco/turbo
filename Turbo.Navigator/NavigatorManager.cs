@@ -7,6 +7,7 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
+using Turbo.Packets.Shared.Navigator;
 
 namespace Turbo.Navigator
 {
@@ -204,5 +205,11 @@ namespace Turbo.Navigator
         });
 
         public async Task SendNavigatorLiftedRooms(IPlayer player) => await player.Session.Send(new NavigatorLiftedRoomsMessage());
+
+        public async Task SendNavigatorSavedSearches(IPlayer player) => await player.Session.Send(new NavigatorSavedSearchesMessage
+        {
+            // Todo: Implement saved searches
+            SavedSearches = new List<NavigatorSavedSearch>(0)
+        });
     }
 }
