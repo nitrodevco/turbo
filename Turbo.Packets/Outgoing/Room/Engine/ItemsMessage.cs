@@ -1,4 +1,6 @@
-﻿using Turbo.Core.Packets.Messages;
+﻿using System.Collections.Generic;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Room.Engine
 {
@@ -7,6 +9,6 @@ namespace Turbo.Packets.Outgoing.Room.Engine
     /// </summary>
     public record ItemsMessage : IComposer
     {
-        //TODO: Add a List<> of furniture objects
+        public IList<IRoomObject> Objects { get; init; }
     }
 }
