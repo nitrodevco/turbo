@@ -45,6 +45,7 @@ namespace Turbo.Furniture
             _furnitureDefinitions.Clear();
 
             List<FurnitureDefinitionEntity> entities;
+
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var furnitureDefinitionRepository = scope.ServiceProvider.GetService<IFurnitureDefinitionRepository>();
@@ -57,6 +58,8 @@ namespace Turbo.Furniture
 
                 _furnitureDefinitions.Add(definition.Id, definition);
             });
+
+            _logger.LogInformation("Loaded {0} furniture definitions", _furnitureDefinitions.Count);
         }
     }
 }

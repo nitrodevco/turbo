@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Entities.Security
@@ -11,10 +12,10 @@ namespace Turbo.Database.Entities.Security
 
         public PlayerEntity PlayerEntity { get; set; }
 
-        [Column("ticket")]
+        [Column("ticket"), Required]
         public string Ticket { get; set; }
 
-        [Column("ip_address")]
+        [Column("ip_address"), Required]
         public string IpAddress { get; set; }
 
         [Column("is_locked")]

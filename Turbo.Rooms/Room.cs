@@ -141,15 +141,15 @@ namespace Turbo.Rooms
             player.Session.SendQueue(new FloorHeightMapMessage
             {
                 IsZoomedIn = true,
-                WallHeight = 1,
+                WallHeight = RoomDetails.WallHeight,
                 RoomModel = RoomModel
             });
 
             player.Session.SendQueue(new RoomVisualizationSettingsMessage
             {
-                WallsHidden = false,
-                FloorThickness = 1,
-                WallThickness = 1
+                WallsHidden = RoomDetails.HideWalls,
+                FloorThickness = (int)RoomDetails.ThicknessFloor,
+                WallThickness = (int)RoomDetails.ThicknessWall
             });
 
             // send the paint
@@ -157,7 +157,7 @@ namespace Turbo.Rooms
             // would be nice to send this from the navigator so we aren't duplicating code
             player.Session.SendQueue(new GetGuestRoomResultMessage
             {
-                EnterRoom = false,
+                EnterRoom = true,
                 Room = this,
                 IsRoomForward = false,
                 IsStaffPick = false,
