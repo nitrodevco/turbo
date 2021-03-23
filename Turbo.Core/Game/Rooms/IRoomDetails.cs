@@ -12,7 +12,7 @@ namespace Turbo.Core.Game.Rooms
         public RoomStateType State { get; }
         public string Password { get; }
         public int ModelId { get; }
-        public int UsersNow { get; }
+        public int UsersNow { get; set; }
         public int UsersMax { get; }
         public double PaintWall { get; }
         public double PaintFloor { get; }
