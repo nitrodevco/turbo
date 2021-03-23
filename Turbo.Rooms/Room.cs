@@ -18,6 +18,8 @@ namespace Turbo.Rooms
 {
     public class Room : IRoom
     {
+        private static readonly int _disposeTicks = 120;
+
         public IRoomManager RoomManager { get; private set; }
         public ILogger<IRoom> Logger { get; private set; }
         private readonly IRoomObjectFactory _roomObjectFactory;
@@ -32,6 +34,7 @@ namespace Turbo.Rooms
 
         private readonly IList<ISession> _roomObservers;
         private object _roomObserverLock = new();
+        private int _remainingDisposeTicks = -1;
 
         public bool IsInitialized { get; private set; }
         public bool IsDisposed { get; private set; }
@@ -93,18 +96,18 @@ namespace Turbo.Rooms
         {
             if (IsDisposed || IsDisposing) return;
 
-            // if dispose already scheduled, return
+            if (_remainingDisposeTicks != -1) return;
 
-            // if has users, return
+            if (RoomDetails.UsersNow > 0) return;
 
             // clear the users waiting at the door
 
-            // schedule the dispose to run in 1 minute
+            _remainingDisposeTicks = _disposeTicks;
         }
 
         public void CancelDispose()
         {
-            // if dispose already scheduled, cancel it
+            _remainingDisposeTicks = -1;
         }
 
         private async Task LoadMapping()
@@ -199,6 +202,15 @@ namespace Turbo.Rooms
 
         public async Task Cycle()
         {
+            if(_remainingDisposeTicks == 0)
+            {
+                await DisposeAsync();
+
+                return;
+            }
+
+            if (_remainingDisposeTicks > -1) _remainingDisposeTicks--;
+
             await RoomCycleManager.RunCycles();
         }
 

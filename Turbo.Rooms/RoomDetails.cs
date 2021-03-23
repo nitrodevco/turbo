@@ -46,6 +46,7 @@ namespace Turbo.Rooms
         public int UsersNow
         {
             get => _roomEntity.UsersNow;
+            set => _roomEntity.UsersNow = value;
         }
 
         public int UsersMax
