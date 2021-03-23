@@ -22,14 +22,14 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<NewNavigatorInitMessage>(this, OnNewNavigatorInitMessage);
         }
 
-        public async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
+        protected virtual async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
         {
             if (session.Player == null) return;
 
             await _navigatorManager.GetGuestRoomMessage(session.Player, message.RoomId, message.EnterRoom, message.RoomForward);
         }
 
-        public async void OnNewNavigatorInitMessage(NewNavigatorInitMessage message, ISession session)
+        protected virtual async void OnNewNavigatorInitMessage(NewNavigatorInitMessage message, ISession session)
         {
             if (session.Player == null) return;
 
