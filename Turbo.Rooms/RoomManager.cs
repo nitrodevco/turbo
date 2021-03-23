@@ -16,12 +16,16 @@ namespace Turbo.Rooms
 {
     public class RoomManager : IRoomManager
     {
+        private static readonly int _tryDisposeTicks = 1200;
+
         private readonly ILogger<IRoomManager> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IRoomFactory _roomFactory;
 
         private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
+
+        private int _remainingTryDisposeTicks = _tryDisposeTicks;
 
         public RoomManager(
             ILogger<IRoomManager> logger,
@@ -183,6 +187,18 @@ namespace Turbo.Rooms
             _logger.LogInformation("Loaded {0} room models", _models.Count);
         }
 
-        public Task Cycle() => Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
+        public Task Cycle()
+        {
+            if(_remainingTryDisposeTicks == 0)
+            {
+                TryDisposeAllRooms();
+
+                _remainingTryDisposeTicks = _tryDisposeTicks;
+            }
+
+            if(_remainingTryDisposeTicks > -1) _remainingTryDisposeTicks--;
+
+            return Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
+        }
     }
 }
