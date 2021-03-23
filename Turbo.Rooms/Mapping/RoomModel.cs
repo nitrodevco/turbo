@@ -136,7 +136,7 @@ namespace Turbo.Rooms.Mapping
                 return;
             }
 
-            DoorLocation = new Point(_modelEntity.DoorX, _modelEntity.DoorY, (double)doorTileHeight, (Rotation)_modelEntity.DoorDirection, (Rotation)_modelEntity.DoorDirection);
+            DoorLocation = new Point(_modelEntity.DoorX, _modelEntity.DoorY, (double)doorTileHeight, _modelEntity.DoorRotation, _modelEntity.DoorRotation);
             DidGenerate = true;
         }
 

@@ -40,7 +40,7 @@ namespace Turbo.Players
         {
             get
             {
-                return _playerEntity.Motto;
+                return _playerEntity.Motto == null ? "" : _playerEntity.Motto;
             }
         }
 

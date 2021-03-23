@@ -81,7 +81,7 @@ namespace Turbo.Navigator
             }
         }
 
-        public async Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool isRoomForward = false)
+        public async Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool roomForward = false)
         {
             if (player == null) return;
 
@@ -93,7 +93,7 @@ namespace Turbo.Navigator
             {
                 EnterRoom = enterRoom,
                 Room = room,
-                IsRoomForward = isRoomForward,
+                IsRoomForward = roomForward,
                 IsStaffPick = false,
                 IsGroupMember = false,
                 AllInRoomMuted = false,
