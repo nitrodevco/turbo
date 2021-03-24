@@ -44,9 +44,7 @@ namespace Turbo.Rooms.Managers
         {
             if (id < 0) return null;
 
-            IRoomObject roomObject;
-
-            if (RoomObjects.TryGetValue(id, out roomObject))
+            if (RoomObjects.TryGetValue(id, out IRoomObject roomObject))
             {
                 return roomObject;
             }
@@ -83,40 +81,24 @@ namespace Turbo.Rooms.Managers
 
             roomObject.SetLocation(location);
 
-            IRoomTile roomTile = avatarLogic.GetCurrentTile();
-
-            if (roomTile != null) roomTile.AddRoomObject(roomObject);
-
-            avatarLogic.InvokeCurrentLocation();
-
-            roomObject.NeedsUpdate = false;
+            _room.RoomMap.AddRoomObjects(roomObject);
 
             RoomObjects.Add(roomObject.Id, roomObject);
-
-            SendComposer(new UsersMessage
-            {
-                RoomObjects = new List<IRoomObject> { roomObject }
-            });
-
-            SendComposer(new UserUpdateMessage
-            {
-                RoomObjects = new List<IRoomObject> { roomObject }
-            });
 
             UpdateTotalUsers();
 
             return roomObject;
         }
 
-        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectFactory objectFactory, IRoomObjectHolder roomObjectHolder, IPoint location)
+        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectFactory objectFactory, IRoomObjectUserHolder userHolder, IPoint location)
         {
-            if (roomObjectHolder == null) return null;
+            if (userHolder == null) return null;
 
-            IRoomObject roomObject = objectFactory.Create(_room, this, ++_roomObjectCounter, roomObjectHolder.Type, roomObjectHolder.Type);
+            IRoomObject roomObject = objectFactory.Create(_room, this, ++_roomObjectCounter, userHolder.Type, userHolder.Type);
 
             if (roomObject == null) return null;
 
-            if (!roomObjectHolder.SetRoomObject(roomObject)) return null;
+            if (!userHolder.SetRoomObject(roomObject)) return null;
 
             return AddRoomObject(roomObject, location);
         }
