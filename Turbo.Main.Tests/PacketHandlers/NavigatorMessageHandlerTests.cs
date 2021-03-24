@@ -71,6 +71,7 @@ namespace Turbo.Main.Tests.PacketHandlers
             _navigatorManagerMock.Verify(x => x.SendNavigatorMetaData(_session.Player), Times.Once);
             _navigatorManagerMock.Verify(x => x.SendNavigatorLiftedRooms(_session.Player), Times.Once);
             _navigatorManagerMock.Verify(x => x.SendNavigatorSavedSearches(_session.Player), Times.Once);
+            _navigatorManagerMock.Verify(x => x.SendNavigatorEventCategories(_session.Player), Times.Once);
         }
 
         [Fact]
@@ -83,6 +84,7 @@ namespace Turbo.Main.Tests.PacketHandlers
             _navigatorManagerMock.Verify(x => x.SendNavigatorMetaData(_session.Player), Times.Never);
             _navigatorManagerMock.Verify(x => x.SendNavigatorLiftedRooms(_session.Player), Times.Never);
             _navigatorManagerMock.Verify(x => x.SendNavigatorSavedSearches(_session.Player), Times.Never);
+            _navigatorManagerMock.Verify(x => x.SendNavigatorEventCategories(_session.Player), Times.Never);
         }
 
         [Fact]
