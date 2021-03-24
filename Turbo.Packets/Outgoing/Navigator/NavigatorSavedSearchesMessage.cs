@@ -6,6 +6,6 @@ namespace Turbo.Packets.Outgoing.Navigator
 {
     public record NavigatorSavedSearchesMessage : IComposer
     {
-        public List<NavigatorSavedSearch> SavedSearches {get; init;}
+        public List<NavigatorSavedSearch> SavedSearches { get; init; }
     }
 }
