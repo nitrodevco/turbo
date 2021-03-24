@@ -14,7 +14,7 @@ namespace Turbo.Rooms.Object.Data.Types
             packet.WriteInteger(Flags);
             packet.WriteInteger(Data.Count);
 
-            foreach(string key in Data.Keys)
+            foreach (string key in Data.Keys)
             {
                 packet.WriteString(key);
                 packet.WriteString(Data[key]);
@@ -25,7 +25,7 @@ namespace Turbo.Rooms.Object.Data.Types
 
         public override string GetLegacyString()
         {
-            if(Data.TryGetValue(_state, out string state))
+            if (Data.TryGetValue(_state, out string state))
             {
                 return state;
             }

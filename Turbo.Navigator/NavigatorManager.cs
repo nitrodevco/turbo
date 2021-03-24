@@ -224,7 +224,8 @@ namespace Turbo.Navigator
                 var categoriesRepo = scope.ServiceProvider.GetRequiredService<INavigatorEventCategoryRepository>();
                 var categories = await categoriesRepo.FindAllAsync();
 
-                await player.Session.Send(new NavigatorEventCategoriesMessage { 
+                await player.Session.Send(new NavigatorEventCategoriesMessage
+                {
                     EventCategories = categories
                 });
             }

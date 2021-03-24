@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Entities.Room;

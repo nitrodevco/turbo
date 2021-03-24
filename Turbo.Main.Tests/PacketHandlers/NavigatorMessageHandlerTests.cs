@@ -39,7 +39,7 @@ namespace Turbo.Main.Tests.PacketHandlers
             var channelHandlerContextMock = new Mock<IChannelHandlerContext>();
             var revisionMock = new Mock<IRevision>();
             _session = new Session(channelHandlerContextMock.Object, revisionMock.Object, new NullLogger<Session>());
-            
+
             // Player
             var playerContainerMock = new Mock<IPlayerContainer>();
             _player = new Player(playerContainerMock.Object, new NullLogger<IPlayer>(), new Database.Entities.Players.PlayerEntity());
