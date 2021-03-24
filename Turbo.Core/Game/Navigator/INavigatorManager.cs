@@ -16,5 +16,6 @@ namespace Turbo.Core.Game.Navigator
         public Task SendNavigatorMetaData(IPlayer player);
         public Task SendNavigatorLiftedRooms(IPlayer player);
         public Task SendNavigatorSavedSearches(IPlayer player);
+        public Task SendNavigatorEventCategories(IPlayer player);
     }
 }

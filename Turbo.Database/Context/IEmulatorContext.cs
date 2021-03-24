@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using Turbo.Database.Entities.Furniture;
+using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Entities.Security;
@@ -18,6 +19,7 @@ namespace Turbo.Database.Context
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
         public DbSet<RoomRightEntity> RoomRights { get; set; }
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
+        public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
 
         int SaveChanges();
     }
