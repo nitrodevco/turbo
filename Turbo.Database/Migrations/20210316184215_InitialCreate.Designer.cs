@@ -8,9 +8,8 @@ using Turbo.Database.Context;
 
 namespace Turbo.Database.Migrations
 {
-    [DbContext(typeof(TurboContext))]
-    [Migration("20210324225455_RenamedNavigatorEventCategoriesColumn")]
-    partial class RenamedNavigatorEventCategoriesColumn
+    [Migration("20210316184215_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -177,35 +176,6 @@ namespace Turbo.Database.Migrations
                     b.ToTable("furniture");
                 });
 
-            modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorEventCategoryEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("DateCreated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_created");
-
-                    b.Property<DateTime>("DateUpdated")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_updated");
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("enabled");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext CHARACTER SET utf8mb4")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("navigator_event_categories");
-                });
-
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -308,10 +278,6 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("chat_distance");
 
-                    b.Property<int>("ChatModeType")
-                        .HasColumnType("int")
-                        .HasColumnName("chat_mode_type");
-
                     b.Property<int>("ChatProtectionType")
                         .HasColumnType("int")
                         .HasColumnName("chat_protection_type");
@@ -319,6 +285,10 @@ namespace Turbo.Database.Migrations
                     b.Property<int>("ChatSpeedType")
                         .HasColumnType("int")
                         .HasColumnName("chat_speed_type");
+
+                    b.Property<int>("ChatType")
+                        .HasColumnType("int")
+                        .HasColumnName("chat_type");
 
                     b.Property<int>("ChatWeightType")
                         .HasColumnType("int")
