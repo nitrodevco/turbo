@@ -26,14 +26,14 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<QuitMessage>(this, OnQuitMessage);
         }
 
-        private async void OnOpenFlatConnectionMessage(OpenFlatConnectionMessage message, ISession session)
+        protected virtual async void OnOpenFlatConnectionMessage(OpenFlatConnectionMessage message, ISession session)
         {
             if (session.Player == null) return;
 
             await _navigatorManager.EnterRoom(session.Player, message.RoomId);
         }
 
-        private async void OnQuitMessage(QuitMessage message, ISession session)
+        protected virtual void OnQuitMessage(QuitMessage message, ISession session)
         {
             if (session.Player == null) return;
 
