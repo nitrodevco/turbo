@@ -194,7 +194,16 @@ namespace Turbo.Rooms.Managers
 
         private void UpdateTotalUsers()
         {
+            int totalUsers = 0;
 
+            foreach(IRoomObject roomObject in RoomObjects.Values)
+            {
+                if (!roomObject.Type.Equals("user")) continue;
+
+                totalUsers++;
+            }
+
+            _room.RoomDetails.UsersNow = totalUsers;
         }
 
         public void SendComposer(IComposer composer)

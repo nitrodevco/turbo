@@ -1,6 +1,8 @@
-﻿namespace Turbo.Packets.Incoming.Inventory.Furni
+﻿using Turbo.Core.Packets.Messages;
+
+namespace Turbo.Packets.Incoming.Inventory.Furni
 {
-    public record RequestFurniInventoryWhenNotInRoomMessage
+    public record RequestFurniInventoryWhenNotInRoomMessage : IMessageEvent
     {
     }
 }

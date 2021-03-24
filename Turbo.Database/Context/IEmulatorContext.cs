@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
@@ -22,5 +24,6 @@ namespace Turbo.Database.Context
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
 
         int SaveChanges();
+        EntityEntry Update([NotNull] object entity);
     }
 }

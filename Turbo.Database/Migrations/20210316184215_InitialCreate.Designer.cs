@@ -8,7 +8,6 @@ using Turbo.Database.Context;
 
 namespace Turbo.Database.Migrations
 {
-    [DbContext(typeof(TurboContext))]
     [Migration("20210316184215_InitialCreate")]
     partial class InitialCreate
     {
@@ -134,9 +133,45 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("definition_id");
 
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.Property<int?>("RoomEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("room_id");
+
+                    b.Property<int>("Rotation")
+                        .HasColumnType("int")
+                        .HasColumnName("direction");
+
+                    b.Property<string>("StuffData")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("stuff_data");
+
+                    b.Property<string>("WallPosition")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("wall_position");
+
+                    b.Property<int>("X")
+                        .HasColumnType("int")
+                        .HasColumnName("x");
+
+                    b.Property<int>("Y")
+                        .HasColumnType("int")
+                        .HasColumnName("y");
+
+                    b.Property<double>("Z")
+                        .HasColumnType("double")
+                        .HasColumnName("z");
+
                     b.HasKey("Id");
 
                     b.HasIndex("FurnitureDefinitionEntityId");
+
+                    b.HasIndex("PlayerEntityId");
+
+                    b.HasIndex("RoomEntityId");
 
                     b.ToTable("furniture");
                 });
@@ -219,8 +254,45 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
+                    b.Property<bool>("AllowEditing")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("allow_editing");
+
+                    b.Property<bool>("AllowPets")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("allow_pets");
+
+                    b.Property<bool>("AllowPetsEat")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("allow_pets_eat");
+
                     b.Property<bool>("AllowWalkThrough")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("allow_walk_through");
+
+                    b.Property<int>("BanType")
+                        .HasColumnType("int")
+                        .HasColumnName("ban_type");
+
+                    b.Property<int>("ChatDistance")
+                        .HasColumnType("int")
+                        .HasColumnName("chat_distance");
+
+                    b.Property<int>("ChatProtectionType")
+                        .HasColumnType("int")
+                        .HasColumnName("chat_protection_type");
+
+                    b.Property<int>("ChatSpeedType")
+                        .HasColumnType("int")
+                        .HasColumnName("chat_speed_type");
+
+                    b.Property<int>("ChatType")
+                        .HasColumnType("int")
+                        .HasColumnName("chat_type");
+
+                    b.Property<int>("ChatWeightType")
+                        .HasColumnType("int")
+                        .HasColumnName("chat_weight_type");
 
                     b.Property<DateTime>("DateCreated")
                         .HasColumnType("datetime(6)")
@@ -230,15 +302,86 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_updated");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("HideWalls")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("hide_walls");
+
+                    b.Property<int>("KickType")
+                        .HasColumnType("int")
+                        .HasColumnName("kick_type");
+
+                    b.Property<DateTime>("LastActive")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("last_active");
+
+                    b.Property<int>("MuteType")
+                        .HasColumnType("int")
+                        .HasColumnName("mute_type");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("name");
+
+                    b.Property<double>("PaintFloor")
+                        .HasColumnType("double")
+                        .HasColumnName("paint_floor");
+
+                    b.Property<double>("PaintLandscape")
+                        .HasColumnType("double")
+                        .HasColumnName("paint_landscape");
+
+                    b.Property<double>("PaintWall")
+                        .HasColumnType("double")
+                        .HasColumnName("paint_wall");
+
+                    b.Property<string>("Password")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("password");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
 
                     b.Property<int>("RoomModelEntityId")
                         .HasColumnType("int")
                         .HasColumnName("model_id");
 
+                    b.Property<int>("RoomState")
+                        .HasColumnType("int")
+                        .HasColumnName("state");
+
+                    b.Property<int>("ThicknessFloor")
+                        .HasColumnType("int")
+                        .HasColumnName("thickness_floor");
+
+                    b.Property<int>("ThicknessWall")
+                        .HasColumnType("int")
+                        .HasColumnName("thickness_wall");
+
+                    b.Property<int>("TradeType")
+                        .HasColumnType("int")
+                        .HasColumnName("trade_type");
+
+                    b.Property<int>("UsersMax")
+                        .HasColumnType("int")
+                        .HasColumnName("users_max");
+
+                    b.Property<int>("UsersNow")
+                        .HasColumnType("int")
+                        .HasColumnName("users_now");
+
+                    b.Property<int>("WallHeight")
+                        .HasColumnType("int")
+                        .HasColumnName("wall_height");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("PlayerEntityId");
 
                     b.HasIndex("RoomModelEntityId");
 
@@ -264,9 +407,9 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_updated");
 
-                    b.Property<int>("DoorDirection")
+                    b.Property<int>("DoorRotation")
                         .HasColumnType("int")
-                        .HasColumnName("door_direction");
+                        .HasColumnName("door_rotation");
 
                     b.Property<int>("DoorX")
                         .HasColumnType("int")
@@ -281,10 +424,12 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("enabled");
 
                     b.Property<string>("Model")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("model");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("name");
 
@@ -373,6 +518,7 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("date_updated");
 
                     b.Property<string>("IpAddress")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("ip_address");
 
@@ -385,6 +531,7 @@ namespace Turbo.Database.Migrations
                         .HasColumnName("player_id");
 
                     b.Property<string>("Ticket")
+                        .IsRequired()
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("ticket");
 
@@ -403,7 +550,21 @@ namespace Turbo.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany()
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "RoomEntity")
+                        .WithMany()
+                        .HasForeignKey("RoomEntityId");
+
                     b.Navigation("FurnitureDefinitionEntity");
+
+                    b.Navigation("PlayerEntity");
+
+                    b.Navigation("RoomEntity");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomBanEntity", b =>
@@ -427,11 +588,19 @@ namespace Turbo.Database.Migrations
 
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntity", b =>
                 {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany()
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Turbo.Database.Entities.Room.RoomModelEntity", "RoomModelEntity")
                         .WithMany()
                         .HasForeignKey("RoomModelEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("PlayerEntity");
 
                     b.Navigation("RoomModelEntity");
                 });

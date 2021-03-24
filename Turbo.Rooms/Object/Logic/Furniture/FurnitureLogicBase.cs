@@ -8,6 +8,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
     public class FurnitureLogicBase : RollingObjectLogic, IFurnitureLogic
     {
         public IFurnitureDefinition FurnitureDefinition { get; private set; }
+        public int DataKey { get; set; }
 
         public void Setup(IFurnitureDefinition furnitureDefinition)
         {
