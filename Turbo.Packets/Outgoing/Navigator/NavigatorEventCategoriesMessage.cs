@@ -6,6 +6,6 @@ namespace Turbo.Packets.Outgoing.Navigator
 {
     public record NavigatorEventCategoriesMessage : IComposer
     {
-        public List<NavigatorEventCategoryEntity> EventCategories { get; set; }
+        public List<NavigatorEventCategoryEntity> EventCategories { get; init; }
     }
 }
