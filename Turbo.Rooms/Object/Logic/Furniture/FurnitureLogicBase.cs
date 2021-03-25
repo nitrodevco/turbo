@@ -11,7 +11,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
     {
         public IFurnitureDefinition FurnitureDefinition { get; private set; }
 
-        public IStuffData StuffData { get; private set; }
+        public IStuffData StuffData { get; protected set; }
 
         public override void Dispose()
         {
@@ -20,7 +20,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             // ensure furniture saves with data from this logic
 
             FurnitureDefinition = null;
-            _stuffData = null;
+            StuffData = null;
         }
 
         public virtual bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)

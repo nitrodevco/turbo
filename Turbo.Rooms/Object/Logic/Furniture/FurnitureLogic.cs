@@ -13,7 +13,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             IStuffData stuffData = CreateStuffDataFromJson(jsonString);
 
-            _stuffData = stuffData;
+            StuffData = stuffData;
 
             return true;
         }
@@ -44,7 +44,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (totalStates == 0) return 0;
 
-            return (_stuffData.GetState() + 1) % totalStates;
+            return (StuffData.GetState() + 1) % totalStates;
         }
     }
 }
