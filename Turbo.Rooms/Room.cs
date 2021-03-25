@@ -174,7 +174,8 @@ namespace Turbo.Rooms
 
             RoomUserManager.EnterRoom(player);
 
-            // send furniture
+            RoomFurnitureManager.SendFurnitureToSession(player.Session);
+
             // refresh rights
             // apply muted from security
 

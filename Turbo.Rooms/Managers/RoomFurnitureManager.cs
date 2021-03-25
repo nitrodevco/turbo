@@ -7,11 +7,13 @@ using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Dtos;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
 using Turbo.Furniture.Factories;
+using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Managers
@@ -146,6 +148,39 @@ namespace Turbo.Rooms.Managers
         public void RemoveAllRoomObjects()
         {
             foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
+        }
+
+        public void SendFurnitureToSession(ISession session)
+        {
+            List<IRoomObject> roomObjects = new();
+            int count = 0;
+
+            foreach(IRoomObject roomObject in RoomObjects.Values)
+            {
+                roomObjects.Add(roomObject);
+
+                count++;
+
+                if(count == 250)
+                {
+                    session.Send(new ObjectsMessage
+                    {
+                        Objects = roomObjects,
+                        OwnersIdToUsername = FurnitureOwners
+                    });
+
+                    roomObjects.Clear();
+                    count = 0;
+                }
+            }
+
+            if (count <= 0) return;
+
+            session.Send(new ObjectsMessage
+            {
+                Objects = roomObjects,
+                OwnersIdToUsername = FurnitureOwners
+            });
         }
 
         private async ValueTask LoadFurniture()
