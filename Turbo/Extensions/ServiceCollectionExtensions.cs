@@ -10,6 +10,7 @@ using Turbo.Core.Packets;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
 using Turbo.Database.Repositories.Furniture;
+using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
 using Turbo.Database.Repositories.Security;
@@ -86,6 +87,7 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IRoomModelRepository, RoomModelRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
+            services.AddScoped<INavigatorEventCategoryRepository, NavigatorEventCategoryRepository>();
         }
     }
 }
