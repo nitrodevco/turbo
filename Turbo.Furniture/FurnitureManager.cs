@@ -37,6 +37,16 @@ namespace Turbo.Furniture
 
         }
 
+        public IFurnitureDefinition GetFurnitureDefinition(int id)
+        {
+            if(_furnitureDefinitions.TryGetValue(id, out IFurnitureDefinition furnitureDefinition))
+            {
+                return furnitureDefinition;
+            }
+
+            return null;
+        }
+
         private async ValueTask LoadDefinitions()
         {
             // when definitions are reloaded

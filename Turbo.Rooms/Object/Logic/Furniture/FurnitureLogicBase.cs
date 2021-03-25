@@ -1,6 +1,7 @@
 ﻿using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Data;
 using Turbo.Core.Game.Rooms.Object.Logic;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
@@ -8,7 +9,6 @@ namespace Turbo.Rooms.Object.Logic.Furniture
     public class FurnitureLogicBase : RollingObjectLogic, IFurnitureLogic
     {
         public IFurnitureDefinition FurnitureDefinition { get; private set; }
-        public int DataKey { get; set; }
 
         public void Setup(IFurnitureDefinition furnitureDefinition)
         {
@@ -77,6 +77,8 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         public virtual bool IsOpen() => CanWalk() || CanSit() || CanLay();
 
         public virtual double StackHeight() => FurnitureDefinition.Z;
+
+        public StuffDataKey DataKey => StuffDataKey.LegacyKey;
 
         public double Height => RoomObject.Location.Z + StackHeight();
     }

@@ -142,7 +142,7 @@ namespace Turbo.Rooms.Mapping
 
             IList<IRoomObject> userObjects = new List<IRoomObject>();
             IList<IRoomObject> furnitureObjects = new List<IRoomObject>();
-            IList<IPoint> points = new List<IPoint>();
+            List<IPoint> points = new List<IPoint>();
 
             foreach(IRoomObject roomObject in roomObjects)
             {
@@ -203,6 +203,8 @@ namespace Turbo.Rooms.Mapping
                         Objects = furnitureObjects
                     });
                 }
+
+                UpdatePoints(true, points.ToArray());
             }
 
             if(userObjects.Count > 0)
@@ -216,6 +218,70 @@ namespace Turbo.Rooms.Mapping
                 {
                     RoomObjects = userObjects
                 });
+            }
+        }
+
+        public void RemoveRoomObjects(IRoomManipulator roomManipulator, params IRoomObject[] roomObjects)
+        {
+            if (roomObjects.Length <= 0) return;
+
+            List<IPoint> points = new List<IPoint>();
+
+            int pickerId = (roomManipulator == null) ? -1 : roomManipulator.Id;
+
+            foreach (IRoomObject roomObject in roomObjects)
+            {
+                if (roomObject.Logic is IFurnitureLogic furnitureLogic)
+                {
+                    IList<IPoint> affectedPoints = AffectedPoints.GetPoints(roomObject);
+
+                    if (affectedPoints.Count > 0)
+                    {
+                        foreach (IPoint affectedPoint in affectedPoints)
+                        {
+                            IRoomTile roomTile = GetTile(affectedPoint);
+
+                            if (roomTile != null)
+                            {
+                                roomTile.RemoveRoomObject(roomObject);
+
+                                points.Add(affectedPoint);
+                            }
+                        }
+                    }
+
+                    if (_room.IsInitialized)
+                    {
+                        _room.SendComposer(new ObjectRemoveMessage
+                        {
+                            Id = roomObject.Id,
+                            IsExpired = false,
+                            PickerId = pickerId,
+                            Delay = 0
+                        });
+                    }
+                }
+
+                else if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
+                {
+                    avatarLogic.GetCurrentTile()?.RemoveRoomObject(roomObject);
+                    avatarLogic.GetNextTile()?.RemoveRoomObject(roomObject);
+
+                    avatarLogic.StopWalking();
+
+                    if (_room.IsInitialized)
+                    {
+                        _room.SendComposer(new UserRemoveMessage
+                        {
+                            Id = roomObject.Id
+                        });
+                    }
+                }
+            }
+
+            if (_room.IsInitialized && (points.Count > 0))
+            {
+                UpdatePoints(true, points.ToArray());
             }
         }
 

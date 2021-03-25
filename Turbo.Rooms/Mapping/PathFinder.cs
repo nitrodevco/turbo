@@ -71,7 +71,7 @@ namespace Turbo.Rooms.Mapping
 
             nodes.Add(currentNode);
 
-            IReadOnlyCollection<IPoint> walkingPoints = ALLOW_DIAGONALS ? MovePoints.MovingPoints : MovePoints.StandardPoints;
+            IReadOnlyCollection<IPoint> walkingPoints = ALLOW_DIAGONALS ? MovePoints.DiagonalPoints : MovePoints.StandardPoints;
 
             if (walkingPoints.Count == 0) return null;
 

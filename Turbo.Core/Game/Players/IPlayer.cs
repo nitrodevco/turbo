@@ -6,7 +6,7 @@ using Turbo.Core.Networking.Game.Clients;
 
 namespace Turbo.Core.Game.Players
 {
-    public interface IPlayer : IRoomObjectHolder, IRoomManipulator, IAsyncInitialisable, IAsyncDisposable
+    public interface IPlayer : IRoomObjectUserHolder, IRoomManipulator, IAsyncInitialisable, IAsyncDisposable
     {
         public ILogger<IPlayer> Logger { get; }
         public ISession Session { get; }
@@ -14,7 +14,7 @@ namespace Turbo.Core.Game.Players
 
         public bool SetSession(ISession session);
 
-        public int Id { get; }
-        public string Name { get; }
+        public new int Id { get; }
+        public new string Name { get; }
     }
 }

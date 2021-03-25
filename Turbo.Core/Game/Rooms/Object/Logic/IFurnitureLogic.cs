@@ -4,6 +4,8 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
 {
     public interface IFurnitureLogic
     {
+        public IFurnitureDefinition FurnitureDefinition { get; }
+
         public void Setup(IFurnitureDefinition furnitureDefinition);
 
         public void OnEnter(IRoomObject roomObject);
