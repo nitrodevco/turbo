@@ -8,6 +8,7 @@
         public string ProductName { get; }
         public string Type { get; }
         public string Logic { get; }
+        public int TotalStates { get; }
         public int X { get; }
         public int Y { get; }
         public double Z { get; }

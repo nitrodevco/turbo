@@ -7,7 +7,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
     {
         public IFurnitureDefinition FurnitureDefinition { get; }
         public StuffDataKey DataKey { get; }
-        public void Setup(IFurnitureDefinition furnitureDefinition);
+        public bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null);
 
         public void OnEnter(IRoomObject roomObject);
         public void OnLeave(IRoomObject roomObject);

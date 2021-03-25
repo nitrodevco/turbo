@@ -85,7 +85,7 @@ namespace Turbo.Furniture
 
             if (roomObject.Logic is IFurnitureLogic furnitureLogic)
             {
-                furnitureLogic.Setup(FurnitureDefinition);
+                furnitureLogic.Setup(FurnitureDefinition, _furnitureEntity.StuffData);
             }
 
             RoomObject = roomObject;
