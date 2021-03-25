@@ -1,4 +1,4 @@
-﻿namespace Turbo.Rooms.Object.Data
+﻿namespace Turbo.Core.Game.Rooms.Object.Data
 {
     public enum StuffDataKey
     {
