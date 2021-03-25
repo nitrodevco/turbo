@@ -9,7 +9,7 @@ using Turbo.Database.Entities;
 
 namespace Turbo.Database.Queue
 {
-    public class StorageQueue<T> : ICyclable 
+    public class StorageQueue<T> : ICyclable
         where T : Entity
     {
         private readonly ConcurrentQueue<T> _queue;

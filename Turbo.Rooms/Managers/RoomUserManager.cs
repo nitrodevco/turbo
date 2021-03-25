@@ -196,7 +196,7 @@ namespace Turbo.Rooms.Managers
         {
             int totalUsers = 0;
 
-            foreach(IRoomObject roomObject in RoomObjects.Values)
+            foreach (IRoomObject roomObject in RoomObjects.Values)
             {
                 if (!roomObject.Type.Equals("user")) continue;
 

@@ -202,7 +202,7 @@ namespace Turbo.Rooms
 
         public async Task Cycle()
         {
-            if(_remainingDisposeTicks == 0)
+            if (_remainingDisposeTicks == 0)
             {
                 await DisposeAsync();
 

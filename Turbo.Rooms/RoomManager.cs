@@ -189,14 +189,14 @@ namespace Turbo.Rooms
 
         public Task Cycle()
         {
-            if(_remainingTryDisposeTicks == 0)
+            if (_remainingTryDisposeTicks == 0)
             {
                 TryDisposeAllRooms();
 
                 _remainingTryDisposeTicks = _tryDisposeTicks;
             }
 
-            if(_remainingTryDisposeTicks > -1) _remainingTryDisposeTicks--;
+            if (_remainingTryDisposeTicks > -1) _remainingTryDisposeTicks--;
 
             return Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
         }

@@ -32,14 +32,14 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<MoveAvatarMessage>(this, OnMoveAvatarMessage);
         }
 
-        private async void OnGetRoomEntryDataMessage(GetRoomEntryDataMessage message, ISession session)
+        protected virtual async void OnGetRoomEntryDataMessage(GetRoomEntryDataMessage message, ISession session)
         {
             if (session.Player == null) return;
 
             await _navigatorManager.ContinueEnteringRoom(session.Player);
         }
 
-        private async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
+        protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
         {
             if (session.Player == null) return;
 
@@ -49,7 +49,7 @@ namespace Turbo.Main.PacketHandlers
             });
         }
 
-        private void OnMoveAvatarMessage(MoveAvatarMessage message, ISession session)
+        protected virtual void OnMoveAvatarMessage(MoveAvatarMessage message, ISession session)
         {
             if (session.Player == null) return;
 
