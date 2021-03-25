@@ -6,7 +6,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
     public interface IFurnitureLogic
     {
         public IFurnitureDefinition FurnitureDefinition { get; }
-        public StuffDataKey DataKey { get; }
+        public IStuffData StuffData { get; }
         public bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null);
 
         public void OnEnter(IRoomObject roomObject);
@@ -26,5 +26,6 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public bool CanToggle();
         public bool IsOpen();
         public double StackHeight();
+        public StuffDataKey DataKey { get; }
     }
 }

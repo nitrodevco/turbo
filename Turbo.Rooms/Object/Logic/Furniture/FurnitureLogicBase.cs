@@ -11,7 +11,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
     {
         public IFurnitureDefinition FurnitureDefinition { get; private set; }
 
-        protected IStuffData _stuffData;
+        public IStuffData StuffData { get; private set; }
 
         public override void Dispose()
         {
