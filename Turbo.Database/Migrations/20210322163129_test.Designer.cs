@@ -8,9 +8,8 @@ using Turbo.Database.Context;
 
 namespace Turbo.Database.Migrations
 {
-    [DbContext(typeof(TurboContext))]
-    [Migration("20210322163129_test")]
-    partial class test
+    [Migration("20210316184215_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

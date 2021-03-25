@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Turbo.Database.Entities.Furniture;
+using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Entities.Security;
@@ -20,6 +21,7 @@ namespace Turbo.Database.Context
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
         public DbSet<RoomRightEntity> RoomRights { get; set; }
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
+        public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
 
         int SaveChanges();
         EntityEntry Update([NotNull] object entity);

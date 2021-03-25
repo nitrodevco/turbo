@@ -1,11 +1,12 @@
 ﻿using Turbo.Core.Game.Furniture.Definition;
+using Turbo.Core.Game.Rooms.Object.Data;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
 {
     public interface IFurnitureLogic
     {
         public IFurnitureDefinition FurnitureDefinition { get; }
-
+        public StuffDataKey DataKey { get; }
         public void Setup(IFurnitureDefinition furnitureDefinition);
 
         public void OnEnter(IRoomObject roomObject);

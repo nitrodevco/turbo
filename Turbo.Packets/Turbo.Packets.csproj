@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
+    <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
   </ItemGroup>
 
 </Project>

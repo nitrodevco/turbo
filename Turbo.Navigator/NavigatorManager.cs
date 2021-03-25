@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -5,23 +6,28 @@ using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Database.Repositories.Navigator;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
+using Turbo.Packets.Shared.Navigator;
 
 namespace Turbo.Navigator
 {
     public class NavigatorManager : INavigatorManager
     {
         private readonly IRoomManager _roomManager;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<INavigatorManager> _logger;
 
         private readonly IDictionary<int, IPendingRoomInfo> _pendingRoomIds;
 
         public NavigatorManager(
             IRoomManager roomManager,
+            IServiceScopeFactory serviceScopeFactory,
             ILogger<INavigatorManager> logger)
         {
             _roomManager = roomManager;
+            _serviceScopeFactory = serviceScopeFactory;
             _logger = logger;
 
             _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
@@ -204,5 +210,24 @@ namespace Turbo.Navigator
         });
 
         public async Task SendNavigatorLiftedRooms(IPlayer player) => await player.Session.Send(new NavigatorLiftedRoomsMessage());
+
+        public async Task SendNavigatorSavedSearches(IPlayer player) => await player.Session.Send(new NavigatorSavedSearchesMessage
+        {
+            // Todo: Implement saved searches
+            SavedSearches = new List<NavigatorSavedSearch>(0)
+        });
+
+        public async Task SendNavigatorEventCategories(IPlayer player)
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var categoriesRepo = scope.ServiceProvider.GetRequiredService<INavigatorEventCategoryRepository>();
+                var categories = await categoriesRepo.FindAllAsync();
+
+                await player.Session.Send(new NavigatorEventCategoriesMessage { 
+                    EventCategories = categories
+                });
+            }
+        }
     }
 }
