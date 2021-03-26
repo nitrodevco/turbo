@@ -136,6 +136,27 @@ namespace Turbo.Rooms.Mapping
             return roomTile;
         }
 
+        public IPoint GetValidPillowPoint(IRoomObject userObject, IRoomObject furnitureObject, IPoint originalPoint)
+        {
+            IList<IPoint> pillowPoints = AffectedPoints.GetPillowPoints(furnitureObject);
+
+            originalPoint = originalPoint.Clone();
+
+            if ((pillowPoints == null) || (pillowPoints.Count == 0)) return null;
+
+            foreach(IPoint point in pillowPoints)
+            {
+                if (furnitureObject.Location.Rotation == Rotation.North) originalPoint.Y = point.Y;
+                else originalPoint.X = point.X;
+
+                IRoomTile roomTile = GetValidTile(userObject, originalPoint);
+
+                if (roomTile != null) return roomTile.Location.Clone();
+            }
+
+            return null;
+        }
+
         public void AddRoomObjects(params IRoomObject[] roomObjects)
         {
             if (roomObjects.Length <= 0) return;
