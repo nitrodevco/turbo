@@ -49,6 +49,8 @@ namespace Turbo.Rooms.Utils
 
             if (roomObject.Logic is IFurnitureLogic furnitureLogic)
             {
+                if (furnitureLogic.FurnitureDefinition.Y == 1) return points;
+
                 Rotation rotation = point.Rotation;
 
                 int x = rotation == Rotation.North ? point.X + 1 : point.X;
