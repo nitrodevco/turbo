@@ -24,6 +24,10 @@ namespace Turbo.Database.Context
         public DbSet<RoomRightEntity> RoomRights { get; set; }
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
+        public DbSet<PermissionEntity> Permissions { get; set; }
+        public DbSet<RankEntity> Ranks { get; set; }
+        public DbSet<RankPermissionEntity> RankPermissions { get; set; }
+        public DbSet<UserPermissionEntity> UserPermissions { get; set; }
 
         public TurboContext(DbContextOptions<TurboContext> options) : base(options) { }
 

@@ -24,5 +24,7 @@ namespace Turbo.Database.Entities.Players
         public string Gender { get; set; }
 
         public List<SecurityTicketEntity> SecurityTickets { get; set; }
+
+        public List<PermissionEntity> PlayerPermissions { get; set; }
     }
 }
