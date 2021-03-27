@@ -22,7 +22,14 @@ namespace Turbo.Main.PacketHandlers
             _roomManager = roomManager;
 
             _messageHub.Subscribe<AvatarExpressionMessage>(this, OnAvatarExpressionMessage);
+            _messageHub.Subscribe<ChangeMottoMessage>(this, OnChangeMottoMessage);
+            _messageHub.Subscribe<ChangePostureMessage>(this, OnChangePostureMessage);
             _messageHub.Subscribe<DanceMessage>(this, OnDanceMessage);
+            _messageHub.Subscribe<DropCarryItemMessage>(this, OnDropCarryItemMessage);
+            _messageHub.Subscribe<LookToMessage>(this, OnLookToMessage);
+            _messageHub.Subscribe<PassCarryItemMessage>(this, OnPassCarryItemMessage);
+            _messageHub.Subscribe<PassCarryItemToPetMessage>(this, OnPassCarryItemToPetMessage);
+            _messageHub.Subscribe<SignMessage>(this, OnSignMessage);
         }
 
         private void OnAvatarExpressionMessage(AvatarExpressionMessage message, ISession session)
@@ -32,6 +39,39 @@ namespace Turbo.Main.PacketHandlers
             IRoomObject roomObject = session.Player.RoomObject;
 
             if (roomObject == null) return;
+
+            if (roomObject.Logic is AvatarLogic avatarLogic)
+            {
+                avatarLogic.Expression((RoomObjectAvatarExpression)message.TypeCode);
+            }
+        }
+
+        private void OnChangeMottoMessage(ChangeMottoMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            IRoomObject roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+        }
+
+        private void OnChangePostureMessage(ChangePostureMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            IRoomObject roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            if (roomObject.Logic is AvatarLogic avatarLogic)
+            {
+                switch ((RoomObjectAvatarPosture)message.Posture)
+                {
+                    case RoomObjectAvatarPosture.Sit:
+                        avatarLogic.Sit(true);
+                        return;
+                }
+            }
         }
 
         private void OnDanceMessage(DanceMessage message, ISession session)
@@ -45,6 +85,58 @@ namespace Turbo.Main.PacketHandlers
             if (roomObject.Logic is AvatarLogic avatarLogic)
             {
                 avatarLogic.Dance((RoomObjectAvatarDanceType)message.Style);
+            }
+        }
+
+        private void OnDropCarryItemMessage(DropCarryItemMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            IRoomObject roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            if (roomObject.Logic is AvatarLogic avatarLogic)
+            {
+                
+            }
+        }
+
+        private void OnLookToMessage(LookToMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            IRoomObject roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            if (roomObject.Logic is AvatarLogic avatarLogic)
+            {
+                
+            }
+        }
+
+        private void OnPassCarryItemMessage(PassCarryItemMessage message, ISession session)
+        {
+
+        }
+
+        private void OnPassCarryItemToPetMessage(PassCarryItemToPetMessage message, ISession session)
+        {
+
+        }
+
+        private void OnSignMessage(SignMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            IRoomObject roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            if (roomObject.Logic is AvatarLogic avatarLogic)
+            {
+                avatarLogic.Sign(message.SignId);
             }
         }
     }

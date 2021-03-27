@@ -7,6 +7,7 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Packets.Messages;
+using Turbo.Packets.Outgoing.Room.Action;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Logic.Avatar;
 
@@ -84,6 +85,13 @@ namespace Turbo.Rooms.Managers
 
             roomObject.SetLocation(location);
 
+            if(!avatarLogic.OnReady())
+            {
+                roomObject.Dispose();
+
+                return null;
+            }
+
             _room.RoomMap.AddRoomObjects(roomObject);
 
             RoomObjects.Add(roomObject.Id, roomObject);
@@ -148,8 +156,23 @@ namespace Turbo.Rooms.Managers
                     RoomObjectAvatarDanceType danceType = avatarLogic.DanceType;
                     bool isIdle = avatarLogic.IsIdle;
 
-                    // if(danceType > RoomObjectAvatarDanceType.None)
-                    // if(idIdle)
+                    if(danceType > RoomObjectAvatarDanceType.None)
+                    {
+                        composers.Add(new DanceMessage
+                        {
+                            UserId = existingObject.Id,
+                            DanceStyle = (int)danceType
+                        });
+                    }
+
+                    if(isIdle)
+                    {
+                        composers.Add(new SleepMessage
+                        {
+                            UserId = existingObject.Id,
+                            Sleeping = isIdle
+                        });
+                    }
                 }
             }
 
