@@ -7,11 +7,7 @@
         public bool SetRoomObject(IRoomObject roomObject);
         public void ClearRoomObject();
 
-        public string Type { get; }
         public int Id { get; }
-        public string Name { get; }
-        public string Motto { get; }
-        public string Figure { get; }
-        public string Gender { get; }
+        public string Type { get; }
     }
 }

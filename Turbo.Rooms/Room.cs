@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
@@ -9,8 +10,10 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Database.Entities.Room;
+using Turbo.Furniture.Factories;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Factories;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
 
@@ -22,8 +25,6 @@ namespace Turbo.Rooms
 
         public IRoomManager RoomManager { get; private set; }
         public ILogger<IRoom> Logger { get; private set; }
-        private readonly IRoomObjectFactory _roomObjectFactory;
-
         public IRoomDetails RoomDetails { get; private set; }
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
@@ -42,19 +43,19 @@ namespace Turbo.Rooms
 
         public Room(
             IRoomManager roomManager,
-            IRoomObjectFactory roomObjectFactory,
             ILogger<IRoom> logger,
+            IRoomFurnitureFactory roomFurnitureFactory,
+            IRoomUserFactory roomUserFactory,
             RoomEntity roomEntity)
         {
             RoomManager = roomManager;
             Logger = logger;
-            _roomObjectFactory = roomObjectFactory;
-
             RoomDetails = new RoomDetails(roomEntity);
+
             RoomCycleManager = new RoomCycleManager(this);
             RoomSecurityManager = new RoomSecurityManager(this);
-            RoomFurnitureManager = new RoomFurnitureManager(this);
-            RoomUserManager = new RoomUserManager(this);
+            RoomFurnitureManager = roomFurnitureFactory.Create(this);
+            RoomUserManager = roomUserFactory.Create(this);
 
             _roomObservers = new List<ISession>();
         }
@@ -171,13 +172,12 @@ namespace Turbo.Rooms
 
             player.Session.Flush();
 
-            RoomUserManager.EnterRoom(_roomObjectFactory, player);
+            RoomUserManager.EnterRoom(player);
 
-            // send furniture
+            RoomFurnitureManager.SendFurnitureToSession(player.Session);
+
             // refresh rights
             // apply muted from security
-
-            player.Session.Flush();
 
             AddObserver(player.Session);
 

@@ -16,7 +16,6 @@ namespace Turbo.Rooms.Managers
         public RoomCycleManager(IRoom room)
         {
             _room = room;
-            _cycles = new List<ICyclable>();
 
             _cycles = new List<ICyclable>();
 

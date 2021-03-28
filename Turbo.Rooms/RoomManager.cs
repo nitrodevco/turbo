@@ -44,14 +44,10 @@ namespace Turbo.Rooms
         public async ValueTask InitAsync()
         {
             await LoadModels();
-
-            // set a interval for TryDisposeAllRooms()
         }
 
         public async ValueTask DisposeAsync()
         {
-            // cancel the TryDisposeAllRooms interval
-
             await RemoveAllRooms();
         }
 

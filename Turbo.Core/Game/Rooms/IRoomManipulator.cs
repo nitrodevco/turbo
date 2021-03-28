@@ -2,5 +2,6 @@
 {
     public interface IRoomManipulator
     {
+        public int Id { get; }
     }
 }

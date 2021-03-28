@@ -1,10 +1,13 @@
 ﻿using Turbo.Core.Game.Furniture.Definition;
+using Turbo.Core.Game.Rooms.Object.Data;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
 {
     public interface IFurnitureLogic
     {
-        public void Setup(IFurnitureDefinition furnitureDefinition);
+        public IFurnitureDefinition FurnitureDefinition { get; }
+        public IStuffData StuffData { get; }
+        public bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null);
 
         public void OnEnter(IRoomObject roomObject);
         public void OnLeave(IRoomObject roomObject);
@@ -23,5 +26,6 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public bool CanToggle();
         public bool IsOpen();
         public double StackHeight();
+        public StuffDataKey DataKey { get; }
     }
 }

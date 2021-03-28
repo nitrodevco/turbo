@@ -22,7 +22,7 @@ namespace Turbo.Packets.Outgoing
 
         public void WriteString(string s)
         {
-            byte[] data = Encoding.UTF8.GetBytes(s);
+            byte[] data = Encoding.UTF8.GetBytes(s ?? string.Empty);
             Content.WriteShort(data.Length);
             Content.WriteBytes(data);
         }

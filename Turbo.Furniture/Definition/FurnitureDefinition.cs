@@ -18,6 +18,7 @@ namespace Turbo.Furniture.Definition
         public string ProductName => _entity.ProductName;
         public string Type => _entity.Type;
         public string Logic => _entity.Logic;
+        public int TotalStates => _entity.TotalStates;
         public int X => _entity.X;
         public int Y => _entity.Y;
         public double Z => _entity.Z;

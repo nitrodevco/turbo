@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
-using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
@@ -16,14 +15,18 @@ namespace Turbo.Rooms.Managers
     public class RoomUserManager : IRoomUserManager
     {
         private readonly IRoom _room;
+        private readonly IRoomObjectFactory _roomObjectFactory;
 
         public IDictionary<int, IRoomObject> RoomObjects { get; private set; }
 
         private int _roomObjectCounter;
 
-        public RoomUserManager(IRoom room)
+        public RoomUserManager(
+            IRoom room,
+            IRoomObjectFactory roomObjectFactory)
         {
             _room = room;
+            _roomObjectFactory = roomObjectFactory;
 
             RoomObjects = new Dictionary<int, IRoomObject>();
 
@@ -44,9 +47,7 @@ namespace Turbo.Rooms.Managers
         {
             if (id < 0) return null;
 
-            IRoomObject roomObject;
-
-            if (RoomObjects.TryGetValue(id, out roomObject))
+            if (RoomObjects.TryGetValue(id, out IRoomObject roomObject))
             {
                 return roomObject;
             }
@@ -83,40 +84,24 @@ namespace Turbo.Rooms.Managers
 
             roomObject.SetLocation(location);
 
-            IRoomTile roomTile = avatarLogic.GetCurrentTile();
-
-            if (roomTile != null) roomTile.AddRoomObject(roomObject);
-
-            avatarLogic.InvokeCurrentLocation();
-
-            roomObject.NeedsUpdate = false;
+            _room.RoomMap.AddRoomObjects(roomObject);
 
             RoomObjects.Add(roomObject.Id, roomObject);
-
-            SendComposer(new UsersMessage
-            {
-                RoomObjects = new List<IRoomObject> { roomObject }
-            });
-
-            SendComposer(new UserUpdateMessage
-            {
-                RoomObjects = new List<IRoomObject> { roomObject }
-            });
 
             UpdateTotalUsers();
 
             return roomObject;
         }
 
-        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectFactory objectFactory, IRoomObjectHolder roomObjectHolder, IPoint location)
+        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectUserHolder userHolder, IPoint location)
         {
-            if (roomObjectHolder == null) return null;
+            if (userHolder == null) return null;
 
-            IRoomObject roomObject = objectFactory.Create(_room, this, ++_roomObjectCounter, roomObjectHolder.Type, roomObjectHolder.Type);
+            IRoomObject roomObject = _roomObjectFactory.Create(_room, this, ++_roomObjectCounter, userHolder.Type, userHolder.Type);
 
             if (roomObject == null) return null;
 
-            if (!roomObjectHolder.SetRoomObject(roomObject)) return null;
+            if (!userHolder.SetRoomObject(roomObject)) return null;
 
             return AddRoomObject(roomObject, location);
         }
@@ -127,18 +112,7 @@ namespace Turbo.Rooms.Managers
 
             if (roomObject == null) return;
 
-            if (roomObject.Logic is MovingAvatarLogic avatarLogic)
-            {
-                avatarLogic.GetCurrentTile()?.RemoveRoomObject(roomObject);
-                avatarLogic.GetNextTile()?.RemoveRoomObject(roomObject);
-
-                avatarLogic.StopWalking();
-            }
-
-            SendComposer(new UserRemoveMessage
-            {
-                Id = id
-            });
+            _room.RoomMap.RemoveRoomObjects(null, roomObject);
 
             RoomObjects.Remove(id);
 
@@ -156,11 +130,11 @@ namespace Turbo.Rooms.Managers
             foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
         }
 
-        public void EnterRoom(IRoomObjectFactory objectFactory, IPlayer player, IPoint location = null)
+        public void EnterRoom(IPlayer player, IPoint location = null)
         {
-            if ((objectFactory == null) || (player == null)) return;
+            if (player == null) return;
 
-            CreateRoomObjectAndAssign(objectFactory, player, location);
+            CreateRoomObjectAndAssign(player, location);
 
             IList<IRoomObject> roomObjects = new List<IRoomObject>();
             IList<IComposer> composers = new List<IComposer>();
@@ -179,17 +153,19 @@ namespace Turbo.Rooms.Managers
                 }
             }
 
-            player.Session.Send(new UsersMessage
+            player.Session.SendQueue(new UsersMessage
             {
                 RoomObjects = roomObjects
             });
 
-            player.Session.Send(new UserUpdateMessage
+            player.Session.SendQueue(new UserUpdateMessage
             {
                 RoomObjects = roomObjects
             });
 
             foreach (IComposer composer in composers) player.Session.SendQueue(composer);
+
+            player.Session.Flush();
         }
 
         private void UpdateTotalUsers()
