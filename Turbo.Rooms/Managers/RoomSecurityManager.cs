@@ -98,7 +98,7 @@ namespace Turbo.Rooms.Managers
 
             if(roomObject.Logic is IMovingAvatarLogic avatarLogic)
             {
-                avatarLogic.AddStatus(RoomObjectAvatarStatus.FlatControl, controllerLevel.ToString());
+                avatarLogic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)controllerLevel).ToString());
             }
         }
 
