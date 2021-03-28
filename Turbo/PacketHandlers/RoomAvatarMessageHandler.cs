@@ -6,6 +6,7 @@ using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Room.Avatar;
 using Turbo.Rooms.Object.Logic.Avatar;
+using Turbo.Rooms.Utils;
 
 namespace Turbo.Main.PacketHandlers
 {
@@ -112,7 +113,7 @@ namespace Turbo.Main.PacketHandlers
 
             if (roomObject.Logic is AvatarLogic avatarLogic)
             {
-                
+                avatarLogic.LookAtPoint(new Point(message.LocX, message.LocY));
             }
         }
 

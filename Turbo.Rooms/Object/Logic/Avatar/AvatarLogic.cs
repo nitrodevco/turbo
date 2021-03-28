@@ -6,18 +6,21 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 {
     public class AvatarLogic : MovingAvatarLogic
     {
-        private static readonly int _idleCycles = 120;
+        private static readonly int _idleCycles = 1200;
+        private static readonly int _headTurnCycles = 6;
 
         public RoomObjectAvatarDanceType DanceType { get; private set; }
         public bool IsIdle { get; private set; }
 
         private int _remainingIdleCycles;
+        private int _remainingHeadCycles;
 
         public override bool OnReady()
         {
             if (!base.OnReady()) return false;
 
             _remainingIdleCycles = _idleCycles;
+            _remainingHeadCycles = -1;
 
             return true;
         }
@@ -38,6 +41,21 @@ namespace Turbo.Rooms.Object.Logic.Avatar
                 }
 
                 _remainingIdleCycles--;
+            }
+
+            if (_remainingHeadCycles > -1)
+            {
+                if (_remainingHeadCycles == 0)
+                {
+                    RoomObject.Location.SetRotation(RoomObject.Location.Rotation);
+                    Idle(true);
+
+                    _remainingHeadCycles = -1;
+
+                    return;
+                }
+
+                _remainingHeadCycles--;
             }
         }
 
@@ -70,6 +88,30 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             Idle(false);
 
             base.Lay(flag, height, rotation);
+        }
+
+        public void LookAtPoint(IPoint point, bool headOnly = false, bool selfInvoked = true)
+        {
+            if (selfInvoked) Idle(false);
+
+            if (IsWalking || IsIdle) return;
+
+            if (RoomObject.Location.Compare(point)) return;
+
+            if (HasStatus(RoomObjectAvatarStatus.Lay)) return;
+
+            if(headOnly || HasStatus(RoomObjectAvatarStatus.Sit))
+            {
+                RoomObject.Location.HeadRotation = RoomObject.Location.CalculateHeadDirection(point);
+
+                _remainingHeadCycles = _headTurnCycles;
+            }
+            else
+            {
+                RoomObject.Location.SetRotation(RoomObject.Location.CalculateHumanDirection(point));
+            }
+
+            RoomObject.NeedsUpdate = true;
         }
 
         public void Dance(RoomObjectAvatarDanceType danceType)
