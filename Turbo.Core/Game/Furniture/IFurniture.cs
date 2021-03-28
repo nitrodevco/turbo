@@ -10,7 +10,6 @@ namespace Turbo.Core.Game.Furniture
 {
     public interface IFurniture : IRoomObjectFurnitureHolder, IDisposable
     {
-        public string PlayerName { get; set; }
         public bool SetRoom(IRoom room);
     }
 }

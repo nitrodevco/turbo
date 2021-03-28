@@ -7,7 +7,9 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Database.Dtos;
 using Turbo.Database.Entities.Room;
+using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
 using Turbo.Rooms.Factories;
 using Turbo.Rooms.Mapping;
@@ -77,16 +79,25 @@ namespace Turbo.Rooms
 
             if (room != null) return room;
 
-            RoomEntity roomEntity;
+            RoomEntity roomEntity = null;
+            string playerName = null;
+
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var roomRepository = scope.ServiceProvider.GetService<IRoomRepository>();
                 roomEntity = await roomRepository.FindAsync(id);
+
+                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+                PlayerUsernameDto dto = await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId);
+
+                if (dto != null) playerName = dto.Name;
             }
 
             if (roomEntity == null) return null;
 
             room = _roomFactory.Create(roomEntity);
+
+            room.RoomDetails.PlayerName = playerName;
 
             return await AddRoom(room);
         }

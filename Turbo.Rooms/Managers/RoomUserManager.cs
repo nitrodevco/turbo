@@ -7,6 +7,7 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Packets.Messages;
+using Turbo.Packets.Outgoing.Room.Action;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Logic.Avatar;
 
@@ -84,6 +85,13 @@ namespace Turbo.Rooms.Managers
 
             roomObject.SetLocation(location);
 
+            if(!avatarLogic.OnReady())
+            {
+                roomObject.Dispose();
+
+                return null;
+            }
+
             _room.RoomMap.AddRoomObjects(roomObject);
 
             RoomObjects.Add(roomObject.Id, roomObject);
@@ -130,11 +138,11 @@ namespace Turbo.Rooms.Managers
             foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
         }
 
-        public void EnterRoom(IPlayer player, IPoint location = null)
+        public IRoomObject EnterRoom(IPlayer player, IPoint location = null)
         {
-            if (player == null) return;
+            if (player == null) return null;
 
-            CreateRoomObjectAndAssign(player, location);
+            IRoomObject roomObject = CreateRoomObjectAndAssign(player, location);
 
             IList<IRoomObject> roomObjects = new List<IRoomObject>();
             IList<IComposer> composers = new List<IComposer>();
@@ -148,8 +156,23 @@ namespace Turbo.Rooms.Managers
                     RoomObjectAvatarDanceType danceType = avatarLogic.DanceType;
                     bool isIdle = avatarLogic.IsIdle;
 
-                    // if(danceType > RoomObjectAvatarDanceType.None)
-                    // if(idIdle)
+                    if(danceType > RoomObjectAvatarDanceType.None)
+                    {
+                        composers.Add(new DanceMessage
+                        {
+                            UserId = existingObject.Id,
+                            DanceStyle = (int)danceType
+                        });
+                    }
+
+                    if(isIdle)
+                    {
+                        composers.Add(new SleepMessage
+                        {
+                            UserId = existingObject.Id,
+                            Sleeping = isIdle
+                        });
+                    }
                 }
             }
 
@@ -166,6 +189,8 @@ namespace Turbo.Rooms.Managers
             foreach (IComposer composer in composers) player.Session.SendQueue(composer);
 
             player.Session.Flush();
+
+            return roomObject;
         }
 
         private void UpdateTotalUsers()

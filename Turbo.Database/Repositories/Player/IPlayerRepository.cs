@@ -7,6 +7,7 @@ namespace Turbo.Database.Repositories.Player
 {
     public interface IPlayerRepository : IBaseRepository<PlayerEntity>
     {
+        public Task<PlayerUsernameDto> FindUsernameAsync(int id);
         public Task<IList<PlayerUsernameDto>> FindUsernamesAsync(IList<int> ids);
     }
 }

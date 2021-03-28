@@ -108,5 +108,7 @@ namespace Turbo.Furniture
         public string Type => "furniture";
 
         public string LogicType => FurnitureDefinition.Logic;
+
+        public int PlayerId => _furnitureEntity.PlayerEntityId;
     }
 }

@@ -19,14 +19,6 @@ namespace Turbo.Rooms.Object.Data
             //}
         }
 
-        public virtual void WriteToPacket(IServerPacket packet)
-        {
-            if (!IsUnique()) return;
-
-            packet.WriteInteger(UniqueNumber);
-            packet.WriteInteger(UniqueSeries);
-        }
-
         public virtual string GetLegacyString()
         {
             return "";

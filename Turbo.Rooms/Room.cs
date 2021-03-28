@@ -172,11 +172,12 @@ namespace Turbo.Rooms
 
             player.Session.Flush();
 
-            RoomUserManager.EnterRoom(player);
+            IRoomObject roomObject = RoomUserManager.EnterRoom(player);
 
             RoomFurnitureManager.SendFurnitureToSession(player.Session);
 
-            // refresh rights
+            if (roomObject != null) RoomSecurityManager.RefreshRights(roomObject);
+
             // apply muted from security
 
             AddObserver(player.Session);

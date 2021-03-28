@@ -9,19 +9,6 @@ namespace Turbo.Rooms.Object.Data.Types
 
         public IList<string> Data { get; private set; }
 
-        public override void WriteToPacket(IServerPacket packet)
-        {
-            packet.WriteInteger(Flags);
-            packet.WriteInteger(Data.Count);
-
-            foreach (string value in Data)
-            {
-                packet.WriteString(value);
-            }
-
-            base.WriteToPacket(packet);
-        }
-
         public override string GetLegacyString()
         {
             return GetValue(_state);

@@ -58,11 +58,22 @@ namespace Turbo.Rooms.Cycles
             {
                 RoomObjects = updatedRoomObjects
             });
+
+            foreach (IRoomObject roomObject in updatedRoomObjects)
+            {
+                MovingAvatarLogic logic = (MovingAvatarLogic)roomObject.Logic;
+
+                logic.RemoveStatus(RoomObjectAvatarStatus.Sign);
+
+                roomObject.NeedsUpdate = false;
+            }
         }
 
         private void ProcessRoomObject(IRoomObject roomObject)
         {
             MovingAvatarLogic avatarLogic = (MovingAvatarLogic)roomObject.Logic;
+
+            avatarLogic.Cycle();
 
             if (!avatarLogic.IsWalking) return; // or is rolling
 

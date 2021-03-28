@@ -13,6 +13,7 @@ namespace Turbo.Core.Game.Players
         public IPlayerDetails PlayerDetails { get; }
 
         public bool SetSession(ISession session);
+        public bool HasPermission(string permission);
 
         public new int Id { get; }
         public new string Name { get; }

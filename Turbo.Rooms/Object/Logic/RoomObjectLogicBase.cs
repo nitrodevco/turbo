@@ -23,7 +23,7 @@ namespace Turbo.Rooms.Object.Logic
 
         }
 
-        protected virtual bool OnReady()
+        public virtual bool OnReady()
         {
             return true;
         }
@@ -53,11 +53,9 @@ namespace Turbo.Rooms.Object.Logic
             return true;
         }
 
-        public virtual void ProcessUpdateMessage(RoomObjectUpdateMessage updateMessage)
+        public virtual void Cycle()
         {
-            if ((updateMessage == null) || (RoomObject == null)) return;
 
-            RoomObject.SetLocation(updateMessage.Location);
         }
     }
 }

@@ -11,6 +11,8 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void ProcessNextLocation();
         public void UpdateHeight(IRoomTile roomTile = null);
         public void InvokeCurrentLocation();
+        public void AddStatus(string type, string value);
+        public bool HasStatus(params string[] types);
         public IRoomTile GetCurrentTile();
         public IRoomTile GetNextTile();
     }

@@ -110,53 +110,21 @@ namespace Turbo.Players
             _playerContainer.ClearPlayerRoomStatus(this);
         }
 
-        public string Type
+        public bool HasPermission(string permission)
         {
-            get
-            {
-                return "user";
-                ;
-            }
+            return false;
         }
 
-        public int Id
-        {
-            get
-            {
-                return PlayerDetails.Id;
-            }
-        }
+        public string Type => "user";
 
-        public string Name
-        {
-            get
-            {
-                return PlayerDetails.Name;
-            }
-        }
+        public int Id => PlayerDetails.Id;
 
-        public string Motto
-        {
-            get
-            {
-                return PlayerDetails.Motto;
-            }
-        }
+        public string Name => PlayerDetails.Name;
 
-        public string Figure
-        {
-            get
-            {
-                return PlayerDetails.Figure;
-            }
-        }
+        public string Motto => PlayerDetails.Motto;
 
-        public string Gender
-        {
-            get
-            {
-                return PlayerDetails.Gender;
-            }
-        }
+        public string Figure => PlayerDetails.Figure;
+
+        public string Gender => PlayerDetails.Gender;
     }
 }

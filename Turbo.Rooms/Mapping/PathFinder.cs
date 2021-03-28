@@ -108,7 +108,7 @@ namespace Turbo.Rooms.Mapping
                     if (currentNode.Location.X != tempNode.Location.X) difference += 2;
                     if (currentNode.Location.Y != tempNode.Location.Y) difference += 2;
 
-                    cost = ((currentNode.Cost + difference) + tempNode.Location.GetDistanceAround(nodeGoal.Location));
+                    cost = ((currentNode.Cost + difference) + (int)tempNode.Location.GetDistanceSquared(nodeGoal.Location));
 
                     if (tempNode.IsOpen) continue;
 

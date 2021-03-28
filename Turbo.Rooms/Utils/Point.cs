@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Rooms.Utils;
+﻿using System;
+using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Rooms.Utils
 {
@@ -61,6 +62,16 @@ namespace Turbo.Rooms.Utils
             clone.Y -= point.Y;
 
             return (clone.X * clone.X) + (clone.Y * clone.Y);
+        }
+
+        public double GetDistanceSquared(IPoint point)
+        {
+            IPoint clone = Clone();
+
+            clone.X -= point.X;
+            clone.Y -= point.Y;
+
+            return Math.Sqrt((clone.X * clone.X) + (clone.Y * clone.Y));
         }
 
         public bool Compare(IPoint point)

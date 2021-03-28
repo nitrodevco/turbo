@@ -6,22 +6,7 @@ namespace Turbo.Rooms.Object.Data.Types
     public class MapStuffData : StuffDataBase
     {
         private static string _state = "state";
-
         public IDictionary<string, string> Data { get; private set; }
-
-        public override void WriteToPacket(IServerPacket packet)
-        {
-            packet.WriteInteger(Flags);
-            packet.WriteInteger(Data.Count);
-
-            foreach (string key in Data.Keys)
-            {
-                packet.WriteString(key);
-                packet.WriteString(Data[key]);
-            }
-
-            base.WriteToPacket(packet);
-        }
 
         public override string GetLegacyString()
         {
