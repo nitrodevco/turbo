@@ -19,6 +19,15 @@ namespace Turbo.Database.Repositories.Player
 
         public async Task<PlayerEntity> FindAsync(int id) => await _context.Players.FindAsync(id);
 
+        public async Task<PlayerUsernameDto> FindUsernameAsync(int id) => await _context.Players
+            .Where(player => id == player.Id)
+            .Select(player => new PlayerUsernameDto
+            {
+                Id = player.Id,
+                Name = player.Name
+            })
+            .FirstOrDefaultAsync();
+
         public async Task<IList<PlayerUsernameDto>> FindUsernamesAsync(IList<int> ids) => await _context.Players
             .Where(player => ids.Any(id => id == player.Id))
             .Select(player => new PlayerUsernameDto

@@ -9,6 +9,7 @@ namespace Turbo.Core.Game.Rooms
         public string Name { get; }
         public string Description { get; }
         public int PlayerId { get; }
+        public string PlayerName { get; set; }
         public RoomStateType State { get; }
         public string Password { get; }
         public int ModelId { get; }

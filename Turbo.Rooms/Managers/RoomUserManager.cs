@@ -138,11 +138,11 @@ namespace Turbo.Rooms.Managers
             foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
         }
 
-        public void EnterRoom(IPlayer player, IPoint location = null)
+        public IRoomObject EnterRoom(IPlayer player, IPoint location = null)
         {
-            if (player == null) return;
+            if (player == null) return null;
 
-            CreateRoomObjectAndAssign(player, location);
+            IRoomObject roomObject = CreateRoomObjectAndAssign(player, location);
 
             IList<IRoomObject> roomObjects = new List<IRoomObject>();
             IList<IComposer> composers = new List<IComposer>();
@@ -189,6 +189,8 @@ namespace Turbo.Rooms.Managers
             foreach (IComposer composer in composers) player.Session.SendQueue(composer);
 
             player.Session.Flush();
+
+            return roomObject;
         }
 
         private void UpdateTotalUsers()
