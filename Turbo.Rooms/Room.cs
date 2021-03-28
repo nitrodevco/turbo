@@ -44,6 +44,7 @@ namespace Turbo.Rooms
         public Room(
             IRoomManager roomManager,
             ILogger<IRoom> logger,
+            IRoomSecurityFactory roomSecurityFactory,
             IRoomFurnitureFactory roomFurnitureFactory,
             IRoomUserFactory roomUserFactory,
             RoomEntity roomEntity)
@@ -53,7 +54,7 @@ namespace Turbo.Rooms
             RoomDetails = new RoomDetails(roomEntity);
 
             RoomCycleManager = new RoomCycleManager(this);
-            RoomSecurityManager = new RoomSecurityManager(this);
+            RoomSecurityManager = roomSecurityFactory.Create(this);
             RoomFurnitureManager = roomFurnitureFactory.Create(this);
             RoomUserManager = roomUserFactory.Create(this);
 
@@ -176,7 +177,7 @@ namespace Turbo.Rooms
 
             RoomFurnitureManager.SendFurnitureToSession(player.Session);
 
-            if (roomObject != null) RoomSecurityManager.RefreshRights(roomObject);
+            if (roomObject != null) RoomSecurityManager.RefreshControllerLevel(roomObject);
 
             // apply muted from security
 

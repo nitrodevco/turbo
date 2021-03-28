@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
@@ -14,13 +15,17 @@ namespace Turbo.Rooms.Managers
 {
     public class RoomSecurityManager : IRoomSecurityManager
     {
-        private IRoom _room;
+        private readonly IRoom _room;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private IDictionary<int, string> _rights;
 
-        public RoomSecurityManager(IRoom room)
+        public RoomSecurityManager(
+            IRoom room,
+            IServiceScopeFactory serviceScopeFactory)
         {
             _room = room;
+            _serviceScopeFactory = serviceScopeFactory;
 
             _rights = new Dictionary<int, string>();
         }
@@ -51,7 +56,7 @@ namespace Turbo.Rooms.Managers
             return false;
         }
 
-        public bool HasRights(IPlayer player)
+        public bool IsController(IPlayer player)
         {
             if (IsOwner(player)) return true;
 
@@ -62,22 +67,22 @@ namespace Turbo.Rooms.Managers
             return false;
         }
 
-        public void RefreshRights(IRoomObject roomObject)
+        public void RefreshControllerLevel(IRoomObject roomObject)
         {
             bool isOwner = false;
-            RoomRightsType rightsType = RoomRightsType.None;
+            RoomControllerLevel controllerLevel = RoomControllerLevel.None;
 
             if(roomObject.RoomObjectHolder is IPlayer player)
             {
                 if(IsOwner(player))
                 {
                     isOwner = true;
-                    rightsType = RoomRightsType.Moderator;
+                    controllerLevel = RoomControllerLevel.Moderator;
                 }
 
-                else if(HasRights(player))
+                else if(IsController(player))
                 {
-                    rightsType = RoomRightsType.Rights;
+                    controllerLevel = RoomControllerLevel.Rights;
                 }
 
                 // composer 780 roomrights
@@ -93,7 +98,7 @@ namespace Turbo.Rooms.Managers
 
             if(roomObject.Logic is IMovingAvatarLogic avatarLogic)
             {
-                avatarLogic.AddStatus(RoomObjectAvatarStatus.FlatControl, rightsType.ToString());
+                avatarLogic.AddStatus(RoomObjectAvatarStatus.FlatControl, controllerLevel.ToString());
             }
         }
 
@@ -116,7 +121,7 @@ namespace Turbo.Rooms.Managers
             {
                 if (roomObject.RoomObjectHolder is IPlayer player)
                 {
-                    if (!HasRights(player)) continue;
+                    if (!IsController(player)) continue;
 
                     player.Session.Send(composer);
                 }
