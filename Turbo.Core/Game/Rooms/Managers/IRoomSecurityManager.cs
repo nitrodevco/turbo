@@ -7,9 +7,9 @@ namespace Turbo.Core.Game.Rooms.Managers
 {
     public interface IRoomSecurityManager : IAsyncInitialisable, IAsyncDisposable
     {
-        public bool IsOwner(IPlayer player);
-        public bool IsStrictOwner(IPlayer player);
-        public bool IsController(IPlayer player);
+        public bool IsOwner(IRoomManipulator manipulator);
+        public bool IsStrictOwner(IRoomManipulator manipulator);
+        public bool IsController(IRoomManipulator manipulator);
         public void RefreshControllerLevel(IRoomObject roomObject);
         public void SendOwnersComposer(IComposer composer);
         public void SendRightsComposer(IComposer composer);

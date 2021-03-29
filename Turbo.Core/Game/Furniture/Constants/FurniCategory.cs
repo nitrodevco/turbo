@@ -1,4 +1,4 @@
-﻿namespace Turbo.Core.Game.Furniture.Types
+﻿namespace Turbo.Core.Game.Furniture.Constants
 {
     public enum FurniCategory
     {

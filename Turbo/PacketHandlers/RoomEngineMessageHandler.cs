@@ -2,6 +2,7 @@
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
@@ -30,6 +31,8 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<GetRoomEntryDataMessage>(this, OnGetRoomEntryDataMessage);
             _messageHub.Subscribe<GetFurnitureAliasesMessage>(this, OnGetFurnitureAliasesMessage);
             _messageHub.Subscribe<MoveAvatarMessage>(this, OnMoveAvatarMessage);
+
+            _messageHub.Subscribe<MoveObjectMessage>(this, OnMoveObjectMessage);
         }
 
         protected virtual async void OnGetRoomEntryDataMessage(GetRoomEntryDataMessage message, ISession session)
@@ -58,6 +61,17 @@ namespace Turbo.Main.PacketHandlers
             if (roomObject == null) return;
 
             ((MovingAvatarLogic)roomObject.Logic).WalkTo(new Point(message.X, message.Y));
+        }
+
+        protected virtual void OnMoveObjectMessage(MoveObjectMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            IRoomObject roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            roomObject.Room.RoomFurnitureManager.MoveFurniture(session.Player, message.ObjectId, message.X, message.Y, (Rotation)message.Direction);
         }
     }
 }

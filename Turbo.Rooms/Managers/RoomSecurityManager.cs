@@ -40,29 +40,29 @@ namespace Turbo.Rooms.Managers
 
         }
 
-        public bool IsOwner(IPlayer player)
+        public bool IsOwner(IRoomManipulator manipulator)
         {
-            if (IsStrictOwner(player)) return true;
+            if (IsStrictOwner(manipulator)) return true;
 
-            if (player.HasPermission("any_room_owner")) return true;
+            if (manipulator.HasPermission("any_room_owner")) return true;
 
             return false;
         }
 
-        public bool IsStrictOwner(IPlayer player)
+        public bool IsStrictOwner(IRoomManipulator manipulator)
         {
-            if (_room.RoomDetails.PlayerId == player.Id) return true;
+            if (_room.RoomDetails.PlayerId == manipulator.Id) return true;
 
             return false;
         }
 
-        public bool IsController(IPlayer player)
+        public bool IsController(IRoomManipulator manipulator)
         {
-            if (IsOwner(player)) return true;
+            if (IsOwner(manipulator)) return true;
 
-            if (player.HasPermission("any_room_rights")) return true;
+            if (manipulator.HasPermission("any_room_rights")) return true;
 
-            if (_rights.ContainsKey(player.Id)) return true;
+            if (_rights.ContainsKey(manipulator.Id)) return true;
 
             return false;
         }

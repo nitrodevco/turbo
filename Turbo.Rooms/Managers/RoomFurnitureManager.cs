@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
+using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
@@ -14,12 +17,15 @@ using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
 using Turbo.Furniture.Factories;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Managers
 {
     public class RoomFurnitureManager : IRoomFurnitureManager
     {
+        public static readonly int MaxHeight = 40;
+
         private readonly IRoom _room;
         private readonly IFurnitureFactory _furnitureFactory;
         private readonly IRoomObjectFactory _roomObjectFactory;
@@ -148,6 +154,121 @@ namespace Turbo.Rooms.Managers
         public void RemoveAllRoomObjects()
         {
             foreach (int id in RoomObjects.Keys) RemoveRoomObject(id);
+        }
+
+        public bool CanPlaceOnTop(IRoomObject bottom, IRoomObject top)
+        {
+            if (top.Logic is not IFurnitureLogic topLogic) return false;
+
+            if (topLogic is FurnitureStackHelperLogic) return true;
+
+            if ((topLogic is FurnitureRollerLogic) || (bottom.Logic is not IFurnitureLogic bottomLogic)) return false;
+
+            if (!bottomLogic.CanStack() || bottomLogic.CanSit() || bottomLogic.CanLay()) return false;
+
+            if(bottomLogic is FurnitureRollerLogic)
+            {
+                if ((topLogic.FurnitureDefinition.X > 1) || (topLogic.FurnitureDefinition.Y > 1)) return false;
+            }
+
+            return true;
+        }
+
+        public bool IsValidPlacement(IRoomObject roomObject, IPoint point)
+        {
+            if (roomObject.Logic is not IFurnitureLogic furnitureLogic) return false;
+
+            bool isRotating = roomObject.Location.Rotation != point.Rotation;
+            IList<IPoint> affectedPoints = AffectedPoints.GetPoints(roomObject, point);
+
+            if (affectedPoints.Count == 0) return false;
+
+            foreach(IPoint affectedPoint in affectedPoints)
+            {
+                IRoomTile roomTile = _room.RoomMap.GetTile(affectedPoint);
+
+                // do we need to validate that all tiles base height is the same?
+
+                if ((roomTile.Users.Count > 0) && !furnitureLogic.IsOpen()) return false;
+
+                if ((roomTile.Height + furnitureLogic.StackHeight()) > MaxHeight) return false;
+
+                if (roomTile.HasStackHelper) continue;
+
+                if(roomTile.HighestObject != null)
+                {
+                    if (isRotating && (roomTile.HighestObject == roomObject)) continue;
+
+                    if ((roomTile.HighestObject != roomObject) && !CanPlaceOnTop(roomTile.HighestObject, roomObject)) return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool MoveFurniture(IRoomManipulator manipulator, int id, int x, int y, Rotation rotation, bool skipChecks = false)
+        {
+            IFurniture furniture = GetFurniture(id);
+
+            if ((furniture == null) || (furniture.RoomObject == null)) return false;
+
+            IPoint location = new Point(x, y, 0, rotation);
+
+            if(furniture.RoomObject.Logic is IFurnitureLogic furnitureLogic)
+            {
+                if (furnitureLogic.FurnitureDefinition.Type.Equals(FurniType.Floor))
+                {
+                    if(!skipChecks)
+                    {
+                        if (manipulator == null) return false;
+
+                        if(!_room.RoomSecurityManager.IsController(manipulator))
+                        {
+                            // send placement notification
+
+                            manipulator.Session.Send(new ObjectUpdateMessage
+                            {
+                                Object = furniture.RoomObject
+                            });
+
+                            return false;
+                        }
+                    }
+
+                    if(!IsValidPlacement(furniture.RoomObject, location))
+                    {
+                        if(manipulator != null)
+                        {
+                            // send placement notification
+
+                            manipulator.Session.Send(new ObjectUpdateMessage
+                            {
+                                Object = furniture.RoomObject
+                            });
+                        }
+
+                        return false;
+                    }
+
+                    IPoint previous = furniture.RoomObject.Location.Clone();
+
+                    furniture.RoomObject.Location.X = location.X;
+                    furniture.RoomObject.Location.Y = location.Y;
+                    furniture.RoomObject.Location.SetRotation(location.Rotation);
+
+                    IRoomTile highestTile = _room.RoomMap.GetHighestTileForRoomObject(furniture.RoomObject);
+
+                    if ((highestTile != null) && (highestTile.HighestObject != furniture.RoomObject) || highestTile.HasStackHelper) furniture.RoomObject.Location.Z = highestTile.Height;
+
+                    furnitureLogic.OnMove(manipulator);
+
+                    _room.RoomMap.MoveRoomObject(furniture.RoomObject, previous);
+
+                    furniture.Save();
+                }
+            }
+
+            return true;
         }
 
         public void SendFurnitureToSession(ISession session)
