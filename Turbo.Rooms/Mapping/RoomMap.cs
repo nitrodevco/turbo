@@ -398,7 +398,6 @@ namespace Turbo.Rooms.Mapping
             if (points.Length <= 0) return;
 
             List<IRoomTile> roomTiles = new();
-            List<IRoomObject> roomObjects = new();
 
             foreach (IPoint point in points)
             {

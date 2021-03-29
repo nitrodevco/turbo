@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Furniture.Definition;
+﻿using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Data;
 using Turbo.Rooms.Object.Logic.Avatar;
@@ -16,6 +17,24 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             StuffData = stuffData;
 
             return true;
+        }
+
+        public override bool SetState(int state, bool refresh = true)
+        {
+            if (StuffData == null) return false;
+
+            if (state == StuffData.GetState()) return false;
+
+            StuffData.SetState(state.ToString());
+
+            if(RoomObject.RoomObjectHolder is IFurniture furniture)
+            {
+                furniture.Save();
+            }
+
+            if (refresh) RefreshStuffData();
+
+            return false;
         }
 
         public override void OnStop(IRoomObject roomObject)
@@ -38,6 +57,17 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             }
         }
 
+        public override void OnInteract(IRoomObject roomObject, int param)
+        {
+            if (!CanToggle(roomObject)) return;
+            
+            param = GetNextToggleableState();
+
+            if (!SetState(param)) return;
+
+            // wired state changed
+        }
+
         protected virtual int GetNextToggleableState()
         {
             int totalStates = FurnitureDefinition.TotalStates;
@@ -46,5 +76,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             return (StuffData.GetState() + 1) % totalStates;
         }
+
+
     }
 }

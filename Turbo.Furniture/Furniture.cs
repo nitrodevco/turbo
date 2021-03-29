@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Text.Json;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
@@ -58,7 +59,20 @@ namespace Turbo.Furniture
 
         public void Save()
         {
+            if(RoomObject != null)
+            {
+                _furnitureEntity.X = RoomObject.Location.X;
+                _furnitureEntity.Y = RoomObject.Location.Y;
+                _furnitureEntity.Z = RoomObject.Location.Z;
+                _furnitureEntity.Rotation = RoomObject.Location.Rotation;
 
+                if(RoomObject.Logic is IFurnitureLogic furnitureLogic)
+                {
+                    _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData);
+                }
+            }
+
+            // waits for skelly :rolling_eyes:
         }
 
         public bool SetRoom(IRoom room)
