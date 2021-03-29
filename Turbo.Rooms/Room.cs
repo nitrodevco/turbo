@@ -86,7 +86,7 @@ namespace Turbo.Rooms
 
             if (RoomManager != null) await RoomManager.RemoveRoom(Id);
 
-            if (RoomCycleManager != null) await RoomCycleManager.DisposeAsync();
+            if (RoomCycleManager != null) RoomCycleManager.Dispose();
             if (RoomUserManager != null) await RoomUserManager.DisposeAsync();
             if (RoomFurnitureManager != null) await RoomFurnitureManager.DisposeAsync();
             if (RoomSecurityManager != null) await RoomSecurityManager.DisposeAsync();
@@ -204,16 +204,21 @@ namespace Turbo.Rooms
 
         public async Task Cycle()
         {
-            if (_remainingDisposeTicks == 0)
+            if(_remainingDisposeTicks > -1)
             {
-                await DisposeAsync();
+                if (_remainingDisposeTicks == 0)
+                {
+                    await DisposeAsync();
 
-                return;
+                    _remainingDisposeTicks = -1;
+
+                    return;
+                }
+
+                _remainingDisposeTicks--;
             }
 
-            if (_remainingDisposeTicks > -1) _remainingDisposeTicks--;
-
-            await RoomCycleManager.RunCycles();
+            await RoomCycleManager.Cycle();
         }
 
         public void SendComposer(IComposer composer)

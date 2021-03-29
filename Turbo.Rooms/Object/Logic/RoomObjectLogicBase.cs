@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Rooms.Messages;
+﻿using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 
@@ -53,7 +54,7 @@ namespace Turbo.Rooms.Object.Logic
             return true;
         }
 
-        public virtual void Cycle()
+        public virtual async Task Cycle()
         {
 
         }

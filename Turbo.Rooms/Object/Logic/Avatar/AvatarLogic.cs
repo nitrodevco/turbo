@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Rooms.Object.Constants;
+﻿using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Action;
 
@@ -25,9 +26,9 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             return true;
         }
 
-        public override void Cycle()
+        public override async Task Cycle()
         {
-            base.Cycle();
+            await base.Cycle();
 
             if(_remainingIdleCycles > -1)
             {
