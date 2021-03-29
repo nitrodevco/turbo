@@ -87,13 +87,13 @@ namespace Turbo.Rooms
                 var roomRepository = scope.ServiceProvider.GetService<IRoomRepository>();
                 roomEntity = await roomRepository.FindAsync(id);
 
+                if (roomEntity == null) return null;
+
                 var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
                 PlayerUsernameDto dto = await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId);
 
                 if (dto != null) playerName = dto.Name;
             }
-
-            if (roomEntity == null) return null;
 
             room = _roomFactory.Create(roomEntity);
 
