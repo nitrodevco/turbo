@@ -88,7 +88,7 @@ namespace Turbo.Rooms.Utils
             return true;
         }
 
-        public Rotation CalculateHumanDirection(IPoint point)
+        public Rotation CalculateHumanRotation(IPoint point)
         {
             if (point == null) return Rotation.North;
 
@@ -109,7 +109,7 @@ namespace Turbo.Rooms.Utils
             return Rotation.North;
         }
 
-        public Rotation CalculateWalkDirection(IPoint point)
+        public Rotation CalculateWalkRotation(IPoint point)
         {
             if (point == null) return Rotation.NorthEast;
 
@@ -133,11 +133,11 @@ namespace Turbo.Rooms.Utils
             return Rotation.NorthEast;
         }
 
-        public Rotation CalculateHeadDirection(IPoint point)
+        public Rotation CalculateHeadRotation(IPoint point)
         {
-            if ((point == null) || ((int)Rotation % 2 == 0)) return Rotation;
+            if ((point == null) || (((int)Rotation % 2) > 0)) return Rotation;
 
-            int difference = ((int)Rotation - (int)CalculateHumanDirection(point));
+            int difference = ((int)Rotation - (int)CalculateHumanRotation(point));
 
             if (difference > 0) return Rotation - 1;
 
@@ -146,9 +146,9 @@ namespace Turbo.Rooms.Utils
             return Rotation;
         }
 
-        public Rotation CalculateSitDirection()
+        public Rotation CalculateSitRotation()
         {
-            return (((int)Rotation % 2) != 0) ? (Rotation - 1) : Rotation;
+            return (((int)Rotation % 2) > 0) ? (Rotation - 1) : Rotation;
         }
 
         public override string ToString()
