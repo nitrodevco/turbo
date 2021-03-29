@@ -205,7 +205,7 @@ namespace Turbo.Rooms.Cycles
 
             avatarLogic.RemoveStatus(RoomObjectAvatarStatus.Lay, RoomObjectAvatarStatus.Sit);
             avatarLogic.AddStatus(RoomObjectAvatarStatus.Move, nextTile.Location.X + "," + nextTile.Location.Y + "," + nextHeight);
-            roomObject.Location.SetRotation(roomObject.Location.CalculateWalkDirection(locationNext));
+            roomObject.Location.SetRotation(roomObject.Location.CalculateWalkRotation(locationNext));
             avatarLogic.LocationNext = locationNext;
 
             if (nextTile.HighestObject != null)

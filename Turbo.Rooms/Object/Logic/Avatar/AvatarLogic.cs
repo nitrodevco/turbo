@@ -47,8 +47,9 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             {
                 if (_remainingHeadCycles == 0)
                 {
-                    RoomObject.Location.SetRotation(RoomObject.Location.Rotation);
-                    Idle(true);
+                    RoomObject.Location.HeadRotation = RoomObject.Location.Rotation;
+
+                    RoomObject.NeedsUpdate = true;
 
                     _remainingHeadCycles = -1;
 
@@ -102,13 +103,13 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if(headOnly || HasStatus(RoomObjectAvatarStatus.Sit))
             {
-                RoomObject.Location.HeadRotation = RoomObject.Location.CalculateHeadDirection(point);
+                RoomObject.Location.HeadRotation = RoomObject.Location.CalculateHeadRotation(point);
 
                 _remainingHeadCycles = _headTurnCycles;
             }
             else
             {
-                RoomObject.Location.SetRotation(RoomObject.Location.CalculateHumanDirection(point));
+                RoomObject.Location.SetRotation(RoomObject.Location.CalculateHumanRotation(point));
             }
 
             RoomObject.NeedsUpdate = true;

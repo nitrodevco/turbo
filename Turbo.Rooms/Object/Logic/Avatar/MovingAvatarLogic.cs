@@ -183,7 +183,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (flag)
             {
-                rotation = (rotation == null) ? RoomObject.Location.CalculateSitDirection() : rotation;
+                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
 
                 RoomObject.Location.SetRotation(rotation);
 
@@ -197,7 +197,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (flag)
             {
-                rotation = (rotation == null) ? RoomObject.Location.CalculateSitDirection() : rotation;
+                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
 
                 RoomObject.Location.SetRotation(rotation);
 
