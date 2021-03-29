@@ -3,7 +3,7 @@ using Turbo.Core.Game.Rooms.Object.Data;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
 {
-    public interface IFurnitureLogic
+    public interface IFurnitureLogic : IRollingObjectLogic
     {
         public IFurnitureDefinition FurnitureDefinition { get; }
         public IStuffData StuffData { get; }
@@ -27,5 +27,6 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public bool IsOpen();
         public double StackHeight();
         public StuffDataKey DataKey { get; }
+        public double Height { get; }
     }
 }
