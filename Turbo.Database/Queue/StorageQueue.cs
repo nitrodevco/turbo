@@ -1,18 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Turbo.Core.Game;
+using Turbo.Core.Storage;
 using Turbo.Database.Context;
-using Turbo.Database.Entities;
 
 namespace Turbo.Database.Queue
 {
-    public class StorageQueue<T> : ICyclable
-        where T : Entity
+    public class StorageQueue : IStorageQueue
     {
-        private readonly ConcurrentQueue<T> _queue;
+        private readonly ConcurrentQueue<object> _queue;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly int _cycleIntervalMs;
         private readonly CancellationTokenSource _cancellationToken;
@@ -22,7 +20,7 @@ namespace Turbo.Database.Queue
         public StorageQueue(int intervalMs, IServiceScopeFactory scopeFactory)
         {
             _serviceScopeFactory = scopeFactory;
-            _queue = new ConcurrentQueue<T>();
+            _queue = new ConcurrentQueue<object>();
             _cancellationToken = new();
             _cycleIntervalMs = intervalMs;
 
@@ -38,15 +36,20 @@ namespace Turbo.Database.Queue
             });
         }
 
-        public void Add(T entity)
+        public void Add(object entity)
         {
             _queue.Enqueue(entity);
         }
 
-        public void AddAll(Collection<T> entities)
+        public void AddAll(ICollection<object> entities)
         {
             foreach (var entity in entities)
                 _queue.Enqueue(entity);
+        }
+
+        public void SaveNow()
+        {
+            if (!_running) Cycle();
         }
 
         public void Stop()
@@ -61,7 +64,7 @@ namespace Turbo.Database.Queue
             {
                 using (var context = scope.ServiceProvider.GetService<IEmulatorContext>())
                 {
-                    while (_queue.TryDequeue(out T entity))
+                    while (_queue.TryDequeue(out object entity))
                     {
                         context.Update(entity);
                     }

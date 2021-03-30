@@ -72,7 +72,7 @@ namespace Turbo.Furniture
                 }
             }
 
-            // waits for skelly :rolling_eyes:
+            _furnitureManager.StorageQueue.Add(_furnitureEntity);
         }
 
         public bool SetRoom(IRoom room)

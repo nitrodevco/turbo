@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Furniture;
+using Turbo.Database.Queue;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture.Definition;
 
@@ -14,6 +16,8 @@ namespace Turbo.Furniture
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<FurnitureManager> _logger;
+        private IStorageQueue _storageQueue;
+        private readonly int storageIntervalMs = 10000;
 
         private IDictionary<int, IFurnitureDefinition> _furnitureDefinitions;
 
@@ -23,18 +27,19 @@ namespace Turbo.Furniture
         {
             _logger = logger;
             _serviceScopeFactory = scopeFactory;
-
             _furnitureDefinitions = new Dictionary<int, IFurnitureDefinition>();
         }
 
         public async ValueTask InitAsync()
         {
             await LoadDefinitions();
+            _storageQueue = new StorageQueue(storageIntervalMs, _serviceScopeFactory);
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
-
+            _storageQueue.Stop();
+            return ValueTask.CompletedTask;
         }
 
         public IFurnitureDefinition GetFurnitureDefinition(int id)
@@ -71,5 +76,7 @@ namespace Turbo.Furniture
 
             _logger.LogInformation("Loaded {0} furniture definitions", _furnitureDefinitions.Count);
         }
+
+        public IStorageQueue StorageQueue => _storageQueue;
     }
 }
