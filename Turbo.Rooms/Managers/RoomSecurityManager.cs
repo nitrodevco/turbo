@@ -10,6 +10,7 @@ using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Packets.Messages;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Packets.Outgoing.Room.Permissions;
 
 namespace Turbo.Rooms.Managers
 {
@@ -85,7 +86,11 @@ namespace Turbo.Rooms.Managers
                     controllerLevel = RoomControllerLevel.Rights;
                 }
 
-                // composer 780 roomrights
+                player.Session.Send(new YouAreControllerMessage
+                {
+                    RoomId = _room.Id,
+                    RoomControllerLevel = controllerLevel
+                });
 
                 player.Session.Send(new RoomEntryInfoMessage
                 {
@@ -93,7 +98,10 @@ namespace Turbo.Rooms.Managers
                     Owner = isOwner
                 });
 
-                // composer 339 room owner
+                if(isOwner)
+                {
+                    player.Session.Send(new YouAreOwnerMessage());
+                }
             }
 
             if(roomObject.Logic is IMovingAvatarLogic avatarLogic)
