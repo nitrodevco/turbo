@@ -68,7 +68,7 @@ namespace Turbo.Furniture
 
                 if(RoomObject.Logic is IFurnitureLogic furnitureLogic)
                 {
-                    _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData);
+                    _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData, furnitureLogic.StuffData.GetType());
                 }
             }
 
