@@ -9,6 +9,8 @@ using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
+using Turbo.Core.Storage;
+using Turbo.Database.Queue;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
@@ -43,6 +45,7 @@ namespace Turbo.Main.Extensions
         public static void AddManagers(this IServiceCollection services)
         {
             services.AddSingleton<IPluginManager, TurboPluginManager>();
+            services.AddSingleton<IStorageQueue, StorageQueue>();
             services.AddSingleton<IServerManager, ServerManager>();
             services.AddSingleton<IRevisionManager, RevisionManager>();
             services.AddSingleton<ISessionManager, SessionManager>();

@@ -14,31 +14,31 @@ namespace Turbo.Furniture
 {
     public class FurnitureManager : IFurnitureManager
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<FurnitureManager> _logger;
-        private IStorageQueue _storageQueue;
-        private readonly int storageIntervalMs = 10000;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IStorageQueue _storageQueue;
 
         private IDictionary<int, IFurnitureDefinition> _furnitureDefinitions;
 
         public FurnitureManager(
             ILogger<FurnitureManager> logger,
+            IStorageQueue storageQueue,
             IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
+            _storageQueue = storageQueue;
             _serviceScopeFactory = scopeFactory;
+
             _furnitureDefinitions = new Dictionary<int, IFurnitureDefinition>();
         }
 
         public async ValueTask InitAsync()
         {
             await LoadDefinitions();
-            _storageQueue = new StorageQueue(storageIntervalMs, _serviceScopeFactory);
         }
 
         public ValueTask DisposeAsync()
         {
-            _storageQueue.Stop();
             return ValueTask.CompletedTask;
         }
 

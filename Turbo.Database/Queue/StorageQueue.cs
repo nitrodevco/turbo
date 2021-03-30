@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core.Storage;
 using Turbo.Database.Context;
@@ -10,30 +9,24 @@ namespace Turbo.Database.Queue
 {
     public class StorageQueue : IStorageQueue
     {
-        private readonly ConcurrentQueue<object> _queue;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly int _cycleIntervalMs;
-        private readonly CancellationTokenSource _cancellationToken;
-        private bool _running;
-        private Task _cycle;
+        private static readonly int _saveCycles = 20;
 
-        public StorageQueue(int intervalMs, IServiceScopeFactory scopeFactory)
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        private readonly ConcurrentQueue<object> _queue;
+
+        private int _remainingSaveCycles = _saveCycles;
+
+        public StorageQueue(IServiceScopeFactory scopeFactory)
         {
             _serviceScopeFactory = scopeFactory;
-            _queue = new ConcurrentQueue<object>();
-            _cancellationToken = new();
-            _cycleIntervalMs = intervalMs;
 
-            _cycle = Task.Run(async () =>
-            {
-                while (!_cancellationToken.IsCancellationRequested)
-                {
-                    _running = true;
-                    await Cycle();
-                    _running = false;
-                    await Task.Delay(_cycleIntervalMs);
-                }
-            });
+            _queue = new();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await SaveNow();
         }
 
         public void Add(object entity)
@@ -47,19 +40,10 @@ namespace Turbo.Database.Queue
                 _queue.Enqueue(entity);
         }
 
-        public void SaveNow()
+        public async Task SaveNow()
         {
-            if (!_running) Cycle();
-        }
+            if (_queue.Count == 0) return;
 
-        public void Stop()
-        {
-            if (!_running) Cycle();
-            _cancellationToken.Cancel();
-        }
-
-        public Task Cycle()
-        {
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 using (var context = scope.ServiceProvider.GetService<IEmulatorContext>())
@@ -68,10 +52,27 @@ namespace Turbo.Database.Queue
                     {
                         context.Update(entity);
                     }
-                    context.SaveChanges();
+
+                    await context.SaveChangesAsync();
                 }
             }
-            return Task.CompletedTask;
+        }
+
+        public async Task Cycle()
+        {
+            if (_remainingSaveCycles > -1)
+            {
+                if (_remainingSaveCycles == 0)
+                {
+                    await SaveNow();
+
+                    _remainingSaveCycles = _saveCycles;
+
+                    return;
+                }
+
+                _remainingSaveCycles--;
+            }
         }
     }
 }

@@ -52,8 +52,6 @@ namespace Turbo.Furniture
                 _furnitureContainer.RemoveFurniture(Id);
             }
 
-            Save();
-
             Logger.LogInformation("Furniture disposed");
         }
 

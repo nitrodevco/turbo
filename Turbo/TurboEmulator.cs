@@ -13,6 +13,7 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
+using Turbo.Core.Storage;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
 
@@ -27,6 +28,7 @@ namespace Turbo.Main
         private readonly IHostApplicationLifetime _appLifetime;
         private readonly ILogger<TurboEmulator> _logger;
         private readonly IPluginManager _pluginManager;
+        private readonly IStorageQueue _storageQueue;
         private readonly IServerManager _serverManager;
 
         private readonly ISecurityManager _securityManager;
@@ -45,6 +47,7 @@ namespace Turbo.Main
             IHostApplicationLifetime appLifetime,
             ILogger<TurboEmulator> logger,
             IPluginManager pluginManager,
+            IStorageQueue storageQueue,
             IServerManager serverManager,
             ISecurityManager securityManager,
             IFurnitureManager furnitureManager,
@@ -56,6 +59,7 @@ namespace Turbo.Main
         {
             _appLifetime = appLifetime;
             _logger = logger;
+            _storageQueue = storageQueue;
             _pluginManager = pluginManager;
             _serverManager = serverManager;
             _securityManager = securityManager;
@@ -138,6 +142,7 @@ namespace Turbo.Main
             await _furnitureManager.DisposeAsync();
             await _roomManager.DisposeAsync();
             await _playerManager.DisposeAsync();
+            await _storageQueue.DisposeAsync();
         }
 
         /// <summary>
@@ -167,7 +172,8 @@ namespace Turbo.Main
                     {
                         Task.WaitAll(
                             Task.Run(async () => await _roomManager.Cycle()),
-                            Task.Run(async () => await _sessionManager.Cycle())
+                            Task.Run(async () => await _sessionManager.Cycle()),
+                            Task.Run(async () => await _storageQueue.Cycle())
                         );
                     }
                     catch (Exception ex)
@@ -176,6 +182,7 @@ namespace Turbo.Main
                     }
 
                     _cycleRunningNow = false;
+
                     await Task.Delay(500);
                 }
             });
