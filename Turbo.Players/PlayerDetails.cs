@@ -76,6 +76,6 @@ namespace Turbo.Players
             }
         }
 
-        public int Rank => _playerEntity.RankEntityId;
+        public int Rank => _playerEntity.RankEntityId.GetValueOrDefault(-1);
     }
 }

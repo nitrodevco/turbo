@@ -24,12 +24,11 @@ namespace Turbo.Database.Entities.Players
         public string Gender { get; set; }
 
         [Column("rank")]
-        public int RankEntityId { get; set; }
+        public int? RankEntityId { get; set; }
         public RankEntity Rank { get; set; }
 
         public List<SecurityTicketEntity> SecurityTickets { get; set; }
 
         public List<PlayerPermissionEntity> PlayerPermissions { get; set; }
-        public ICollection<PermissionEntity> Permissions { get; set; }
     }
 }

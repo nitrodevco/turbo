@@ -58,9 +58,10 @@ namespace Turbo.Players.Components
             using (var scope = _scopeFactory.CreateScope())
             {
                 var context = scope.ServiceProvider.GetService<IEmulatorContext>();
-                 context.Entry(_playerEntity)
-                       .Collection(p => p.PlayerPermissions)
-                       .Load();
+                context.Attach(_playerEntity);
+                context.Entry(_playerEntity)
+                    .Collection(p => p.PlayerPermissions)
+                    .Load();
             }
 
             return ValueTask.CompletedTask;

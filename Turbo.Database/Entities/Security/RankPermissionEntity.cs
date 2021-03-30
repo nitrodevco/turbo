@@ -4,7 +4,7 @@ using Turbo.Core.Security.Constants;
 
 namespace Turbo.Database.Entities.Security
 {
-    [Table("ranks_permissions")]
+    [Table("rank_permissions")]
     public class RankPermissionEntity : Entity
     {
         [Column("rank_id"), Required]

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Players.Components;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
@@ -42,7 +43,8 @@ namespace Turbo.Main.Tests.PacketHandlers
 
             // Player
             var playerContainerMock = new Mock<IPlayerContainer>();
-            _player = new Player(playerContainerMock.Object, new NullLogger<IPlayer>(), new Database.Entities.Players.PlayerEntity());
+            var permissionComponentMock = new Mock<IPermissionComponent>();
+            _player = new Player(playerContainerMock.Object, new NullLogger<IPlayer>(), new Database.Entities.Players.PlayerEntity(), permissionComponentMock.Object);
 
             // Object mocking object
             _fixture = new Fixture();

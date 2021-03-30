@@ -15,7 +15,6 @@ namespace Turbo.Database.Entities.Security
         [Column("name"), Required]
         public string Name { get; set; }
 
-        public ICollection<PermissionEntity> Permissions { get; set; }
         public List<RankPermissionEntity> RankPermissions { get; set; }
         public List<PlayerEntity> Players;
     }
