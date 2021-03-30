@@ -18,7 +18,7 @@ namespace Turbo.Database.Entities.Security
 
         public PermissionEntity PermissionEntity { get; set; }
 
-        [Column("required_rights", TypeName = "nvarchar(24)")]
+        [Column("required_rights"), Required]
         public PermissionRequiredRights RequiredRights { get; set; }
     }
 }
