@@ -191,7 +191,7 @@ namespace Turbo.Rooms.Managers
 
                 if ((roomTile.Users.Count > 0) && !furnitureLogic.IsOpen()) return false;
 
-                if ((roomTile.Height + furnitureLogic.StackHeight()) > MaxHeight) return false;
+                if ((roomTile.Height + furnitureLogic.StackHeight) > MaxHeight) return false;
 
                 if (roomTile.HasStackHelper) continue;
 

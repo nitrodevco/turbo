@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Furniture.Definition;
+﻿using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms.Object.Data;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
@@ -27,7 +28,8 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public bool CanRoll();
         public bool CanToggle(IRoomObject roomObject);
         public bool IsOpen();
-        public double StackHeight();
+        public FurniUsagePolicy UsagePolicy { get; }
+        public double StackHeight { get; }
         public StuffDataKey DataKey { get; }
         public double Height { get; }
     }

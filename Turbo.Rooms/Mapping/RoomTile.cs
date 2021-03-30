@@ -149,7 +149,7 @@ namespace Turbo.Rooms.Mapping
             {
                 if (HighestObject.Logic is IFurnitureLogic furnitureLogic && (furnitureLogic.CanSit() || furnitureLogic.CanLay()))
                 {
-                    height -= furnitureLogic.StackHeight();
+                    height -= furnitureLogic.StackHeight;
                 }
             }
 

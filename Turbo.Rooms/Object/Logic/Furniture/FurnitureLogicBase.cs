@@ -55,22 +55,10 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public void RefreshStuffData()
         {
-            if(StuffData is LegacyStuffData stuffType)
+            RoomObject.Room.SendComposer(new ObjectDataUpdateMessage
             {
-                // send composer 2376 roomObject.Id, stuffType.GetState();
-
-                RoomObject.Room.SendComposer(new ObjectDataUpdateMessage
-                {
-                    Object = RoomObject
-                });
-            }
-            else
-            {
-                RoomObject.Room.SendComposer(new ObjectDataUpdateMessage
-                {
-                    Object = RoomObject
-                });
-            }
+                Object = RoomObject
+            });
         }
 
         public virtual bool SetState(int state, bool refresh = true)
@@ -135,9 +123,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual bool CanToggle(IRoomObject roomObject)
         {
-            if (FurnitureDefinition.UsagePolicy == FurniUsagePolicy.Nobdy) return false;
+            if (UsagePolicy == FurniUsagePolicy.Nobdy) return false;
 
-            if(FurnitureDefinition.UsagePolicy == FurniUsagePolicy.Controller)
+            if(UsagePolicy == FurniUsagePolicy.Controller)
             {
                 if(roomObject.RoomObjectHolder is IRoomManipulator roomManipulator)
                 {
@@ -152,10 +140,12 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual bool IsOpen() => CanWalk() || CanSit() || CanLay();
 
-        public virtual double StackHeight() => FurnitureDefinition.Z;
+        public virtual FurniUsagePolicy UsagePolicy => FurnitureDefinition.UsagePolicy;
+
+        public virtual double StackHeight => FurnitureDefinition.Z;
 
         public StuffDataKey DataKey => StuffDataKey.LegacyKey;
 
-        public double Height => RoomObject.Location.Z + StackHeight();
+        public double Height => RoomObject.Location.Z + StackHeight;
     }
 }

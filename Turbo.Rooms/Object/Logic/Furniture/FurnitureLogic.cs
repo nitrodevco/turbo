@@ -43,14 +43,14 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             {
                 if(CanSit())
                 {
-                    avatarLogic.Sit(true, StackHeight(), RoomObject.Location.Rotation);
+                    avatarLogic.Sit(true, StackHeight, RoomObject.Location.Rotation);
 
                     return;
                 }
 
                 if (CanLay())
                 {
-                    avatarLogic.Lay(true, StackHeight(), RoomObject.Location.Rotation);
+                    avatarLogic.Lay(true, StackHeight, RoomObject.Location.Rotation);
 
                     return;
                 }
@@ -76,7 +76,5 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             return (StuffData.GetState() + 1) % totalStates;
         }
-
-
     }
 }
