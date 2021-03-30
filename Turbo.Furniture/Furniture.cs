@@ -68,11 +68,11 @@ namespace Turbo.Furniture
 
                 if(RoomObject.Logic is IFurnitureLogic furnitureLogic)
                 {
-                    _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData);
+                    _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData, furnitureLogic.StuffData.GetType());
                 }
             }
 
-            // waits for skelly :rolling_eyes:
+            _furnitureManager.StorageQueue.Add(_furnitureEntity);
         }
 
         public bool SetRoom(IRoom room)
