@@ -9,6 +9,6 @@ namespace Turbo.Core.Game.Rooms.Managers
     {
         public IRoomObject GetRoomObjectByUserId(int userId);
         public IRoomObject GetRoomObjectByUsername(string username);
-        public void EnterRoom(IRoomObjectFactory objectFactory, IPlayer player, IPoint location = null);
+        public IRoomObject EnterRoom(IPlayer player, IPoint location = null);
     }
 }

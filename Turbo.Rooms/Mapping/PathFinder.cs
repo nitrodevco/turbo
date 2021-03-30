@@ -71,7 +71,7 @@ namespace Turbo.Rooms.Mapping
 
             nodes.Add(currentNode);
 
-            IReadOnlyCollection<IPoint> walkingPoints = ALLOW_DIAGONALS ? MovePoints.MovingPoints : MovePoints.StandardPoints;
+            IReadOnlyCollection<IPoint> walkingPoints = ALLOW_DIAGONALS ? MovePoints.DiagonalPoints : MovePoints.StandardPoints;
 
             if (walkingPoints.Count == 0) return null;
 
@@ -108,7 +108,7 @@ namespace Turbo.Rooms.Mapping
                     if (currentNode.Location.X != tempNode.Location.X) difference += 2;
                     if (currentNode.Location.Y != tempNode.Location.Y) difference += 2;
 
-                    cost = ((currentNode.Cost + difference) + tempNode.Location.GetDistanceAround(nodeGoal.Location));
+                    cost = ((currentNode.Cost + difference) + (int)tempNode.Location.GetDistanceSquared(nodeGoal.Location));
 
                     if (tempNode.IsOpen) continue;
 

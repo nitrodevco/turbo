@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Furniture;
+using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
@@ -39,11 +41,25 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (RoomObject.Location.Compare(location)) return;
 
-            if (RoomObject.Room.RoomMap.GetValidTile(RoomObject, location) == null)
+            IRoomTile roomTile = RoomObject.Room.RoomMap.GetValidTile(RoomObject, location);
+
+            if(roomTile == null)
             {
                 StopWalking();
 
                 return;
+            }
+
+            if(roomTile.CanLay() && roomTile.HighestObject != null)
+            {
+                location = RoomObject.Room.RoomMap.GetValidPillowPoint(RoomObject, roomTile.HighestObject, location);
+
+                if (location == null)
+                {
+                    StopWalking();
+
+                    return;
+                }
             }
 
             IList<IPoint> path = RoomObject.Room.RoomMap.PathFinder.MakePath(RoomObject, location);
@@ -163,29 +179,41 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public virtual void Sit(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
-            RemoveStatus(RoomObjectAvatarStatus.Sit, RoomObjectAvatarStatus.Lay);
-
             if (flag)
             {
-                rotation = (rotation == null) ? RoomObject.Location.CalculateSitDirection() : rotation;
+                RemoveStatus(RoomObjectAvatarStatus.Lay);
+
+                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
 
                 RoomObject.Location.SetRotation(rotation);
 
                 AddStatus(RoomObjectAvatarStatus.Sit, string.Format("{0:N3}", height));
             }
+            else
+            {
+                if (!HasStatus(RoomObjectAvatarStatus.Sit)) return;
+
+                RemoveStatus(RoomObjectAvatarStatus.Sit);
+            }
         }
 
         public virtual void Lay(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
-            RemoveStatus(RoomObjectAvatarStatus.Lay, RoomObjectAvatarStatus.Sit);
-
             if (flag)
             {
-                rotation = (rotation == null) ? RoomObject.Location.CalculateSitDirection() : rotation;
+                RemoveStatus(RoomObjectAvatarStatus.Sit);
+
+                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
 
                 RoomObject.Location.SetRotation(rotation);
 
                 AddStatus(RoomObjectAvatarStatus.Lay, string.Format("{0:N3}", height));
+            }
+            else
+            {
+                if (!HasStatus(RoomObjectAvatarStatus.Lay)) return;
+
+                RemoveStatus(RoomObjectAvatarStatus.Lay);
             }
         }
 

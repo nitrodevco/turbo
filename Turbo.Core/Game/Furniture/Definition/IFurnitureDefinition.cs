@@ -1,4 +1,6 @@
-﻿namespace Turbo.Core.Game.Furniture.Definition
+﻿using Turbo.Core.Game.Furniture.Constants;
+
+namespace Turbo.Core.Game.Furniture.Definition
 {
     public interface IFurnitureDefinition
     {
@@ -8,6 +10,7 @@
         public string ProductName { get; }
         public string Type { get; }
         public string Logic { get; }
+        public int TotalStates { get; }
         public int X { get; }
         public int Y { get; }
         public double Z { get; }
@@ -19,6 +22,7 @@
         public bool CanTrade { get; }
         public bool CanGroup { get; }
         public bool CanSell { get; }
+        public FurniUsagePolicy UsagePolicy { get; }
         public string ExtraData { get; }
     }
 }

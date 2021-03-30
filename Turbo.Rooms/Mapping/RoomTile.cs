@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
@@ -25,8 +26,8 @@ namespace Turbo.Rooms.Mapping
         public IDictionary<int, IRoomObject> Furniture { get; private set; }
 
         public bool IsDoor { get; set; }
+        public bool HasStackHelper { get; private set; }
 
-        private bool _hasStackHelper;
         private double _stackHelperHeight;
 
         public RoomTile(IPoint location, double height, RoomTileState state)
@@ -48,7 +49,7 @@ namespace Turbo.Rooms.Mapping
         {
             if (roomObject == null) return;
 
-            if (roomObject.Logic is AvatarLogic avatarLogic)
+            if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
             {
                 if (IsDoor) return;
 
@@ -56,7 +57,7 @@ namespace Turbo.Rooms.Mapping
 
                 Users.Add(roomObject.Id, roomObject);
             }
-            else if (roomObject.Logic is FurnitureLogicBase furnitureLogic)
+            else if (roomObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 Furniture.Add(roomObject.Id, roomObject);
 
@@ -70,11 +71,11 @@ namespace Turbo.Rooms.Mapping
         {
             if (roomObject == null) return;
 
-            if (roomObject.Logic is AvatarLogic avatarLogic)
+            if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
             {
                 Users.Remove(roomObject.Id);
             }
-            else if (roomObject.Logic is FurnitureLogicBase furnitureLogic)
+            else if (roomObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 Furniture.Remove(roomObject.Id);
 
@@ -88,7 +89,7 @@ namespace Turbo.Rooms.Mapping
         {
             Height = DefaultHeight;
 
-            if (HighestObject != null && HighestObject.Logic is FurnitureLogicBase furnitureLogic)
+            if (HighestObject != null && HighestObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 Height = furnitureLogic.Height;
             }
@@ -101,20 +102,20 @@ namespace Turbo.Rooms.Mapping
             Height = DefaultHeight;
             HighestObject = null;
 
-            _hasStackHelper = false;
+            HasStackHelper = false;
             _stackHelperHeight = 0;
 
             if (Furniture.Count > 0)
             {
                 foreach (IRoomObject roomObject in Furniture.Values)
                 {
-                    if (roomObject.Logic is FurnitureLogicBase furnitureLogic)
+                    if (roomObject.Logic is IFurnitureLogic furnitureLogic)
                     {
                         double height = furnitureLogic.Height;
 
                         if (furnitureLogic is FurnitureStackHelperLogic)
                         {
-                            _hasStackHelper = true;
+                            HasStackHelper = true;
                             _stackHelperHeight = height;
 
                             continue;
@@ -137,7 +138,7 @@ namespace Turbo.Rooms.Mapping
 
             if ((State == RoomTileState.Closed) || !CanStack()) return;
 
-            RelativeHeight = (int)Math.Ceiling((decimal)(_hasStackHelper ? _stackHelperHeight : Height) * TILE_HEIGHT_MULTIPLIER);
+            RelativeHeight = (int)Math.Ceiling((decimal)(HasStackHelper ? _stackHelperHeight : Height) * TILE_HEIGHT_MULTIPLIER);
         }
 
         public double GetWalkingHeight()
@@ -146,9 +147,9 @@ namespace Turbo.Rooms.Mapping
 
             if (HighestObject != null)
             {
-                if (HighestObject.Logic is FurnitureLogicBase furnitureLogic && (furnitureLogic.CanSit() || furnitureLogic.CanLay()))
+                if (HighestObject.Logic is IFurnitureLogic furnitureLogic && (furnitureLogic.CanSit() || furnitureLogic.CanLay()))
                 {
-                    height -= furnitureLogic.StackHeight();
+                    height -= furnitureLogic.StackHeight;
                 }
             }
 
@@ -159,7 +160,7 @@ namespace Turbo.Rooms.Mapping
         {
             if (State == RoomTileState.Closed) return false;
 
-            if (HighestObject != null && HighestObject.Logic is FurnitureLogicBase furnitureLogic && !furnitureLogic.IsOpen())
+            if (HighestObject != null && HighestObject.Logic is IFurnitureLogic furnitureLogic && !furnitureLogic.IsOpen())
             {
                 return false;
             }
@@ -169,37 +170,37 @@ namespace Turbo.Rooms.Mapping
 
         public bool CanWalk()
         {
-            if (HighestObject != null && HighestObject.Logic is FurnitureLogicBase furnitureLogic)
+            if (HighestObject != null && HighestObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 if (!furnitureLogic.IsOpen()) return false;
 
-                if (_hasStackHelper && (_stackHelperHeight >= furnitureLogic.Height)) return false;
+                if (HasStackHelper && (_stackHelperHeight >= furnitureLogic.Height)) return false;
 
                 return true;
             }
 
-            if (_hasStackHelper) return false;
+            if (HasStackHelper) return false;
 
             return true;
         }
 
         public bool CanSit()
         {
-            if (HighestObject != null && HighestObject.Logic is FurnitureLogicBase furnitureLogic && furnitureLogic.CanSit()) return true;
+            if (HighestObject != null && HighestObject.Logic is IFurnitureLogic furnitureLogic && furnitureLogic.CanSit()) return true;
 
             return false;
         }
 
         public bool CanLay()
         {
-            if (HighestObject != null && HighestObject.Logic is FurnitureLogicBase furnitureLogic && furnitureLogic.CanLay()) return true;
+            if (HighestObject != null && HighestObject.Logic is IFurnitureLogic furnitureLogic && furnitureLogic.CanLay()) return true;
 
             return false;
         }
 
         public bool CanStack()
         {
-            if (HighestObject != null && HighestObject.Logic is FurnitureLogicBase furnitureLogic && !furnitureLogic.CanStack()) return false;
+            if (HighestObject != null && HighestObject.Logic is IFurnitureLogic furnitureLogic && !furnitureLogic.CanStack()) return false;
 
             return true;
         }

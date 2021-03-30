@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Packets.Messages;
+﻿using System;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Rooms.Object.Data.Types
 {
@@ -6,17 +7,16 @@ namespace Turbo.Rooms.Object.Data.Types
     {
         public string Data { get; set; }
 
-        public override void WriteToPacket(IServerPacket packet)
+        public LegacyStuffData()
         {
-            packet.WriteInteger(Flags);
-            packet.WriteString(Data);
+            if((Data == null) || Data.Equals("")) Data = "0";
 
-            base.WriteToPacket(packet);
+            Console.WriteLine(Data);
         }
 
         public override string GetLegacyString()
         {
-            return Data == null ? "" : Data;
+            return Data;
         }
 
         public override void SetState(string state)

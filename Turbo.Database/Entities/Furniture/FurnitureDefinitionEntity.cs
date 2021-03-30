@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Turbo.Core.Game.Furniture.Constants;
 
 namespace Turbo.Database.Entities.Furniture
 {
@@ -57,6 +58,9 @@ namespace Turbo.Database.Entities.Furniture
 
         [Column("can_sell")]
         public bool CanSell { get; set; }
+
+        [Column("usage_policy")]
+        public FurniUsagePolicy UsagePolicy { get; set; }
 
         [Column("extra_data")]
         public string? ExtraData { get; set; }

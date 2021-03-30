@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Furniture.Definition;
+﻿using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Definition
@@ -18,6 +19,7 @@ namespace Turbo.Furniture.Definition
         public string ProductName => _entity.ProductName;
         public string Type => _entity.Type;
         public string Logic => _entity.Logic;
+        public int TotalStates => _entity.TotalStates;
         public int X => _entity.X;
         public int Y => _entity.Y;
         public double Z => _entity.Z;
@@ -29,6 +31,7 @@ namespace Turbo.Furniture.Definition
         public bool CanTrade => _entity.CanTrade;
         public bool CanGroup => _entity.CanGroup;
         public bool CanSell => _entity.CanSell;
+        public FurniUsagePolicy UsagePolicy => _entity.UsagePolicy;
         public string ExtraData => _entity.ExtraData;
     }
 }

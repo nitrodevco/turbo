@@ -13,5 +13,11 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public IRoomTile GetTile(IPoint point);
         public IRoomTile GetValidTile(IRoomObject roomObject, IPoint point, bool isGoal = true);
         public IRoomTile GetValidDiagonalTile(IRoomObject roomObject, IPoint point);
+        public IPoint GetValidPillowPoint(IRoomObject userObject, IRoomObject furnitureObject, IPoint originalPoint);
+        public IRoomTile GetHighestTileForRoomObject(IRoomObject roomObject);
+        public void AddRoomObjects(params IRoomObject[] roomObjects);
+        public void MoveRoomObject(IRoomObject roomObject, IPoint oldLocation, bool sendUpdate = true);
+        public void RemoveRoomObjects(IRoomManipulator roomManipulator, params IRoomObject[] roomObjects);
+        public void UpdatePoints(bool updateUsers = true, params IPoint[] points);
     }
 }

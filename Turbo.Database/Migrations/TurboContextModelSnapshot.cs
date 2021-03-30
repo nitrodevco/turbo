@@ -96,6 +96,10 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("type");
 
+                    b.Property<int>("UsagePolicy")
+                        .HasColumnType("int")
+                        .HasColumnName("usage_policy");
+
                     b.Property<int>("X")
                         .HasColumnType("int")
                         .HasColumnName("x");

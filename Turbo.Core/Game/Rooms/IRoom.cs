@@ -19,6 +19,8 @@ namespace Turbo.Core.Game.Rooms
         public IRoomFurnitureManager RoomFurnitureManager { get; }
         public IRoomUserManager RoomUserManager { get; }
 
+        public bool IsInitialized { get; }
+
         public void TryDispose();
         public void CancelDispose();
 

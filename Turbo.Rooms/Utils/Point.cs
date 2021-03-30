@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Rooms.Utils;
+﻿using System;
+using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Rooms.Utils
 {
@@ -63,6 +64,16 @@ namespace Turbo.Rooms.Utils
             return (clone.X * clone.X) + (clone.Y * clone.Y);
         }
 
+        public double GetDistanceSquared(IPoint point)
+        {
+            IPoint clone = Clone();
+
+            clone.X -= point.X;
+            clone.Y -= point.Y;
+
+            return Math.Sqrt((clone.X * clone.X) + (clone.Y * clone.Y));
+        }
+
         public bool Compare(IPoint point)
         {
             if ((point == null) || (point.X != X) || (point.Y != Y)) return false;
@@ -77,7 +88,7 @@ namespace Turbo.Rooms.Utils
             return true;
         }
 
-        public Rotation CalculateHumanDirection(IPoint point)
+        public Rotation CalculateHumanRotation(IPoint point)
         {
             if (point == null) return Rotation.North;
 
@@ -98,7 +109,7 @@ namespace Turbo.Rooms.Utils
             return Rotation.North;
         }
 
-        public Rotation CalculateWalkDirection(IPoint point)
+        public Rotation CalculateWalkRotation(IPoint point)
         {
             if (point == null) return Rotation.NorthEast;
 
@@ -122,11 +133,11 @@ namespace Turbo.Rooms.Utils
             return Rotation.NorthEast;
         }
 
-        public Rotation CalculateHeadDirection(IPoint point)
+        public Rotation CalculateHeadRotation(IPoint point)
         {
-            if ((point == null) || ((int)Rotation % 2 == 0)) return Rotation;
+            if ((point == null) || (((int)Rotation % 2) > 0)) return Rotation;
 
-            int difference = ((int)Rotation - (int)CalculateHumanDirection(point));
+            int difference = ((int)Rotation - (int)CalculateHumanRotation(point));
 
             if (difference > 0) return Rotation - 1;
 
@@ -135,9 +146,9 @@ namespace Turbo.Rooms.Utils
             return Rotation;
         }
 
-        public Rotation CalculateSitDirection()
+        public Rotation CalculateSitRotation()
         {
-            return (((int)Rotation % 2) != 0) ? (Rotation - 1) : Rotation;
+            return (((int)Rotation % 2) > 0) ? (Rotation - 1) : Rotation;
         }
 
         public override string ToString()

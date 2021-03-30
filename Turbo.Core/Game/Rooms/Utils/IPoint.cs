@@ -14,11 +14,12 @@ namespace Turbo.Core.Game.Rooms.Utils
         public IPoint AdjustPoint(IPoint point);
         public void SetRotation(Rotation? rotation);
         public int GetDistanceAround(IPoint point);
+        public double GetDistanceSquared(IPoint point);
         public bool Compare(IPoint point);
         public bool CompareStrict(IPoint point);
-        public Rotation CalculateHumanDirection(IPoint point);
-        public Rotation CalculateWalkDirection(IPoint point);
-        public Rotation CalculateHeadDirection(IPoint point);
-        public Rotation CalculateSitDirection();
+        public Rotation CalculateHumanRotation(IPoint point);
+        public Rotation CalculateWalkRotation(IPoint point);
+        public Rotation CalculateHeadRotation(IPoint point);
+        public Rotation CalculateSitRotation();
     }
 }

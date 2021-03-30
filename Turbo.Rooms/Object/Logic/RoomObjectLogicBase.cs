@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Rooms.Messages;
+﻿using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 
@@ -23,7 +24,7 @@ namespace Turbo.Rooms.Object.Logic
 
         }
 
-        protected virtual bool OnReady()
+        public virtual bool OnReady()
         {
             return true;
         }
@@ -53,11 +54,9 @@ namespace Turbo.Rooms.Object.Logic
             return true;
         }
 
-        public virtual void ProcessUpdateMessage(RoomObjectUpdateMessage updateMessage)
+        public virtual async Task Cycle()
         {
-            if ((updateMessage == null) || (RoomObject == null)) return;
 
-            RoomObject.SetLocation(updateMessage.Location);
         }
     }
 }

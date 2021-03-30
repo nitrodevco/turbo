@@ -1,20 +1,69 @@
-﻿using Turbo.Core.Game.Furniture.Definition;
+﻿using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Data;
 using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Object.Data;
+using Turbo.Rooms.Object.Data.Types;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
     public class FurnitureLogicBase : RollingObjectLogic, IFurnitureLogic
     {
         public IFurnitureDefinition FurnitureDefinition { get; private set; }
-        public int DataKey { get; set; }
 
-        public void Setup(IFurnitureDefinition furnitureDefinition)
+        public IStuffData StuffData { get; protected set; }
+
+        public override void Dispose()
         {
-            if (furnitureDefinition == null) return;
+            base.Dispose();
+
+            // ensure furniture saves with data from this logic
+
+            FurnitureDefinition = null;
+            StuffData = null;
+        }
+
+        public virtual bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
+        {
+            if (furnitureDefinition == null) return false;
 
             FurnitureDefinition = furnitureDefinition;
+
+            return true;
+        }
+
+        protected IStuffData CreateStuffData()
+        {
+            return StuffDataFactory.CreateStuffData((int)DataKey);
+        }
+
+        protected IStuffData CreateStuffDataFromJson(string jsonString)
+        {
+            return StuffDataFactory.CreateStuffDataFromJson((int)DataKey, jsonString);
+        }
+
+        public void RefreshFurniture()
+        {
+            RoomObject.Room.SendComposer(new ObjectUpdateMessage
+            {
+                Object = RoomObject
+            });
+        }
+
+        public void RefreshStuffData()
+        {
+            RoomObject.Room.SendComposer(new ObjectDataUpdateMessage
+            {
+                Object = RoomObject
+            });
+        }
+
+        public virtual bool SetState(int state, bool refresh = true)
+        {
+            return false;
         }
 
         public virtual void OnEnter(IRoomObject roomObject)
@@ -42,7 +91,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             return;
         }
 
-        public virtual void OnInteract(IRoomObject roomObject)
+        public virtual void OnInteract(IRoomObject roomObject, int param)
         {
             return;
         }
@@ -72,12 +121,31 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual bool CanRoll() => true;
 
-        public virtual bool CanToggle() => true;
+        public virtual bool CanToggle(IRoomObject roomObject)
+        {
+            if (UsagePolicy == FurniUsagePolicy.Nobdy) return false;
+
+            if(UsagePolicy == FurniUsagePolicy.Controller)
+            {
+                if(roomObject.RoomObjectHolder is IRoomManipulator roomManipulator)
+                {
+                    if (RoomObject.Room.RoomSecurityManager.IsController(roomManipulator)) return true;
+                }
+
+                return false;
+            }
+
+            return true;
+        }
 
         public virtual bool IsOpen() => CanWalk() || CanSit() || CanLay();
 
-        public virtual double StackHeight() => FurnitureDefinition.Z;
+        public virtual FurniUsagePolicy UsagePolicy => FurnitureDefinition.UsagePolicy;
 
-        public double Height => RoomObject.Location.Z + StackHeight();
+        public virtual double StackHeight => FurnitureDefinition.Z;
+
+        public StuffDataKey DataKey => StuffDataKey.LegacyKey;
+
+        public double Height => RoomObject.Location.Z + StackHeight;
     }
 }

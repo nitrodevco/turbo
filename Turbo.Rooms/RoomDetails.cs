@@ -31,6 +31,8 @@ namespace Turbo.Rooms
             get => _roomEntity.PlayerEntityId;
         }
 
+        public string PlayerName { get; set; }
+
         public RoomStateType State
         {
             get => _roomEntity.RoomState;

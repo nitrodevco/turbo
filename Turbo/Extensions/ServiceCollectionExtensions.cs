@@ -15,6 +15,7 @@ using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
 using Turbo.Database.Repositories.Security;
 using Turbo.Furniture;
+using Turbo.Furniture.Factories;
 using Turbo.Main.PacketHandlers;
 using Turbo.Navigator;
 using Turbo.Networking;
@@ -56,6 +57,10 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IPlayerFactory, PlayerFactory>();
             services.AddSingleton<IRoomObjectFactory, RoomObjectFactory>();
             services.AddSingleton<IRoomObjectLogicFactory, RoomObjectLogicFactory>();
+            services.AddSingleton<IFurnitureFactory, FurnitureFactory>();
+            services.AddSingleton<IRoomFurnitureFactory, RoomFurnitureFactory>();
+            services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
+            services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
         }
 
         public static void AddNetworking(this IServiceCollection services)

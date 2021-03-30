@@ -6,7 +6,7 @@ namespace Turbo.Rooms.Object.Data
 {
     public class StuffDataFactory
     {
-        public IStuffData CreateStuffData(int flags)
+        public static IStuffData CreateStuffData(int flags)
         {
             IStuffData stuffData = null;
 
@@ -45,8 +45,10 @@ namespace Turbo.Rooms.Object.Data
             return stuffData;
         }
 
-        public IStuffData CreateStuffDataFromJson(int flags, string jsonString)
+        public static IStuffData CreateStuffDataFromJson(int flags, string jsonString)
         {
+            if (jsonString == null) return CreateStuffData(flags);
+
             IStuffData stuffData = null;
 
             switch (flags & 0xFF)
