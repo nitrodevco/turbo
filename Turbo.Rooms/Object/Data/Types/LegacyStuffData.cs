@@ -10,8 +10,6 @@ namespace Turbo.Rooms.Object.Data.Types
         public LegacyStuffData()
         {
             if((Data == null) || Data.Equals("")) Data = "0";
-
-            Console.WriteLine(Data);
         }
 
         public override string GetLegacyString()

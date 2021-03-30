@@ -83,6 +83,11 @@ namespace Turbo.Rooms.Object.Data
 
             stuffData.Flags = flags;
 
+            if(stuffData.IsUnique())
+            {
+                stuffData.Flags += (int)StuffDataFlags.UniqueSet;
+            }
+
             return stuffData;
         }
     }
