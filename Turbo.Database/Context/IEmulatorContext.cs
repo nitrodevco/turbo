@@ -30,7 +30,7 @@ namespace Turbo.Database.Context
         int SaveChanges();
         EntityEntry Update([NotNull] object entity);
         EntityEntry Entry([NotNull] object entity);
-        public virtual EntityEntry<TEntity> Entry<TEntity>([NotNullAttribute] TEntity entity) where TEntity : class;
+        public EntityEntry<TEntity> Entry<TEntity>([NotNullAttribute] TEntity entity) where TEntity : class;
 
     }
 }
