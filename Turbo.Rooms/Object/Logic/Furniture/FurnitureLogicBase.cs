@@ -19,11 +19,6 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         public override void Dispose()
         {
             base.Dispose();
-
-            // ensure furniture saves with data from this logic
-
-            FurnitureDefinition = null;
-            StuffData = null;
         }
 
         public virtual bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
@@ -140,7 +135,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual bool IsOpen() => CanWalk() || CanSit() || CanLay();
 
-        public virtual FurniUsagePolicy UsagePolicy => FurnitureDefinition.UsagePolicy;
+        public virtual FurniUsagePolicy UsagePolicy => (FurnitureDefinition.TotalStates == 0) ? FurniUsagePolicy.Nobody : FurnitureDefinition.UsagePolicy;
 
         public virtual double StackHeight => FurnitureDefinition.Z;
 
