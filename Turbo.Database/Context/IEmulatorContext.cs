@@ -25,9 +25,12 @@ namespace Turbo.Database.Context
         public DbSet<PermissionEntity> Permissions { get; set; }
         public DbSet<RankEntity> Ranks { get; set; }
         public DbSet<RankPermissionEntity> RankPermissions { get; set; }
-        public DbSet<UserPermissionEntity> UserPermissions { get; set; }
+        public DbSet<PlayerPermissionEntity> UserPermissions { get; set; }
 
         int SaveChanges();
         EntityEntry Update([NotNull] object entity);
+        EntityEntry Entry([NotNull] object entity);
+        public virtual EntityEntry<TEntity> Entry<TEntity>([NotNullAttribute] TEntity entity) where TEntity : class;
+
     }
 }

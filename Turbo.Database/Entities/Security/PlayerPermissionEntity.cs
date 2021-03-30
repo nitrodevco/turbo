@@ -5,7 +5,7 @@ using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Entities.Security
 {
-    public class UserPermissionEntity : Entity
+    public class PlayerPermissionEntity : Entity
     {
         [Column("player_id"), Required]
         public int PlayerEntityId { get; set; }

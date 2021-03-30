@@ -23,8 +23,13 @@ namespace Turbo.Database.Entities.Players
         [Column("gender")]
         public string Gender { get; set; }
 
+        [Column("rank")]
+        public int RankEntityId { get; set; }
+        public RankEntity Rank { get; set; }
+
         public List<SecurityTicketEntity> SecurityTickets { get; set; }
 
-        public List<PermissionEntity> PlayerPermissions { get; set; }
+        public List<PlayerPermissionEntity> PlayerPermissions { get; set; }
+        public ICollection<PermissionEntity> Permissions { get; set; }
     }
 }

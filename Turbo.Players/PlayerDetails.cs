@@ -75,5 +75,7 @@ namespace Turbo.Players
                 return _playerEntity.DateUpdated;
             }
         }
+
+        public int Rank => _playerEntity.RankEntityId;
     }
 }

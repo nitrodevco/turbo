@@ -4,6 +4,7 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Security.Permissions;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Players
@@ -36,6 +37,7 @@ namespace Turbo.Players
             // load roles
             // load inventory
             // load messenger
+            
 
             Logger.LogInformation("Player initialized");
         }

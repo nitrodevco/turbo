@@ -27,7 +27,7 @@ namespace Turbo.Database.Context
         public DbSet<PermissionEntity> Permissions { get; set; }
         public DbSet<RankEntity> Ranks { get; set; }
         public DbSet<RankPermissionEntity> RankPermissions { get; set; }
-        public DbSet<UserPermissionEntity> UserPermissions { get; set; }
+        public DbSet<PlayerPermissionEntity> UserPermissions { get; set; }
 
         public TurboContext(DbContextOptions<TurboContext> options) : base(options) { }
 
