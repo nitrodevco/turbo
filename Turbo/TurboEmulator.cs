@@ -39,9 +39,13 @@ namespace Turbo.Main
         private readonly ISessionManager _sessionManager;
         private readonly IPacketHandlerManager _packetHandlers;
 
+        private Task _storageCycle;
+        private bool _storageCycleStarted;
+        private bool _storageCycleRunning;
+
         private Task _gameCycle;
-        private bool _cycleStarted = false;
-        private bool _cycleRunningNow = false;
+        private bool _gameCycleStarted;
+        private bool _gameCycleRunning;
 
         public TurboEmulator(
             IHostApplicationLifetime appLifetime,
@@ -107,6 +111,7 @@ namespace Turbo.Main
             await _roomManager.InitAsync();
             await _navigatorManager.InitAsync();
 
+            StartStorageCycle();
             StartGameCycle();
         }
 
@@ -122,7 +127,8 @@ namespace Turbo.Main
         /// </summary>
         private void OnStopping()
         {
-            _cycleStarted = false;
+            _storageCycleStarted = false;
+            _gameCycleStarted = false;
             _logger.LogInformation("OnStopping has been called.");
         }
 
@@ -134,7 +140,8 @@ namespace Turbo.Main
         {
             _logger.LogInformation("Shutting down. Disposing services...");
 
-            _cycleStarted = false;
+            _gameCycleStarted = false;
+            _storageCycleStarted = false;
 
             // Todo: Dispose all services here
             await _roomManager.DisposeAsync();
@@ -158,22 +165,49 @@ namespace Turbo.Main
             Thread.CurrentThread.CurrentUICulture = culture;
         }
 
+        private void StartStorageCycle()
+        {
+            if (_storageCycleStarted) return;
+
+            _storageCycleStarted = true;
+
+            _storageCycle = Task.Run(async () =>
+            {
+                while (_storageCycleStarted)
+                {
+                    _storageCycleRunning = true;
+
+                    try
+                    {
+                        await _storageQueue.Cycle();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError("Exception caught! " + ex.ToString());
+                    }
+
+                    _storageCycleRunning = false;
+
+                    await Task.Delay(10000);
+                }
+            });
+        }
+
         private void StartGameCycle()
         {
-            _cycleStarted = true;
+            _gameCycleStarted = true;
 
             _gameCycle = Task.Run(async () =>
             {
-                while (_cycleStarted)
+                while (_gameCycleStarted)
                 {
-                    _cycleRunningNow = true;
+                    _gameCycleRunning = true;
 
                     try
                     {
                         Task.WaitAll(
                             Task.Run(async () => await _roomManager.Cycle()),
-                            Task.Run(async () => await _sessionManager.Cycle()),
-                            Task.Run(async () => await _storageQueue.Cycle())
+                            Task.Run(async () => await _sessionManager.Cycle())
                         );
                     }
                     catch (Exception ex)
@@ -181,7 +215,7 @@ namespace Turbo.Main
                         _logger.LogError("Exception caught! " + ex.ToString());
                     }
 
-                    _cycleRunningNow = false;
+                    _gameCycleRunning = false;
 
                     await Task.Delay(500);
                 }

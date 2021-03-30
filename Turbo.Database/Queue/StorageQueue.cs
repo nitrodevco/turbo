@@ -9,13 +9,9 @@ namespace Turbo.Database.Queue
 {
     public class StorageQueue : IStorageQueue
     {
-        private static readonly int _saveCycles = 20;
-
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly ConcurrentQueue<object> _queue;
-
-        private int _remainingSaveCycles = _saveCycles;
 
         public StorageQueue(IServiceScopeFactory scopeFactory)
         {
@@ -60,19 +56,7 @@ namespace Turbo.Database.Queue
 
         public async Task Cycle()
         {
-            if (_remainingSaveCycles > -1)
-            {
-                if (_remainingSaveCycles == 0)
-                {
-                    await SaveNow();
-
-                    _remainingSaveCycles = _saveCycles;
-
-                    return;
-                }
-
-                _remainingSaveCycles--;
-            }
+            await SaveNow();
         }
     }
 }
