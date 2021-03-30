@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
@@ -7,6 +8,7 @@ using Turbo.Core.Packets;
 using Turbo.Core.Security;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
+using Turbo.Packets.Outgoing.Perks;
 
 namespace Turbo.Main.PacketHandlers
 {
@@ -55,10 +57,24 @@ namespace Turbo.Main.PacketHandlers
 
         public async Task OnInfoRetrieve(InfoRetrieveMessage message, ISession session)
         {
-            await session.Send(new UserObjectMessage
+            await session.SendQueue(new UserObjectMessage
             {
                 Player = session.Player
             });
+
+            await session.SendQueue(new UserRightsMessage
+            {
+                ClubLevel = 2, // todo: remove hardcoded stuff
+                IsAmbassador = session.Player.HasPermission("ambassador"),
+                SecurityLevel = session.Player.PermissionComponent.Rank.ClientLevel
+            });
+
+            await session.SendQueue(new PerkAllowancesMessage
+            {
+                Perks = new List<Perk>() // todo: get actual perks
+            });
+
+            session.Flush();
         }
     }
 }
