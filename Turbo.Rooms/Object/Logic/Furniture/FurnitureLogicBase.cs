@@ -123,7 +123,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual bool CanToggle(IRoomObject roomObject)
         {
-            if (UsagePolicy == FurniUsagePolicy.Nobdy) return false;
+            if (UsagePolicy == FurniUsagePolicy.Nobody) return false;
 
             if(UsagePolicy == FurniUsagePolicy.Controller)
             {
