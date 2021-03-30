@@ -179,29 +179,41 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public virtual void Sit(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
-            RemoveStatus(RoomObjectAvatarStatus.Sit, RoomObjectAvatarStatus.Lay);
-
             if (flag)
             {
-                rotation = (rotation == null) ? RoomObject.Location.CalculateSitDirection() : rotation;
+                RemoveStatus(RoomObjectAvatarStatus.Lay);
+
+                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
 
                 RoomObject.Location.SetRotation(rotation);
 
                 AddStatus(RoomObjectAvatarStatus.Sit, string.Format("{0:N3}", height));
             }
+            else
+            {
+                if (!HasStatus(RoomObjectAvatarStatus.Sit)) return;
+
+                RemoveStatus(RoomObjectAvatarStatus.Sit);
+            }
         }
 
         public virtual void Lay(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
-            RemoveStatus(RoomObjectAvatarStatus.Lay, RoomObjectAvatarStatus.Sit);
-
             if (flag)
             {
-                rotation = (rotation == null) ? RoomObject.Location.CalculateSitDirection() : rotation;
+                RemoveStatus(RoomObjectAvatarStatus.Sit);
+
+                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
 
                 RoomObject.Location.SetRotation(rotation);
 
                 AddStatus(RoomObjectAvatarStatus.Lay, string.Format("{0:N3}", height));
+            }
+            else
+            {
+                if (!HasStatus(RoomObjectAvatarStatus.Lay)) return;
+
+                RemoveStatus(RoomObjectAvatarStatus.Lay);
             }
         }
 

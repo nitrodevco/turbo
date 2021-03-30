@@ -157,6 +157,42 @@ namespace Turbo.Rooms.Mapping
             return null;
         }
 
+        public IRoomTile GetHighestTileForRoomObject(IRoomObject roomObject)
+        {
+            IList<IPoint> points = AffectedPoints.GetPoints(roomObject);
+
+            IRoomTile highestTile = null;
+
+            foreach(IPoint point in points)
+            {
+                IRoomTile roomTile = GetTile(point);
+
+                if (roomTile == null) continue;
+
+                if(highestTile == null)
+                {
+                    highestTile = roomTile;
+
+                    continue;
+                }
+
+                if (highestTile == null) continue;
+
+                double height = roomTile.Height;
+
+                if ((roomTile.HighestObject == roomObject) && (roomTile.HighestObject.Logic is IFurnitureLogic furnitureLogic))
+                {
+                    height -= furnitureLogic.Height;
+                }
+
+                if (height < highestTile.Height) continue;
+
+                highestTile = roomTile;
+            }
+
+            return highestTile;
+        }
+
         public void AddRoomObjects(params IRoomObject[] roomObjects)
         {
             if (roomObjects.Length <= 0) return;
@@ -242,6 +278,57 @@ namespace Turbo.Rooms.Mapping
             }
         }
 
+        public void MoveRoomObject(IRoomObject roomObject, IPoint oldLocation, bool sendUpdate = true)
+        {
+            if (roomObject.Logic is not IFurnitureLogic furnitureLogic) return;
+
+            List<IPoint> points = new List<IPoint>();
+
+            if(oldLocation != null)
+            {
+                IList<IPoint> oldAffectedPoints = AffectedPoints.GetPoints(roomObject, oldLocation);
+
+                if(oldAffectedPoints.Count > 0)
+                {
+                    foreach(IPoint point in oldAffectedPoints)
+                    {
+                        IRoomTile roomTile = GetTile(point);
+
+                        if (roomTile == null) continue;
+
+                        roomTile.RemoveRoomObject(roomObject);
+
+                        points.Add(point);
+                    }
+                }
+            }
+
+            IList<IPoint> newAffectedPoints = AffectedPoints.GetPoints(roomObject);
+
+            if (newAffectedPoints.Count > 0)
+            {
+                foreach (IPoint point in newAffectedPoints)
+                {
+                    IRoomTile roomTile = GetTile(point);
+
+                    if (roomTile == null) continue;
+
+                    roomTile.AddRoomObject(roomObject);
+
+                    points.Add(point);
+                }
+            }
+
+            if (!_room.IsInitialized) return;
+
+            UpdatePoints(true, points.ToArray());
+
+            if(sendUpdate) _room.SendComposer(new ObjectUpdateMessage
+            {
+                Object = roomObject
+            });
+        }
+
         public void RemoveRoomObjects(IRoomManipulator roomManipulator, params IRoomObject[] roomObjects)
         {
             if (roomObjects.Length <= 0) return;
@@ -311,7 +398,6 @@ namespace Turbo.Rooms.Mapping
             if (points.Length <= 0) return;
 
             List<IRoomTile> roomTiles = new();
-            List<IRoomObject> roomObjects = new();
 
             foreach (IPoint point in points)
             {
@@ -326,13 +412,6 @@ namespace Turbo.Rooms.Mapping
                         if (roomObject.Logic is MovingAvatarLogic avatarLogic)
                         {
                             avatarLogic.InvokeCurrentLocation();
-
-                            if (roomObject.NeedsUpdate)
-                            {
-                                roomObject.NeedsUpdate = false;
-
-                                roomObjects.Add(roomObject);
-                            }
                         }
                     }
                 }
@@ -347,14 +426,6 @@ namespace Turbo.Rooms.Mapping
                 _room.SendComposer(new HeightMapUpdateMessage
                 {
                     TilesToUpdate = roomTiles
-                });
-            }
-
-            if(roomObjects.Count > 0)
-            {
-                _room.SendComposer(new UserUpdateMessage
-                {
-                    RoomObjects = roomObjects
                 });
             }
         }

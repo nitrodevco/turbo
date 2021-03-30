@@ -19,11 +19,12 @@ namespace Turbo.Rooms.Managers
 
             _cycles = new List<ICyclable>();
 
+            _cycles.Add(new RoomObjectCycle(_room));
             _cycles.Add(new RoomUserStatusCycle(_room));
         }
 
-        public async Task RunCycles() => _cycles.ForEach(async (x) => await x.Cycle());
+        public void Dispose() => _cycles.Clear();
 
-        public async ValueTask DisposeAsync() => _cycles.Clear();
+        public async Task Cycle() => _cycles.ForEach(async (x) => await x.Cycle());
     }
 }

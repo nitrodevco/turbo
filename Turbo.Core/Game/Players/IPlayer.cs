@@ -9,11 +9,11 @@ namespace Turbo.Core.Game.Players
     public interface IPlayer : IRoomObjectUserHolder, IRoomManipulator, IAsyncInitialisable, IAsyncDisposable
     {
         public ILogger<IPlayer> Logger { get; }
-        public ISession Session { get; }
+        public new ISession Session { get; }
         public IPlayerDetails PlayerDetails { get; }
 
         public bool SetSession(ISession session);
-        public bool HasPermission(string permission);
+        public new bool HasPermission(string permission);
 
         public new int Id { get; }
         public new string Name { get; }

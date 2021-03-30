@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Furniture.Definition;
+﻿using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Data;
 using Turbo.Rooms.Object.Logic.Avatar;
@@ -18,24 +19,53 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             return true;
         }
 
+        public override bool SetState(int state, bool refresh = true)
+        {
+            if (StuffData == null) return false;
+
+            if (state == StuffData.GetState()) return false;
+
+            StuffData.SetState(state.ToString());
+
+            if(RoomObject.RoomObjectHolder is IFurniture furniture)
+            {
+                furniture.Save();
+            }
+
+            if (refresh) RefreshStuffData();
+
+            return false;
+        }
+
         public override void OnStop(IRoomObject roomObject)
         {
             if(roomObject.Logic is AvatarLogic avatarLogic)
             {
                 if(CanSit())
                 {
-                    avatarLogic.Sit(true, StackHeight(), RoomObject.Location.Rotation);
+                    avatarLogic.Sit(true, StackHeight, RoomObject.Location.Rotation);
 
                     return;
                 }
 
                 if (CanLay())
                 {
-                    avatarLogic.Lay(true, StackHeight(), RoomObject.Location.Rotation);
+                    avatarLogic.Lay(true, StackHeight, RoomObject.Location.Rotation);
 
                     return;
                 }
             }
+        }
+
+        public override void OnInteract(IRoomObject roomObject, int param)
+        {
+            if (!CanToggle(roomObject)) return;
+            
+            param = GetNextToggleableState();
+
+            if (!SetState(param)) return;
+
+            // wired state changed
         }
 
         protected virtual int GetNextToggleableState()

@@ -14,6 +14,8 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public RoomTileState State { get; }
         public IRoomObject HighestObject { get; }
 
+        public bool HasStackHelper { get; }
+
         public IDictionary<int, IRoomObject> Users { get; }
         public IDictionary<int, IRoomObject> Furniture { get; }
 

@@ -7,6 +7,7 @@ using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Logic.Avatar;
@@ -15,19 +16,17 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Cycles
 {
-    public class RoomUserStatusCycle : ICyclable
+    public class RoomUserStatusCycle : RoomCycle
     {
         private static readonly int MAX_WALKING_HEIGHT = 2;
         private static readonly bool ALLOW_DIAGONALS = true;
 
-        private readonly IRoom _room;
-
-        public RoomUserStatusCycle(IRoom room)
+        public RoomUserStatusCycle(IRoom room) : base(room)
         {
-            _room = room;
+
         }
 
-        public async Task Cycle()
+        public override async Task Cycle()
         {
             IRoomUserManager roomUserManager = _room.RoomUserManager;
 
@@ -41,7 +40,7 @@ namespace Turbo.Rooms.Cycles
 
             foreach (IRoomObject roomObject in roomObjects.Values)
             {
-                if (!(roomObject.Logic is MovingAvatarLogic)) continue;
+                if (!(roomObject.Logic is IMovingAvatarLogic)) continue;
 
                 ProcessRoomObject(roomObject);
 
@@ -61,7 +60,7 @@ namespace Turbo.Rooms.Cycles
 
             foreach (IRoomObject roomObject in updatedRoomObjects)
             {
-                MovingAvatarLogic logic = (MovingAvatarLogic)roomObject.Logic;
+                IMovingAvatarLogic logic = (IMovingAvatarLogic)roomObject.Logic;
 
                 logic.RemoveStatus(RoomObjectAvatarStatus.Sign);
 
@@ -71,11 +70,9 @@ namespace Turbo.Rooms.Cycles
 
         private void ProcessRoomObject(IRoomObject roomObject)
         {
-            MovingAvatarLogic avatarLogic = (MovingAvatarLogic)roomObject.Logic;
+            IMovingAvatarLogic avatarLogic = (IMovingAvatarLogic)roomObject.Logic;
 
-            avatarLogic.Cycle();
-
-            if (!avatarLogic.IsWalking) return; // or is rolling
+            if (!avatarLogic.IsWalking || avatarLogic.IsRolling) return;
 
             avatarLogic.ProcessNextLocation();
 
@@ -95,7 +92,7 @@ namespace Turbo.Rooms.Cycles
 
         private void CheckStep(IRoomObject roomObject, IPoint locationNext)
         {
-            MovingAvatarLogic avatarLogic = (MovingAvatarLogic)roomObject.Logic;
+            IMovingAvatarLogic avatarLogic = (IMovingAvatarLogic)roomObject.Logic;
 
             if (avatarLogic.NeedsRepathing)
             {
@@ -151,7 +148,7 @@ namespace Turbo.Rooms.Cycles
                 {
                     foreach (IRoomObject existingObject in nextTile.Users.Values)
                     {
-                        MovingAvatarLogic existingAvatarLogic = (MovingAvatarLogic)existingObject.Logic;
+                        IMovingAvatarLogic existingAvatarLogic = (IMovingAvatarLogic)existingObject.Logic;
 
                         if (!existingAvatarLogic.IsWalking)
                         {
@@ -194,7 +191,7 @@ namespace Turbo.Rooms.Cycles
 
             if (currentTile.HighestObject != null)
             {
-                if ((currentTile.HighestObject != nextTile.HighestObject) && (currentTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic))
+                if ((currentTile.HighestObject != nextTile.HighestObject) && (currentTile.HighestObject.Logic is IFurnitureLogic furnitureLogic))
                 {
                     furnitureLogic.OnLeave(roomObject);
                 }
@@ -205,7 +202,7 @@ namespace Turbo.Rooms.Cycles
 
             avatarLogic.RemoveStatus(RoomObjectAvatarStatus.Lay, RoomObjectAvatarStatus.Sit);
             avatarLogic.AddStatus(RoomObjectAvatarStatus.Move, nextTile.Location.X + "," + nextTile.Location.Y + "," + nextHeight);
-            roomObject.Location.SetRotation(roomObject.Location.CalculateWalkDirection(locationNext));
+            roomObject.Location.SetRotation(roomObject.Location.CalculateWalkRotation(locationNext));
             avatarLogic.LocationNext = locationNext;
 
             if (nextTile.HighestObject != null)

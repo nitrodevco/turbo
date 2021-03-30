@@ -44,6 +44,7 @@ namespace Turbo.Rooms
         public Room(
             IRoomManager roomManager,
             ILogger<IRoom> logger,
+            IRoomSecurityFactory roomSecurityFactory,
             IRoomFurnitureFactory roomFurnitureFactory,
             IRoomUserFactory roomUserFactory,
             RoomEntity roomEntity)
@@ -53,7 +54,7 @@ namespace Turbo.Rooms
             RoomDetails = new RoomDetails(roomEntity);
 
             RoomCycleManager = new RoomCycleManager(this);
-            RoomSecurityManager = new RoomSecurityManager(this);
+            RoomSecurityManager = roomSecurityFactory.Create(this);
             RoomFurnitureManager = roomFurnitureFactory.Create(this);
             RoomUserManager = roomUserFactory.Create(this);
 
@@ -85,7 +86,7 @@ namespace Turbo.Rooms
 
             if (RoomManager != null) await RoomManager.RemoveRoom(Id);
 
-            if (RoomCycleManager != null) await RoomCycleManager.DisposeAsync();
+            if (RoomCycleManager != null) RoomCycleManager.Dispose();
             if (RoomUserManager != null) await RoomUserManager.DisposeAsync();
             if (RoomFurnitureManager != null) await RoomFurnitureManager.DisposeAsync();
             if (RoomSecurityManager != null) await RoomSecurityManager.DisposeAsync();
@@ -176,7 +177,7 @@ namespace Turbo.Rooms
 
             RoomFurnitureManager.SendFurnitureToSession(player.Session);
 
-            if (roomObject != null) RoomSecurityManager.RefreshRights(roomObject);
+            if (roomObject != null) RoomSecurityManager.RefreshControllerLevel(roomObject);
 
             // apply muted from security
 
@@ -203,16 +204,21 @@ namespace Turbo.Rooms
 
         public async Task Cycle()
         {
-            if (_remainingDisposeTicks == 0)
+            if(_remainingDisposeTicks > -1)
             {
-                await DisposeAsync();
+                if (_remainingDisposeTicks == 0)
+                {
+                    await DisposeAsync();
 
-                return;
+                    _remainingDisposeTicks = -1;
+
+                    return;
+                }
+
+                _remainingDisposeTicks--;
             }
 
-            if (_remainingDisposeTicks > -1) _remainingDisposeTicks--;
-
-            await RoomCycleManager.RunCycles();
+            await RoomCycleManager.Cycle();
         }
 
         public void SendComposer(IComposer composer)

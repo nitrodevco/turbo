@@ -11,7 +11,7 @@ namespace Turbo.Database.Migrations
     [Migration("20210316184215_InitialCreate")]
     partial class InitialCreate
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
