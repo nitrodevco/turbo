@@ -20,6 +20,14 @@ namespace Turbo.Rooms.Utils
             HeadRotation = headRotation;
         }
 
+        public void SetRotation(Rotation? rotation)
+        {
+            if (rotation == null) return;
+
+            Rotation = (Rotation)rotation;
+            HeadRotation = (Rotation)rotation;
+        }
+
         public IPoint Clone()
         {
             return new Point(X, Y, Z, Rotation, HeadRotation);
@@ -46,12 +54,50 @@ namespace Turbo.Rooms.Utils
             return clone;
         }
 
-        public void SetRotation(Rotation? rotation)
+        public IPoint GetPointForward(int offset = 1)
         {
-            if (rotation == null) return;
+            return GetPoint(Rotation, offset);
+        }
 
-            Rotation = (Rotation)rotation;
-            HeadRotation = (Rotation)rotation;
+        public IPoint GetPoint(Rotation rotation, int offset = 1)
+        {
+            IPoint clone = Clone();
+
+            rotation = (Rotation)((int)rotation % 8);
+
+            switch(rotation)
+            {
+                case Rotation.North:
+                    clone.Y -= offset;
+                    break;
+                case Rotation.NorthEast:
+                    clone.X += offset;
+                    clone.Y -= offset;
+                    break;
+                case Rotation.East:
+                    clone.X += offset;
+                    break;
+                case Rotation.SouthEast:
+                    clone.X += offset;
+                    clone.Y += offset;
+                    break;
+                case Rotation.South:
+                    clone.Y += offset;
+                    break;
+                case Rotation.SouthWest:
+                    clone.X -= offset;
+                    clone.Y += offset;
+                    break;
+                case Rotation.West:
+                    clone.X -= offset;
+                    break;
+                case Rotation.NorthWest:
+                    clone.X -= offset;
+                    clone.Y -= offset;
+                    break;
+            }
+
+            return clone;
         }
 
         public int GetDistanceAround(IPoint point)
