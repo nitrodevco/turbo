@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Players.Components;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
-using Turbo.Core.Security.Permissions;
 using Turbo.Database.Entities.Players;
+using Turbo.Players.Components;
 
 namespace Turbo.Players
 {
@@ -18,18 +19,21 @@ namespace Turbo.Players
         public ISession Session { get; set; }
         public IPlayerDetails PlayerDetails { get; private set; }
         public IRoomObject RoomObject { get; private set; }
+        public IPermissionComponent PermissionComponent { get; private set; }
 
         private bool _isDisposing { get; set; }
 
         public Player(
             IPlayerContainer playerContainer,
             ILogger<IPlayer> logger,
-            PlayerEntity playerEntity)
+            PlayerEntity playerEntity,
+            IPermissionComponent permissionComponent)
         {
             _playerContainer = playerContainer;
 
             Logger = logger;
             PlayerDetails = new PlayerDetails(this, playerEntity);
+            PermissionComponent = permissionComponent;
         }
 
         public async ValueTask InitAsync()
@@ -37,7 +41,7 @@ namespace Turbo.Players
             // load roles
             // load inventory
             // load messenger
-            
+            await PermissionComponent.InitAsync();
 
             Logger.LogInformation("Player initialized");
         }
@@ -114,7 +118,7 @@ namespace Turbo.Players
 
         public bool HasPermission(string permission)
         {
-            return false;
+            return PermissionComponent.HasPermission(permission);
         }
 
         public string Type => "user";

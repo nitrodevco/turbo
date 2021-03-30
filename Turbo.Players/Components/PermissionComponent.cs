@@ -11,17 +11,15 @@ namespace Turbo.Players.Components
 {
     public class PermissionComponent : IPermissionComponent
     {
-        private readonly IPlayer _player;
+        private IPlayer _player;
         private readonly IPermissionManager _permissionManager;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly PlayerEntity _playerEntity;
 
         public PermissionComponent(IPermissionManager permissionManager,
             IServiceScopeFactory scopeFactory,
-            IPlayer player,
             PlayerEntity playerEntity)
         {
-            _player = player;
             _permissionManager = permissionManager;
             _scopeFactory = scopeFactory;
             _playerEntity = playerEntity;
@@ -33,6 +31,11 @@ namespace Turbo.Players.Components
             {
                 return _permissionManager.Ranks[_player.PlayerDetails.Rank];
             }
+        }
+
+        public IPlayer Player
+        {
+            set => _player = value;
         }
 
         public bool HasPermission(string name, PermissionRequiredRights currentRights = PermissionRequiredRights.NONE)

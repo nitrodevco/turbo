@@ -1,9 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using Turbo.Core.Game.Players.Components;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
-using Turbo.Core.Security.Permissions;
 
 namespace Turbo.Core.Game.Players
 {
@@ -12,6 +12,7 @@ namespace Turbo.Core.Game.Players
         public ILogger<IPlayer> Logger { get; }
         public new ISession Session { get; }
         public IPlayerDetails PlayerDetails { get; }
+        public IPermissionComponent PermissionComponent { get; }
 
         public bool SetSession(ISession session);
         public new bool HasPermission(string permission);

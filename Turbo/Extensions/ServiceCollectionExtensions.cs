@@ -9,6 +9,7 @@ using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
+using Turbo.Core.Security.Permissions;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
@@ -51,6 +52,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IFurnitureManager, FurnitureManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
+            services.AddSingleton<IPermissionManager, PermissionManager>();
 
             // Factories
             services.AddSingleton<IRoomFactory, RoomFactory>();

@@ -13,6 +13,7 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
+using Turbo.Core.Security.Permissions;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
 
@@ -36,6 +37,7 @@ namespace Turbo.Main
         private readonly IPlayerManager _playerManager;
         private readonly ISessionManager _sessionManager;
         private readonly IPacketHandlerManager _packetHandlers;
+        private readonly IPermissionManager _permissionManager;
 
         private Task _gameCycle;
         private bool _cycleStarted = false;
@@ -52,6 +54,7 @@ namespace Turbo.Main
             INavigatorManager navigatorManager,
             IPlayerManager playerManager,
             ISessionManager sessionManager,
+            IPermissionManager permissionManager,
             IPacketHandlerManager packetHandlers)
         {
             _appLifetime = appLifetime;
@@ -65,6 +68,7 @@ namespace Turbo.Main
             _playerManager = playerManager;
             _sessionManager = sessionManager;
             _packetHandlers = packetHandlers;
+            _permissionManager = permissionManager;
         }
 
         /// <summary>
@@ -102,6 +106,7 @@ namespace Turbo.Main
             await _furnitureManager.InitAsync();
             await _roomManager.InitAsync();
             await _navigatorManager.InitAsync();
+            await _permissionManager.InitAsync();
 
             StartGameCycle();
         }
@@ -138,6 +143,7 @@ namespace Turbo.Main
             await _furnitureManager.DisposeAsync();
             await _roomManager.DisposeAsync();
             await _playerManager.DisposeAsync();
+            await _permissionManager.DisposeAsync();
         }
 
         /// <summary>
