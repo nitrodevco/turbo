@@ -98,6 +98,8 @@ namespace Turbo.Rooms.Managers
 
             UpdateTotalUsers();
 
+            avatarLogic.CanWalk = true;
+
             return roomObject;
         }
 

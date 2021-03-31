@@ -20,18 +20,20 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; private set; }
-        public bool CanWalk { get; private set; }
+        public bool CanWalk { get; set; }
 
         public MovingAvatarLogic()
         {
             Statuses = new Dictionary<string, string>();
         }
 
-        public virtual void WalkTo(IPoint location)
+        public virtual void WalkTo(IPoint location, bool selfWalk = false)
         {
             NeedsRepathing = false;
 
             if (location == null) return;
+
+            if (!CanWalk && selfWalk) return;
 
             location = location.Clone();
 

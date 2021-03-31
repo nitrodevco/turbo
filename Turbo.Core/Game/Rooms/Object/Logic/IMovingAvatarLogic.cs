@@ -11,8 +11,8 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public IList<IPoint> CurrentPath { get; }
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; }
-        public bool CanWalk { get; }
-        public void WalkTo(IPoint location);
+        public bool CanWalk { get; set; }
+        public void WalkTo(IPoint location, bool selfWalk = false);
         public void StopWalking();
         public void ClearPath();
         public void ProcessNextLocation();

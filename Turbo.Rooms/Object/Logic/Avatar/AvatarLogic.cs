@@ -61,9 +61,9 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             }
         }
 
-        public override void WalkTo(IPoint location)
+        public override void WalkTo(IPoint location, bool selfWalk = false)
         {
-            base.WalkTo(location);
+            base.WalkTo(location, selfWalk);
 
             Idle(false);
         }
