@@ -9,17 +9,9 @@ namespace Turbo.Packets.Outgoing.Room.Engine
     {
         public IPoint OldPos { get; init; }
         public IPoint NewPos { get; init; }
-        public List<IRoomObject> Objects { get; init; }
-        public int RollerItemId { get; init; }
-
-        /// <summary>
-        /// Optional, set as null or 0 if no Avatar
-        /// </summary>
-        public int? AvatarId { get; init; }
-
-        /// <summary>
-        /// Optional, applies to Avatar
-        /// </summary>
-        public SlideObjectMoveType? MoveType { get; init; }
+        public IRollerItemData User { get; init; }
+        public List<IRollerItemData> Furniture { get; init; }
+        public int RollerItemId { get; init; } = 0;
+        public SlideObjectMoveType MoveType { get; init; } = SlideObjectMoveType.Slide;
     }
 }

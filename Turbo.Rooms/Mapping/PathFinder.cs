@@ -27,14 +27,14 @@ namespace Turbo.Rooms.Mapping
 
             if ((node == null) || (node.NextNode == null)) return points;
 
-            while (node.NextNode != null)
+            node = node.NextNode;
+
+            while (node != null)
             {
                 points.Add(node.Location);
 
                 node = node.NextNode;
             }
-
-            points.Reverse();
 
             return points;
         }
@@ -51,7 +51,7 @@ namespace Turbo.Rooms.Mapping
 
             IList<IPathFinderNode> nodes = new List<IPathFinderNode>();
             IDictionary<int, IDictionary<int, IPathFinderNode>> nodeMap = new Dictionary<int, IDictionary<int, IPathFinderNode>>();
-            IPathFinderNode nodeGoal = new PathFinderNode(location);
+            IPathFinderNode nodeGoal = new PathFinderNode(roomObject.Location);
 
             IPathFinderNode currentNode;
             IPathFinderNode tempNode;
@@ -60,7 +60,7 @@ namespace Turbo.Rooms.Mapping
             int cost;
             int difference;
 
-            currentNode = new PathFinderNode(roomObject.Location)
+            currentNode = new PathFinderNode(location)
             {
                 Cost = 0
             };
@@ -105,8 +105,8 @@ namespace Turbo.Rooms.Mapping
 
                     difference = 0;
 
-                    if (currentNode.Location.X != tempNode.Location.X) difference += 2;
-                    if (currentNode.Location.Y != tempNode.Location.Y) difference += 2;
+                    if (currentNode.Location.X != tempNode.Location.X) difference -= 1;
+                    if (currentNode.Location.Y != tempNode.Location.Y) difference -= 1;
 
                     cost = ((currentNode.Cost + difference) + (int)tempNode.Location.GetDistanceSquared(nodeGoal.Location));
 

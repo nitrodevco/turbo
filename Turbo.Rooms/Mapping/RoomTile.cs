@@ -124,7 +124,7 @@ namespace Turbo.Rooms.Mapping
                         if (height < Height) continue;
 
                         HighestObject = roomObject;
-                        Height = height;
+                        Height = Math.Round((double)height, 3);
                     }
                 }
             }
@@ -153,7 +153,17 @@ namespace Turbo.Rooms.Mapping
                 }
             }
 
-            return height;
+            return Math.Round((double)height, 3);
+        }
+
+        public bool HasLogic<T>()
+        {
+            foreach(IRoomObject roomObject in Furniture.Values)
+            {
+                if (roomObject.Logic is T) return true;
+            }
+
+            return false;
         }
 
         public bool IsOpen()

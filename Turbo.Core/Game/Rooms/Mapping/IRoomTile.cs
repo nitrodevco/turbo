@@ -26,6 +26,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
 
         public void ResetTileHeight();
         public double GetWalkingHeight();
+        public bool HasLogic<T>();
 
         public bool IsOpen();
         public bool CanWalk();

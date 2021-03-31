@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
-using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -187,6 +186,8 @@ namespace Turbo.Rooms.Managers
             {
                 IRoomTile roomTile = _room.RoomMap.GetTile(affectedPoint);
 
+                if (roomTile == null) return false;
+
                 // do we need to validate that all tiles base height is the same?
 
                 if ((roomTile.Users.Count > 0) && !furnitureLogic.IsOpen()) return false;
@@ -269,6 +270,20 @@ namespace Turbo.Rooms.Managers
             }
 
             return true;
+        }
+
+        public IList<IRoomObject> GetRoomObjectsWithLogic<T>()
+        {
+            List<IRoomObject> roomObjects = new();
+
+            foreach (IRoomObject roomObject in RoomObjects.Values)
+            {
+                if (roomObject.Logic is not T) continue;
+
+                roomObjects.Add(roomObject);
+            }
+
+            return roomObjects;
         }
 
         public void SendFurnitureToSession(ISession session)

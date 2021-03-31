@@ -35,7 +35,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             location = location.Clone();
 
-            // clear roller data
+            RollerData = null;
 
             ProcessNextLocation();
 
@@ -240,8 +240,6 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             RoomObject.NeedsUpdate = true;
         }
-
-        public IRoomTile GetCurrentTile() => RoomObject?.Room?.RoomMap?.GetTile(RoomObject.Location);
 
         public IRoomTile GetNextTile() => RoomObject?.Room?.RoomMap?.GetTile(LocationNext);
     }

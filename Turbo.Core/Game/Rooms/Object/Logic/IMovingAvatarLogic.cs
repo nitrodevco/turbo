@@ -21,7 +21,6 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void AddStatus(string type, string value);
         public bool HasStatus(params string[] types);
         public void RemoveStatus(params string[] types);
-        public IRoomTile GetCurrentTile();
         public IRoomTile GetNextTile();
     }
 }

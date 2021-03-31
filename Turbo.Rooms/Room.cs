@@ -73,7 +73,10 @@ namespace Turbo.Rooms
 
             Logger.LogInformation("Room loaded");
 
+            RoomCycleManager.Start();
+
             IsInitialized = true;
+
         }
 
         public async ValueTask DisposeAsync()
@@ -102,6 +105,8 @@ namespace Turbo.Rooms
 
             if (RoomDetails.UsersNow > 0) return;
 
+            RoomCycleManager.Stop();
+
             // clear the users waiting at the door
 
             _remainingDisposeTicks = _disposeTicks;
@@ -109,6 +114,8 @@ namespace Turbo.Rooms
 
         public void CancelDispose()
         {
+            RoomCycleManager.Start();
+
             _remainingDisposeTicks = -1;
         }
 
