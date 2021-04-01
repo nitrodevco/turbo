@@ -101,6 +101,13 @@ namespace Turbo.Rooms.Managers
 
             roomObject.SetLocation(location);
 
+            if (!furnitureLogic.OnReady())
+            {
+                roomObject.Dispose();
+
+                return null;
+            }
+
             _room.RoomMap.AddRoomObjects(roomObject);
 
             RoomObjects.Add(roomObject.Id, roomObject);
