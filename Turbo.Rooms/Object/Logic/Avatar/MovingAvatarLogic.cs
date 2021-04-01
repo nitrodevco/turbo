@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
@@ -17,6 +18,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public IPoint LocationNext { get; set; }
         public IPoint LocationGoal { get; private set; }
         public IList<IPoint> CurrentPath { get; private set; }
+        public Action GoalAction { get; set; }
 
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; private set; }
