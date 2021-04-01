@@ -10,7 +10,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public IPoint LocationNext { get; set; }
         public IPoint LocationGoal { get; }
         public IList<IPoint> CurrentPath { get; }
-        public Action GoalAction { get; set; }
+        public Action<IRoomObject> GoalAction { get; set; }
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; }
         public bool CanWalk { get; set; }

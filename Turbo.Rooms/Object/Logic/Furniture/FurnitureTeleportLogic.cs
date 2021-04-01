@@ -23,8 +23,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (!roomObject.Location.Compare(goalPoint))
             {
-                avatarLogic.GoalAction = OnInteract(roomObject, param);
-
+                avatarLogic.GoalAction = new Action<IRoomObject>(p => OnInteract(p, param));
                 avatarLogic.WalkTo(goalPoint);
 
                 return;

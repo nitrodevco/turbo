@@ -18,7 +18,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public IPoint LocationNext { get; set; }
         public IPoint LocationGoal { get; private set; }
         public IList<IPoint> CurrentPath { get; private set; }
-        public Action GoalAction { get; set; }
+        public Action<IRoomObject> GoalAction { get; set; }
 
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; private set; }
