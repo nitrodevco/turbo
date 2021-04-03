@@ -60,6 +60,13 @@ namespace Turbo.Rooms.Utils
                 {
                     IRoomObject roomObject = rollerItemData.RoomObject;
 
+                    if(roomObject.Disposed)
+                    {
+                        Users.Remove(roomObject.Id);
+
+                        continue;
+                    }
+
                     if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
                     {
                         if(!avatarLogic.IsRolling || !roomObject.Location.Compare(Location) || (avatarLogic.RollerData != this))
@@ -87,6 +94,13 @@ namespace Turbo.Rooms.Utils
                 foreach (IRollerItemData rollerItemData in Furniture.Values)
                 {
                     IRoomObject roomObject = rollerItemData.RoomObject;
+
+                    if (roomObject.Disposed)
+                    {
+                        Furniture.Remove(roomObject.Id);
+
+                        continue;
+                    }
 
                     if (roomObject.Logic is IFurnitureLogic furnitureLogic)
                     {
@@ -121,6 +135,8 @@ namespace Turbo.Rooms.Utils
                 {
                     IRoomObject roomObject = rollerItemData.RoomObject;
 
+                    if (roomObject.Disposed) continue;
+
                     if (roomObject.Logic is IRollingObjectLogic rollingLogic)
                     {
                         rollingLogic.RollerData = null;
@@ -133,6 +149,8 @@ namespace Turbo.Rooms.Utils
                 foreach (IRollerItemData rollerItemData in Furniture.Values)
                 {
                     IRoomObject roomObject = rollerItemData.RoomObject;
+
+                    if (roomObject.Disposed) continue;
 
                     if (roomObject.Logic is IRollingObjectLogic rollingLogic)
                     {
