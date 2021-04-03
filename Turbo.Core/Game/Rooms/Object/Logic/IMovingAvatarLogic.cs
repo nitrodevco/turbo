@@ -10,6 +10,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public IPoint LocationNext { get; set; }
         public IPoint LocationGoal { get; }
         public IList<IPoint> CurrentPath { get; }
+        public Action<IRoomObject> BeforeGoalAction { get; set; }
         public Action<IRoomObject> GoalAction { get; set; }
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; }
@@ -20,6 +21,8 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void ProcessNextLocation();
         public void UpdateHeight(IRoomTile roomTile = null);
         public void InvokeCurrentLocation();
+        public void InvokeBeforeGoalAction();
+        public void InvokeGoalAction();
         public void AddStatus(string type, string value);
         public bool HasStatus(params string[] types);
         public void RemoveStatus(params string[] types);

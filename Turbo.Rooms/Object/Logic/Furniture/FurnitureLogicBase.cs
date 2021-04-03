@@ -108,11 +108,11 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual bool CanStack() => FurnitureDefinition.CanStack;
 
-        public virtual bool CanWalk() => FurnitureDefinition.CanWalk;
+        public virtual bool CanWalk(IRoomObject roomObject = null) => FurnitureDefinition.CanWalk;
 
-        public virtual bool CanSit() => FurnitureDefinition.CanSit;
+        public virtual bool CanSit(IRoomObject roomObject = null) => FurnitureDefinition.CanSit;
 
-        public virtual bool CanLay() => FurnitureDefinition.CanLay;
+        public virtual bool CanLay(IRoomObject roomObject = null) => FurnitureDefinition.CanLay;
 
         public virtual bool CanRoll() => true;
 
@@ -133,7 +133,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             return true;
         }
 
-        public virtual bool IsOpen() => CanWalk() || CanSit() || CanLay();
+        public virtual bool IsOpen(IRoomObject roomObject = null) => CanWalk(roomObject) || CanSit(roomObject) || CanLay(roomObject);
 
         public virtual FurniUsagePolicy UsagePolicy => (FurnitureDefinition.TotalStates == 0) ? FurniUsagePolicy.Nobody : FurnitureDefinition.UsagePolicy;
 

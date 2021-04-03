@@ -159,7 +159,7 @@ namespace Turbo.Rooms.Mapping
 
             if (nextTile.Location.Compare(roomObject.Location)) return true;
 
-            if (!isGoal && (nextTile.CanSit() || nextTile.CanLay())) return false;
+            if (!isGoal && (nextTile.CanSit(roomObject) || nextTile.CanLay(roomObject))) return false;
 
             return true;
         }

@@ -22,12 +22,12 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void OnMove(IRoomManipulator roomManipulator);
         public void OnPickup(IRoomManipulator roomManipulator);
         public bool CanStack();
-        public bool CanWalk();
-        public bool CanSit();
-        public bool CanLay();
+        public bool CanWalk(IRoomObject roomObject = null);
+        public bool CanSit(IRoomObject roomObject = null);
+        public bool CanLay(IRoomObject roomObject = null);
         public bool CanRoll();
         public bool CanToggle(IRoomObject roomObject);
-        public bool IsOpen();
+        public bool IsOpen(IRoomObject roomObject = null);
         public FurniUsagePolicy UsagePolicy { get; }
         public double StackHeight { get; }
         public StuffDataKey DataKey { get; }

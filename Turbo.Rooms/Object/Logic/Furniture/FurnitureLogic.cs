@@ -34,7 +34,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (refresh) RefreshStuffData();
 
-            return false;
+            return true;
         }
 
         public override void OnStop(IRoomObject roomObject)
@@ -57,7 +57,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             }
         }
 
-        public override void OnInteract(IRoomObject roomObject, int param)
+        public override void OnInteract(IRoomObject roomObject, int param = 0)
         {
             if (!CanToggle(roomObject)) return;
             

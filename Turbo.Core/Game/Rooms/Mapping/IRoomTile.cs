@@ -28,10 +28,10 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public double GetWalkingHeight();
         public bool HasLogic<T>();
 
-        public bool IsOpen();
-        public bool CanWalk();
-        public bool CanSit();
-        public bool CanLay();
+        public bool IsOpen(IRoomObject roomObject = null);
+        public bool CanWalk(IRoomObject roomObject = null);
+        public bool CanSit(IRoomObject roomObject = null);
+        public bool CanLay(IRoomObject roomObject = null);
         public bool CanStack();
 
     }

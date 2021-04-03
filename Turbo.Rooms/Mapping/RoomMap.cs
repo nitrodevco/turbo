@@ -106,7 +106,7 @@ namespace Turbo.Rooms.Mapping
                 else return null;
             }
 
-            if (!roomTile.CanWalk()) return null;
+            if (!roomTile.CanWalk(roomObject)) return null;
 
             return roomTile;
         }
@@ -131,7 +131,7 @@ namespace Turbo.Rooms.Mapping
                 if (!_room.RoomDetails.AllowWalkThrough) return null;
             }
 
-            if (!roomTile.CanWalk() || roomTile.CanSit() || roomTile.CanLay()) return null;
+            if (!roomTile.CanWalk(roomObject) || roomTile.CanSit(roomObject) || roomTile.CanLay(roomObject)) return null;
 
             return roomTile;
         }
