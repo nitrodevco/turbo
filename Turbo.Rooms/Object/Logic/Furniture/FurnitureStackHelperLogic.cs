@@ -10,6 +10,6 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public override bool CanToggle(IRoomObject roomObject) => false;
 
-        public override bool IsOpen() => false;
+        public override bool IsOpen(IRoomObject roomObject = null) => false;
     }
 }
