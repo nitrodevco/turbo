@@ -24,6 +24,7 @@ namespace Turbo.Rooms.Object.Logic
             _logics.Add("roller", typeof(FurnitureRollerLogic));
             _logics.Add("gate", typeof(FurnitureGateLogic));
             _logics.Add("teleport", typeof(FurnitureTeleportLogic));
+            _logics.Add("dice", typeof(FurnitureDiceLogic));
         }
 
         public IRoomObjectLogic GetLogic(string type)

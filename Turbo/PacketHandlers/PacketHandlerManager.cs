@@ -8,17 +8,21 @@ namespace Turbo.Main.PacketHandlers
         private readonly INavigatorMessageHandler _navigatorMessageHandler;
         private readonly IRoomAvatarMessageHandler _roomAvatarMessageHandler;
         private readonly IRoomEngineMessageHandler _roomEngineMessageHandler;
+        private readonly IRoomFurnitureMessageHandler _roomFurnitureMessageHandler;
         private readonly IRoomSessionMessageHandler _roomSessionMessageHandler;
+
         public PacketHandlerManager(
             INavigatorMessageHandler navigatorMessageHandler,
             IRoomAvatarMessageHandler roomAvatarMessageHandler,
             IRoomEngineMessageHandler roomEngineMessageHandler,
+            IRoomFurnitureMessageHandler roomFurnitureMessageHandler,
             IRoomSessionMessageHandler roomSessionMessageHandler,
             IAuthenticationMessageHandler authenticationMessageHandler)
         {
             _authenticationMessageHandler = authenticationMessageHandler;
             _navigatorMessageHandler = navigatorMessageHandler;
             _roomAvatarMessageHandler = roomAvatarMessageHandler;
+            _roomFurnitureMessageHandler = roomFurnitureMessageHandler;
             _roomEngineMessageHandler = roomEngineMessageHandler;
             _roomSessionMessageHandler = roomSessionMessageHandler;
         }

@@ -83,6 +83,7 @@ namespace Turbo.Main.Extensions
             services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();
             services.AddTransient<IRoomAvatarMessageHandler, RoomAvatarMessageHandler>();
             services.AddTransient<IRoomEngineMessageHandler, RoomEngineMessageHandler>();
+            services.AddTransient<IRoomFurnitureMessageHandler, RoomFurnitureMessageHandler>();
             services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
             services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
         }
