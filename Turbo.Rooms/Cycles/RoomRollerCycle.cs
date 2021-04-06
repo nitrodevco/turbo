@@ -21,6 +21,7 @@ namespace Turbo.Rooms.Cycles
     public class RoomRollerCycle : RoomCycle
     {
         private readonly static int _rollerCycles = 4;
+        private readonly static double _maxFallingHeight = 0.5;
 
         private int _remainingRollerCycles = _rollerCycles;
 
@@ -44,8 +45,6 @@ namespace Turbo.Rooms.Cycles
                 if (_remainingRollerCycles > 0)
                 {
                     _remainingRollerCycles--;
-
-                    return;
                 }
 
                 if (_remainingRollerCycles != 0) return;
@@ -157,7 +156,7 @@ namespace Turbo.Rooms.Cycles
 
             if (roomTile == null) return false;
 
-            foreach(IRoomObject roomObject in roomTile.Furniture.Values)
+            foreach (IRoomObject roomObject in roomTile.Furniture.Values)
             {
                 if ((rollingData.Roller == roomObject) || (rollingData.Furniture.ContainsKey(roomObject.Id))) continue;
 
@@ -187,7 +186,14 @@ namespace Turbo.Rooms.Cycles
                 if (roomObject.Location.Z < ((IFurnitureLogic)rollingData.Roller.Logic).Height) return false;
             }
 
-            if (_room.RoomMap.GetValidTile(roomObject, rollingData.LocationNext) == null) return false;
+            IRoomTile nextTile = _room.RoomMap.GetValidTile(roomObject, rollingData.LocationNext);
+
+            if (nextTile == null) return false;
+
+            if(nextTile.HighestObject != null && nextTile.HighestObject.Logic is IFurnitureLogic nextTileLogic)
+            {
+                if ((nextTile.Height - nextTileLogic.StackHeight) > roomObject.Location.Z) return false;
+            }
 
             foreach(IRoomObject userObject in _room.RoomUserManager.RoomObjects.Values)
             {
@@ -210,6 +216,17 @@ namespace Turbo.Rooms.Cycles
                 if (userObject.Location.Compare(rollingData.LocationNext)) return false;
             }
 
+            foreach (IRoomObject furnitureObject in _room.RoomFurnitureManager.RoomObjects.Values)
+            {
+                if (furnitureObject.Logic is not IFurnitureLogic furnitureLogic || (furnitureObject.Logic is FurnitureRollerLogic)) continue;
+
+                if (!furnitureLogic.IsRolling) continue;
+
+                if (furnitureObject.Location.Compare(rollingData.Roller.Location)) continue;
+
+                if (furnitureLogic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
+            }
+
             IRoomTile currentTile = movingAvatarLogic.GetCurrentTile();
 
             if (currentTile == null) return false;
@@ -218,34 +235,13 @@ namespace Turbo.Rooms.Cycles
             {
                 if (currentTile.HighestObject.Logic is not FurnitureRollerLogic)
                 {
-                    if (!ProcessRollingFurniture(rollingData, currentTile.HighestObject, true))
-                    {
-                        return false;
-                    }
+                    if (!ProcessRollingFurniture(rollingData, currentTile.HighestObject, true)) return false;
                 }
             }
 
             if (validateOnly) return true;
 
-            double nextHeight = roomObject.Location.Z;
-
-            if (rollingData.Roller != null)
-            {
-                IRoomTile roomTileNext = _room.RoomMap.GetTile(rollingData.LocationNext);
-
-                if (roomTileNext == null) return false;
-
-                if (!roomTileNext.HasLogic<FurnitureRollerLogic>())
-                {
-                    nextHeight -= ((IFurnitureLogic)rollingData.Roller.Logic).StackHeight;
-                }
-            }
-            else
-            {
-                IRoomTile roomTile = _room.RoomMap.GetTile(rollingData.Location);
-
-                if (roomTile != null) nextHeight = roomTile.Height;
-            }
+            double nextHeight = nextTile.GetWalkingHeight();
 
             rollingData.Users.Add(roomObject.Id, new RollerItemData
             {
@@ -295,11 +291,9 @@ namespace Turbo.Rooms.Cycles
                 if (userObject.Location.Compare(rollingData.LocationNext)) return false;
             }
 
-            foreach (IRoomObject furniObject in _room.RoomFurnitureManager.RoomObjects.Values)
+            foreach (IRoomObject furnitureObject in _room.RoomFurnitureManager.RoomObjects.Values)
             {
-                if ((furniObject.Logic is not IFurnitureLogic furnitureLogic) || (furniObject.Logic is FurnitureRollerLogic) || (furniObject == rollingData.Roller)) continue;
-
-                if (!furnitureLogic.FurnitureDefinition.Type.Equals(FurniType.Floor)) continue;
+                if (furnitureObject.Logic is not IFurnitureLogic furnitureLogic || (furnitureObject == roomObject) || (furnitureObject.Logic is FurnitureRollerLogic)) continue;
 
                 if (furnitureLogic.IsRolling)
                 {
@@ -308,7 +302,7 @@ namespace Turbo.Rooms.Cycles
                     if (furnitureLogic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
                 }
 
-                if (furniObject.Location.Compare(rollingData.LocationNext)) return false;
+                if (furnitureObject.Location.Compare(rollingData.LocationNext)) return false;
             }
 
             if (validateOnly) return true;
