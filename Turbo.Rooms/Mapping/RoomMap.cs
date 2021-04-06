@@ -13,20 +13,19 @@ namespace Turbo.Rooms.Mapping
     public class RoomMap : IRoomMap
     {
         private readonly IRoom _room;
-
         private readonly IDictionary<int, IDictionary<int, IRoomTile>> _map;
 
+        public byte[,] Map { get; private set; }
         public IList<IRoomTile> Tiles { get; init; }
         public IPathFinder PathFinder { get; init; }
 
         public RoomMap(IRoom room)
         {
             _room = room;
-
             _map = new Dictionary<int, IDictionary<int, IRoomTile>>();
-            Tiles = new List<IRoomTile>();
 
-            PathFinder = new PathFinder(this);
+            Tiles = new List<IRoomTile>();
+            PathFinder = new Turbo.Rooms.PathFinder.PathFinder(this);
         }
 
         public void Dispose()
@@ -48,6 +47,12 @@ namespace Turbo.Rooms.Mapping
             int totalY = roomModel.TotalY;
 
             if ((totalX == 0) || (totalY == 0)) return;
+
+            Map = new byte[totalX, totalY];
+
+            for (int y = 0; y < totalY; y++)
+                for (int x = 0; x < totalX; x++)
+                    Map[x, y] = 1;
 
             for (int y = 0; y < totalY; y++)
             {

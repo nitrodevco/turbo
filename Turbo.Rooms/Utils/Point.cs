@@ -20,6 +20,15 @@ namespace Turbo.Rooms.Utils
             HeadRotation = headRotation;
         }
 
+        public Point(IPoint point)
+        {
+            X = point.X;
+            Y = point.Y;
+            Z = point.Z;
+            Rotation = point.Rotation;
+            HeadRotation = point.HeadRotation;
+        }
+
         public void SetRotation(Rotation? rotation)
         {
             if (rotation == null) return;
@@ -107,7 +116,7 @@ namespace Turbo.Rooms.Utils
             clone.X -= point.X;
             clone.Y -= point.Y;
 
-            return (clone.X * clone.X) + (clone.Y * clone.Y);
+            return Math.Abs(clone.X * clone.X) + Math.Abs(clone.Y * clone.Y);
         }
 
         public double GetDistanceSquared(IPoint point)
