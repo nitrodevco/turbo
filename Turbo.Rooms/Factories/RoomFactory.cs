@@ -19,13 +19,13 @@ namespace Turbo.Rooms.Factories
 
         public IRoom Create(RoomEntity roomEntity)
         {
+            ILogger<IRoom> logger = _provider.GetService<ILogger<Room>>();
             IRoomManager roomManager = _provider.GetService<IRoomManager>();
             IRoomSecurityFactory roomSecurityFactory = _provider.GetService<IRoomSecurityFactory>();
             IRoomFurnitureFactory roomFurnitureFactory = _provider.GetService<IRoomFurnitureFactory>();
             IRoomUserFactory roomUserFactory = _provider.GetService<IRoomUserFactory>();
-            ILogger<IRoom> logger = _provider.GetService<ILogger<Room>>();
 
-            return new Room(roomManager, logger, roomSecurityFactory, roomFurnitureFactory, roomUserFactory, roomEntity);
+            return new Room(logger, roomManager, roomEntity, roomSecurityFactory, roomFurnitureFactory, roomUserFactory);
         }
     }
 }

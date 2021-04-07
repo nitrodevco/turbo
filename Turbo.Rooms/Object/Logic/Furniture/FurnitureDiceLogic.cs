@@ -51,11 +51,14 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             _remainingDiceCycles = -1;
         }
 
+        public override void OnInteract(IRoomObject roomObject, int param)
+        {
+            return;
+        }
+
         public override bool CanToggle(IRoomObject roomObject)
         {
             if (RoomObject.Location.GetDistanceAround(roomObject.Location) > 2) return false;
-
-            Console.WriteLine("will toggle");
 
             return base.CanToggle(roomObject);
         }

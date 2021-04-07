@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
@@ -17,7 +19,7 @@ namespace Turbo.Furniture
         private readonly IFurnitureManager _furnitureManager;
         private readonly FurnitureEntity _furnitureEntity;
 
-        public IFurnitureDefinition FurnitureDefinition;
+        public IFurnitureDefinition FurnitureDefinition { get; private set; }
         public IRoomObject RoomObject { get; private set; }
         public string PlayerName { get; set; }
 
@@ -59,6 +61,7 @@ namespace Turbo.Furniture
         {
             if(RoomObject != null)
             {
+
                 _furnitureEntity.X = RoomObject.Location.X;
                 _furnitureEntity.Y = RoomObject.Location.Y;
                 _furnitureEntity.Z = RoomObject.Location.Z;
@@ -95,14 +98,23 @@ namespace Turbo.Furniture
 
             if ((roomObject == null) || !roomObject.SetHolder(this)) return false;
 
-            if (roomObject.Logic is IFurnitureLogic furnitureLogic)
-            {
-                furnitureLogic.Setup(FurnitureDefinition, _furnitureEntity.StuffData);
-            }
-
             RoomObject = roomObject;
 
             return true;
+        }
+
+        public async Task<bool> SetupRoomObject()
+        {
+            if (RoomObject == null) return false;
+
+            if (RoomObject.Logic is IFurnitureLogic furnitureLogic)
+            {
+                if (!await furnitureLogic.Setup(FurnitureDefinition, _furnitureEntity.StuffData)) return false;
+
+                return true;
+            }
+
+            return false;
         }
 
         public void ClearRoomObject()
@@ -113,6 +125,11 @@ namespace Turbo.Furniture
 
                 RoomObject = null;
             }
+        }
+
+        public async Task<TeleportPairingDto> GetTeleportPairing()
+        {
+            return await _furnitureManager.GetTeleportPairing(Id);
         }
 
         public int Id => _furnitureEntity.Id;

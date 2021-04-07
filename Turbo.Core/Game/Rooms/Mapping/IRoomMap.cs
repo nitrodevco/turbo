@@ -7,6 +7,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
 {
     public interface IRoomMap : IDisposable
     {
+        public byte[,] Map { get; }
         public IList<IRoomTile> Tiles { get; }
         public IPathFinder PathFinder { get; }
         public void GenerateMap();

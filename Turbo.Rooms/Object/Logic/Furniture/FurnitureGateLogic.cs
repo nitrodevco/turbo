@@ -29,7 +29,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (StuffData.GetState() == _gateOpenState) return true;
 
-            return base.IsOpen();
+            return base.IsOpen(roomObject);
         }
 
         public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Controller;

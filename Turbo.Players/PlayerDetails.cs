@@ -6,8 +6,8 @@ namespace Turbo.Players
 {
     public class PlayerDetails : IPlayerDetails
     {
-        private IPlayer _player { get; set; }
-        private PlayerEntity _playerEntity { get; set; }
+        private readonly IPlayer _player;
+        private readonly PlayerEntity _playerEntity;
 
         public PlayerDetails(IPlayer player, PlayerEntity playerEntity)
         {
@@ -15,9 +15,9 @@ namespace Turbo.Players
             _playerEntity = playerEntity;
         }
 
-        public void SaveNow()
+        public void Save()
         {
-
+            _player.PlayerManager.StorageQueue.Add(_playerEntity);
         }
 
         public int Id

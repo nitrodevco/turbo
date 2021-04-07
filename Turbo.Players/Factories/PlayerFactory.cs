@@ -15,11 +15,12 @@ namespace Turbo.Players.Factories
             _provider = provider;
         }
 
-        public IPlayer Create(IPlayerContainer playerContainer, PlayerEntity playerEntity)
+        public IPlayer Create(PlayerEntity playerEntity)
         {
             ILogger<IPlayer> logger = _provider.GetService<ILogger<Player>>();
+            IPlayerManager playerManager = _provider.GetService<IPlayerManager>();
 
-            return new Player(playerContainer, logger, playerEntity);
+            return new Player(logger, playerManager, playerEntity);
         }
     }
 }

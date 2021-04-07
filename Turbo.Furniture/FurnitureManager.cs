@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Storage;
 using Turbo.Database.Entities.Furniture;
-using Turbo.Database.Queue;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture.Definition;
 
@@ -50,6 +50,16 @@ namespace Turbo.Furniture
             }
 
             return null;
+        }
+
+        public async Task<TeleportPairingDto> GetTeleportPairing(int furnitureId)
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+
+                return await furnitureRepository.GetTeleportPairing(furnitureId);
+            }
         }
 
         private async ValueTask LoadDefinitions()

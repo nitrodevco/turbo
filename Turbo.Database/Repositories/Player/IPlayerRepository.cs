@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Turbo.Database.Dtos;
+using Turbo.Core.Database.Dtos;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Repositories.Player

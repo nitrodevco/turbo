@@ -1,4 +1,6 @@
-﻿using Turbo.Core.Game.Furniture.Constants;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
@@ -21,7 +23,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             base.Dispose();
         }
 
-        public virtual bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
+        public virtual async Task<bool> Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
         {
             if (furnitureDefinition == null) return false;
 

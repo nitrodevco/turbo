@@ -16,6 +16,7 @@ namespace Turbo.Database.Context
     {
         public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }
         public DbSet<FurnitureEntity> Furnitures { get; set; }
+        public DbSet<FurnitureTeleportLinkEntity> FurnitureTeleportLinks { get; set; }
         public DbSet<PlayerEntity> Players { get; set; }
         public DbSet<RoomBanEntity> RoomBans { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }

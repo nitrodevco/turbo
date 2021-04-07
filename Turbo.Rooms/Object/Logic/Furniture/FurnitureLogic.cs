@@ -1,4 +1,6 @@
-﻿using Turbo.Core.Game.Furniture;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Data;
@@ -8,9 +10,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 {
     public class FurnitureLogic : FurnitureLogicBase
     {
-        public override bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
+        public override async Task<bool> Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
         {
-            if (!base.Setup(furnitureDefinition)) return false;
+            if (!await base.Setup(furnitureDefinition, jsonString)) return false;
 
             IStuffData stuffData = CreateStuffDataFromJson(jsonString);
 

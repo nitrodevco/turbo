@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Storage;
 
 namespace Turbo.Core.Game.Players
 {
@@ -13,5 +15,9 @@ namespace Turbo.Core.Game.Players
         public Task<IPlayer> CreatePlayer(int id, ISession session);
         public ValueTask RemovePlayer(int id);
         public ValueTask RemoveAllPlayers();
+        public void ClearPlayerRoomStatus(IPlayer player);
+        public Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null);
+
+        public IStorageQueue StorageQueue { get; }
     }
 }

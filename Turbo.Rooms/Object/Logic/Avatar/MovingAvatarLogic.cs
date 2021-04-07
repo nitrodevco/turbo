@@ -72,6 +72,48 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             WalkPath(location, path);
         }
 
+        public virtual void GoTo(IPoint location, bool selfWalk = false)
+        {
+            NeedsRepathing = false;
+
+            if (location == null) return;
+
+            if (!CanWalk && selfWalk) return;
+
+            location = location.Clone();
+
+            RollerData = null;
+
+            if (RoomObject.Location.Compare(location)) return;
+
+            StopWalking();
+
+            LocationNext = location;
+
+            IRoomTile currentTile = GetCurrentTile();
+            IRoomTile nextTile = GetNextTile();
+
+            if (currentTile == null || nextTile == null) return;
+
+            if(currentTile.HighestObject != null && currentTile.HighestObject.Logic is IFurnitureLogic currentLogic)
+            {
+                if (currentTile.HighestObject != nextTile.HighestObject) currentLogic.OnLeave(RoomObject);
+            }
+
+            currentTile.RemoveRoomObject(RoomObject);
+            nextTile.AddRoomObject(RoomObject);
+
+            if (nextTile.HighestObject != null && nextTile.HighestObject.Logic is IFurnitureLogic nextLogic)
+            {
+                if (nextTile.HighestObject != currentTile.HighestObject) nextLogic.OnLeave(RoomObject);
+            }
+
+            ProcessNextLocation();
+            InvokeCurrentLocation();
+
+            RoomObject.Location.SetRotation(location.Rotation);
+        }
+
         private void WalkPath(IPoint goal, IList<IPoint> path)
         {
             if ((goal == null) || (path == null) || (path.Count == 0))

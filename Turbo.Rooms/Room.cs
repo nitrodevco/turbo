@@ -7,6 +7,7 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Database.Entities.Room;
@@ -23,15 +24,17 @@ namespace Turbo.Rooms
     {
         private static readonly int _disposeTicks = 120;
 
-        public IRoomManager RoomManager { get; private set; }
         public ILogger<IRoom> Logger { get; private set; }
+        public IRoomManager RoomManager { get; private set; }
         public IRoomDetails RoomDetails { get; private set; }
-        public IRoomModel RoomModel { get; private set; }
-        public IRoomMap RoomMap { get; private set; }
         public IRoomCycleManager RoomCycleManager { get; private set; }
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
+
+        public IRoomModel RoomModel { get; private set; }
+        public IRoomMap RoomMap { get; private set; }
+
 
         private readonly IList<ISession> _roomObservers;
         private object _roomObserverLock = new();
@@ -42,16 +45,16 @@ namespace Turbo.Rooms
         public bool IsDisposing { get; private set; }
 
         public Room(
-            IRoomManager roomManager,
             ILogger<IRoom> logger,
+            IRoomManager roomManager,
+            RoomEntity roomEntity,
             IRoomSecurityFactory roomSecurityFactory,
             IRoomFurnitureFactory roomFurnitureFactory,
-            IRoomUserFactory roomUserFactory,
-            RoomEntity roomEntity)
+            IRoomUserFactory roomUserFactory)
         {
             RoomManager = roomManager;
             Logger = logger;
-            RoomDetails = new RoomDetails(roomEntity);
+            RoomDetails = new RoomDetails(this, roomEntity);
 
             RoomCycleManager = new RoomCycleManager(this);
             RoomSecurityManager = roomSecurityFactory.Create(this);
@@ -76,7 +79,6 @@ namespace Turbo.Rooms
             RoomCycleManager.Start();
 
             IsInitialized = true;
-
         }
 
         public async ValueTask DisposeAsync()
@@ -94,7 +96,7 @@ namespace Turbo.Rooms
             if (RoomFurnitureManager != null) await RoomFurnitureManager.DisposeAsync();
             if (RoomSecurityManager != null) await RoomSecurityManager.DisposeAsync();
 
-            Logger.LogInformation("Room disposed");
+            IsDisposed = true;
         }
 
         public void TryDispose()
@@ -140,7 +142,7 @@ namespace Turbo.Rooms
             RoomMap.GenerateMap();
         }
 
-        public void EnterRoom(IPlayer player)
+        public void EnterRoom(IPlayer player, IPoint location = null)
         {
             if (player == null) return;
 
@@ -180,7 +182,7 @@ namespace Turbo.Rooms
 
             player.Session.Flush();
 
-            IRoomObject roomObject = RoomUserManager.EnterRoom(player);
+            IRoomObject roomObject = RoomUserManager.EnterRoom(player, location);
 
             RoomFurnitureManager.SendFurnitureToSession(player.Session);
 
