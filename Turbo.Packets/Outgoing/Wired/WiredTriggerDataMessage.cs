@@ -4,6 +4,6 @@ namespace Turbo.Packets.Outgoing.Wired
 {
     public record WiredTriggerDataMessage
     {
-        public IRoomObject WiredTiggerObject { get; init; }
+        public IRoomObject WiredTriggerObject { get; init; }
     }
 }
