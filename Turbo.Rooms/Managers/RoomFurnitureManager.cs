@@ -331,7 +331,7 @@ namespace Turbo.Rooms.Managers
             });
         }
 
-        private async ValueTask LoadFurniture()
+        private async Task LoadFurniture()
         {
             Furniture.Clear();
             FurnitureOwners.Clear();

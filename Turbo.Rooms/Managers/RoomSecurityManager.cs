@@ -9,6 +9,8 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Packets.Messages;
+using Turbo.Database.Entities.Room;
+using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Permissions;
 
@@ -19,7 +21,7 @@ namespace Turbo.Rooms.Managers
         private readonly IRoom _room;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        private IDictionary<int, string> _rights;
+        public IList<int> Rights { get; private set; }
 
         public RoomSecurityManager(
             IRoom room,
@@ -28,12 +30,12 @@ namespace Turbo.Rooms.Managers
             _room = room;
             _serviceScopeFactory = serviceScopeFactory;
 
-            _rights = new Dictionary<int, string>();
+            Rights = new List<int>();
         }
 
         public async ValueTask InitAsync()
         {
-
+            await LoadRights();
         }
 
         public async ValueTask DisposeAsync()
@@ -63,7 +65,7 @@ namespace Turbo.Rooms.Managers
 
             if (manipulator.HasPermission("any_room_rights")) return true;
 
-            if (_rights.ContainsKey(manipulator.Id)) return true;
+            if (Rights.Contains(manipulator.Id)) return true;
 
             return false;
         }
@@ -132,6 +134,22 @@ namespace Turbo.Rooms.Managers
                     if (!IsController(player)) continue;
 
                     player.Session.Send(composer);
+                }
+            }
+        }
+
+        private async Task LoadRights()
+        {
+            Rights.Clear();
+
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var roomRightRepository = scope.ServiceProvider.GetService<IRoomRightRepository>();
+                var entities = await roomRightRepository.FindAllByRoomIdAsync(_room.Id);
+
+                foreach (RoomRightEntity roomRightEntity in entities)
+                {
+                    Rights.Add(roomRightEntity.PlayerEntityId);
                 }
             }
         }
