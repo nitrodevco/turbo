@@ -40,5 +40,8 @@ namespace Turbo.Database.Entities.Furniture
 
         [Column("stuff_data")]
         public string? StuffData { get; set; }
+
+        [Column("wired_data")]
+        public string? WiredData { get; set; }
     }
 }

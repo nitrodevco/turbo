@@ -7,6 +7,7 @@ using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Core.Game.Rooms.Object.Logic.Wired;
 using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture
@@ -61,7 +62,6 @@ namespace Turbo.Furniture
         {
             if(RoomObject != null)
             {
-
                 _furnitureEntity.X = RoomObject.Location.X;
                 _furnitureEntity.Y = RoomObject.Location.Y;
                 _furnitureEntity.Z = RoomObject.Location.Z;
@@ -70,6 +70,11 @@ namespace Turbo.Furniture
                 if(RoomObject.Logic is IFurnitureLogic furnitureLogic)
                 {
                     _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData, furnitureLogic.StuffData.GetType());
+
+                    if(furnitureLogic is IFurnitureWiredLogic wiredLogic)
+                    {
+                        _furnitureEntity.WiredData = JsonSerializer.Serialize(wiredLogic.WiredData, wiredLogic.WiredData.GetType());
+                    }
                 }
             }
 
@@ -110,6 +115,11 @@ namespace Turbo.Furniture
             if (RoomObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 if (!await furnitureLogic.Setup(FurnitureDefinition, _furnitureEntity.StuffData)) return false;
+
+                if (furnitureLogic is IFurnitureWiredLogic wiredLogic)
+                {
+                    wiredLogic.SetupWiredData(_furnitureEntity.WiredData);
+                }
 
                 return true;
             }

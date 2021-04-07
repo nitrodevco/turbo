@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
+using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 
 namespace Turbo.Rooms.Object.Logic
 {
@@ -25,6 +26,7 @@ namespace Turbo.Rooms.Object.Logic
             _logics.Add("gate", typeof(FurnitureGateLogic));
             _logics.Add("teleport", typeof(FurnitureTeleportLogic));
             _logics.Add("dice", typeof(FurnitureDiceLogic));
+            _logics.Add("wf_trg_enter_room", typeof(FurnitureWiredTriggerEnterRoomLogic));
         }
 
         public IRoomObjectLogic GetLogic(string type)

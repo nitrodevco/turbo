@@ -156,6 +156,10 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("wall_position");
 
+                    b.Property<string>("WiredData")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("wired_data");
+
                     b.Property<int>("X")
                         .HasColumnType("int")
                         .HasColumnName("x");
@@ -208,7 +212,7 @@ namespace Turbo.Database.Migrations
 
                     b.HasIndex("FurnitureEntityTwoId");
 
-                    b.ToTable("furniture_teleport_link");
+                    b.ToTable("furniture_teleport_links");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorEventCategoryEntity", b =>
