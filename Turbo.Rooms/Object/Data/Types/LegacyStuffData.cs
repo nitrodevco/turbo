@@ -1,5 +1,4 @@
 ﻿using System;
-using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Rooms.Object.Data.Types
 {
@@ -9,7 +8,7 @@ namespace Turbo.Rooms.Object.Data.Types
 
         public LegacyStuffData()
         {
-            if((Data == null) || Data.Equals("")) Data = "0";
+            if ((Data == null) || Data.Equals("")) Data = "0";
 
             Console.WriteLine(Data);
         }

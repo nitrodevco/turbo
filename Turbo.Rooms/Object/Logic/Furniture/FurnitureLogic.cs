@@ -27,7 +27,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             StuffData.SetState(state.ToString());
 
-            if(RoomObject.RoomObjectHolder is IFurniture furniture)
+            if (RoomObject.RoomObjectHolder is IFurniture furniture)
             {
                 furniture.Save();
             }
@@ -39,9 +39,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public override void OnStop(IRoomObject roomObject)
         {
-            if(roomObject.Logic is AvatarLogic avatarLogic)
+            if (roomObject.Logic is AvatarLogic avatarLogic)
             {
-                if(CanSit())
+                if (CanSit())
                 {
                     avatarLogic.Sit(true, StackHeight, RoomObject.Location.Rotation);
 
@@ -60,7 +60,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         public override void OnInteract(IRoomObject roomObject, int param)
         {
             if (!CanToggle(roomObject)) return;
-            
+
             param = GetNextToggleableState();
 
             if (!SetState(param)) return;

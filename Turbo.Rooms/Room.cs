@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
@@ -10,7 +9,6 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Database.Entities.Room;
-using Turbo.Furniture.Factories;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Factories;
@@ -204,7 +202,7 @@ namespace Turbo.Rooms
 
         public async Task Cycle()
         {
-            if(_remainingDisposeTicks > -1)
+            if (_remainingDisposeTicks > -1)
             {
                 if (_remainingDisposeTicks == 0)
                 {

@@ -88,7 +88,7 @@ namespace Turbo.Main.PacketHandlers
 
             if (furnitureObject == null) return;
 
-            if(furnitureObject.Logic is IFurnitureLogic furnitureLogic)
+            if (furnitureObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 furnitureLogic.OnInteract(roomObject, message.Param);
             }

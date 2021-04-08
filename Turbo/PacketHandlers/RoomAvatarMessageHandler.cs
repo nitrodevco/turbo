@@ -99,7 +99,7 @@ namespace Turbo.Main.PacketHandlers
 
             if (roomObject.Logic is AvatarLogic avatarLogic)
             {
-                
+
             }
         }
 

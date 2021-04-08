@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Database.Context;
-using Turbo.Database.Entities.Players;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Dtos;
+using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Repositories.Player
 {

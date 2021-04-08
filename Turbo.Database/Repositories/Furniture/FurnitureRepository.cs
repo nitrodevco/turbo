@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Furniture;
-using System.Linq;
 
 namespace Turbo.Database.Repositories.Furniture
 {

@@ -47,7 +47,7 @@ namespace Turbo.Furniture
 
             ClearRoomObject();
 
-            if(_furnitureContainer != null)
+            if (_furnitureContainer != null)
             {
                 _furnitureContainer.RemoveFurniture(Id);
             }
@@ -59,14 +59,14 @@ namespace Turbo.Furniture
 
         public void Save()
         {
-            if(RoomObject != null)
+            if (RoomObject != null)
             {
                 _furnitureEntity.X = RoomObject.Location.X;
                 _furnitureEntity.Y = RoomObject.Location.Y;
                 _furnitureEntity.Z = RoomObject.Location.Z;
                 _furnitureEntity.Rotation = RoomObject.Location.Rotation;
 
-                if(RoomObject.Logic is IFurnitureLogic furnitureLogic)
+                if (RoomObject.Logic is IFurnitureLogic furnitureLogic)
                 {
                     _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData);
                 }
@@ -81,7 +81,7 @@ namespace Turbo.Furniture
 
             _room = room;
 
-            if(_furnitureEntity.RoomEntityId != room.Id)
+            if (_furnitureEntity.RoomEntityId != room.Id)
             {
                 _furnitureEntity.RoomEntityId = room.Id;
 

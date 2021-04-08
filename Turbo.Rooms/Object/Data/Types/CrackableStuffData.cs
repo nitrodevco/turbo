@@ -1,6 +1,4 @@
-﻿using Turbo.Core.Packets.Messages;
-
-namespace Turbo.Rooms.Object.Data.Types
+﻿namespace Turbo.Rooms.Object.Data.Types
 {
     public class CrackableStuffData : StuffDataBase
     {
