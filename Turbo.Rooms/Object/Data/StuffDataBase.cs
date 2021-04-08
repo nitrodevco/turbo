@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Turbo.Core.Game.Rooms.Object.Data;
-using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Rooms.Object.Data
 {

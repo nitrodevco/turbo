@@ -2,9 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Rooms.Object;
 using Turbo.Database.Entities.Room;
-using Turbo.Furniture.Factories;
 
 namespace Turbo.Rooms.Factories
 {

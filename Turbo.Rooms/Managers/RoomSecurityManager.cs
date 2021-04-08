@@ -72,15 +72,15 @@ namespace Turbo.Rooms.Managers
             bool isOwner = false;
             RoomControllerLevel controllerLevel = RoomControllerLevel.None;
 
-            if(roomObject.RoomObjectHolder is IPlayer player)
+            if (roomObject.RoomObjectHolder is IPlayer player)
             {
-                if(IsOwner(player))
+                if (IsOwner(player))
                 {
                     isOwner = true;
                     controllerLevel = RoomControllerLevel.Moderator;
                 }
 
-                else if(IsController(player))
+                else if (IsController(player))
                 {
                     controllerLevel = RoomControllerLevel.Rights;
                 }
@@ -96,7 +96,7 @@ namespace Turbo.Rooms.Managers
                 // composer 339 room owner
             }
 
-            if(roomObject.Logic is IMovingAvatarLogic avatarLogic)
+            if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
             {
                 avatarLogic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)controllerLevel).ToString());
             }
@@ -104,9 +104,9 @@ namespace Turbo.Rooms.Managers
 
         public void SendOwnersComposer(IComposer composer)
         {
-            foreach(IRoomObject roomObject in _room.RoomUserManager.RoomObjects.Values)
+            foreach (IRoomObject roomObject in _room.RoomUserManager.RoomObjects.Values)
             {
-                if(roomObject.RoomObjectHolder is IPlayer player)
+                if (roomObject.RoomObjectHolder is IPlayer player)
                 {
                     if (!IsOwner(player)) continue;
 

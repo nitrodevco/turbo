@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Turbo.Core.Game.Rooms.Mapping;
-using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Furniture;
-using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
@@ -43,14 +41,14 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             IRoomTile roomTile = RoomObject.Room.RoomMap.GetValidTile(RoomObject, location);
 
-            if(roomTile == null)
+            if (roomTile == null)
             {
                 StopWalking();
 
                 return;
             }
 
-            if(roomTile.CanLay() && roomTile.HighestObject != null)
+            if (roomTile.CanLay() && roomTile.HighestObject != null)
             {
                 location = RoomObject.Room.RoomMap.GetValidPillowPoint(RoomObject, roomTile.HighestObject, location);
 

@@ -6,7 +6,6 @@ using Turbo.Core.Game.Rooms.Object.Data;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Data;
-using Turbo.Rooms.Object.Data.Types;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
@@ -125,9 +124,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         {
             if (UsagePolicy == FurniUsagePolicy.Nobdy) return false;
 
-            if(UsagePolicy == FurniUsagePolicy.Controller)
+            if (UsagePolicy == FurniUsagePolicy.Controller)
             {
-                if(roomObject.RoomObjectHolder is IRoomManipulator roomManipulator)
+                if (roomObject.RoomObjectHolder is IRoomManipulator roomManipulator)
                 {
                     if (RoomObject.Room.RoomSecurityManager.IsController(roomManipulator)) return true;
                 }

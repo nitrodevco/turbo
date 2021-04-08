@@ -85,7 +85,7 @@ namespace Turbo.Rooms.Managers
 
             roomObject.SetLocation(location);
 
-            if(!avatarLogic.OnReady())
+            if (!avatarLogic.OnReady())
             {
                 roomObject.Dispose();
 
@@ -156,7 +156,7 @@ namespace Turbo.Rooms.Managers
                     RoomObjectAvatarDanceType danceType = avatarLogic.DanceType;
                     bool isIdle = avatarLogic.IsIdle;
 
-                    if(danceType > RoomObjectAvatarDanceType.None)
+                    if (danceType > RoomObjectAvatarDanceType.None)
                     {
                         composers.Add(new DanceMessage
                         {
@@ -165,7 +165,7 @@ namespace Turbo.Rooms.Managers
                         });
                     }
 
-                    if(isIdle)
+                    if (isIdle)
                     {
                         composers.Add(new SleepMessage
                         {

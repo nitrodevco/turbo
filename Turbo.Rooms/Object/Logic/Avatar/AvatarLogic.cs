@@ -30,7 +30,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             await base.Cycle();
 
-            if(_remainingIdleCycles > -1)
+            if (_remainingIdleCycles > -1)
             {
                 if (_remainingIdleCycles == 0)
                 {
@@ -102,7 +102,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (HasStatus(RoomObjectAvatarStatus.Lay)) return;
 
-            if(headOnly || HasStatus(RoomObjectAvatarStatus.Sit))
+            if (headOnly || HasStatus(RoomObjectAvatarStatus.Sit))
             {
                 RoomObject.Location.HeadRotation = RoomObject.Location.CalculateHeadRotation(point);
 
@@ -138,7 +138,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public void Expression(RoomObjectAvatarExpression expressionType)
         {
-            if(expressionType == RoomObjectAvatarExpression.Idle)
+            if (expressionType == RoomObjectAvatarExpression.Idle)
             {
                 Idle(true);
 
@@ -170,7 +170,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public void Idle(bool flag)
         {
-            if(!flag)
+            if (!flag)
             {
                 ResetIdleCycle();
             }

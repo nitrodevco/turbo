@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Turbo.Core.Game.Furniture.Constants;
+﻿using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 
@@ -18,7 +13,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         {
             IRoomTile roomTile = RoomObject.Room.RoomMap.GetTile(RoomObject.Location);
 
-            if ((roomTile == null) || (roomTile.Users.Count > 0))  return;
+            if ((roomTile == null) || (roomTile.Users.Count > 0)) return;
 
             base.OnInteract(roomObject, param);
         }
