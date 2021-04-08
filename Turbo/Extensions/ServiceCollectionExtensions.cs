@@ -64,6 +64,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomFurnitureFactory, RoomFurnitureFactory>();
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
+            services.AddSingleton<IRoomWiredFactory, RoomWiredFactory>();
         }
 
         public static void AddNetworking(this IServiceCollection services)

@@ -11,7 +11,6 @@ using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Database.Entities.Room;
-using Turbo.Furniture.Factories;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Factories;
@@ -30,6 +29,7 @@ namespace Turbo.Rooms
         public IRoomCycleManager RoomCycleManager { get; private set; }
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
+        public IRoomWiredManager RoomWiredManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
 
         public IRoomModel RoomModel { get; private set; }
@@ -50,6 +50,7 @@ namespace Turbo.Rooms
             RoomEntity roomEntity,
             IRoomSecurityFactory roomSecurityFactory,
             IRoomFurnitureFactory roomFurnitureFactory,
+            IRoomWiredFactory roomWiredFactory,
             IRoomUserFactory roomUserFactory)
         {
             RoomManager = roomManager;
@@ -59,6 +60,7 @@ namespace Turbo.Rooms
             RoomCycleManager = new RoomCycleManager(this);
             RoomSecurityManager = roomSecurityFactory.Create(this);
             RoomFurnitureManager = roomFurnitureFactory.Create(this);
+            RoomWiredManager = roomWiredFactory.Create(this);
             RoomUserManager = roomUserFactory.Create(this);
 
             _roomObservers = new List<ISession>();
