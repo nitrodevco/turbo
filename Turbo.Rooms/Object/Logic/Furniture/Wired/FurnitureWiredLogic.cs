@@ -92,14 +92,14 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
             // send wired config (class specific)
         }
 
-        public virtual bool CanTrigger()
+        public virtual bool CanTrigger(IWiredArguments wiredArguments = null)
         {
             if (_wiredData == null) return false;
 
             return true;
         }
 
-        public virtual void OnTriggered()
+        public virtual void OnTriggered(IWiredArguments wiredArguments = null)
         {
             ProcessAnimation();
         }
@@ -112,7 +112,5 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
         public virtual IWiredData WiredData => _wiredData;
         public int WiredKey => 0;
-
-        public virtual bool RequiresPlayer => false;
     }
 }

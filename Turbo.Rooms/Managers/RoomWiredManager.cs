@@ -24,7 +24,7 @@ namespace Turbo.Rooms.Managers
             _logicFactory = logicFactory;
         }
 
-        public bool ProcessTriggers(string type)
+        public bool ProcessTriggers(string type, IWiredArguments wiredArguments = null)
         {
             Type logicType = _logicFactory.Logics[type];
 
@@ -38,7 +38,7 @@ namespace Turbo.Rooms.Managers
 
             foreach (IRoomObject roomObject in roomObjects)
             {
-                if (!ProcessTrigger(roomObject)) continue;
+                if (!ProcessTrigger(roomObject, wiredArguments)) continue;
 
                 didTrigger = true;
             }
@@ -46,7 +46,7 @@ namespace Turbo.Rooms.Managers
             return didTrigger;
         }
 
-        public bool ProcessTrigger(IRoomObject roomObject)
+        public bool ProcessTrigger(IRoomObject roomObject, IWiredArguments wiredArguments = null)
         {
             if (roomObject.Logic is not IFurnitureWiredLogic wiredLogic) return false;
 
@@ -54,16 +54,16 @@ namespace Turbo.Rooms.Managers
 
             if (roomTile == null) return false;
 
-            if (!ProcessConditionsAtTile(roomTile)) return false;
+            if (!ProcessConditionsAtTile(roomTile, wiredArguments)) return false;
 
-            if (!CanTrigger(roomObject)) return false;
+            if (!CanTrigger(roomObject, wiredArguments)) return false;
 
-            ProcessActionsAtTile(roomTile);
+            ProcessActionsAtTile(roomTile, wiredArguments);
 
             return true;
         }
 
-        public bool ProcessConditionsAtTile(IRoomTile roomTile)
+        public bool ProcessConditionsAtTile(IRoomTile roomTile, IWiredArguments wiredArguments = null)
         {
             IList<IRoomObject> roomObjects = GetConditionsAtTile(roomTile);
 
@@ -71,14 +71,14 @@ namespace Turbo.Rooms.Managers
             {
                 foreach(IRoomObject roomObject in roomObjects)
                 {
-                    if (!CanTrigger(roomObject)) return false;
+                    if (!CanTrigger(roomObject, wiredArguments)) return false;
                 }
             }
 
             return true;
         }
 
-        public bool ProcessActionsAtTile(IRoomTile roomTile)
+        public bool ProcessActionsAtTile(IRoomTile roomTile, IWiredArguments wiredArguments = null)
         {
             IList<IRoomObject> roomObjects = GetActionsAtTile(roomTile);
 
@@ -86,20 +86,20 @@ namespace Turbo.Rooms.Managers
             {
                 foreach (IRoomObject roomObject in roomObjects)
                 {
-                    if (!CanTrigger(roomObject)) return false;
+                    if (!CanTrigger(roomObject, wiredArguments)) return false;
                 }
             }
 
             return true;
         }
 
-        public bool CanTrigger(IRoomObject roomObject)
+        public bool CanTrigger(IRoomObject roomObject, IWiredArguments wiredArguments = null)
         {
             IFurnitureWiredLogic wiredLogic = (IFurnitureWiredLogic)roomObject.Logic;
 
-            if (!wiredLogic.CanTrigger()) return false;
+            if (!wiredLogic.CanTrigger(wiredArguments)) return false;
 
-            wiredLogic.OnTriggered();
+            wiredLogic.OnTriggered(wiredArguments);
 
             return true;
         }

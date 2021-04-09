@@ -8,6 +8,7 @@ using Turbo.Core.Game.Rooms.Object.Data;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Data;
+using Turbo.Rooms.Object.Logic.Furniture.Wired;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
@@ -64,11 +65,21 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnEnter(IRoomObject roomObject)
         {
+            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_ON_FURNI, new WiredArguments
+            {
+                RoomObject = roomObject
+            });
+
             return;
         }
 
         public virtual void OnLeave(IRoomObject roomObject)
         {
+            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_OFF_FURNI, new WiredArguments
+            {
+                RoomObject = roomObject
+            });
+
             return;
         }
 
@@ -89,6 +100,11 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnInteract(IRoomObject roomObject, int param)
         {
+            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_ACTION_TOGGLE_FURNI_STATE, new WiredArguments
+            {
+                RoomObject = roomObject
+            });
+
             return;
         }
 

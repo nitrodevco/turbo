@@ -1,20 +1,16 @@
 ﻿using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic.Wired;
 
 namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers
 {
     public class FurnitureWiredTriggerEnterRoomLogic : FurnitureWiredTriggerLogic
     {
-        public bool CanTrigger(IRoomObject roomObject)
+        public override bool CanTrigger(IWiredArguments wiredArguments = null)
         {
-            if(RequiresPlayer)
-            {
-                if (roomObject.RoomObjectHolder is not IPlayer player) return false;
-            }
-
+            if (wiredArguments.RoomObject == null) return false;
+            
             return true;
         }
-
-        public override bool RequiresPlayer => true;
     }
 }

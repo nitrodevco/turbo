@@ -16,6 +16,7 @@ using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Factories;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
+using Turbo.Rooms.Object.Logic.Furniture.Wired;
 
 namespace Turbo.Rooms
 {
@@ -194,7 +195,10 @@ namespace Turbo.Rooms
 
             AddObserver(player.Session);
 
-            RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom);
+            RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, new WiredArguments
+            {
+                RoomObject = roomObject
+            });
         }
 
         public void AddObserver(ISession session)
