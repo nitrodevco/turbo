@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 
@@ -26,7 +27,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
 
         public void ResetTileHeight();
         public double GetWalkingHeight();
-        public bool HasLogic<T>();
+        public bool HasLogic(Type type);
 
         public bool IsOpen(IRoomObject roomObject = null);
         public bool CanWalk(IRoomObject roomObject = null);

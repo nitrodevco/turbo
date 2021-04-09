@@ -17,6 +17,7 @@ namespace Turbo.Core.Game.Rooms
         public IRoomCycleManager RoomCycleManager { get; }
         public IRoomSecurityManager RoomSecurityManager { get; }
         public IRoomFurnitureManager RoomFurnitureManager { get; }
+        public IRoomWiredManager RoomWiredManager { get; }
         public IRoomUserManager RoomUserManager { get; }
 
         public IRoomModel RoomModel { get; }

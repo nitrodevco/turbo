@@ -2,9 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Rooms.Object;
 using Turbo.Database.Entities.Room;
-using Turbo.Furniture.Factories;
 
 namespace Turbo.Rooms.Factories
 {
@@ -23,9 +21,10 @@ namespace Turbo.Rooms.Factories
             IRoomManager roomManager = _provider.GetService<IRoomManager>();
             IRoomSecurityFactory roomSecurityFactory = _provider.GetService<IRoomSecurityFactory>();
             IRoomFurnitureFactory roomFurnitureFactory = _provider.GetService<IRoomFurnitureFactory>();
+            IRoomWiredFactory roomWiredFactory = _provider.GetService<IRoomWiredFactory>();
             IRoomUserFactory roomUserFactory = _provider.GetService<IRoomUserFactory>();
 
-            return new Room(logger, roomManager, roomEntity, roomSecurityFactory, roomFurnitureFactory, roomUserFactory);
+            return new Room(logger, roomManager, roomEntity, roomSecurityFactory, roomFurnitureFactory, roomWiredFactory, roomUserFactory);
         }
     }
 }

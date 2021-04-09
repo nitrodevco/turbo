@@ -15,7 +15,7 @@ namespace Turbo.Rooms.Object
 
         public IRoomObject Create(IRoom room, IRoomObjectContainer roomObjectContainer, int id, string type, string logicType)
         {
-            IRoomObjectLogic logic = _logicFactory.GetLogic(logicType);
+            IRoomObjectLogic logic = _logicFactory.Create(logicType);
 
             IRoomObject roomObject = new RoomObject(room, roomObjectContainer, id, type);
 

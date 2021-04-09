@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms;
@@ -25,8 +23,8 @@ namespace Turbo.Rooms.Cycles
 
         private int _remainingRollerCycles = _rollerCycles;
 
-        private IList<IRollerData> _lastRollingDatas;
-        private IList<IPoint> _lastRollingPoints;
+        private List<IRollerData> _lastRollingDatas;
+        private List<IPoint> _lastRollingPoints;
 
         public RoomRollerCycle(IRoom room) : base(room)
         {
@@ -52,11 +50,11 @@ namespace Turbo.Rooms.Cycles
                 _remainingRollerCycles = _rollerCycles;
             }
 
-            IList<IRoomObject> rollers = _room.RoomFurnitureManager.GetRoomObjectsWithLogic<FurnitureRollerLogic>();
+            IList<IRoomObject> rollers = _room.RoomFurnitureManager.GetRoomObjectsWithLogic(typeof(FurnitureRollerLogic));
 
             if (rollers.Count == 0) return;
 
-            IList<IRollerData> rollingDatas = new List<IRollerData>();
+            List<IRollerData> rollingDatas = new();
 
             foreach(IRoomObject roomObject in rollers)
             {
@@ -71,8 +69,8 @@ namespace Turbo.Rooms.Cycles
 
             if (rollingDatas.Count == 0) return;
 
-            IList<IPoint> points = new List<IPoint>();
-            IList<IComposer> composers = new List<IComposer>();
+            List<IPoint> points = new();
+            List<IComposer> composers = new();
 
             foreach(IRollerData rollingData in rollingDatas)
             {
@@ -315,7 +313,7 @@ namespace Turbo.Rooms.Cycles
 
                 if (roomTileNext == null) return false;
 
-                if (!roomTileNext.HasLogic<FurnitureRollerLogic>())
+                if (!roomTileNext.HasLogic(typeof(FurnitureRollerLogic)))
                 {
                     nextHeight -= ((IFurnitureLogic)rollingData.Roller.Logic).StackHeight;
                 }

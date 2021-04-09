@@ -149,7 +149,7 @@ namespace Turbo.Rooms.Mapping
 
             if ((pillowPoints == null) || (pillowPoints.Count == 0)) return null;
 
-            foreach(IPoint point in pillowPoints)
+            foreach (IPoint point in pillowPoints)
             {
                 if (furnitureObject.Location.Rotation == Rotation.North) originalPoint.Y = point.Y;
                 else originalPoint.X = point.X;
@@ -168,13 +168,13 @@ namespace Turbo.Rooms.Mapping
 
             IRoomTile highestTile = null;
 
-            foreach(IPoint point in points)
+            foreach (IPoint point in points)
             {
                 IRoomTile roomTile = GetTile(point);
 
                 if (roomTile == null) continue;
 
-                if(highestTile == null)
+                if (highestTile == null)
                 {
                     highestTile = roomTile;
 
@@ -206,19 +206,19 @@ namespace Turbo.Rooms.Mapping
             IList<IRoomObject> furnitureObjects = new List<IRoomObject>();
             List<IPoint> points = new List<IPoint>();
 
-            foreach(IRoomObject roomObject in roomObjects)
+            foreach (IRoomObject roomObject in roomObjects)
             {
-                if(roomObject.Logic is IFurnitureLogic furnitureLogic)
+                if (roomObject.Logic is IFurnitureLogic furnitureLogic)
                 {
                     IList<IPoint> affectedPoints = AffectedPoints.GetPoints(roomObject);
 
-                    if(affectedPoints.Count > 0)
+                    if (affectedPoints.Count > 0)
                     {
-                        foreach(IPoint affectedPoint in affectedPoints)
+                        foreach (IPoint affectedPoint in affectedPoints)
                         {
                             IRoomTile roomTile = GetTile(affectedPoint);
 
-                            if(roomTile != null)
+                            if (roomTile != null)
                             {
                                 roomTile.AddRoomObject(roomObject);
 
@@ -230,7 +230,7 @@ namespace Turbo.Rooms.Mapping
                     furnitureObjects.Add(roomObject);
                 }
 
-                else if(roomObject.Logic is IMovingAvatarLogic avatarLogic)
+                else if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
                 {
                     IRoomTile roomTile = GetTile(roomObject.Location);
 
@@ -251,7 +251,7 @@ namespace Turbo.Rooms.Mapping
 
             if (furnitureObjects.Count > 0)
             {
-                if(furnitureObjects.Count == 1)
+                if (furnitureObjects.Count == 1)
                 {
                     _room.SendComposer(new ObjectAddMessage
                     {
@@ -269,7 +269,7 @@ namespace Turbo.Rooms.Mapping
                 UpdatePoints(true, points.ToArray());
             }
 
-            if(userObjects.Count > 0)
+            if (userObjects.Count > 0)
             {
                 _room.SendComposer(new UsersMessage
                 {
@@ -289,13 +289,13 @@ namespace Turbo.Rooms.Mapping
 
             List<IPoint> points = new List<IPoint>();
 
-            if(oldLocation != null)
+            if (oldLocation != null)
             {
                 IList<IPoint> oldAffectedPoints = AffectedPoints.GetPoints(roomObject, oldLocation);
 
-                if(oldAffectedPoints.Count > 0)
+                if (oldAffectedPoints.Count > 0)
                 {
-                    foreach(IPoint point in oldAffectedPoints)
+                    foreach (IPoint point in oldAffectedPoints)
                     {
                         IRoomTile roomTile = GetTile(point);
 
@@ -328,7 +328,7 @@ namespace Turbo.Rooms.Mapping
 
             UpdatePoints(true, points.ToArray());
 
-            if(sendUpdate) _room.SendComposer(new ObjectUpdateMessage
+            if (sendUpdate) _room.SendComposer(new ObjectUpdateMessage
             {
                 Object = roomObject
             });
@@ -410,7 +410,7 @@ namespace Turbo.Rooms.Mapping
 
                 if ((roomTile == null) || roomTiles.Contains(roomTile)) continue;
 
-                if(updateUsers && roomTile.Users.Count > 0)
+                if (updateUsers && roomTile.Users.Count > 0)
                 {
                     foreach (IRoomObject roomObject in roomTile.Users.Values)
                     {
@@ -426,7 +426,7 @@ namespace Turbo.Rooms.Mapping
                 // check roomTiles count, if count equals max byte length, send height packet and clear the list
             }
 
-            if(roomTiles.Count > 0)
+            if (roomTiles.Count > 0)
             {
                 _room.SendComposer(new HeightMapUpdateMessage
                 {

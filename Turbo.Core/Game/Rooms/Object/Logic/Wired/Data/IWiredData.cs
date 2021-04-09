@@ -13,5 +13,8 @@ namespace Turbo.Core.Game.Rooms.Object.Logic.Wired.Data
         public int WiredType { get; }
         public bool SelectionEnabled { get; }
         public int SelectionLimit { get; }
+        public IList<int> SelectionIds { get; set; }
+        public string StringParameter { get; set; }
+        public IList<int> IntParameters { get; set; }
     }
 }
