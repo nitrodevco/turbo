@@ -10,48 +10,46 @@ namespace Turbo.Players
 {
     public class Player : IPlayer
     {
-        private IPlayerContainer _playerContainer { get; set; }
-
         public ILogger<IPlayer> Logger { get; private set; }
-
-        public ISession Session { get; set; }
+        public IPlayerManager PlayerManager { get; private set; }
         public IPlayerDetails PlayerDetails { get; private set; }
+
+        public ISession Session { get; private set; }
         public IRoomObject RoomObject { get; private set; }
 
-        private bool _isDisposing { get; set; }
+        public bool IsInitialized { get; private set; }
+        public bool IsDisposed { get; private set; }
+        public bool IsDisposing { get; private set; }
 
         public Player(
-            IPlayerContainer playerContainer,
             ILogger<IPlayer> logger,
+            IPlayerManager playerManager,
             PlayerEntity playerEntity)
         {
-            _playerContainer = playerContainer;
-
             Logger = logger;
+            PlayerManager = playerManager;
             PlayerDetails = new PlayerDetails(this, playerEntity);
         }
 
         public async ValueTask InitAsync()
         {
+            if (IsInitialized) return;
             // load roles
             // load inventory
             // load messenger
 
-            Logger.LogInformation("Player initialized");
+            IsInitialized = true;
         }
 
         public async ValueTask DisposeAsync()
         {
-            if (_isDisposing) return;
+            if (IsDisposing) return;
 
-            _isDisposing = true;
+            IsDisposing = true;
 
             ClearRoomObject();
 
-            if (_playerContainer != null)
-            {
-                await _playerContainer.RemovePlayer(Id);
-            }
+            if (PlayerManager != null) await PlayerManager.RemovePlayer(Id);
 
             // set offline in PlayerDetails
 
@@ -61,9 +59,7 @@ namespace Turbo.Players
 
             await Session.DisposeAsync();
 
-            PlayerDetails.SaveNow();
-
-            Logger.LogInformation("Player disposed");
+            IsDisposed = true;
         }
 
         public bool SetSession(ISession session)
@@ -92,11 +88,9 @@ namespace Turbo.Players
 
         public void ClearRoomObject()
         {
-            IRoom room = null;
-
             if (RoomObject != null)
             {
-                room = RoomObject.Room;
+                IRoom room = RoomObject.Room;
 
                 RoomObject.Dispose();
 
@@ -107,7 +101,7 @@ namespace Turbo.Players
                 // update all messenger friends
             }
 
-            _playerContainer.ClearPlayerRoomStatus(this);
+            PlayerManager.ClearPlayerRoomStatus(this);
         }
 
         public bool HasPermission(string permission)

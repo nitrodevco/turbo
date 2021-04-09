@@ -1,4 +1,4 @@
-﻿namespace Turbo.Database.Dtos
+﻿namespace Turbo.Core.Database.Dtos
 {
     public class PlayerUsernameDto
     {

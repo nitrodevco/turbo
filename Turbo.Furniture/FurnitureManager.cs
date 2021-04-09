@@ -2,8 +2,10 @@
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture.Definition;
@@ -12,16 +14,19 @@ namespace Turbo.Furniture
 {
     public class FurnitureManager : IFurnitureManager
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly ILogger<FurnitureManager> _logger;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IStorageQueue _storageQueue;
 
         private IDictionary<int, IFurnitureDefinition> _furnitureDefinitions;
 
         public FurnitureManager(
             ILogger<FurnitureManager> logger,
+            IStorageQueue storageQueue,
             IServiceScopeFactory scopeFactory)
         {
             _logger = logger;
+            _storageQueue = storageQueue;
             _serviceScopeFactory = scopeFactory;
 
             _furnitureDefinitions = new Dictionary<int, IFurnitureDefinition>();
@@ -32,9 +37,9 @@ namespace Turbo.Furniture
             await LoadDefinitions();
         }
 
-        public async ValueTask DisposeAsync()
+        public ValueTask DisposeAsync()
         {
-
+            return ValueTask.CompletedTask;
         }
 
         public IFurnitureDefinition GetFurnitureDefinition(int id)
@@ -45,6 +50,16 @@ namespace Turbo.Furniture
             }
 
             return null;
+        }
+
+        public async Task<TeleportPairingDto> GetTeleportPairing(int furnitureId)
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+
+                return await furnitureRepository.GetTeleportPairing(furnitureId);
+            }
         }
 
         private async ValueTask LoadDefinitions()
@@ -71,5 +86,7 @@ namespace Turbo.Furniture
 
             _logger.LogInformation("Loaded {0} furniture definitions", _furnitureDefinitions.Count);
         }
+
+        public IStorageQueue StorageQueue => _storageQueue;
     }
 }

@@ -41,8 +41,8 @@ namespace Turbo.Main.Tests.PacketHandlers
             _session = new Session(channelHandlerContextMock.Object, revisionMock.Object, new NullLogger<Session>());
 
             // Player
-            var playerContainerMock = new Mock<IPlayerContainer>();
-            _player = new Player(playerContainerMock.Object, new NullLogger<IPlayer>(), new Database.Entities.Players.PlayerEntity());
+            var playerManagerMock = new Mock<IPlayerManager>();
+            _player = new Player(new NullLogger<IPlayer>(), playerManagerMock.Object, new Database.Entities.Players.PlayerEntity());
 
             // Object mocking object
             _fixture = new Fixture();

@@ -84,6 +84,7 @@ namespace Turbo.Rooms.Managers
             if (location == null) location = _room.RoomModel.DoorLocation.Clone();
 
             roomObject.SetLocation(location);
+            roomObject.Location.SetRotation(location.Rotation);
 
             if (!avatarLogic.OnReady())
             {
@@ -98,10 +99,12 @@ namespace Turbo.Rooms.Managers
 
             UpdateTotalUsers();
 
+            avatarLogic.CanWalk = true;
+
             return roomObject;
         }
 
-        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectUserHolder userHolder, IPoint location)
+        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectUserHolder userHolder, IPoint location = null)
         {
             if (userHolder == null) return null;
 

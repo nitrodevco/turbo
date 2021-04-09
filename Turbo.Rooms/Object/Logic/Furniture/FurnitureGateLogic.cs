@@ -18,13 +18,13 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             base.OnInteract(roomObject, param);
         }
 
-        public override bool IsOpen()
+        public override bool IsOpen(IRoomObject roomObject = null)
         {
             if (StuffData.GetState() == _gateClosedState) return false;
 
             if (StuffData.GetState() == _gateOpenState) return true;
 
-            return base.IsOpen();
+            return base.IsOpen(roomObject);
         }
 
         public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Controller;

@@ -76,9 +76,23 @@ namespace Turbo.Rooms.Cycles
 
             if (avatarLogic.CurrentPath.Count == 0)
             {
-                avatarLogic.StopWalking();
+                if (avatarLogic.BeforeGoalAction != null)
+                {
+                    avatarLogic.InvokeBeforeGoalAction();
 
-                return;
+                    if (avatarLogic.CurrentPath.Count == 0)
+                    {
+                        avatarLogic.StopWalking();
+
+                        return;
+                    }
+                }
+                else
+                {
+                    avatarLogic.StopWalking();
+
+                    return;
+                }
             }
 
             IPoint nextLocation = avatarLogic.CurrentPath[0];
@@ -133,7 +147,7 @@ namespace Turbo.Rooms.Cycles
 
             if (isGoal)
             {
-                if (!nextTile.IsOpen() || ((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id)))
+                if (!nextTile.IsOpen(roomObject) || ((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id)))
                 {
                     avatarLogic.StopWalking();
 
@@ -161,7 +175,7 @@ namespace Turbo.Rooms.Cycles
                     avatarLogic.NeedsRepathing = true;
                 }
 
-                if (!nextTile.IsOpen() || nextTile.CanSit() || nextTile.CanLay())
+                if (!nextTile.IsOpen(roomObject) || nextTile.CanSit(roomObject) || nextTile.CanLay(roomObject))
                 {
                     avatarLogic.NeedsRepathing = true;
                 }

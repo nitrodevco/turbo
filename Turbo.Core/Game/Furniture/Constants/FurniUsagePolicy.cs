@@ -2,7 +2,7 @@
 {
     public enum FurniUsagePolicy
     {
-        Nobdy,
+        Nobody,
         Controller,
         Everybody
     }

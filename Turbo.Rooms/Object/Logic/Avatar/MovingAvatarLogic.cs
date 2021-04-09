@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object.Constants;
@@ -15,25 +16,29 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public IPoint LocationNext { get; set; }
         public IPoint LocationGoal { get; private set; }
         public IList<IPoint> CurrentPath { get; private set; }
+        public Action<IRoomObject> BeforeGoalAction { get; set; }
+        public Action<IRoomObject> GoalAction { get; set; }
 
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; private set; }
-        public bool CanWalk { get; private set; }
+        public bool CanWalk { get; set; }
 
         public MovingAvatarLogic()
         {
             Statuses = new Dictionary<string, string>();
         }
 
-        public virtual void WalkTo(IPoint location)
+        public virtual void WalkTo(IPoint location, bool selfWalk = false)
         {
             NeedsRepathing = false;
 
             if (location == null) return;
 
+            if (!CanWalk && selfWalk) return;
+
             location = location.Clone();
 
-            // clear roller data
+            RollerData = null;
 
             ProcessNextLocation();
 
@@ -65,6 +70,48 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             WalkPath(location, path);
         }
 
+        public virtual void GoTo(IPoint location, bool selfWalk = false)
+        {
+            NeedsRepathing = false;
+
+            if (location == null) return;
+
+            if (!CanWalk && selfWalk) return;
+
+            location = location.Clone();
+
+            RollerData = null;
+
+            if (RoomObject.Location.Compare(location)) return;
+
+            StopWalking();
+
+            LocationNext = location;
+
+            IRoomTile currentTile = GetCurrentTile();
+            IRoomTile nextTile = GetNextTile();
+
+            if (currentTile == null || nextTile == null) return;
+
+            if(currentTile.HighestObject != null && currentTile.HighestObject.Logic is IFurnitureLogic currentLogic)
+            {
+                if (currentTile.HighestObject != nextTile.HighestObject) currentLogic.OnLeave(RoomObject);
+            }
+
+            currentTile.RemoveRoomObject(RoomObject);
+            nextTile.AddRoomObject(RoomObject);
+
+            if (nextTile.HighestObject != null && nextTile.HighestObject.Logic is IFurnitureLogic nextLogic)
+            {
+                if (nextTile.HighestObject != currentTile.HighestObject) nextLogic.OnLeave(RoomObject);
+            }
+
+            ProcessNextLocation();
+            InvokeCurrentLocation();
+
+            RoomObject.Location.SetRotation(location.Rotation);
+        }
+
         private void WalkPath(IPoint goal, IList<IPoint> path)
         {
             if ((goal == null) || (path == null) || (path.Count == 0))
@@ -77,6 +124,9 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             LocationGoal = goal;
             CurrentPath = path;
             IsWalking = true;
+
+            BeforeGoalAction = null;
+            GoalAction = null;
         }
 
         public void StopWalking()
@@ -86,6 +136,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             ClearWalking();
 
             InvokeCurrentLocation();
+
+            InvokeGoalAction();
         }
 
         private void ClearWalking()
@@ -175,6 +227,24 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             UpdateHeight();
         }
 
+        public void InvokeBeforeGoalAction()
+        {
+            if (BeforeGoalAction == null) return;
+
+            BeforeGoalAction(RoomObject);
+
+            BeforeGoalAction = null;
+        }
+
+        public void InvokeGoalAction()
+        {
+            if (GoalAction == null) return;
+
+            GoalAction(RoomObject);
+
+            GoalAction = null;
+        }
+
         public virtual void Sit(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
             if (flag)
@@ -189,8 +259,6 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             }
             else
             {
-                if (!HasStatus(RoomObjectAvatarStatus.Sit)) return;
-
                 RemoveStatus(RoomObjectAvatarStatus.Sit);
             }
         }
@@ -209,8 +277,6 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             }
             else
             {
-                if (!HasStatus(RoomObjectAvatarStatus.Lay)) return;
-
                 RemoveStatus(RoomObjectAvatarStatus.Lay);
             }
         }
@@ -231,15 +297,19 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             if ((types == null) || (types.Length == 0)) return;
 
+            bool updated = false;
+
             foreach (string type in types)
             {
+                if (!HasStatus(type)) continue;
+
                 Statuses.Remove(type);
+
+                updated = true;
             }
 
-            RoomObject.NeedsUpdate = true;
+            if(updated) RoomObject.NeedsUpdate = true;
         }
-
-        public IRoomTile GetCurrentTile() => RoomObject?.Room?.RoomMap?.GetTile(RoomObject.Location);
 
         public IRoomTile GetNextTile() => RoomObject?.Room?.RoomMap?.GetTile(LocationNext);
     }

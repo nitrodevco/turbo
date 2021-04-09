@@ -1,4 +1,6 @@
 ﻿using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Messages;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 
@@ -57,5 +59,7 @@ namespace Turbo.Rooms.Object.Logic
         {
 
         }
+
+        public IRoomTile GetCurrentTile() => RoomObject?.Room?.RoomMap?.GetTile(RoomObject.Location);
     }
 }

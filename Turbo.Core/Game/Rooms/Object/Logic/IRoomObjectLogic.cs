@@ -1,4 +1,5 @@
 ﻿using System;
+using Turbo.Core.Game.Rooms.Mapping;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
 {
@@ -6,5 +7,6 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
     {
         public bool OnReady();
         public bool SetRoomObject(IRoomObject roomObject);
+        public IRoomTile GetCurrentTile();
     }
 }

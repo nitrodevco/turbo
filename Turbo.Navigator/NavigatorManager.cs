@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Packets.Shared.Navigator;
+using Turbo.Rooms.Utils;
 
 namespace Turbo.Navigator
 {
@@ -101,7 +103,7 @@ namespace Turbo.Navigator
             });
         }
 
-        public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false)
+        public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null)
         {
             if ((player == null) || (roomId <= 0)) return;
 
@@ -130,22 +132,73 @@ namespace Turbo.Navigator
                 return;
             }
 
-            // check if banned
+            // check ban
 
-            // if not owner
+            if (!room.RoomSecurityManager.IsOwner(player))
+            {
+                if (room.RoomDetails.UsersNow >= room.RoomDetails.UsersMax)
+                {
+                    ClearPendingRoomId(player.Id);
 
-            // if usersNow >= usersMax
-            // if !skipsState
-            // if locked
-            // request doorbell
-            // if password
-            // test the password
-            // if invisible
-            // check rights
+                    await player.Session.Send(new CantConnectMessage
+                    {
+                        Reason = CantConnectReason.Full,
+                        Parameter = ""
+                    });
 
-            // if locked state clear the doorbell
+                    return;
+                }
+
+                if (!skipState)
+                {
+                    if (room.RoomDetails.State == RoomStateType.Locked)
+                    {
+                        ClearPendingRoomId(player.Id);
+
+                        // doorbell
+                    }
+
+                    else if(room.RoomDetails.State == RoomStateType.Password)
+                    {
+                        if (!password.Equals(room.RoomDetails.Password))
+                        {
+                            ClearPendingRoomId(player.Id);
+
+                            // generic password error
+
+                            await player.Session.Send(new CantConnectMessage
+                            {
+                                Reason = CantConnectReason.Closed,
+                                Parameter = ""
+                            });
+
+                            return;
+                        }
+                    }
+
+                    else if(room.RoomDetails.State == RoomStateType.Invisible)
+                    {
+                        if(!room.RoomSecurityManager.IsController(player))
+                        {
+                            ClearPendingRoomId(player.Id);
+
+                            await player.Session.Send(new CantConnectMessage
+                            {
+                                Reason = CantConnectReason.Closed,
+                                Parameter = ""
+                            });
+
+                            return;
+                        }
+                    }
+                }
+            }
+
+            ClearPendingDoorbell(player);
 
             SetPendingRoomId(player.Id, roomId, true);
+
+            if(location != null) _pendingRoomIds[player.Id].Location = new Point(location);
 
             await player.Session.Send(new OpenConnectionMessage());
             await player.Session.Send(new RoomReadyMessage
@@ -185,7 +238,7 @@ namespace Turbo.Navigator
             {
                 await room.InitAsync();
 
-                room.EnterRoom(player);
+                room.EnterRoom(player, _pendingRoomIds[player.Id].Location);
             }
 
             ClearPendingRoomId(player.Id);

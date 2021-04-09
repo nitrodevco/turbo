@@ -1,4 +1,6 @@
-﻿using Turbo.Core.Game.Furniture.Constants;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms.Object.Data;
 
@@ -8,7 +10,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
     {
         public IFurnitureDefinition FurnitureDefinition { get; }
         public IStuffData StuffData { get; }
-        public bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null);
+        public Task<bool> Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null);
         public void RefreshFurniture();
         public void RefreshStuffData();
         public bool SetState(int state, bool refresh = true);
@@ -22,12 +24,12 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void OnMove(IRoomManipulator roomManipulator);
         public void OnPickup(IRoomManipulator roomManipulator);
         public bool CanStack();
-        public bool CanWalk();
-        public bool CanSit();
-        public bool CanLay();
+        public bool CanWalk(IRoomObject roomObject = null);
+        public bool CanSit(IRoomObject roomObject = null);
+        public bool CanLay(IRoomObject roomObject = null);
         public bool CanRoll();
         public bool CanToggle(IRoomObject roomObject);
-        public bool IsOpen();
+        public bool IsOpen(IRoomObject roomObject = null);
         public FurniUsagePolicy UsagePolicy { get; }
         public double StackHeight { get; }
         public StuffDataKey DataKey { get; }

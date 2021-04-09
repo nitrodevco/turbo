@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
@@ -14,6 +16,7 @@ namespace Turbo.Database.Context
     {
         public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }
         public DbSet<FurnitureEntity> Furnitures { get; set; }
+        public DbSet<FurnitureTeleportLinkEntity> FurnitureTeleportLinks { get; set; }
         public DbSet<PlayerEntity> Players { get; set; }
         public DbSet<RoomBanEntity> RoomBans { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }
@@ -23,7 +26,11 @@ namespace Turbo.Database.Context
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
 
-        int SaveChanges();
-        EntityEntry Update([NotNull] object entity);
+        public int SaveChanges(bool acceptAllChangesOnSuccess);
+        public int SaveChanges();
+        public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        public EntityEntry Update([NotNull] object entity);
+        public EntityEntry<TEntity> Update<TEntity>([NotNull] TEntity entity) where TEntity : class;
     }
 }

@@ -4,10 +4,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
-using Turbo.Database.Dtos;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
@@ -21,6 +22,7 @@ namespace Turbo.Rooms
         private static readonly int _tryDisposeTicks = 1200;
 
         private readonly ILogger<IRoomManager> _logger;
+        private readonly IStorageQueue _storageQueue;
         private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IRoomFactory _roomFactory;
 
@@ -31,11 +33,12 @@ namespace Turbo.Rooms
 
         public RoomManager(
             ILogger<IRoomManager> logger,
+            IStorageQueue storageQueue,
             IServiceScopeFactory scopeFactory,
-            IRoomObjectFactory roomObjectFactory,
             IRoomFactory roomFactory)
         {
             _logger = logger;
+            _storageQueue = storageQueue;
             _serviceScopeFactory = scopeFactory;
             _roomFactory = roomFactory;
 
@@ -115,9 +118,11 @@ namespace Turbo.Rooms
                 return existing;
             }
 
-            _rooms.TryAdd(room.Id, room);
+            if (_rooms.TryAdd(room.Id, room)) return room;
 
-            return room;
+            await room.DisposeAsync();
+
+            return null;
         }
 
         public async ValueTask RemoveRoom(int id)
@@ -207,5 +212,7 @@ namespace Turbo.Rooms
 
             return Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
         }
+
+        public IStorageQueue StorageQueue => _storageQueue;
     }
 }

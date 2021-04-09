@@ -1,4 +1,6 @@
-﻿using Turbo.Core.Game.Furniture.Constants;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
@@ -18,14 +20,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         public override void Dispose()
         {
             base.Dispose();
-
-            // ensure furniture saves with data from this logic
-
-            FurnitureDefinition = null;
-            StuffData = null;
         }
 
-        public virtual bool Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
+        public virtual async Task<bool> Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
         {
             if (furnitureDefinition == null) return false;
 
@@ -112,17 +109,17 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual bool CanStack() => FurnitureDefinition.CanStack;
 
-        public virtual bool CanWalk() => FurnitureDefinition.CanWalk;
+        public virtual bool CanWalk(IRoomObject roomObject = null) => FurnitureDefinition.CanWalk;
 
-        public virtual bool CanSit() => FurnitureDefinition.CanSit;
+        public virtual bool CanSit(IRoomObject roomObject = null) => FurnitureDefinition.CanSit;
 
-        public virtual bool CanLay() => FurnitureDefinition.CanLay;
+        public virtual bool CanLay(IRoomObject roomObject = null) => FurnitureDefinition.CanLay;
 
         public virtual bool CanRoll() => true;
 
         public virtual bool CanToggle(IRoomObject roomObject)
         {
-            if (UsagePolicy == FurniUsagePolicy.Nobdy) return false;
+            if (UsagePolicy == FurniUsagePolicy.Nobody) return false;
 
             if (UsagePolicy == FurniUsagePolicy.Controller)
             {
@@ -137,9 +134,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             return true;
         }
 
-        public virtual bool IsOpen() => CanWalk() || CanSit() || CanLay();
+        public virtual bool IsOpen(IRoomObject roomObject = null) => CanWalk(roomObject) || CanSit(roomObject) || CanLay(roomObject);
 
-        public virtual FurniUsagePolicy UsagePolicy => FurnitureDefinition.UsagePolicy;
+        public virtual FurniUsagePolicy UsagePolicy => (FurnitureDefinition.TotalStates == 0) ? FurniUsagePolicy.Nobody : FurnitureDefinition.UsagePolicy;
 
         public virtual double StackHeight => FurnitureDefinition.Z;
 

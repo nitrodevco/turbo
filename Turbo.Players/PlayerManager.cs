@@ -1,37 +1,43 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
 using Turbo.Players.Factories;
 
 namespace Turbo.Players
 {
-    public class PlayerManager : IPlayerManager, IPlayerContainer
+    public class PlayerManager : IPlayerManager
     {
+        private readonly ILogger<IPlayerManager> _logger;
+        private readonly IStorageQueue _storageQueue;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
         private readonly IPlayerFactory _playerFactory;
         private readonly INavigatorManager _navigatorManager;
-        private readonly ILogger<PlayerManager> _logger;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         private readonly IDictionary<int, IPlayer> _players;
 
         public PlayerManager(
-            IPlayerFactory playerFactory,
+            ILogger<IPlayerManager> logger,
+            IStorageQueue storageQueue,
             IServiceScopeFactory scopeFactory,
-            INavigatorManager navigatorManager,
-            ILogger<PlayerManager> logger)
+            IPlayerFactory playerFactory,
+            INavigatorManager navigatorManager)
         {
-            _playerFactory = playerFactory;
             _logger = logger;
-            _navigatorManager = navigatorManager;
+            _storageQueue = storageQueue;
             _serviceScopeFactory = scopeFactory;
+            _playerFactory = playerFactory;
+            _navigatorManager = navigatorManager;
 
-            _players = new Dictionary<int, IPlayer>();
+            _players = new ConcurrentDictionary<int, IPlayer>();
         }
 
         public async ValueTask DisposeAsync()
@@ -75,7 +81,7 @@ namespace Turbo.Players
 
             if (playerEntity == null) return null;
 
-            player = _playerFactory.Create(this, playerEntity);
+            player = _playerFactory.Create(playerEntity);
 
             return player;
         }
@@ -126,8 +132,6 @@ namespace Turbo.Players
             _players.Remove(id);
 
             await player.DisposeAsync();
-
-
         }
 
         public async ValueTask RemoveAllPlayers()
@@ -144,5 +148,12 @@ namespace Turbo.Players
 
             _navigatorManager.ClearRoomStatus(player);
         }
+
+        public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null)
+        {
+            await _navigatorManager.EnterRoom(player, roomId, password, skipState, location);
+        }
+
+        public IStorageQueue StorageQueue => _storageQueue;
     }
 }

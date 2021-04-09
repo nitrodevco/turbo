@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms;
@@ -10,7 +11,6 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
-using Turbo.Database.Dtos;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
@@ -101,6 +101,13 @@ namespace Turbo.Rooms.Managers
 
             roomObject.SetLocation(location);
 
+            if (!furnitureLogic.OnReady())
+            {
+                roomObject.Dispose();
+
+                return null;
+            }
+
             _room.RoomMap.AddRoomObjects(roomObject);
 
             RoomObjects.Add(roomObject.Id, roomObject);
@@ -108,7 +115,7 @@ namespace Turbo.Rooms.Managers
             return roomObject;
         }
 
-        public IRoomObject CreateRoomObjectAndAssign(IRoomObjectFurnitureHolder furnitureHolder, IPoint location)
+        public async Task<IRoomObject> CreateRoomObjectAndAssign(IRoomObjectFurnitureHolder furnitureHolder, IPoint location)
         {
             if (furnitureHolder == null) return null;
 
@@ -116,8 +123,13 @@ namespace Turbo.Rooms.Managers
 
             if (roomObject == null) return null;
 
-            if (!furnitureHolder.SetRoomObject(roomObject)) return null;
+            if (!furnitureHolder.SetRoomObject(roomObject) || !await furnitureHolder.SetupRoomObject())
+            {
+                roomObject.Dispose();
 
+                return null;
+            }
+            
             return AddRoomObject(roomObject, location);
         }
 
@@ -185,6 +197,8 @@ namespace Turbo.Rooms.Managers
             foreach (IPoint affectedPoint in affectedPoints)
             {
                 IRoomTile roomTile = _room.RoomMap.GetTile(affectedPoint);
+
+                if (roomTile == null) return false;
 
                 // do we need to validate that all tiles base height is the same?
 
@@ -270,6 +284,20 @@ namespace Turbo.Rooms.Managers
             return true;
         }
 
+        public IList<IRoomObject> GetRoomObjectsWithLogic<T>()
+        {
+            List<IRoomObject> roomObjects = new();
+
+            foreach (IRoomObject roomObject in RoomObjects.Values)
+            {
+                if (roomObject.Logic is not T) continue;
+
+                roomObjects.Add(roomObject);
+            }
+
+            return roomObjects;
+        }
+
         public void SendFurnitureToSession(ISession session)
         {
             List<IRoomObject> roomObjects = new();
@@ -350,7 +378,7 @@ namespace Turbo.Rooms.Managers
 
                 Furniture.Add(furniture.Id, furniture);
 
-                CreateRoomObjectAndAssign(furniture, new Point(furnitureEntity.X, furnitureEntity.Y, furnitureEntity.Z, furnitureEntity.Rotation));
+                await CreateRoomObjectAndAssign(furniture, new Point(furnitureEntity.X, furnitureEntity.Y, furnitureEntity.Z, furnitureEntity.Rotation));
             }
         }
     }

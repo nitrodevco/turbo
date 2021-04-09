@@ -7,11 +7,18 @@ namespace Turbo.Rooms
 {
     public class RoomDetails : IRoomDetails
     {
+        private readonly IRoom _room;
         private readonly RoomEntity _roomEntity;
 
-        public RoomDetails(RoomEntity roomEntity)
+        public RoomDetails(IRoom room, RoomEntity roomEntity)
         {
+            _room = room;
             _roomEntity = roomEntity;
+        }
+
+        public void Save()
+        {
+            _room.RoomManager.StorageQueue.Add(_roomEntity);
         }
 
         public int Id => _roomEntity.Id;
@@ -48,7 +55,14 @@ namespace Turbo.Rooms
         public int UsersNow
         {
             get => _roomEntity.UsersNow;
-            set => _roomEntity.UsersNow = value;
+            set
+            {
+                if (_roomEntity.UsersNow == value) return;
+
+                _roomEntity.UsersNow = value;
+
+                Save();
+            }
         }
 
         public int UsersMax

@@ -179,6 +179,38 @@ namespace Turbo.Database.Migrations
                     b.ToTable("furniture");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureTeleportLinkEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("FurnitureEntityOneId")
+                        .HasColumnType("int")
+                        .HasColumnName("furniture_one_id");
+
+                    b.Property<int>("FurnitureEntityTwoId")
+                        .HasColumnType("int")
+                        .HasColumnName("furniture_two_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FurnitureEntityOneId");
+
+                    b.HasIndex("FurnitureEntityTwoId");
+
+                    b.ToTable("furniture_teleport_link");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorEventCategoryEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -597,6 +629,25 @@ namespace Turbo.Database.Migrations
                     b.Navigation("PlayerEntity");
 
                     b.Navigation("RoomEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureTeleportLinkEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntityOne")
+                        .WithMany()
+                        .HasForeignKey("FurnitureEntityOneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntityTwo")
+                        .WithMany()
+                        .HasForeignKey("FurnitureEntityTwoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FurnitureEntityOne");
+
+                    b.Navigation("FurnitureEntityTwo");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomBanEntity", b =>

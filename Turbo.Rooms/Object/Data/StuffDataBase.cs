@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 using Turbo.Core.Game.Rooms.Object.Data;
 
 namespace Turbo.Rooms.Object.Data
@@ -12,10 +13,6 @@ namespace Turbo.Rooms.Object.Data
 
         public StuffDataBase()
         {
-            //if (IsUnique)
-            //{
-            //    Flags += (int)StuffDataFlags.UniqueSet;
-            //}
         }
 
         public virtual string GetLegacyString()
