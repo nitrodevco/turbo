@@ -97,6 +97,7 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
             services.AddScoped<INavigatorEventCategoryRepository, NavigatorEventCategoryRepository>();
+            services.AddScoped<IRoomRightRepository, RoomRightRepository>();
         }
     }
 }
