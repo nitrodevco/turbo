@@ -177,7 +177,7 @@ namespace Turbo.Rooms.Managers
 
             if (!bottomLogic.CanStack() || bottomLogic.CanSit() || bottomLogic.CanLay()) return false;
 
-            if(bottomLogic is FurnitureRollerLogic)
+            if (bottomLogic is FurnitureRollerLogic)
             {
                 if ((topLogic.FurnitureDefinition.X > 1) || (topLogic.FurnitureDefinition.Y > 1)) return false;
             }
@@ -194,7 +194,7 @@ namespace Turbo.Rooms.Managers
 
             if (affectedPoints.Count == 0) return false;
 
-            foreach(IPoint affectedPoint in affectedPoints)
+            foreach (IPoint affectedPoint in affectedPoints)
             {
                 IRoomTile roomTile = _room.RoomMap.GetTile(affectedPoint);
 
@@ -208,7 +208,7 @@ namespace Turbo.Rooms.Managers
 
                 if (roomTile.HasStackHelper) continue;
 
-                if(roomTile.HighestObject != null)
+                if (roomTile.HighestObject != null)
                 {
                     if (isRotating && (roomTile.HighestObject == roomObject)) continue;
 
@@ -227,15 +227,15 @@ namespace Turbo.Rooms.Managers
 
             IPoint location = new Point(x, y, 0, rotation);
 
-            if(furniture.RoomObject.Logic is IFurnitureLogic furnitureLogic)
+            if (furniture.RoomObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 if (furnitureLogic.FurnitureDefinition.Type.Equals(FurniType.Floor))
                 {
-                    if(!skipChecks)
+                    if (!skipChecks)
                     {
                         if (manipulator == null) return false;
 
-                        if(!_room.RoomSecurityManager.IsController(manipulator))
+                        if (!_room.RoomSecurityManager.IsController(manipulator))
                         {
                             // send placement notification
 
@@ -248,9 +248,9 @@ namespace Turbo.Rooms.Managers
                         }
                     }
 
-                    if(!IsValidPlacement(furniture.RoomObject, location))
+                    if (!IsValidPlacement(furniture.RoomObject, location))
                     {
-                        if(manipulator != null)
+                        if (manipulator != null)
                         {
                             // send placement notification
 
@@ -303,13 +303,13 @@ namespace Turbo.Rooms.Managers
             List<IRoomObject> roomObjects = new();
             int count = 0;
 
-            foreach(IRoomObject roomObject in RoomObjects.Values)
+            foreach (IRoomObject roomObject in RoomObjects.Values)
             {
                 roomObjects.Add(roomObject);
 
                 count++;
 
-                if(count == 250)
+                if (count == 250)
                 {
                     session.Send(new ObjectsMessage
                     {
@@ -349,7 +349,7 @@ namespace Turbo.Rooms.Managers
                     playerIds.Add(furnitureEntity.PlayerEntityId);
                 }
 
-                if(playerIds.Count > 0)
+                if (playerIds.Count > 0)
                 {
                     var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
 
@@ -371,7 +371,7 @@ namespace Turbo.Rooms.Managers
 
                 if (!furniture.SetRoom(_room)) continue;
 
-                if(FurnitureOwners.TryGetValue(furnitureEntity.PlayerEntityId, out string name))
+                if (FurnitureOwners.TryGetValue(furnitureEntity.PlayerEntityId, out string name))
                 {
                     furniture.PlayerName = name;
                 }

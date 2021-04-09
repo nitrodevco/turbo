@@ -13,13 +13,13 @@ namespace Turbo.Rooms.Utils
 
             point ??= roomObject.Location;
 
-            if(roomObject.Logic is IFurnitureLogic furnitureLogic)
+            if (roomObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 int width = furnitureLogic.FurnitureDefinition.X;
                 int length = furnitureLogic.FurnitureDefinition.Y;
                 Rotation rotation = point.Rotation;
 
-                if((rotation == Rotation.East) || (rotation == Rotation.West))
+                if ((rotation == Rotation.East) || (rotation == Rotation.West))
                 {
                     int tempWidth = width;
 
@@ -27,9 +27,9 @@ namespace Turbo.Rooms.Utils
                     length = tempWidth;
                 }
 
-                for(int x = point.X; x < point.X + width; x++)
+                for (int x = point.X; x < point.X + width; x++)
                 {
-                    for(int y = point.Y; y < point.Y + length; y++)
+                    for (int y = point.Y; y < point.Y + length; y++)
                     {
                         points.Add(new Point(x, y));
                     }
