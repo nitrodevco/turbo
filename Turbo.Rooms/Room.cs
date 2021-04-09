@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
@@ -216,7 +215,7 @@ namespace Turbo.Rooms
 
         public async Task Cycle()
         {
-            if(_remainingDisposeTicks > -1)
+            if (_remainingDisposeTicks > -1)
             {
                 if (_remainingDisposeTicks == 0)
                 {
