@@ -1,4 +1,6 @@
-﻿namespace Turbo.Core.Game.Rooms.Object
+﻿using System.Threading.Tasks;
+
+namespace Turbo.Core.Game.Rooms.Object
 {
     public interface IRoomObjectFurnitureHolder : IRoomObjectHolder
     {

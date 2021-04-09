@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
