@@ -9,6 +9,7 @@ using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Data;
 using Turbo.Rooms.Object.Logic.Furniture.Wired;
+using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {

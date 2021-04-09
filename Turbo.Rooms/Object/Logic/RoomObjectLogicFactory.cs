@@ -27,7 +27,9 @@ namespace Turbo.Rooms.Object.Logic
             Logics.Add(RoomObjectLogicType.FurnitureGate, typeof(FurnitureGateLogic));
             Logics.Add(RoomObjectLogicType.FurnitureTeleport, typeof(FurnitureTeleportLogic));
             Logics.Add(RoomObjectLogicType.FurnitureDice, typeof(FurnitureDiceLogic));
+
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, typeof(FurnitureWiredTriggerEnterRoomLogic));
+            Logics.Add(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_ON_FURNI, typeof(FurnitureWiredTriggerWalksOnFurni));
         }
 
         public IRoomObjectLogic Create(string type)

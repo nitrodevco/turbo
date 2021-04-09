@@ -17,6 +17,7 @@ using Turbo.Rooms.Factories;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
 using Turbo.Rooms.Object.Logic.Furniture.Wired;
+using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
 
 namespace Turbo.Rooms
 {
