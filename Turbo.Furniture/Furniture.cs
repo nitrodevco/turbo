@@ -69,11 +69,17 @@ namespace Turbo.Furniture
 
                 if(RoomObject.Logic is IFurnitureLogic furnitureLogic)
                 {
-                    _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData, furnitureLogic.StuffData.GetType());
+                    if(furnitureLogic.StuffData != null)
+                    {
+                        _furnitureEntity.StuffData = JsonSerializer.Serialize(furnitureLogic.StuffData, furnitureLogic.StuffData.GetType());
+                    }
 
                     if(furnitureLogic is IFurnitureWiredLogic wiredLogic)
                     {
-                        _furnitureEntity.WiredData = JsonSerializer.Serialize(wiredLogic.WiredData, wiredLogic.WiredData.GetType());
+                        if(wiredLogic.WiredData != null)
+                        {
+                            _furnitureEntity.WiredData = JsonSerializer.Serialize(wiredLogic.WiredData, wiredLogic.WiredData.GetType());
+                        }
                     }
                 }
             }

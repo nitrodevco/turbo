@@ -7,6 +7,7 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
@@ -184,9 +185,9 @@ namespace Turbo.Rooms
 
             player.Session.Flush();
 
-            IRoomObject roomObject = RoomUserManager.EnterRoom(player, location);
-
             RoomFurnitureManager.SendFurnitureToSession(player.Session);
+
+            IRoomObject roomObject = RoomUserManager.EnterRoom(player, location);
 
             if (roomObject != null) RoomSecurityManager.RefreshControllerLevel(roomObject);
 
@@ -194,7 +195,7 @@ namespace Turbo.Rooms
 
             AddObserver(player.Session);
 
-            // process wired triggers for entering room
+            RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom);
         }
 
         public void AddObserver(ISession session)

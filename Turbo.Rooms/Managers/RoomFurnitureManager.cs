@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Database.Dtos;
@@ -284,15 +285,13 @@ namespace Turbo.Rooms.Managers
             return true;
         }
 
-        public IList<IRoomObject> GetRoomObjectsWithLogic<T>()
+        public IList<IRoomObject> GetRoomObjectsWithLogic(Type type)
         {
             List<IRoomObject> roomObjects = new();
 
             foreach (IRoomObject roomObject in RoomObjects.Values)
             {
-                if (roomObject.Logic is not T) continue;
-
-                roomObjects.Add(roomObject);
+                if (roomObject.Logic.GetType() == type) roomObjects.Add(roomObject);
             }
 
             return roomObjects;

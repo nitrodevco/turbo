@@ -156,11 +156,11 @@ namespace Turbo.Rooms.Mapping
             return Math.Round((double)height, 3);
         }
 
-        public bool HasLogic<T>()
+        public bool HasLogic(Type type)
         {
             foreach(IRoomObject roomObject in Furniture.Values)
             {
-                if (roomObject.Logic is T) return true;
+                if (roomObject.Logic.GetType() == type) return true;
             }
 
             return false;

@@ -12,7 +12,7 @@ namespace Turbo.Core.Game.Rooms.Managers
         public bool CanPlaceOnTop(IRoomObject bottom, IRoomObject top);
         public bool IsValidPlacement(IRoomObject roomObject, IPoint point);
         public bool MoveFurniture(IRoomManipulator manipulator, int id, int x, int y, Rotation rotation, bool skipChecks = false);
-        public IList<IRoomObject> GetRoomObjectsWithLogic<T>();
+        public IList<IRoomObject> GetRoomObjectsWithLogic(Type type);
         public void SendFurnitureToSession(ISession session);
     }
 }

@@ -31,9 +31,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Data
         [JsonIgnore]
         public int SelectionLimit { get; protected set; }
 
-        public IList<int> SelectionIds { get; protected set; }
-        public string StringParameter { get; protected set; }
-        public IList<int> IntParameters { get; protected set; }
+        public IList<int> SelectionIds { get; set; }
+        public string StringParameter { get; set; }
+        public IList<int> IntParameters { get; set; }
 
         public WiredDataBase()
         {

@@ -5,12 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DotNetty.Buffers" Version="0.6.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
+    <Compile Remove="Game\Rooms\Mapping\Constants\**" />
+    <EmbeddedResource Remove="Game\Rooms\Mapping\Constants\**" />
+    <None Remove="Game\Rooms\Mapping\Constants\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Game\Rooms\Mapping\Constants\" />
+    <PackageReference Include="DotNetty.Buffers" Version="0.6.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

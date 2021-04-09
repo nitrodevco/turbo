@@ -1,7 +1,11 @@
-﻿namespace Turbo.Core.Game.Rooms.Object.Logic
+﻿using System;
+using System.Collections.Generic;
+
+namespace Turbo.Core.Game.Rooms.Object.Logic
 {
     public interface IRoomObjectLogicFactory
     {
-        public IRoomObjectLogic GetLogic(string type);
+        public IDictionary<string, Type> Logics { get; }
+        public IRoomObjectLogic Create(string type);
     }
 }

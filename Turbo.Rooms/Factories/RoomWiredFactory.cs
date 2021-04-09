@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Managers;
 
 namespace Turbo.Rooms.Factories
@@ -20,7 +18,9 @@ namespace Turbo.Rooms.Factories
 
         public IRoomWiredManager Create(IRoom room)
         {
-            return new RoomWiredManager(room);
+            IRoomObjectLogicFactory logicFactory = _provider.GetService<IRoomObjectLogicFactory>();
+
+            return new RoomWiredManager(room, logicFactory);
         }
     }
 }

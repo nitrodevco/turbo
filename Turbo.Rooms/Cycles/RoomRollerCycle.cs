@@ -52,7 +52,7 @@ namespace Turbo.Rooms.Cycles
                 _remainingRollerCycles = _rollerCycles;
             }
 
-            IList<IRoomObject> rollers = _room.RoomFurnitureManager.GetRoomObjectsWithLogic<FurnitureRollerLogic>();
+            IList<IRoomObject> rollers = _room.RoomFurnitureManager.GetRoomObjectsWithLogic(typeof(FurnitureRollerLogic));
 
             if (rollers.Count == 0) return;
 
@@ -315,7 +315,7 @@ namespace Turbo.Rooms.Cycles
 
                 if (roomTileNext == null) return false;
 
-                if (!roomTileNext.HasLogic<FurnitureRollerLogic>())
+                if (!roomTileNext.HasLogic(typeof(FurnitureRollerLogic)))
                 {
                     nextHeight -= ((IFurnitureLogic)rollingData.Roller.Logic).StackHeight;
                 }

@@ -9,33 +9,32 @@ namespace Turbo.Rooms.Object.Logic
 {
     public class RoomObjectLogicFactory : IRoomObjectLogicFactory
     {
-        private readonly IDictionary<string, Type> _logics;
+        public IDictionary<string, Type> Logics { get; private set; }
+
 
         public RoomObjectLogicFactory()
         {
-            _logics = new Dictionary<string, Type>();
+            Logics = new Dictionary<string, Type>();
 
-            _logics.Add("user", typeof(AvatarLogic));
-            _logics.Add("pet", typeof(PetLogic));
-            _logics.Add("bot", typeof(BotLogic));
-            _logics.Add("rentablebot", typeof(RentableBotLogic));
+            Logics.Add(RoomObjectLogicType.User, typeof(AvatarLogic));
+            Logics.Add(RoomObjectLogicType.Pet, typeof(PetLogic));
+            Logics.Add(RoomObjectLogicType.Bot, typeof(BotLogic));
+            Logics.Add(RoomObjectLogicType.RentableBot, typeof(RentableBotLogic));
 
-            _logics.Add("default", typeof(FurnitureLogic));
-            _logics.Add("stack_helper", typeof(FurnitureStackHelperLogic));
-            _logics.Add("roller", typeof(FurnitureRollerLogic));
-            _logics.Add("gate", typeof(FurnitureGateLogic));
-            _logics.Add("teleport", typeof(FurnitureTeleportLogic));
-            _logics.Add("dice", typeof(FurnitureDiceLogic));
-            _logics.Add("wf_trg_enter_room", typeof(FurnitureWiredTriggerEnterRoomLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureDefault, typeof(FurnitureLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureStackHelper, typeof(FurnitureStackHelperLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureRoller, typeof(FurnitureRollerLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureGate, typeof(FurnitureGateLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureTeleport, typeof(FurnitureTeleportLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureDice, typeof(FurnitureDiceLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, typeof(FurnitureWiredTriggerEnterRoomLogic));
         }
 
-        public IRoomObjectLogic GetLogic(string type)
+        public IRoomObjectLogic Create(string type)
         {
-            Type logicType = _logics[type];
+            if (!Logics.ContainsKey(type)) return null;
 
-            if (logicType == null) return null;
-
-            return (IRoomObjectLogic)Activator.CreateInstance(logicType);
+            return (IRoomObjectLogic)Activator.CreateInstance(Logics[type]);
         }
     }
 }
