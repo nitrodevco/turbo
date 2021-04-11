@@ -198,7 +198,7 @@ namespace Turbo.Rooms
 
             RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, new WiredArguments
             {
-                RoomObject = roomObject
+                UserObject = roomObject
             });
         }
 

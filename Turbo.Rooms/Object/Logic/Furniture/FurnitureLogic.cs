@@ -67,7 +67,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (!SetState(param)) return;
 
-            // wired state changed
+            base.OnInteract(roomObject, param);
         }
 
         protected virtual int GetNextToggleableState()

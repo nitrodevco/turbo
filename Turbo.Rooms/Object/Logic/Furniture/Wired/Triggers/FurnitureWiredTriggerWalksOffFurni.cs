@@ -8,7 +8,7 @@ using Turbo.Core.Game.Rooms.Object.Logic.Wired.Constants;
 
 namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers
 {
-    public class FurnitureWiredTriggerWalksOnFurni : FurnitureWiredTriggerLogic
+    public class FurnitureWiredTriggerWalksOffFurni : FurnitureWiredTriggerLogic
     {
         public override bool CanTrigger(IWiredArguments wiredArguments = null)
         {
@@ -21,6 +21,6 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers
             return true;
         }
 
-        public override int WiredKey => (int)FurnitureWiredTriggerType.AvatarWalksOnFurni;
+        public override int WiredKey => (int)FurnitureWiredTriggerType.AvatarWalksOffFurni;
     }
 }

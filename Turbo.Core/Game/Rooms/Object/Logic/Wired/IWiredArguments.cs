@@ -8,6 +8,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic.Wired
 {
     public interface IWiredArguments
     {
-        public IRoomObject? RoomObject { get; set; }
+        public IRoomObject? UserObject { get; set; }
+        public IRoomObject? FurnitureObject { get; set; }
     }
 }

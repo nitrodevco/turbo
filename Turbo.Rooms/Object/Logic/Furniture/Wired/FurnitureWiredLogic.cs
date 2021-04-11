@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Definition;
 using System;
 using Turbo.Core.Game.Rooms.Object.Data;
+using Turbo.Core.Utilities;
 
 namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 {
@@ -20,11 +21,17 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
         protected IWiredData _wiredData;
 
+        private long _lastRun;
+        private Dictionary<int, long> _lastRunPlayers;
+        private bool _needsOffState;
+
         public override async Task<bool> Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
         {
             if (!await base.Setup(furnitureDefinition, jsonString)) return false;
 
-            //SetState(_offState);
+            _lastRunPlayers = new();
+
+            SetState(_offState);
 
             return true;
         }
@@ -82,7 +89,12 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
         public override async Task Cycle()
         {
+            if(_needsOffState)
+            {
+                SetState(_offState);
 
+                _needsOffState = false;
+            }
         }
 
         public override void OnInteract(IRoomObject roomObject, int param)
@@ -96,6 +108,26 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
         {
             if (_wiredData == null) return false;
 
+            long lastRun = TimeUtilities.GetCurrentMilliseconds();
+
+            if ((lastRun - _lastRun) < Cooldown) return false;
+
+            if(wiredArguments.UserObject != null)
+            {
+                if(_lastRunPlayers.ContainsKey(wiredArguments.UserObject.Id))
+                {
+                    if ((lastRun - _lastRunPlayers[wiredArguments.UserObject.Id]) < CooldownPlayer) return false;
+
+                    _lastRunPlayers[wiredArguments.UserObject.Id] = lastRun;
+                }
+                else
+                {
+                    _lastRunPlayers.Add(wiredArguments.UserObject.Id, lastRun);
+                }    
+            }
+
+            _lastRun = lastRun;
+
             return true;
         }
 
@@ -107,10 +139,14 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
         protected virtual void ProcessAnimation()
         {
             SetState(_onState);
-            SetState(_offState, false);
+
+            _needsOffState = true;
         }
 
         public virtual IWiredData WiredData => _wiredData;
-        public int WiredKey => 0;
+        public virtual int WiredKey => 0;
+
+        public virtual int Cooldown => 50;
+        public virtual int CooldownPlayer => 350;
     }
 }

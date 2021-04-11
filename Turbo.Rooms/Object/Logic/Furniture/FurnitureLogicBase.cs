@@ -68,7 +68,8 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         {
             RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_ON_FURNI, new WiredArguments
             {
-                RoomObject = roomObject
+                UserObject = roomObject,
+                FurnitureObject = RoomObject
             });
 
             return;
@@ -78,7 +79,8 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         {
             RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_OFF_FURNI, new WiredArguments
             {
-                RoomObject = roomObject
+                UserObject = roomObject,
+                FurnitureObject = RoomObject
             });
 
             return;
@@ -101,9 +103,10 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnInteract(IRoomObject roomObject, int param)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_ACTION_TOGGLE_FURNI_STATE, new WiredArguments
+            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_STATE_CHANGED, new WiredArguments
             {
-                RoomObject = roomObject
+                UserObject = roomObject,
+                FurnitureObject = RoomObject
             });
 
             return;

@@ -10,6 +10,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments
 {
     public class WiredArguments : IWiredArguments
     {
-        public IRoomObject RoomObject { get; set; }
+        public IRoomObject UserObject { get; set; }
+        public IRoomObject FurnitureObject { get; set; }
     }
 }

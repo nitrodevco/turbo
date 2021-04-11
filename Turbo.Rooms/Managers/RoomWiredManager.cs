@@ -26,9 +26,7 @@ namespace Turbo.Rooms.Managers
 
         public bool ProcessTriggers(string type, IWiredArguments wiredArguments = null)
         {
-            Type logicType = _logicFactory.Logics[type];
-
-            if (logicType == null) return false;
+            if (!_logicFactory.Logics.TryGetValue(type, out Type logicType)) return false;
 
             IList<IRoomObject> roomObjects = _room.RoomFurnitureManager.GetRoomObjectsWithLogic(logicType);
 
