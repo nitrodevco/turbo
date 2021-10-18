@@ -9,8 +9,8 @@ using Turbo.Database.Context;
 namespace Turbo.Database.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    [Migration("20210329220458_AddUsagePolicy")]
-    partial class AddUsagePolicy
+    [Migration("20211006070530_Default")]
+    partial class Default
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -158,6 +158,10 @@ namespace Turbo.Database.Migrations
                         .HasColumnType("longtext CHARACTER SET utf8mb4")
                         .HasColumnName("wall_position");
 
+                    b.Property<string>("WiredData")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4")
+                        .HasColumnName("wired_data");
+
                     b.Property<int>("X")
                         .HasColumnType("int")
                         .HasColumnName("x");
@@ -179,6 +183,38 @@ namespace Turbo.Database.Migrations
                     b.HasIndex("RoomEntityId");
 
                     b.ToTable("furniture");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureTeleportLinkEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("FurnitureEntityOneId")
+                        .HasColumnType("int")
+                        .HasColumnName("furniture_one_id");
+
+                    b.Property<int>("FurnitureEntityTwoId")
+                        .HasColumnType("int")
+                        .HasColumnName("furniture_two_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FurnitureEntityOneId");
+
+                    b.HasIndex("FurnitureEntityTwoId");
+
+                    b.ToTable("furniture_teleport_links");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorEventCategoryEntity", b =>
@@ -599,6 +635,25 @@ namespace Turbo.Database.Migrations
                     b.Navigation("PlayerEntity");
 
                     b.Navigation("RoomEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureTeleportLinkEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntityOne")
+                        .WithMany()
+                        .HasForeignKey("FurnitureEntityOneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntityTwo")
+                        .WithMany()
+                        .HasForeignKey("FurnitureEntityTwoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FurnitureEntityOne");
+
+                    b.Navigation("FurnitureEntityTwo");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomBanEntity", b =>

@@ -31,6 +31,7 @@ namespace Turbo.Main
                     hostContext.Configuration.Bind(TurboConfig.Turbo, turboConfig);
                     services.AddSingleton<IEmulatorConfig>(turboConfig);
 
+
                     // DB Context
                     var connectionString = $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
                     services.AddDbContext<IEmulatorContext, TurboContext>(options => options

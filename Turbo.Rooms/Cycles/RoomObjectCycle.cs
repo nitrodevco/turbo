@@ -23,7 +23,7 @@ namespace Turbo.Rooms.Cycles
                 {
                     foreach (IRoomObject roomObject in roomObjects.Values)
                     {
-                        if (!(roomObject.Logic is IRoomObjectLogic objectLogic)) continue;
+                        if (roomObject.Logic is not IRoomObjectLogic objectLogic) continue;
 
                         await objectLogic.Cycle();
                     }

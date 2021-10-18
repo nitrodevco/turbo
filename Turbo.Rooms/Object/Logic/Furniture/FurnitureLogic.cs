@@ -27,10 +27,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             StuffData.SetState(state.ToString());
 
-            if(RoomObject.RoomObjectHolder is IFurniture furniture)
-            {
-                furniture.Save();
-            }
+            NeedsSaving = true;
 
             if (refresh) RefreshStuffData();
 

@@ -212,9 +212,15 @@ namespace Turbo.Rooms.Managers
 
             if ((furniture == null) || (furniture.RoomObject == null)) return false;
 
+            IRoomObject roomObject = furniture.RoomObject;
+
             IPoint location = new Point(x, y, 0, rotation);
 
+<<<<<<< Updated upstream
             if(furniture.RoomObject.Logic is IFurnitureLogic furnitureLogic)
+=======
+            if (roomObject.Logic is IFurnitureLogic furnitureLogic)
+>>>>>>> Stashed changes
             {
                 if (furnitureLogic.FurnitureDefinition.Type.Equals(FurniType.Floor))
                 {
@@ -228,14 +234,18 @@ namespace Turbo.Rooms.Managers
 
                             manipulator.Session.Send(new ObjectUpdateMessage
                             {
-                                Object = furniture.RoomObject
+                                Object = roomObject
                             });
 
                             return false;
                         }
                     }
 
+<<<<<<< Updated upstream
                     if(!IsValidPlacement(furniture.RoomObject, location))
+=======
+                    if (!IsValidPlacement(roomObject, location))
+>>>>>>> Stashed changes
                     {
                         if(manipulator != null)
                         {
@@ -250,19 +260,21 @@ namespace Turbo.Rooms.Managers
                         return false;
                     }
 
-                    IPoint previous = furniture.RoomObject.Location.Clone();
+                    IPoint previous = roomObject.Location.Clone();
 
-                    furniture.RoomObject.Location.X = location.X;
-                    furniture.RoomObject.Location.Y = location.Y;
-                    furniture.RoomObject.Location.SetRotation(location.Rotation);
+                    roomObject.Location.X = location.X;
+                    roomObject.Location.Y = location.Y;
+                    roomObject.Location.SetRotation(location.Rotation);
 
-                    IRoomTile highestTile = _room.RoomMap.GetHighestTileForRoomObject(furniture.RoomObject);
+                    furniture.Save();
 
-                    if ((highestTile != null) && (highestTile.HighestObject != furniture.RoomObject) || highestTile.HasStackHelper) furniture.RoomObject.Location.Z = highestTile.Height;
+                    IRoomTile highestTile = _room.RoomMap.GetHighestTileForRoomObject(roomObject);
+
+                    if ((highestTile != null) && (highestTile.HighestObject != roomObject) || highestTile.HasStackHelper) roomObject.Location.Z = highestTile.Height;
 
                     furnitureLogic.OnMove(manipulator);
 
-                    _room.RoomMap.MoveRoomObject(furniture.RoomObject, previous);
+                    _room.RoomMap.MoveRoomObject(roomObject, previous);
 
                     furniture.Save();
                 }

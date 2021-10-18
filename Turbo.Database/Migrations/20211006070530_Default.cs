@@ -1,10 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
 
 namespace Turbo.Database.Migrations
 {
-    public partial class test : Migration
+    public partial class Default : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -31,6 +31,7 @@ namespace Turbo.Database.Migrations
                     can_trade = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     can_group = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     can_sell = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    usage_policy = table.Column<int>(type: "int", nullable: false),
                     extra_data = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -38,6 +39,22 @@ namespace Turbo.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_furniture_definitions", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "navigator_event_categories",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    name = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: false),
+                    enabled = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_navigator_event_categories", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -132,7 +149,7 @@ namespace Turbo.Database.Migrations
                     mute_type = table.Column<int>(type: "int", nullable: false),
                     kick_type = table.Column<int>(type: "int", nullable: false),
                     ban_type = table.Column<int>(type: "int", nullable: false),
-                    chat_type = table.Column<int>(type: "int", nullable: false),
+                    chat_mode_type = table.Column<int>(type: "int", nullable: false),
                     chat_weight_type = table.Column<int>(type: "int", nullable: false),
                     chat_speed_type = table.Column<int>(type: "int", nullable: false),
                     chat_protection_type = table.Column<int>(type: "int", nullable: false),
@@ -173,6 +190,7 @@ namespace Turbo.Database.Migrations
                     direction = table.Column<int>(type: "int", nullable: false),
                     wall_position = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     stuff_data = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
+                    wired_data = table.Column<string>(type: "longtext CHARACTER SET utf8mb4", nullable: true),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
@@ -283,6 +301,34 @@ namespace Turbo.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "furniture_teleport_links",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    furniture_one_id = table.Column<int>(type: "int", nullable: false),
+                    furniture_two_id = table.Column<int>(type: "int", nullable: false),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_furniture_teleport_links", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_furniture_teleport_links_furniture_furniture_one_id",
+                        column: x => x.furniture_one_id,
+                        principalTable: "furniture",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_furniture_teleport_links_furniture_furniture_two_id",
+                        column: x => x.furniture_two_id,
+                        principalTable: "furniture",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_furniture_definition_id",
                 table: "furniture",
@@ -297,6 +343,16 @@ namespace Turbo.Database.Migrations
                 name: "IX_furniture_room_id",
                 table: "furniture",
                 column: "room_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_furniture_teleport_links_furniture_one_id",
+                table: "furniture_teleport_links",
+                column: "furniture_one_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_furniture_teleport_links_furniture_two_id",
+                table: "furniture_teleport_links",
+                column: "furniture_two_id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_room_bans_player_id",
@@ -347,7 +403,10 @@ namespace Turbo.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "furniture");
+                name: "furniture_teleport_links");
+
+            migrationBuilder.DropTable(
+                name: "navigator_event_categories");
 
             migrationBuilder.DropTable(
                 name: "room_bans");
@@ -360,6 +419,9 @@ namespace Turbo.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "security_tickets");
+
+            migrationBuilder.DropTable(
+                name: "furniture");
 
             migrationBuilder.DropTable(
                 name: "furniture_definitions");
