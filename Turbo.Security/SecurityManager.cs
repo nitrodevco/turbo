@@ -9,6 +9,7 @@ namespace Turbo.Security
     public class SecurityManager : ISecurityManager
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
+
         public SecurityManager(IServiceScopeFactory scopeFactory)
         {
             _serviceScopeFactory = scopeFactory;
@@ -38,7 +39,7 @@ namespace Turbo.Security
 
                 if (securityTicketEntity == null) return 0;
 
-                if (!securityTicketEntity.IsLocked)
+                if ((bool)!securityTicketEntity.IsLocked)
                 {
                     securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);
 

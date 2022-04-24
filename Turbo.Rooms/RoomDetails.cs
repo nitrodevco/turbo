@@ -92,7 +92,7 @@ namespace Turbo.Rooms
 
         public bool HideWalls
         {
-            get => _roomEntity.HideWalls;
+            get => (bool)_roomEntity.HideWalls;
         }
 
         public RoomThicknessType ThicknessWall
@@ -107,22 +107,22 @@ namespace Turbo.Rooms
 
         public bool AllowWalkThrough
         {
-            get => _roomEntity.AllowWalkThrough;
+            get => (bool)_roomEntity.AllowWalkThrough;
         }
 
         public bool AllowEditing
         {
-            get => _roomEntity.AllowEditing;
+            get => (bool)_roomEntity.AllowEditing;
         }
 
         public bool AllowPets
         {
-            get => _roomEntity.AllowPets;
+            get => (bool)_roomEntity.AllowPets;
         }
 
         public bool AllowPetsEat
         {
-            get => _roomEntity.AllowPetsEat;
+            get => (bool)_roomEntity.AllowPetsEat;
         }
 
         public RoomTradeType TradeType

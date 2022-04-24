@@ -1,5 +1,6 @@
 ﻿using System;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Players
@@ -52,7 +53,7 @@ namespace Turbo.Players
             }
         }
 
-        public string Gender
+        public AvatarGender Gender
         {
             get
             {

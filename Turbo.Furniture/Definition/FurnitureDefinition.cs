@@ -23,14 +23,14 @@ namespace Turbo.Furniture.Definition
         public int X => _entity.X;
         public int Y => _entity.Y;
         public double Z => _entity.Z;
-        public bool CanStack => _entity.CanStack;
-        public bool CanWalk => _entity.CanWalk;
-        public bool CanSit => _entity.CanSit;
-        public bool CanLay => _entity.CanLay;
-        public bool CanRecycle => _entity.CanRecycle;
-        public bool CanTrade => _entity.CanTrade;
-        public bool CanGroup => _entity.CanGroup;
-        public bool CanSell => _entity.CanSell;
+        public bool CanStack => (bool)_entity.CanStack;
+        public bool CanWalk => (bool)_entity.CanWalk;
+        public bool CanSit => (bool)_entity.CanSit;
+        public bool CanLay => (bool)_entity.CanLay;
+        public bool CanRecycle => (bool)_entity.CanRecycle;
+        public bool CanTrade => (bool)_entity.CanTrade;
+        public bool CanGroup => (bool)_entity.CanGroup;
+        public bool CanSell => (bool)_entity.CanSell;
         public FurniUsagePolicy UsagePolicy => _entity.UsagePolicy;
         public string ExtraData => _entity.ExtraData;
     }

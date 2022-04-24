@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
 
@@ -119,6 +120,6 @@ namespace Turbo.Players
 
         public string Figure => PlayerDetails.Figure;
 
-        public string Gender => PlayerDetails.Gender;
+        public AvatarGender Gender => PlayerDetails.Gender;
     }
 }

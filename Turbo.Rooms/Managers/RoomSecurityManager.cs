@@ -104,6 +104,8 @@ namespace Turbo.Rooms.Managers
                 {
                     player.Session.Send(new YouAreOwnerMessage());
                 }
+
+                // needs groups
             }
 
             if (roomObject.Logic is IMovingAvatarLogic avatarLogic)

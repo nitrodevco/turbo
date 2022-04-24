@@ -154,30 +154,29 @@ namespace Turbo.Rooms.Managers
 
             foreach (IRoomObject existingObject in RoomObjects.Values)
             {
+                if (existingObject.Logic is not AvatarLogic avatarLogic) continue;
+                   
                 roomObjects.Add(existingObject);
 
-                if (existingObject.Logic is AvatarLogic avatarLogic)
+                RoomObjectAvatarDanceType danceType = avatarLogic.DanceType;
+                bool isIdle = avatarLogic.IsIdle;
+
+                if (danceType > RoomObjectAvatarDanceType.None)
                 {
-                    RoomObjectAvatarDanceType danceType = avatarLogic.DanceType;
-                    bool isIdle = avatarLogic.IsIdle;
-
-                    if (danceType > RoomObjectAvatarDanceType.None)
+                    composers.Add(new DanceMessage
                     {
-                        composers.Add(new DanceMessage
-                        {
-                            UserId = existingObject.Id,
-                            DanceStyle = (int)danceType
-                        });
-                    }
+                        UserId = existingObject.Id,
+                        DanceStyle = (int)danceType
+                    });
+                }
 
-                    if (isIdle)
+                if (isIdle)
+                {
+                    composers.Add(new SleepMessage
                     {
-                        composers.Add(new SleepMessage
-                        {
-                            UserId = existingObject.Id,
-                            Sleeping = isIdle
-                        });
-                    }
+                        UserId = existingObject.Id,
+                        Sleeping = isIdle
+                    });
                 }
             }
 

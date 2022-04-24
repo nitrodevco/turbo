@@ -104,7 +104,6 @@ namespace Turbo.Main
 
             // Start services
             _pluginManager.LoadPlugins();
-            await _serverManager.StartServersAsync();
 
             await _securityManager.InitAsync();
             await _furnitureManager.InitAsync();
@@ -113,6 +112,8 @@ namespace Turbo.Main
 
             StartStorageCycle();
             StartGameCycle();
+
+            await _serverManager.StartServersAsync();
         }
 
         /// <summary>
@@ -225,12 +226,7 @@ namespace Turbo.Main
         public string GetVersion()
         {
             var sb = new StringBuilder();
-            sb.Append("Tu");
-            for (int i = 0; i < Environment.ProcessorCount; i++)
-            {
-                sb.Append("r");
-            }
-            sb.Append($"bo Emulator {MAJOR}.{MINOR}.{PATCH}");
+            sb.Append($"Turbo Emulator {MAJOR}.{MINOR}.{PATCH}");
             return sb.ToString();
         }
     }

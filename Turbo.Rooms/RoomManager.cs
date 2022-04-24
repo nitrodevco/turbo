@@ -58,10 +58,6 @@ namespace Turbo.Rooms
 
         public async Task<IRoom> GetRoom(int id)
         {
-            IRoom room = GetOnlineRoom(id);
-
-            if (room != null) return room;
-
             return await GetOfflineRoom(id);
         }
 
