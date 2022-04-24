@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Turbo.Database.Entities.Furniture
 {
-    [Table("furniture_teleport_links")]
+    [Table("furniture_teleport_links"), Index(nameof(FurnitureEntityOneId), IsUnique = true), Index(nameof(FurnitureEntityTwoId), IsUnique = true)]
     public class FurnitureTeleportLinkEntity : Entity
     {
         [Column("furniture_one_id")]

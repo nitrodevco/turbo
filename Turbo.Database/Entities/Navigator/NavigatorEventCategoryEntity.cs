@@ -6,12 +6,10 @@ namespace Turbo.Database.Entities.Navigator
     [Table("navigator_event_categories")]
     public class NavigatorEventCategoryEntity : Entity
     {
-        [Required]
-        [Column("name")]
+        [Column("name"), Required]
         public string Name { get; set; }
 
-        [Required]
-        [Column("enabled")]
+        [Column("enabled"), Required]
         public bool Enabled { get; set; }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Turbo.Database.Attributes;
+using Turbo.Database.Entities;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
@@ -30,6 +33,8 @@ namespace Turbo.Database.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            OnModelCreatingAddDefaultSqlValues(modelBuilder);
+
             var entityMethod = typeof(ModelBuilder).GetMethod("Entity", Type.EmptyTypes);
 
             if (!Directory.Exists("plugins"))
@@ -51,6 +56,42 @@ namespace Turbo.Database.Context
                 {
                     entityMethod.MakeGenericMethod(type)
                         .Invoke(modelBuilder, new object[] { });
+                }
+            }
+        }
+
+        private void OnModelCreatingAddDefaultSqlValues(ModelBuilder modelBuilder)
+        {
+            var asm = Assembly.Load("Turbo.Database");
+
+            if (asm == null) return;
+
+            List<Type> types = asm.GetTypes().ToList();
+
+            var dbSets = typeof(TurboContext).GetProperties().Where(p => p.PropertyType.Name.ToLower().Contains("dbset")).ToList();
+
+            List<Type> dbSetTypes = new();
+
+            foreach (PropertyInfo pi in dbSets)
+            {
+                dbSetTypes.Add(pi.PropertyType.GetGenericArguments()[0]);
+            }
+
+            foreach (Type t in types)
+            {
+                if (typeof(Entity).IsAssignableFrom(t) && t.Name != nameof(Entity) && dbSetTypes.Contains(t))
+                {
+                    var properties = t.GetProperties().ToList();
+
+                    foreach (var p in properties)
+                    {
+                        var att = p.GetCustomAttribute<DefaultValueSqlAttribute>();
+
+                        if (att != null)
+                        {
+                            modelBuilder.Entity(t).Property(p.Name).HasDefaultValueSql(att.DefaultValueSql);
+                        }
+                    }
                 }
             }
         }

@@ -2,6 +2,9 @@
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Entities.Room;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using Turbo.Database.Attributes;
 
 namespace Turbo.Database.Entities.Furniture
 {
@@ -11,28 +14,22 @@ namespace Turbo.Database.Entities.Furniture
         [Column("player_id")]
         public int PlayerEntityId { get; set; }
 
-        public PlayerEntity PlayerEntity { get; set; }
-
         [Column("definition_id")]
         public int FurnitureDefinitionEntityId { get; set; }
-
-        public FurnitureDefinitionEntity FurnitureDefinitionEntity { get; set; }
 
         [Column("room_id")]
         public int? RoomEntityId { get; set; }
 
-        public RoomEntity RoomEntity { get; set; }
+        [Column("x"), DefaultValueSql("0")]
+        public int X { get; set; } = 0;
 
-        [Column("x")]
-        public int X { get; set; }
+        [Column("y"), DefaultValueSql("0")]
+        public int Y { get; set; } = 0;
 
-        [Column("y")]
-        public int Y { get; set; }
-
-        [Column("z")]
+        [Column("z", TypeName = "double(10,3)"), DefaultValueSql("0")]
         public double Z { get; set; }
 
-        [Column("direction")]
+        [Column("direction"), DefaultValueSql("0")] //Rotation.North
         public Rotation Rotation { get; set; }
 
         [Column("wall_position")]
@@ -43,5 +40,11 @@ namespace Turbo.Database.Entities.Furniture
 
         [Column("wired_data")]
         public string? WiredData { get; set; }
+
+        public PlayerEntity PlayerEntity { get; set; }
+
+        public FurnitureDefinitionEntity FurnitureDefinitionEntity { get; set; }
+
+        public RoomEntity RoomEntity { get; set; }
     }
 }
