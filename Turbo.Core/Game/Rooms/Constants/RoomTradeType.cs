@@ -2,8 +2,8 @@
 {
     public enum RoomTradeType
     {
-        Disabled,
-        RoomOwner,
-        Everyone
+        Disabled = 0,
+        RoomOwner = 1,
+        Everyone = 2
     }
 }

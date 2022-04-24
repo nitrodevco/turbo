@@ -2,7 +2,7 @@
 {
     public enum RoomChatModeType
     {
-        FreeFlow,
-        Old
+        FreeFlow = 0,
+        Old = 1
     }
 }

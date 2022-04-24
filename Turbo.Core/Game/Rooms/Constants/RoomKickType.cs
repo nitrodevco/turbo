@@ -2,8 +2,8 @@
 {
     public enum RoomKickType
     {
-        None,
-        Rights,
-        All
+        None = 0,
+        Rights = 1,
+        All = 2
     }
 }

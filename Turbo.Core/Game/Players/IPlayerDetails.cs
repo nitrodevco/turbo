@@ -1,4 +1,5 @@
 ﻿using System;
+using Turbo.Core.Game.Rooms.Object.Constants;
 
 namespace Turbo.Core.Game.Players
 {
@@ -9,7 +10,7 @@ namespace Turbo.Core.Game.Players
         public string Name { get; }
         public string Motto { get; }
         public string Figure { get; }
-        public string Gender { get; }
+        public AvatarGender Gender { get; }
         public DateTime DateCreated { get; }
         public DateTime DateUpdated { get; }
     }

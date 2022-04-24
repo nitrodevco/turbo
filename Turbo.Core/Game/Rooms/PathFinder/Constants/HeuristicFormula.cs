@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turbo.Core.Game.Rooms.PathFinder.COnstants
+namespace Turbo.Core.Game.Rooms.PathFinder.Constants
 {
     public enum HeuristicFormula
     {

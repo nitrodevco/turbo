@@ -2,7 +2,7 @@
 {
     public enum RoomMuteType
     {
-        None,
-        Rights
+        None = 0,
+        Rights = 1
     }
 }

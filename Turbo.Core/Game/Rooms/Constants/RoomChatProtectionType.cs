@@ -2,8 +2,8 @@
 {
     public enum RoomChatProtectionType
     {
-        Extra,
-        Normal,
-        Minimal
+        Extra = 0,
+        Normal = 1,
+        Minimal = 2
     }
 }

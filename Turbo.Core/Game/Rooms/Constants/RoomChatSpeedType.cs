@@ -2,8 +2,8 @@
 {
     public enum RoomChatSpeedType
     {
-        Fast,
-        Normal,
-        Slow
+        Fast = 0,
+        Normal = 1,
+        Slow = 2
     }
 }
