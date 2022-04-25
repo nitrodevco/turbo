@@ -7,6 +7,6 @@ namespace Turbo.Core.Game.Rooms.Mapping
     public interface IPathFinder
     {
         public IList<IPoint> MakePath(IRoomObject roomObject, IPoint location);
-        public bool IsValidStep(IRoomObject roomObject, IPoint location, IPoint nextLocation, IPoint goalLocation);
+        public bool IsValidStep(IRoomObject roomObject, IPoint location, IPoint nextLocation, IPoint goalLocation, bool blockingDisabled = false);
     }
 }

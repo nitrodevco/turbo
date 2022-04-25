@@ -21,10 +21,7 @@ namespace Turbo.Rooms.Utils
 
                 if ((rotation == Rotation.East) || (rotation == Rotation.West))
                 {
-                    int tempWidth = width;
-
-                    width = length;
-                    length = tempWidth;
+                    (length, width) = (width, length);
                 }
 
                 for (int x = point.X; x < point.X + width; x++)

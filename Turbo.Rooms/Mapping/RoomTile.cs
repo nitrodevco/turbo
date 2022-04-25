@@ -48,15 +48,18 @@ namespace Turbo.Rooms.Mapping
         {
             if (roomObject == null) return;
 
-            if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
+            if (roomObject.Logic is IMovingAvatarLogic)
             {
                 if (IsDoor) return;
 
                 if (Users.ContainsKey(roomObject.Id)) return;
 
                 Users.Add(roomObject.Id, roomObject);
+
+                return;
             }
-            else if (roomObject.Logic is IFurnitureLogic furnitureLogic)
+            
+            if (roomObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 Furniture.Add(roomObject.Id, roomObject);
 
@@ -70,17 +73,22 @@ namespace Turbo.Rooms.Mapping
         {
             if (roomObject == null) return;
 
-            if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
+            if (roomObject.Logic is IMovingAvatarLogic)
             {
                 Users.Remove(roomObject.Id);
+
+                return;
             }
-            else if (roomObject.Logic is IFurnitureLogic furnitureLogic)
+            
+            if (roomObject.Logic is IFurnitureLogic furnitureLogic)
             {
                 Furniture.Remove(roomObject.Id);
 
                 if ((roomObject != HighestObject) && !(furnitureLogic is FurnitureStackHelperLogic)) return;
 
                 ResetHighestObject();
+
+                return;
             }
         }
 

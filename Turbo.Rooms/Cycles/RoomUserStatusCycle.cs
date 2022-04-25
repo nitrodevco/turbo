@@ -38,7 +38,7 @@ namespace Turbo.Rooms.Cycles
 
             foreach (IRoomObject roomObject in roomObjects.Values)
             {
-                if (!(roomObject.Logic is IMovingAvatarLogic)) continue;
+                if (roomObject.Logic is not IMovingAvatarLogic) continue;
 
                 ProcessRoomObject(roomObject);
 
@@ -74,6 +74,8 @@ namespace Turbo.Rooms.Cycles
 
             avatarLogic.ProcessNextLocation();
 
+            if (avatarLogic.NeedsRepathing) avatarLogic.ResetPath();
+
             if (avatarLogic.CurrentPath.Count == 0)
             {
                 if (avatarLogic.BeforeGoalAction != null)
@@ -105,17 +107,6 @@ namespace Turbo.Rooms.Cycles
         private void CheckStep(IRoomObject roomObject, IPoint locationNext)
         {
             IMovingAvatarLogic avatarLogic = (IMovingAvatarLogic)roomObject.Logic;
-
-            if (avatarLogic.NeedsRepathing)
-            {
-                avatarLogic.ClearPath();
-
-                avatarLogic.WalkTo(avatarLogic.LocationGoal);
-
-                ProcessRoomObject(roomObject);
-
-                return;
-            }
 
             if (locationNext == null)
             {
@@ -158,21 +149,7 @@ namespace Turbo.Rooms.Cycles
             {
                 if ((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id))
                 {
-                    foreach (IRoomObject existingObject in nextTile.Users.Values)
-                    {
-                        IMovingAvatarLogic existingAvatarLogic = (IMovingAvatarLogic)existingObject.Logic;
-
-                        if (!existingAvatarLogic.IsWalking)
-                        {
-                            avatarLogic.StopWalking();
-
-                            return;
-                        }
-
-                        existingAvatarLogic.NeedsRepathing = true;
-                    }
-
-                    avatarLogic.NeedsRepathing = true;
+                    if(!_room.RoomDetails.BlockingDisabled) avatarLogic.NeedsRepathing = true;
                 }
 
                 if (!nextTile.IsOpen(roomObject) || nextTile.CanSit(roomObject) || nextTile.CanLay(roomObject))

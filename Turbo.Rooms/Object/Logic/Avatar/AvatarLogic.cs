@@ -68,6 +68,13 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             Idle(false);
         }
 
+        public override void GoTo(IPoint location, bool selfWalk = false)
+        {
+            base.GoTo(location, selfWalk);
+
+            Idle(false);
+        }
+
         public override void Sit(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
             if (flag)

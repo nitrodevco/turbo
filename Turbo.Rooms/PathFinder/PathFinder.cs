@@ -26,9 +26,17 @@ namespace Turbo.Rooms.PathFinder
 
         public IList<IPoint> MakePath(IRoomObject roomObject, IPoint location)
         {
+            if ((roomObject == null) || (location == null)) return null;
+
+            location = location.Clone();
+
+            IRoomTile goalTile = _roomMap.GetValidTile(roomObject, location);
+
+            if (goalTile == null) return null;
+
             List<IPoint> points = new();
 
-            IList<PathFinderNode> nodes = CalculatePathFinderNode(roomObject, location);
+            IList<PathFinderNode> nodes = CalculatePathFinderNode(roomObject, goalTile);
 
             if(nodes != null)
             {
@@ -46,15 +54,11 @@ namespace Turbo.Rooms.PathFinder
             return points;
         }
 
-        private IList<PathFinderNode> CalculatePathFinderNode(IRoomObject roomObject, IPoint location)
+        private IList<PathFinderNode> CalculatePathFinderNode(IRoomObject roomObject, IRoomTile goalTile, bool blockingDisabled = false)
         {
-            if ((roomObject == null) || (_roomMap == null) || (location == null)) return null;
+            if ((roomObject == null) || (_roomMap == null) || (goalTile == null)) return null;
 
-            location = location.Clone();
-
-            IRoomTile validTile = _roomMap.GetValidTile(roomObject, location);
-
-            if (validTile == null) return null;
+            IPoint location = goalTile.Location;
 
             PriorityQueue<PathFinderNode> openNodes = new(new NodeComparer());
             List<PathFinderNode> closedNodes = new();
@@ -77,7 +81,7 @@ namespace Turbo.Rooms.PathFinder
             {
                 currentNode = openNodes.Pop();
 
-                if(currentNode.Location.X == location.X && currentNode.Location.Y == location.Y)
+                if (currentNode.Location.X == location.X && currentNode.Location.Y == location.Y)
                 {
                     closedNodes.Add(currentNode);
 
@@ -101,11 +105,11 @@ namespace Turbo.Rooms.PathFinder
 
                     tempNode.Location = currentNode.Location.AddPoint(walkingPoint);
 
-                    if (!IsValidStep(roomObject, currentNode.Location, tempNode.Location, location)) continue;
+                    if (!IsValidStep(roomObject, currentNode.Location, tempNode.Location, location, blockingDisabled)) continue;
 
                     int gCost;
 
-                    if(_heavyDiagonals && (walkingPoint.X != 0 && walkingPoint.Y != 0))
+                    if (_heavyDiagonals && (walkingPoint.X != 0 && walkingPoint.Y != 0))
                     {
                         gCost = currentNode.G + (int)(_roomMap.Map[tempNode.Location.X, tempNode.Location.Y] * 2.41);
                     }
@@ -118,9 +122,9 @@ namespace Turbo.Rooms.PathFinder
 
                     int foundInOpenIndex = -1;
 
-                    for(int i = 0; i < openNodes.Count; i++)
+                    for (int i = 0; i < openNodes.Count; i++)
                     {
-                        if(openNodes[i].Location.X == tempNode.Location.X && openNodes[i].Location.Y == tempNode.Location.Y)
+                        if (openNodes[i].Location.X == tempNode.Location.X && openNodes[i].Location.Y == tempNode.Location.Y)
                         {
                             foundInOpenIndex = i;
 
@@ -187,16 +191,18 @@ namespace Turbo.Rooms.PathFinder
                 closedNodes.Add(currentNode);
             }
 
+            if (_roomMap.BlockingDisabled && !blockingDisabled) return CalculatePathFinderNode(roomObject, goalTile, true);
+
             return null;
         }
 
-        public bool IsValidStep(IRoomObject roomObject, IPoint location, IPoint nextLocation, IPoint goalLocation)
+        public bool IsValidStep(IRoomObject roomObject, IPoint location, IPoint nextLocation, IPoint goalLocation, bool blockingDisabled = false)
         {
             if ((_roomMap == null) || (roomObject == null) || (location == null) || (nextLocation == null) || (goalLocation == null)) return false;
 
             bool isGoal = nextLocation.Compare(goalLocation);
-            IRoomTile currentTile = _roomMap.GetValidTile(roomObject, location, false);
-            IRoomTile nextTile = _roomMap.GetValidTile(roomObject, nextLocation, isGoal);
+            IRoomTile currentTile = _roomMap.GetValidTile(roomObject, location, false, blockingDisabled);
+            IRoomTile nextTile = _roomMap.GetValidTile(roomObject, nextLocation, isGoal, blockingDisabled);
 
             if (((currentTile == null) || (nextTile == null)) || (nextTile.IsDoor && !isGoal)) return false;
 

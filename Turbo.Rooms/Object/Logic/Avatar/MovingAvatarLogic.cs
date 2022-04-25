@@ -130,6 +130,14 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             GoalAction = null;
         }
 
+        public virtual void ResetPath()
+        {
+            if (LocationGoal == null) return;
+
+            ClearPath();
+            WalkTo(LocationGoal, true);
+        }
+
         public void StopWalking()
         {
             if (!IsWalking) return;
@@ -292,7 +300,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             RoomObject.NeedsUpdate = true;
         }
 
-        public bool HasStatus(params string[] types) => types == null || types.Length == 0 ? false : types.Any(x => Statuses.ContainsKey(x));
+        public bool HasStatus(params string[] types) => types != null && types.Length != 0 && types.Any(x => Statuses.ContainsKey(x));
 
         public void RemoveStatus(params string[] types)
         {

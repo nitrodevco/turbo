@@ -22,7 +22,7 @@ namespace Turbo.Core.Game.Rooms
         public bool HideWalls { get; }
         public RoomThicknessType ThicknessWall { get; }
         public RoomThicknessType ThicknessFloor { get; }
-        public bool AllowWalkThrough { get; }
+        public bool BlockingDisabled { get; }
         public bool AllowEditing { get; }
         public bool AllowPets { get; }
         public bool AllowPetsEat { get; }

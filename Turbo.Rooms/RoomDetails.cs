@@ -105,7 +105,7 @@ namespace Turbo.Rooms
             get => _roomEntity.ThicknessFloor;
         }
 
-        public bool AllowWalkThrough
+        public bool BlockingDisabled
         {
             get => (bool)_roomEntity.AllowWalkThrough;
         }
