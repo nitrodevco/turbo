@@ -7,6 +7,7 @@ using Turbo.Core.Packets;
 using Turbo.Core.Security;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
+using Turbo.Packets.Outgoing.Navigator;
 
 namespace Turbo.Main.PacketHandlers
 {
@@ -51,6 +52,11 @@ namespace Turbo.Main.PacketHandlers
             // set player online
             // send required composers for hotel view
             await session.Send(new AuthenticationOKMessage());
+            await session.Send(new NavigatorSettingsMessage
+            {
+                HomeRoomId = 0,
+                RoomIdToEnter = 0
+            });
         }
 
         public async Task OnInfoRetrieve(InfoRetrieveMessage message, ISession session)
