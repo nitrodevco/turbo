@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Turbo.Core;
+using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
@@ -33,6 +34,7 @@ namespace Turbo.Main
 
         private readonly ISecurityManager _securityManager;
         private readonly IFurnitureManager _furnitureManager;
+        private readonly ICatalogManager _catalogManager;
         private readonly INavigatorManager _navigatorManager;
         private readonly IRoomManager _roomManager;
         private readonly IPlayerManager _playerManager;
@@ -55,6 +57,7 @@ namespace Turbo.Main
             IServerManager serverManager,
             ISecurityManager securityManager,
             IFurnitureManager furnitureManager,
+            ICatalogManager catalogManager,
             IRoomManager roomManager,
             INavigatorManager navigatorManager,
             IPlayerManager playerManager,
@@ -68,6 +71,7 @@ namespace Turbo.Main
             _serverManager = serverManager;
             _securityManager = securityManager;
             _furnitureManager = furnitureManager;
+            _catalogManager = catalogManager;
             _roomManager = roomManager;
             _navigatorManager = navigatorManager;
             _playerManager = playerManager;
@@ -223,11 +227,6 @@ namespace Turbo.Main
             });
         }
 
-        public string GetVersion()
-        {
-            var sb = new StringBuilder();
-            sb.Append($"Turbo Emulator {MAJOR}.{MINOR}.{PATCH}");
-            return sb.ToString();
-        }
+        public string GetVersion() => ($"Turbo Emulator {MAJOR}.{MINOR}.{PATCH}");
     }
 }

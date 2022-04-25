@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Turbo.Catalog;
+using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
@@ -52,6 +54,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<ISecurityManager, SecurityManager>();
             services.AddSingleton<INavigatorManager, NavigatorManager>();
             services.AddSingleton<IFurnitureManager, FurnitureManager>();
+            services.AddSingleton<ICatalogManager, CatalogManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
 
