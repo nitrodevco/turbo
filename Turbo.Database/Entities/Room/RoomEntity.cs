@@ -99,7 +99,7 @@ namespace Turbo.Database.Entities.Room
         [Column("chat_distance"), DefaultValueSql("50")]
         public int ChatDistance { get; set; }
 
-        [Column("last_active"), DefaultValueSql("NOW()")]
+        [Column("last_active"), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime LastActive { get; set; }
 
         public List<RoomBanEntity> RoomBans { get; set; }

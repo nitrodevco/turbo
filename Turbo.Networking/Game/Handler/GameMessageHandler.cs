@@ -47,6 +47,13 @@ namespace Turbo.Networking.Game.Handler
         {
             if (_sessionManager.TryGetSession(ctx.Channel.Id, out ISession session))
             {
+                if(session.Revision == null)
+                {
+                    await session.DisposeAsync();
+
+                    return;
+                }
+
                 if (session.Revision.Parsers.TryGetValue(msg.Header, out IParser parser))
                 {
                     _logger.LogDebug($"Received {msg.Header}:{parser.GetType().Name}");

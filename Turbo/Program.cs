@@ -22,7 +22,7 @@ namespace Turbo.Main
                 CreateHostBuilder(args).Build().Run();
             }
 
-            catch(Exception error)
+            catch (Exception error)
             {
                 Log.Error(error.Message);
             }
@@ -43,7 +43,6 @@ namespace Turbo.Main
                     hostContext.Configuration.Bind(TurboConfig.Turbo, turboConfig);
                     services.AddSingleton<IEmulatorConfig>(turboConfig);
 
-                    
                     var connectionString = $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
                     services.AddDbContext<IEmulatorContext, TurboContext>(options => options
                         .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
