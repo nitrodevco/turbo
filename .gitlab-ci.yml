@@ -1,17 +1,14 @@
-image: mcr.microsoft.com/dotnet/sdk:6.0
+image: mcr.microsoft.com/dotnet/sdk:7.0
 
 stages:
   - test
 
 Test Turbo:
-    stage: test
-    script:
-        - mkdir -p /usr/share/man/man1
-        - apt update && apt install default-jre -y
-        - dotnet tool install --global dotnet-sonarscanner
-        - export PATH="$PATH:/root/.dotnet/tools"
-        - mv Turbo/appsettings.Development.json.example Turbo/appsettings.Development.json
-        - mv Turbo/appsettings.Production.json.example Turbo/appsettings.Production.json
-        - dotnet sonarscanner begin /d:sonar.host.url="$SONAR_HOST" /d:sonar.login="$SONAR_LOGIN_KEY" /k:"Turbo" /d:sonar.coverage.exclusions="**Tests*.cs" /d:sonar.cs.opencover.reportsPaths="**\coverage.opencover.xml"
-        - dotnet test --settings coverlet.runsettings
-        - dotnet sonarscanner end /d:sonar.login="$SONAR_LOGIN_KEY"
+  stage: test
+  script:
+    - mkdir -p /usr/share/man/man1
+    - apt update && apt install default-jre -y
+    - export PATH="$PATH:/root/.dotnet/tools"
+    - mv Turbo/appsettings.Development.json.example Turbo/appsettings.Development.json
+    - mv Turbo/appsettings.Production.json.example Turbo/appsettings.Production.json
+    - dotnet test --settings coverlet.runsettings
