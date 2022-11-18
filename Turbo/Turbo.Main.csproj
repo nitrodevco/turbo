@@ -39,5 +39,6 @@
     <ProjectReference Include="..\Turbo.Plugins\Turbo.Plugins.csproj" />
     <ProjectReference Include="..\Turbo.Rooms\Turbo.Rooms.csproj" />
     <ProjectReference Include="..\Turbo.Security\Turbo.Security.csproj" />
+    <ProjectReference Include="..\Turbo.Inventory\Turbo.Inventory.csproj" />
   </ItemGroup>
 </Project>

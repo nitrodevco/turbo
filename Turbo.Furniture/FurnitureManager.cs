@@ -58,7 +58,7 @@ namespace Turbo.Furniture
             {
                 var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
 
-                return await furnitureRepository.GetTeleportPairing(furnitureId);
+                return await furnitureRepository.GetTeleportPairingAsync(furnitureId);
             }
         }
 

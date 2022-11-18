@@ -6,6 +6,8 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Players;
+using Turbo.Core.Game.Inventory;
+using Turbo.Inventory.Factories;
 
 namespace Turbo.Players
 {
@@ -14,6 +16,7 @@ namespace Turbo.Players
         public ILogger<IPlayer> Logger { get; private set; }
         public IPlayerManager PlayerManager { get; private set; }
         public IPlayerDetails PlayerDetails { get; private set; }
+        public IPlayerInventory PlayerInventory { get; private set; }
 
         public ISession Session { get; private set; }
         public IRoomObject RoomObject { get; private set; }
@@ -25,16 +28,20 @@ namespace Turbo.Players
         public Player(
             ILogger<IPlayer> logger,
             IPlayerManager playerManager,
-            PlayerEntity playerEntity)
+            PlayerEntity playerEntity,
+            IPlayerInventoryFactory playerInventoryFactory)
         {
             Logger = logger;
             PlayerManager = playerManager;
             PlayerDetails = new PlayerDetails(this, playerEntity);
+            PlayerInventory = playerInventoryFactory.Create(this);
         }
 
         public async ValueTask InitAsync()
         {
             if (IsInitialized) return;
+
+
             // load roles
             // load inventory
             // load messenger

@@ -39,37 +39,12 @@ using Turbo.Rooms.Factories;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic;
 using Turbo.Security;
+using Turbo.Inventory.Factories;
 
 namespace Turbo.Main.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddManagers(this IServiceCollection services)
-        {
-            services.AddSingleton<IPluginManager, TurboPluginManager>();
-            services.AddSingleton<IStorageQueue, StorageQueue>();
-            services.AddSingleton<IServerManager, ServerManager>();
-            services.AddSingleton<IRevisionManager, RevisionManager>();
-            services.AddSingleton<ISessionManager, SessionManager>();
-            services.AddSingleton<ISecurityManager, SecurityManager>();
-            services.AddSingleton<INavigatorManager, NavigatorManager>();
-            services.AddSingleton<IFurnitureManager, FurnitureManager>();
-            services.AddSingleton<ICatalogManager, CatalogManager>();
-            services.AddSingleton<IPlayerManager, PlayerManager>();
-            services.AddSingleton<IRoomManager, RoomManager>();
-
-            // Factories
-            services.AddSingleton<IRoomFactory, RoomFactory>();
-            services.AddSingleton<IPlayerFactory, PlayerFactory>();
-            services.AddSingleton<IRoomObjectFactory, RoomObjectFactory>();
-            services.AddSingleton<IRoomObjectLogicFactory, RoomObjectLogicFactory>();
-            services.AddSingleton<IFurnitureFactory, FurnitureFactory>();
-            services.AddSingleton<IRoomFurnitureFactory, RoomFurnitureFactory>();
-            services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
-            services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
-            services.AddSingleton<IRoomWiredFactory, RoomWiredFactory>();
-        }
-
         public static void AddNetworking(this IServiceCollection services)
         {
             // Servers
@@ -90,6 +65,36 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IRoomFurnitureMessageHandler, RoomFurnitureMessageHandler>();
             services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
             services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
+        }
+
+        public static void AddManagers(this IServiceCollection services)
+        {
+            services.AddSingleton<IPluginManager, TurboPluginManager>();
+            services.AddSingleton<IStorageQueue, StorageQueue>();
+            services.AddSingleton<IServerManager, ServerManager>();
+            services.AddSingleton<IRevisionManager, RevisionManager>();
+            services.AddSingleton<ISessionManager, SessionManager>();
+            services.AddSingleton<ISecurityManager, SecurityManager>();
+            services.AddSingleton<INavigatorManager, NavigatorManager>();
+            services.AddSingleton<IFurnitureManager, FurnitureManager>();
+            services.AddSingleton<ICatalogManager, CatalogManager>();
+            services.AddSingleton<IPlayerManager, PlayerManager>();
+            services.AddSingleton<IRoomManager, RoomManager>();
+        }
+
+        public static void AddFactories(this IServiceCollection services)
+        {
+            services.AddSingleton<IRoomFactory, RoomFactory>();
+            services.AddSingleton<IPlayerFactory, PlayerFactory>();
+            services.AddSingleton<IPlayerInventoryFactory, PlayerInventoryFactory>();
+            services.AddSingleton<IRoomObjectFactory, RoomObjectFactory>();
+            services.AddSingleton<IRoomObjectLogicFactory, RoomObjectLogicFactory>();
+            services.AddSingleton<IFurnitureFactory, FurnitureFactory>();
+            services.AddSingleton<IPlayerFurnitureFactory, PlayerFurnitureFactory>();
+            services.AddSingleton<IRoomFurnitureFactory, RoomFurnitureFactory>();
+            services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
+            services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
+            services.AddSingleton<IRoomWiredFactory, RoomWiredFactory>();
         }
 
         public static void AddRepositories(this IServiceCollection services)

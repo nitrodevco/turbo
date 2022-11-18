@@ -51,9 +51,9 @@ namespace Turbo.Main
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
                     );
 
-                    // Repositories, Managers and networking
                     services.AddRepositories();
                     services.AddManagers();
+                    services.AddFactories();
                     services.AddNetworking();
 
                     // Emulator

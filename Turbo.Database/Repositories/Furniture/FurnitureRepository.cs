@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Furniture;
-using System.Linq;
 using Turbo.Core.Database.Dtos;
 
 namespace Turbo.Database.Repositories.Furniture
@@ -25,7 +24,11 @@ namespace Turbo.Database.Repositories.Furniture
             .Where(entity => entity.RoomEntityId == roomId)
             .ToListAsync();
 
-        public async Task<TeleportPairingDto> GetTeleportPairing(int furnitureId)
+        public async Task<List<FurnitureEntity>> FindAllInventoryByPlayerIdAsync(int playerId) => await _context.Furnitures
+            .Where(entity => entity.PlayerEntityId == playerId && entity.RoomEntityId == null)
+            .ToListAsync();
+
+        public async Task<TeleportPairingDto> GetTeleportPairingAsync(int furnitureId)
         {
             FurnitureTeleportLinkEntity linkEntity = await FindTeleportLinkByFurnitureIdAsync(furnitureId);
 
@@ -33,7 +36,7 @@ namespace Turbo.Database.Repositories.Furniture
 
             FurnitureEntity furnitureEntity;
 
-            if(linkEntity.FurnitureEntityOneId == furnitureId)
+            if (linkEntity.FurnitureEntityOneId == furnitureId)
             {
                 furnitureEntity = await FindAsync(linkEntity.FurnitureEntityTwoId);
             }

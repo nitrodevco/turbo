@@ -8,6 +8,7 @@
     <Compile Remove="Game\Rooms\Mapping\Constants\**" />
     <EmbeddedResource Remove="Game\Rooms\Mapping\Constants\**" />
     <None Remove="Game\Rooms\Mapping\Constants\**" />
+    <None Remove="Game\Inventory\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,4 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Game\Inventory\" />
+  </ItemGroup>
 </Project>
