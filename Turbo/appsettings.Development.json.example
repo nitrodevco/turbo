@@ -1,5 +1,4 @@
 {
-	// Override appsettings.json for Development environment here
 	"Serilog": {
 		"MinimumLevel": {
 			"Default": "Debug",
@@ -9,7 +8,6 @@
 		}
 	},
 	"Turbo": {
-		"GameHost": "127.0.0.1",
 		"DatabaseHost": "localhost",
 		"DatabaseUser": "root",
 		"DatabasePassword": "",
