@@ -13,12 +13,12 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public double Height { get; }
         public int RelativeHeight { get; }
         public RoomTileState State { get; }
-        public IRoomObject HighestObject { get; }
+        public IRoomObjectFloor HighestObject { get; }
 
         public bool HasStackHelper { get; }
 
-        public IDictionary<int, IRoomObject> Users { get; }
-        public IDictionary<int, IRoomObject> Furniture { get; }
+        public IDictionary<int, IRoomObjectAvatar> Avatars { get; }
+        public IDictionary<int, IRoomObjectFloor> Furniture { get; }
 
         public bool IsDoor { get; set; }
 
@@ -29,10 +29,10 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public double GetWalkingHeight();
         public bool HasLogic(Type type);
 
-        public bool IsOpen(IRoomObject roomObject = null);
-        public bool CanWalk(IRoomObject roomObject = null);
-        public bool CanSit(IRoomObject roomObject = null);
-        public bool CanLay(IRoomObject roomObject = null);
+        public bool IsOpen(IRoomObjectAvatar roomObject = null);
+        public bool CanWalk(IRoomObjectAvatar roomObject = null);
+        public bool CanSit(IRoomObjectAvatar roomObject = null);
+        public bool CanLay(IRoomObjectAvatar roomObject = null);
         public bool CanStack();
 
     }

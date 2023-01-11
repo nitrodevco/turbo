@@ -9,12 +9,12 @@ using Turbo.Rooms.Object.Logic.Furniture.Wired.Data;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Definition;
 using System;
-using Turbo.Core.Game.Rooms.Object.Data;
+using Turbo.Core.Game.Furniture.Data;
 using Turbo.Core.Utilities;
 
 namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 {
-    public class FurnitureWiredLogic : FurnitureLogic, IFurnitureWiredLogic
+    public class FurnitureWiredLogic : FurnitureFloorLogic, IFurnitureWiredLogic
     {
         private static readonly int _offState = 0;
         private static readonly int _onState = 1;
@@ -40,7 +40,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
         {
             IWiredData wiredData = CreateWiredDataFromJson(jsonString);
 
-            if(ValidateWiredData(wiredData)) _wiredData = wiredData;
+            if (ValidateWiredData(wiredData)) _wiredData = wiredData;
         }
 
         public virtual IWiredData CreateWiredDataFromJson(string jsonString = null)
@@ -60,7 +60,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
                 {
                     if (furnitureIds.Count == wiredData.SelectionLimit) break;
 
-                    IFurniture furniture = RoomObject.Room.RoomFurnitureManager.GetFurniture(id);
+                    var furniture = RoomObject.Room.RoomFurnitureManager.GetFloorFurniture(id);
 
                     if (furniture == null) continue;
 
@@ -77,7 +77,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
                 {
                     wiredData.SelectionIds = furnitureIds;
 
-                    if(RoomObject.RoomObjectHolder is IFurniture furniture)
+                    if (RoomObject.RoomObjectHolder is IRoomFloorFurniture furniture)
                     {
                         furniture.Save();
                     }
@@ -89,7 +89,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
         public override async Task Cycle()
         {
-            if(_needsOffState)
+            if (_needsOffState)
             {
                 SetState(_offState);
 
@@ -97,9 +97,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
             }
         }
 
-        public override void OnInteract(IRoomObject roomObject, int param)
+        public override void OnInteract(IRoomObjectAvatar avatar, int param)
         {
-            if (!CanToggle(RoomObject)) return;
+            if (!CanToggle(avatar)) return;
 
             // send wired config (class specific)
         }
@@ -112,9 +112,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
             if ((lastRun - _lastRun) < Cooldown) return false;
 
-            if(wiredArguments.UserObject != null)
+            if (wiredArguments.UserObject != null)
             {
-                if(_lastRunPlayers.ContainsKey(wiredArguments.UserObject.Id))
+                if (_lastRunPlayers.ContainsKey(wiredArguments.UserObject.Id))
                 {
                     if ((lastRun - _lastRunPlayers[wiredArguments.UserObject.Id]) < CooldownPlayer) return false;
 
@@ -123,7 +123,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
                 else
                 {
                     _lastRunPlayers.Add(wiredArguments.UserObject.Id, lastRun);
-                }    
+                }
             }
 
             _lastRun = lastRun;

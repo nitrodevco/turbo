@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Rooms.Utils
@@ -19,9 +13,9 @@ namespace Turbo.Rooms.Utils
         public IPoint Location { get; private set; }
         public IPoint LocationNext { get; private set; }
 
-        public IRoomObject Roller { get; set; }
-        public IDictionary<int, IRollerItemData> Users { get; private set; }
-        public IDictionary<int, IRollerItemData> Furniture { get; private set; }
+        public IRoomObjectFloor Roller { get; set; }
+        public IDictionary<int, IRollerItemData<IRoomObjectAvatar>> Avatars { get; private set; }
+        public IDictionary<int, IRollerItemData<IRoomObjectFloor>> Furniture { get; private set; }
 
         public RollerData(IRoom room, IPoint location, IPoint locationNext)
         {
@@ -30,70 +24,74 @@ namespace Turbo.Rooms.Utils
             Location = location;
             LocationNext = locationNext;
 
-            Users = new Dictionary<int, IRollerItemData>();
-            Furniture = new Dictionary<int, IRollerItemData>();
+            Avatars = new Dictionary<int, IRollerItemData<IRoomObjectAvatar>>();
+            Furniture = new Dictionary<int, IRollerItemData<IRoomObjectFloor>>();
         }
 
         public void RemoveRoomObject(IRoomObject roomObject)
         {
-            if(roomObject.Logic is IMovingAvatarLogic)
+            if (roomObject is IRoomObjectAvatar avatarObject)
             {
-                Users.Remove(roomObject.Id);
+                Avatars.Remove(roomObject.Id);
+
+                return;
             }
 
-            else if(roomObject.Logic is IFurnitureLogic)
+            if (roomObject is IRoomObjectFloor floorObject)
             {
                 Furniture.Remove(roomObject.Id);
+
+                return;
             }
         }
 
         public void CommitRoll()
         {
-            IRoomTile currentTile = _room.RoomMap.GetTile(Location);
-            IRoomTile nextTile = _room.RoomMap.GetTile(LocationNext);
+            var currentTile = _room.RoomMap.GetTile(Location);
+            var nextTile = _room.RoomMap.GetTile(LocationNext);
 
-            if((currentTile == null) || (nextTile == null)) return;
+            if ((currentTile == null) || (nextTile == null)) return;
 
-            if(Users.Count > 0)
+            if (Avatars.Count > 0)
             {
-                foreach(IRollerItemData rollerItemData in Users.Values)
+                foreach (var rollerItemData in Avatars.Values)
                 {
-                    IRoomObject roomObject = rollerItemData.RoomObject;
+                    var roomObject = rollerItemData.RoomObject;
 
-                    if(roomObject.Disposed)
+                    if (roomObject.Disposed)
                     {
-                        Users.Remove(roomObject.Id);
+                        Avatars.Remove(roomObject.Id);
 
                         continue;
                     }
 
-                    if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
+                    if (roomObject is IRoomObjectAvatar avatarObject)
                     {
-                        if(!avatarLogic.IsRolling || !roomObject.Location.Compare(Location) || (avatarLogic.RollerData != this))
+                        if (!avatarObject.Logic.IsRolling || !avatarObject.Location.Compare(Location) || (avatarObject.Logic.RollerData != this))
                         {
-                            Users.Remove(roomObject.Id);
+                            Avatars.Remove(roomObject.Id);
 
-                            avatarLogic.RollerData = null;
+                            avatarObject.Logic.RollerData = null;
 
                             continue;
                         }
 
-                        avatarLogic.GetCurrentTile()?.RemoveRoomObject(roomObject);
+                        avatarObject.Logic.GetCurrentTile()?.RemoveRoomObject(roomObject);
 
-                        roomObject.Location.X = LocationNext.X;
-                        roomObject.Location.Y = LocationNext.Y;
-                        roomObject.Location.Z = rollerItemData.HeightNext;
+                        avatarObject.Location.X = LocationNext.X;
+                        avatarObject.Location.Y = LocationNext.Y;
+                        avatarObject.Location.Z = rollerItemData.HeightNext;
 
-                        avatarLogic.GetCurrentTile()?.AddRoomObject(roomObject);
+                        avatarObject.Logic.GetCurrentTile()?.AddRoomObject(roomObject);
                     }
                 }
             }
 
             if (Furniture.Count > 0)
             {
-                foreach (IRollerItemData rollerItemData in Furniture.Values)
+                foreach (var rollerItemData in Furniture.Values)
                 {
-                    IRoomObject roomObject = rollerItemData.RoomObject;
+                    var roomObject = rollerItemData.RoomObject;
 
                     if (roomObject.Disposed)
                     {
@@ -102,26 +100,26 @@ namespace Turbo.Rooms.Utils
                         continue;
                     }
 
-                    if (roomObject.Logic is IFurnitureLogic furnitureLogic)
+                    if (roomObject is IRoomObjectFloor floorObject)
                     {
-                        if (!furnitureLogic.IsRolling || !roomObject.Location.Compare(Location) || (furnitureLogic.RollerData != this))
+                        if (!floorObject.Logic.IsRolling || !floorObject.Location.Compare(Location) || (floorObject.Logic.RollerData != this))
                         {
                             Furniture.Remove(roomObject.Id);
 
-                            furnitureLogic.RollerData = null;
+                            floorObject.Logic.RollerData = null;
 
                             continue;
                         }
 
-                        furnitureLogic.GetCurrentTile()?.RemoveRoomObject(roomObject);
+                        floorObject.Logic.GetCurrentTile()?.RemoveRoomObject(roomObject);
 
-                        roomObject.Location.X = LocationNext.X;
-                        roomObject.Location.Y = LocationNext.Y;
-                        roomObject.Location.Z = rollerItemData.HeightNext;
+                        floorObject.Location.X = LocationNext.X;
+                        floorObject.Location.Y = LocationNext.Y;
+                        floorObject.Location.Z = rollerItemData.HeightNext;
 
-                        if(roomObject.RoomObjectHolder is IFurniture furniture) furniture.Save();
+                        if (floorObject.RoomObjectHolder is IRoomFloorFurniture furniture) furniture.Save();
 
-                        furnitureLogic.GetCurrentTile()?.AddRoomObject(roomObject);
+                        floorObject.Logic.GetCurrentTile()?.AddRoomObject(roomObject);
                     }
                 }
             }
@@ -129,33 +127,27 @@ namespace Turbo.Rooms.Utils
 
         public void CompleteRoll()
         {
-            if (Users.Count > 0)
+            if (Avatars.Count > 0)
             {
-                foreach (IRollerItemData rollerItemData in Users.Values)
+                foreach (var rollerItemData in Avatars.Values)
                 {
-                    IRoomObject roomObject = rollerItemData.RoomObject;
+                    var avatarObject = rollerItemData.RoomObject;
 
-                    if (roomObject.Disposed) continue;
+                    if (avatarObject.Disposed) continue;
 
-                    if (roomObject.Logic is IRollingObjectLogic rollingLogic)
-                    {
-                        rollingLogic.RollerData = null;
-                    }
+                    avatarObject.Logic.RollerData = null;
                 }
             }
 
             if (Furniture.Count > 0)
             {
-                foreach (IRollerItemData rollerItemData in Furniture.Values)
+                foreach (var rollerItemData in Furniture.Values)
                 {
-                    IRoomObject roomObject = rollerItemData.RoomObject;
+                    var floorObject = rollerItemData.RoomObject;
 
-                    if (roomObject.Disposed) continue;
+                    if (floorObject.Disposed) continue;
 
-                    if (roomObject.Logic is IRollingObjectLogic rollingLogic)
-                    {
-                        rollingLogic.RollerData = null;
-                    }
+                    floorObject.Logic.RollerData = null;
                 }
             }
         }

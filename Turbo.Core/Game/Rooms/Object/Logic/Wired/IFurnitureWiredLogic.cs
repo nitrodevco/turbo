@@ -2,7 +2,7 @@
 
 namespace Turbo.Core.Game.Rooms.Object.Logic.Wired
 {
-    public interface IFurnitureWiredLogic : IFurnitureLogic
+    public interface IFurnitureWiredLogic : IFurnitureFloorLogic
     {
         public void SetupWiredData(string jsonString = null);
         public IWiredData CreateWiredDataFromJson(string jsonString = null);

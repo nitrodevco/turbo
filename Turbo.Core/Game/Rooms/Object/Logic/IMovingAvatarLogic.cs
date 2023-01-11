@@ -5,13 +5,17 @@ using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
 {
-    public interface IMovingAvatarLogic : IRollingObjectLogic
+    public interface IMovingAvatarLogic : IRoomObjectLogic, IRollingObjectLogic
     {
+        public IRoomObjectAvatar RoomObject { get; }
+        public bool SetRoomObject(IRoomObjectAvatar roomObject);
+
+        public IDictionary<string, string> Statuses { get; }
         public IPoint LocationNext { get; set; }
         public IPoint LocationGoal { get; }
         public IList<IPoint> CurrentPath { get; }
-        public Action<IRoomObject> BeforeGoalAction { get; set; }
-        public Action<IRoomObject> GoalAction { get; set; }
+        public Action<IRoomObjectAvatar> BeforeGoalAction { get; set; }
+        public Action<IRoomObjectAvatar> GoalAction { get; set; }
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; }
         public bool CanWalk { get; set; }
@@ -28,6 +32,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void AddStatus(string type, string value);
         public bool HasStatus(params string[] types);
         public void RemoveStatus(params string[] types);
+        public IRoomTile GetCurrentTile();
         public IRoomTile GetNextTile();
     }
 }

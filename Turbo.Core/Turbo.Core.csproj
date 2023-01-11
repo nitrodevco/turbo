@@ -9,6 +9,7 @@
     <EmbeddedResource Remove="Game\Rooms\Mapping\Constants\**" />
     <None Remove="Game\Rooms\Mapping\Constants\**" />
     <None Remove="Game\Inventory\" />
+    <None Remove="Game\Furniture\Data\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -18,5 +19,6 @@
 
   <ItemGroup>
     <Folder Include="Game\Inventory\" />
+    <Folder Include="Game\Furniture\Data\" />
   </ItemGroup>
 </Project>

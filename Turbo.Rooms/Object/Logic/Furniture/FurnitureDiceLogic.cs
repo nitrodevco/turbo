@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms.Object;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
-    public class FurnitureDiceLogic : FurnitureLogic
+    public class FurnitureDiceLogic : FurnitureFloorLogic
     {
         private static readonly int _diceCycles = 4;
         private static readonly int _rollingState = -1;
@@ -33,34 +30,34 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             }
         }
 
-        public virtual void ThrowDice(IRoomObject roomObject)
+        public virtual void ThrowDice(IRoomObjectAvatar avatar)
         {
-            if (!CanToggle(roomObject)) return;
+            if (!CanToggle(avatar)) return;
 
             SetState(_rollingState);
 
             _remainingDiceCycles = _diceCycles;
         }
 
-        public virtual void DiceOff(IRoomObject roomObject)
+        public virtual void DiceOff(IRoomObjectAvatar avatar)
         {
-            if (!CanToggle(roomObject)) return;
+            if (!CanToggle(avatar)) return;
 
             SetState(_closedState);
 
             _remainingDiceCycles = -1;
         }
 
-        public override void OnInteract(IRoomObject roomObject, int param)
+        public override void OnInteract(IRoomObjectAvatar avatar, int param)
         {
             return;
         }
 
-        public override bool CanToggle(IRoomObject roomObject)
+        public override bool CanToggle(IRoomObjectAvatar avatar)
         {
-            if (RoomObject.Location.GetDistanceAround(roomObject.Location) > 2) return false;
+            if (RoomObject.Location.GetDistanceAround(avatar.Location) > 2) return false;
 
-            return base.CanToggle(roomObject);
+            return base.CanToggle(avatar);
         }
 
         public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Everybody;

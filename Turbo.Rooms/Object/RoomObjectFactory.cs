@@ -13,13 +13,35 @@ namespace Turbo.Rooms.Object
             _logicFactory = logicFactory;
         }
 
-        public IRoomObject Create(IRoom room, IRoomObjectContainer roomObjectContainer, int id, string type, string logicType)
+        public IRoomObjectAvatar CreateAvatarObject(IRoom room, IRoomObjectContainer<IRoomObjectAvatar> roomObjectContainer, int id, string logicType = "")
         {
-            IRoomObjectLogic logic = _logicFactory.Create(logicType);
+            if (logicType == null || logicType.Length == 0) return null;
 
-            IRoomObject roomObject = new RoomObject(room, roomObjectContainer, id, type);
+            IRoomObjectAvatar roomObject = new RoomObjectAvatar(room, roomObjectContainer, id);
 
-            roomObject.SetLogic(logic);
+            roomObject.SetLogic((IMovingAvatarLogic)_logicFactory.Create(logicType));
+
+            return roomObject;
+        }
+
+        public IRoomObjectFloor CreateFloorObject(IRoom room, IRoomObjectContainer<IRoomObjectFloor> roomObjectContainer, int id, string logicType = "")
+        {
+            if (logicType == null || logicType.Length == 0) return null;
+
+            var roomObject = new RoomObjectFloor(room, roomObjectContainer, id);
+
+            roomObject.SetLogic((IFurnitureFloorLogic)_logicFactory.Create(logicType));
+
+            return roomObject;
+        }
+
+        public IRoomObjectWall CreateWallObject(IRoom room, IRoomObjectContainer<IRoomObjectWall> roomObjectContainer, int id, string logicType = "")
+        {
+            if (logicType == null || logicType.Length == 0) return null;
+
+            var roomObject = new RoomObjectWall(room, roomObjectContainer, id);
+
+            roomObject.SetLogic((IFurnitureWallLogic)_logicFactory.Create(logicType));
 
             return roomObject;
         }

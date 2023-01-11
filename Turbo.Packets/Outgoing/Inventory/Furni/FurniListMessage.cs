@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Inventory;
 using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Inventory.Furni

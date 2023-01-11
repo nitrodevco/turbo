@@ -24,23 +24,23 @@ namespace Turbo.Rooms.PathFinder
             _roomMap = roomMap;
         }
 
-        public IList<IPoint> MakePath(IRoomObject roomObject, IPoint location)
+        public IList<IPoint> MakePath(IRoomObjectAvatar avatar, IPoint location)
         {
-            if ((roomObject == null) || (location == null)) return null;
+            if ((avatar == null) || (location == null)) return null;
 
             location = location.Clone();
 
-            IRoomTile goalTile = _roomMap.GetValidTile(roomObject, location);
+            IRoomTile goalTile = _roomMap.GetValidTile(avatar, location);
 
             if (goalTile == null) return null;
 
             List<IPoint> points = new();
 
-            IList<PathFinderNode> nodes = CalculatePathFinderNode(roomObject, goalTile);
+            IList<PathFinderNode> nodes = CalculatePathFinderNode(avatar, goalTile);
 
-            if(nodes != null)
+            if (nodes != null)
             {
-                if(nodes.Count > 0)
+                if (nodes.Count > 0)
                 {
                     nodes.RemoveAt(0);
 
@@ -54,9 +54,9 @@ namespace Turbo.Rooms.PathFinder
             return points;
         }
 
-        private IList<PathFinderNode> CalculatePathFinderNode(IRoomObject roomObject, IRoomTile goalTile, bool blockingDisabled = false)
+        private IList<PathFinderNode> CalculatePathFinderNode(IRoomObjectAvatar avatar, IRoomTile goalTile, bool blockingDisabled = false)
         {
-            if ((roomObject == null) || (_roomMap == null) || (goalTile == null)) return null;
+            if ((avatar == null) || (_roomMap == null) || (goalTile == null)) return null;
 
             IPoint location = goalTile.Location;
 
@@ -68,7 +68,7 @@ namespace Turbo.Rooms.PathFinder
             currentNode.G = 0;
             currentNode.H = _heuristicEstimate;
             currentNode.F = currentNode.G + currentNode.H;
-            currentNode.Location = new Point(roomObject.Location);
+            currentNode.Location = new Point(avatar.Location);
             currentNode.LocationParent = new Point(currentNode.Location);
 
             openNodes.Push(currentNode);
@@ -105,7 +105,7 @@ namespace Turbo.Rooms.PathFinder
 
                     tempNode.Location = currentNode.Location.AddPoint(walkingPoint);
 
-                    if (!IsValidStep(roomObject, currentNode.Location, tempNode.Location, location, blockingDisabled)) continue;
+                    if (!IsValidStep(avatar, currentNode.Location, tempNode.Location, location, blockingDisabled)) continue;
 
                     int gCost;
 
@@ -177,8 +177,8 @@ namespace Turbo.Rooms.PathFinder
                     {
                         int dx1 = currentNode.Location.X - location.X;
                         int dy1 = currentNode.Location.Y - location.Y;
-                        int dx2 = roomObject.Location.X - location.X;
-                        int dy2 = roomObject.Location.Y - location.Y;
+                        int dx2 = avatar.Location.X - location.X;
+                        int dy2 = avatar.Location.Y - location.Y;
                         int cross = Math.Abs(dx1 * dy2 - dx2 * dy1);
                         tempNode.H = (int)(tempNode.H + cross * 0.001);
                     }
@@ -191,18 +191,18 @@ namespace Turbo.Rooms.PathFinder
                 closedNodes.Add(currentNode);
             }
 
-            if (_roomMap.BlockingDisabled && !blockingDisabled) return CalculatePathFinderNode(roomObject, goalTile, true);
+            if (_roomMap.BlockingDisabled && !blockingDisabled) return CalculatePathFinderNode(avatar, goalTile, true);
 
             return null;
         }
 
-        public bool IsValidStep(IRoomObject roomObject, IPoint location, IPoint nextLocation, IPoint goalLocation, bool blockingDisabled = false)
+        public bool IsValidStep(IRoomObjectAvatar avatar, IPoint location, IPoint nextLocation, IPoint goalLocation, bool blockingDisabled = false)
         {
-            if ((_roomMap == null) || (roomObject == null) || (location == null) || (nextLocation == null) || (goalLocation == null)) return false;
+            if ((_roomMap == null) || (avatar == null) || (location == null) || (nextLocation == null) || (goalLocation == null)) return false;
 
             bool isGoal = nextLocation.Compare(goalLocation);
-            IRoomTile currentTile = _roomMap.GetValidTile(roomObject, location, false, blockingDisabled);
-            IRoomTile nextTile = _roomMap.GetValidTile(roomObject, nextLocation, isGoal, blockingDisabled);
+            IRoomTile currentTile = _roomMap.GetValidTile(avatar, location, false, blockingDisabled);
+            IRoomTile nextTile = _roomMap.GetValidTile(avatar, nextLocation, isGoal, blockingDisabled);
 
             if (((currentTile == null) || (nextTile == null)) || (nextTile.IsDoor && !isGoal)) return false;
 
@@ -213,15 +213,15 @@ namespace Turbo.Rooms.PathFinder
 
             if (_allowDiagonals && !location.Compare(nextLocation))
             {
-                bool isSideValid = (_roomMap.GetValidDiagonalTile(roomObject, new Point(nextLocation.X, location.Y)) != null);
-                bool isOtherSideValid = (_roomMap.GetValidDiagonalTile(roomObject, new Point(location.X, nextLocation.Y)) != null);
+                bool isSideValid = (_roomMap.GetValidDiagonalTile(avatar, new Point(nextLocation.X, location.Y)) != null);
+                bool isOtherSideValid = (_roomMap.GetValidDiagonalTile(avatar, new Point(location.X, nextLocation.Y)) != null);
 
                 if (!isSideValid && !isOtherSideValid) return false;
             }
 
-            if (nextTile.Location.Compare(roomObject.Location)) return true;
+            if (nextTile.Location.Compare(avatar.Location)) return true;
 
-            if (!isGoal && (nextTile.CanSit(roomObject) || nextTile.CanLay(roomObject))) return false;
+            if (!isGoal && (nextTile.CanSit(avatar) || nextTile.CanLay(avatar))) return false;
 
             return true;
         }

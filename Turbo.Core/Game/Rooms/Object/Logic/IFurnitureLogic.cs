@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Furniture.Definition;
-using Turbo.Core.Game.Rooms.Object.Data;
+using Turbo.Core.Game.Furniture.Data;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
 {
-    public interface IFurnitureLogic : IRollingObjectLogic
+    public interface IFurnitureLogic : IRoomObjectLogic
     {
         public IFurnitureDefinition FurnitureDefinition { get; }
         public IStuffData StuffData { get; }
@@ -14,25 +14,12 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void RefreshFurniture();
         public void RefreshStuffData();
         public bool SetState(int state, bool refresh = true);
-        public void OnEnter(IRoomObject roomObject);
-        public void OnLeave(IRoomObject roomObject);
-        public void BeforeStep(IRoomObject roomObject);
-        public void OnStep(IRoomObject roomObject);
-        public void OnStop(IRoomObject roomObject);
-        public void OnInteract(IRoomObject roomObject, int param);
+        public void OnInteract(IRoomObjectAvatar avatar, int param);
         public void OnPlace(IRoomManipulator roomManipulator);
         public void OnMove(IRoomManipulator roomManipulator);
         public void OnPickup(IRoomManipulator roomManipulator);
-        public bool CanStack();
-        public bool CanWalk(IRoomObject roomObject = null);
-        public bool CanSit(IRoomObject roomObject = null);
-        public bool CanLay(IRoomObject roomObject = null);
-        public bool CanRoll();
-        public bool CanToggle(IRoomObject roomObject);
-        public bool IsOpen(IRoomObject roomObject = null);
+        public bool CanToggle(IRoomObjectAvatar avatar);
         public FurniUsagePolicy UsagePolicy { get; }
-        public double StackHeight { get; }
         public StuffDataKey DataKey { get; }
-        public double Height { get; }
     }
 }

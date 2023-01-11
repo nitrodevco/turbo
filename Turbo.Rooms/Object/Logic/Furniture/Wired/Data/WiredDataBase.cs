@@ -43,7 +43,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Data
             IntParameters = new List<int>();
         }
 
-        public virtual bool SetRoomObject(IRoomObject roomObject)
+        public virtual bool SetRoomObject(IRoomObjectFloor roomObject)
         {
             if (roomObject.Logic is not IFurnitureWiredLogic wiredLogic) return false;
 

@@ -188,7 +188,7 @@ namespace Turbo.Rooms
 
             RoomFurnitureManager.SendFurnitureToSession(player.Session);
 
-            IRoomObject roomObject = RoomUserManager.EnterRoom(player, location);
+            var roomObject = RoomUserManager.EnterRoom(player, location);
 
             if (roomObject != null) RoomSecurityManager.RefreshControllerLevel(roomObject);
 

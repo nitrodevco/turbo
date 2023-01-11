@@ -5,7 +5,7 @@ namespace Turbo.Packets.Outgoing.Room.Engine
 {
     public record ItemAddMessage : IComposer
     {
-        public IRoomObject Object { get; init; }
+        public IRoomObjectWall Object { get; init; }
         public string OwnerName { get; init; }
     }
 }

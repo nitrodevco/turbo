@@ -4,6 +4,8 @@ using System;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Database.Entities.Furniture;
+using Turbo.Core.Game.Rooms.Managers;
+using Turbo.Core.Game.Rooms.Object;
 
 namespace Turbo.Furniture.Factories
 {
@@ -16,18 +18,39 @@ namespace Turbo.Furniture.Factories
             _provider = provider;
         }
 
-        public IFurniture Create(IFurnitureContainer furnitureContainer, FurnitureEntity furnitureEntity)
+        public IFurnitureDefinition GetFurnitureDefinition(int id)
         {
-            IFurnitureManager furnitureManager = _provider.GetService<IFurnitureManager>();
+            var furnitureManager = _provider.GetService<IFurnitureManager>();
 
-            IFurnitureDefinition furnitureDefinition = furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
+            return furnitureManager.GetFurnitureDefinition(id);
+        }
+
+        public IRoomFloorFurniture CreateFloorFurniture(IRoomFurnitureManager roomFurnitureManager, FurnitureEntity furnitureEntity)
+        {
+            var furnitureManager = _provider.GetService<IFurnitureManager>();
+
+            var furnitureDefinition = furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
             if (furnitureDefinition == null) return null;
 
-            ILogger<IFurniture> logger = _provider.GetService<ILogger<Furniture>>();
+            var logger = _provider.GetService<ILogger<RoomFloorFurniture>>();
             IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
 
-            return new Furniture(logger, furnitureContainer, furnitureManager, furnitureEntity, furnitureDefinition);
+            return new RoomFloorFurniture(logger, roomFurnitureManager, furnitureManager, furnitureEntity, furnitureDefinition);
+        }
+
+        public IRoomWallFurniture CreateWallFurniture(IRoomFurnitureManager roomFurnitureManager, FurnitureEntity furnitureEntity)
+        {
+            var furnitureManager = _provider.GetService<IFurnitureManager>();
+
+            var furnitureDefinition = furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
+
+            if (furnitureDefinition == null) return null;
+
+            var logger = _provider.GetService<ILogger<RoomWallFurniture>>();
+            IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
+
+            return new RoomWallFurniture(logger, roomFurnitureManager, furnitureManager, furnitureEntity, furnitureDefinition);
         }
     }
 }

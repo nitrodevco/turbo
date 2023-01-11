@@ -138,7 +138,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             RoomObject.Room.SendComposer(new DanceMessage
             {
-                UserId = RoomObject.Id,
+                ObjectId = RoomObject.Id,
                 DanceStyle = (int)danceType
             });
         }
@@ -159,7 +159,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             RoomObject.Room.SendComposer(new ExpressionMessage
             {
-                UserId = RoomObject.Id,
+                ObjectId = RoomObject.Id,
                 ExpressionType = (int)expressionType
             });
         }
@@ -192,7 +192,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             RoomObject.Room.SendComposer(new SleepMessage
             {
-                UserId = RoomObject.Id,
+                ObjectId = RoomObject.Id,
                 Sleeping = IsIdle
             });
         }

@@ -5,6 +5,6 @@ namespace Turbo.Packets.Outgoing.Room.Engine
 {
     public record ItemUpdateMessage : IComposer
     {
-        public IRoomObject Object { get; init; }
+        public IRoomObjectWall Object { get; init; }
     }
 }

@@ -6,7 +6,8 @@
         public static readonly string Pet = "pet";
         public static readonly string Bot = "bot";
         public static readonly string RentableBot = "rentablebot";
-        public static readonly string FurnitureDefault = "default";
+        public static readonly string FurnitureDefaultFloor = "default_floor";
+        public static readonly string FurnitureDefaultWall = "default_wall";
         public static readonly string FURNITURE_EXCHANGE = "exchange";
         public static readonly string FurnitureRoller = "roller";
         public static readonly string FURNITURE_MULTIHEIGHT = "multi_height";

@@ -33,17 +33,13 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            IRoomObject diceObject = roomObject.Room.RoomFurnitureManager.GetRoomObject(message.ObjectId);
+            var diceObject = session.Player.RoomObject?.Room.RoomFurnitureManager.FloorObjects.GetRoomObject(message.ObjectId);
 
             if (diceObject == null) return;
 
-            if(diceObject.Logic is FurnitureDiceLogic diceLogic)
+            if (diceObject.Logic is FurnitureDiceLogic diceLogic)
             {
-                diceLogic.ThrowDice(roomObject);
+                diceLogic.ThrowDice(session.Player.RoomObject);
             }
         }
 
@@ -51,17 +47,13 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            IRoomObject diceObject = roomObject.Room.RoomFurnitureManager.GetRoomObject(message.ObjectId);
+            var diceObject = session.Player.RoomObject?.Room.RoomFurnitureManager.FloorObjects.GetRoomObject(message.ObjectId);
 
             if (diceObject == null) return;
 
             if (diceObject.Logic is FurnitureDiceLogic diceLogic)
             {
-                diceLogic.DiceOff(roomObject);
+                diceLogic.DiceOff(session.Player.RoomObject);
             }
         }
     }

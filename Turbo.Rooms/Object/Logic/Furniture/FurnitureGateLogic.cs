@@ -4,21 +4,21 @@ using Turbo.Core.Game.Rooms.Object;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
-    public class FurnitureGateLogic : FurnitureLogic
+    public class FurnitureGateLogic : FurnitureFloorLogic
     {
         private static readonly int _gateClosedState = 0;
         private static readonly int _gateOpenState = 1;
 
-        public override void OnInteract(IRoomObject roomObject, int param)
+        public override void OnInteract(IRoomObjectAvatar avatar, int param)
         {
-            IRoomTile roomTile = RoomObject.Room.RoomMap.GetTile(RoomObject.Location);
+            IRoomTile roomTile = GetCurrentTile();
 
-            if ((roomTile == null) || (roomTile.Users.Count > 0)) return;
+            if ((roomTile == null) || (roomTile.Avatars.Count > 0)) return;
 
-            base.OnInteract(roomObject, param);
+            base.OnInteract(avatar, param);
         }
 
-        public override bool IsOpen(IRoomObject roomObject = null)
+        public override bool IsOpen(IRoomObjectAvatar roomObject = null)
         {
             if (StuffData.GetState() == _gateClosedState) return false;
 

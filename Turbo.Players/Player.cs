@@ -19,7 +19,7 @@ namespace Turbo.Players
         public IPlayerInventory PlayerInventory { get; private set; }
 
         public ISession Session { get; private set; }
-        public IRoomObject RoomObject { get; private set; }
+        public IRoomObjectAvatar RoomObject { get; private set; }
 
         public bool IsInitialized { get; private set; }
         public bool IsDisposed { get; private set; }
@@ -41,10 +41,10 @@ namespace Turbo.Players
         {
             if (IsInitialized) return;
 
-
             // load roles
-            // load inventory
             // load messenger
+
+            await PlayerInventory.InitAsync();
 
             IsInitialized = true;
         }
@@ -62,8 +62,9 @@ namespace Turbo.Players
             // set offline in PlayerDetails
 
             // dispose messenger
-            // dispose inventory
             // dispose roles
+
+            await PlayerInventory.DisposeAsync();
 
             await Session.DisposeAsync();
 
@@ -81,13 +82,20 @@ namespace Turbo.Players
             return true;
         }
 
-        public bool SetRoomObject(IRoomObject roomObject)
+        public async Task<bool> SetupRoomObject()
+        {
+            if (RoomObject == null) return false;
+
+            return true;
+        }
+
+        public bool SetRoomObject(IRoomObjectAvatar avatarObject)
         {
             ClearRoomObject();
 
-            if ((roomObject == null) || !roomObject.SetHolder(this)) return false;
+            if ((avatarObject == null) || !avatarObject.SetHolder(this)) return false;
 
-            RoomObject = roomObject;
+            RoomObject = avatarObject;
 
             // update all messenger friends
 
@@ -117,7 +125,7 @@ namespace Turbo.Players
             return false;
         }
 
-        public string Type => "user";
+        public RoomObjectHolderType Type => RoomObjectHolderType.User;
 
         public int Id => PlayerDetails.Id;
 

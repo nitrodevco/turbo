@@ -6,6 +6,6 @@ namespace Turbo.Packets.Outgoing.Room.Engine
 {
     public record UsersMessage : IComposer
     {
-        public IList<IRoomObject> RoomObjects { get; init; }
+        public IList<IRoomObjectAvatar> RoomObjects { get; init; }
     }
 }

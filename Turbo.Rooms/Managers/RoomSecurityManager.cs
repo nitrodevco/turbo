@@ -13,6 +13,8 @@ using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Permissions;
+using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Furniture.Constants;
 
 namespace Turbo.Rooms.Managers
 {
@@ -43,6 +45,13 @@ namespace Turbo.Rooms.Managers
 
         }
 
+        public bool IsStrictOwner(IRoomManipulator manipulator)
+        {
+            if (_room.RoomDetails.PlayerId == manipulator.Id) return true;
+
+            return false;
+        }
+
         public bool IsOwner(IRoomManipulator manipulator)
         {
             if (IsStrictOwner(manipulator)) return true;
@@ -52,41 +61,39 @@ namespace Turbo.Rooms.Managers
             return false;
         }
 
-        public bool IsStrictOwner(IRoomManipulator manipulator)
+        public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator)
         {
-            if (_room.RoomDetails.PlayerId == manipulator.Id) return true;
+            if (IsOwner(manipulator)) return RoomControllerLevel.Moderator;
 
-            return false;
+            bool isGroup = false;
+
+            if (isGroup)
+            {
+                if (manipulator.HasPermission("any_group_admin")) return RoomControllerLevel.GroupAdmin;
+
+                if (manipulator.HasPermission("any_group_member")) return RoomControllerLevel.GroupRights;
+
+                // check if the manipulator belongs to the group
+            }
+            else
+            {
+                if (manipulator.HasPermission("any_room_rights")) return RoomControllerLevel.Rights;
+
+                if (Rights.Contains(manipulator.Id)) return RoomControllerLevel.Rights;
+            }
+
+            return RoomControllerLevel.None;
         }
 
-        public bool IsController(IRoomManipulator manipulator)
-        {
-            if (IsOwner(manipulator)) return true;
-
-            if (manipulator.HasPermission("any_room_rights")) return true;
-
-            if (Rights.Contains(manipulator.Id)) return true;
-
-            return false;
-        }
-
-        public void RefreshControllerLevel(IRoomObject roomObject)
+        public void RefreshControllerLevel(IRoomObjectAvatar avatarObject)
         {
             bool isOwner = false;
             RoomControllerLevel controllerLevel = RoomControllerLevel.None;
 
-            if (roomObject.RoomObjectHolder is IPlayer player)
+            if (avatarObject.RoomObjectHolder is IPlayer player)
             {
-                if (IsOwner(player))
-                {
-                    isOwner = true;
-                    controllerLevel = RoomControllerLevel.Moderator;
-                }
-
-                else if (IsController(player))
-                {
-                    controllerLevel = RoomControllerLevel.Rights;
-                }
+                isOwner = IsOwner(player);
+                controllerLevel = GetControllerLevel(player);
 
                 player.Session.Send(new YouAreControllerMessage
                 {
@@ -100,25 +107,17 @@ namespace Turbo.Rooms.Managers
                     Owner = isOwner
                 });
 
-                if(isOwner)
-                {
-                    player.Session.Send(new YouAreOwnerMessage());
-                }
-
-                // needs groups
+                if (isOwner) player.Session.Send(new YouAreOwnerMessage());
             }
 
-            if (roomObject.Logic is IMovingAvatarLogic avatarLogic)
-            {
-                avatarLogic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)controllerLevel).ToString());
-            }
+            avatarObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)controllerLevel).ToString());
         }
 
         public void SendOwnersComposer(IComposer composer)
         {
-            foreach (IRoomObject roomObject in _room.RoomUserManager.RoomObjects.Values)
+            foreach (var avatarObject in _room.RoomUserManager.AvatarObjects.RoomObjects.Values)
             {
-                if (roomObject.RoomObjectHolder is IPlayer player)
+                if (avatarObject.RoomObjectHolder is IPlayer player)
                 {
                     if (!IsOwner(player)) continue;
 
@@ -129,11 +128,11 @@ namespace Turbo.Rooms.Managers
 
         public void SendRightsComposer(IComposer composer)
         {
-            foreach (IRoomObject roomObject in _room.RoomUserManager.RoomObjects.Values)
+            foreach (var avatarObject in _room.RoomUserManager.AvatarObjects.RoomObjects.Values)
             {
-                if (roomObject.RoomObjectHolder is IPlayer player)
+                if (avatarObject.RoomObjectHolder is IPlayer player)
                 {
-                    if (!IsController(player)) continue;
+                    if (GetControllerLevel(player) < RoomControllerLevel.Rights) continue;
 
                     player.Session.Send(composer);
                 }
@@ -154,6 +153,80 @@ namespace Turbo.Rooms.Managers
                     Rights.Add(roomRightEntity.PlayerEntityId);
                 }
             }
+        }
+
+        public bool CanManipulateFurniture(IRoomManipulator manipulator, IRoomFurniture furniture)
+        {
+            if (furniture == null) return false;
+
+            if (manipulator == null) return true;
+
+            var controllerLevel = GetControllerLevel(manipulator);
+
+            if (controllerLevel >= RoomControllerLevel.GroupAdmin) return true;
+
+            bool isGroup = false;
+            bool canGroupDecorate = false;
+
+            if (isGroup)
+            {
+                if (controllerLevel >= RoomControllerLevel.GroupRights && canGroupDecorate) return true;
+            }
+            else
+            {
+                if (controllerLevel >= RoomControllerLevel.Rights) return true;
+            }
+
+            return false;
+        }
+
+        public bool CanPlaceFurniture(IRoomManipulator manipulator)
+        {
+            if (manipulator == null) return true;
+
+            var controllerLevel = GetControllerLevel(manipulator);
+
+            if (controllerLevel >= RoomControllerLevel.GroupAdmin) return true;
+
+            bool isGroup = false;
+            bool canGroupDecorate = false;
+
+            if (isGroup)
+            {
+                if (controllerLevel >= RoomControllerLevel.GroupRights && canGroupDecorate) return true;
+            }
+            else
+            {
+                if (controllerLevel >= RoomControllerLevel.Rights) return true;
+            }
+
+            return false;
+        }
+
+        public FurniturePickupType GetFurniturePickupType(IRoomManipulator manipulator, IRoomFurniture furniture)
+        {
+            if (furniture == null) return FurniturePickupType.None;
+
+            if (manipulator == null) return FurniturePickupType.SendToOwner;
+
+            if (manipulator is IPlayer player)
+            {
+                if (furniture is IRoomFloorFurniture floorFurniture)
+                {
+                    if (floorFurniture.PlayerId == manipulator.Id) return FurniturePickupType.SendToManipulator;
+                }
+
+                else if (furniture is IRoomWallFurniture wallFurniture)
+                {
+                    if (wallFurniture.PlayerId == manipulator.Id) return FurniturePickupType.SendToManipulator;
+                }
+            }
+
+            if (manipulator.HasPermission("can_steal_furniture")) return FurniturePickupType.SendToManipulator;
+
+            if (GetControllerLevel(manipulator) >= RoomControllerLevel.GroupAdmin) return FurniturePickupType.SendToOwner;
+
+            return FurniturePickupType.None;
         }
     }
 }

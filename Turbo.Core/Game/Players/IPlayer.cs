@@ -7,7 +7,7 @@ using Turbo.Core.Networking.Game.Clients;
 
 namespace Turbo.Core.Game.Players
 {
-    public interface IPlayer : IRoomObjectUserHolder, IRoomManipulator, IAsyncInitialisable, IAsyncDisposable
+    public interface IPlayer : IRoomObjectAvatarHolder, IRoomManipulator, IAsyncInitialisable, IAsyncDisposable
     {
         public ILogger<IPlayer> Logger { get; }
         public IPlayerManager PlayerManager { get; }

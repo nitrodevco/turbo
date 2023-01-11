@@ -8,8 +8,8 @@ using Turbo.Furniture.Factories;
 
 namespace Turbo.Inventory.Factories
 {
-	public class PlayerInventoryFactory : IPlayerInventoryFactory
-	{
+    public class PlayerInventoryFactory : IPlayerInventoryFactory
+    {
         private readonly IServiceProvider _provider;
 
         public PlayerInventoryFactory(IServiceProvider provider)
@@ -19,8 +19,11 @@ namespace Turbo.Inventory.Factories
 
         public IPlayerInventory Create(IPlayer player)
         {
-            IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
-            IPlayerFurnitureFactory playerFurnitureFactory = _provider.GetService<IPlayerFurnitureFactory>();
+            IServiceScopeFactory? scopeFactory = _provider.GetService<IServiceScopeFactory>();
+
+            IPlayerFurnitureFactory? playerFurnitureFactory = _provider.GetService<IPlayerFurnitureFactory>();
+
+            if (scopeFactory == null || playerFurnitureFactory == null) return null;
 
             IPlayerFurnitureInventory playerFurnitureInventory = new PlayerFurnitureInventory(player, playerFurnitureFactory, scopeFactory);
 

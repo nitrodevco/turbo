@@ -156,9 +156,10 @@ namespace Turbo.Navigator
                         ClearPendingRoomId(player.Id);
 
                         // doorbell
+                        // if rights do u need 2 wait
                     }
 
-                    else if(room.RoomDetails.State == RoomStateType.Password)
+                    else if (room.RoomDetails.State == RoomStateType.Password)
                     {
                         if (!password.Equals(room.RoomDetails.Password))
                         {
@@ -176,9 +177,9 @@ namespace Turbo.Navigator
                         }
                     }
 
-                    else if(room.RoomDetails.State == RoomStateType.Invisible)
+                    else if (room.RoomDetails.State == RoomStateType.Invisible)
                     {
-                        if(!room.RoomSecurityManager.IsController(player))
+                        if (room.RoomSecurityManager.GetControllerLevel(player) == RoomControllerLevel.None)
                         {
                             ClearPendingRoomId(player.Id);
 
@@ -198,7 +199,7 @@ namespace Turbo.Navigator
 
             SetPendingRoomId(player.Id, roomId, true);
 
-            if(location != null) _pendingRoomIds[player.Id].Location = new Point(location);
+            if (location != null) _pendingRoomIds[player.Id].Location = new Point(location);
 
             await player.Session.Send(new OpenConnectionMessage());
             await player.Session.Send(new RoomReadyMessage

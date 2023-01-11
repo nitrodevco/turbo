@@ -2,14 +2,14 @@
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
-    public class FurnitureStackHelperLogic : FurnitureLogic
+    public class FurnitureStackHelperLogic : FurnitureFloorLogic
     {
         public override bool CanStack() => false;
 
         public override bool CanRoll() => false;
 
-        public override bool CanToggle(IRoomObject roomObject) => false;
+        public override bool CanToggle(IRoomObjectAvatar avatar) => false;
 
-        public override bool IsOpen(IRoomObject roomObject = null) => false;
+        public override bool IsOpen(IRoomObjectAvatar avatar = null) => false;
     }
 }

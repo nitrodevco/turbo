@@ -54,6 +54,19 @@ namespace Turbo.Database.Queue
             }
         }
 
+        public async Task SaveNow(object entity)
+        {
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                using (var context = scope.ServiceProvider.GetService<IEmulatorContext>())
+                {
+                    context.Update(entity);
+
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
+
         public async Task Cycle()
         {
             await SaveNow();

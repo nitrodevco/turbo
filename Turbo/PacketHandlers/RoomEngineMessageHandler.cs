@@ -29,19 +29,19 @@ namespace Turbo.Main.PacketHandlers
             _roomManager = roomManager;
             _navigatorManager = navigatorManager;
 
-            _messageHub.Subscribe<GetRoomEntryDataMessage>(this, OnGetRoomEntryDataMessage);
             _messageHub.Subscribe<GetFurnitureAliasesMessage>(this, OnGetFurnitureAliasesMessage);
+            _messageHub.Subscribe<GetItemDataMessage>(this, OnGetItemDataMessage);
+            _messageHub.Subscribe<GetRoomEntryDataMessage>(this, OnGetRoomEntryDataMessage);
             _messageHub.Subscribe<MoveAvatarMessage>(this, OnMoveAvatarMessage);
-
             _messageHub.Subscribe<MoveObjectMessage>(this, OnMoveObjectMessage);
+            _messageHub.Subscribe<MoveWallItemMessage>(this, OnMoveWallItemMessage);
+            _messageHub.Subscribe<PickupObjectMessage>(this, OnPickupObjectMessage);
+            _messageHub.Subscribe<PlaceObjectMessage>(this, OnPlaceObjectMessage);
+            _messageHub.Subscribe<RemoveItemMessage>(this, OnRemoveItemMessage);
+            _messageHub.Subscribe<SetItemDataMessage>(this, OnSetItemDataMessage);
+            _messageHub.Subscribe<SetObjectDataMessage>(this, OnSetObjectDataMessage);
             _messageHub.Subscribe<UseFurnitureMessage>(this, OnUseFurnitureMessage);
-        }
-
-        protected virtual async void OnGetRoomEntryDataMessage(GetRoomEntryDataMessage message, ISession session)
-        {
-            if (session.Player == null) return;
-
-            await _navigatorManager.ContinueEnteringRoom(session.Player);
+            _messageHub.Subscribe<UseWallItemMessage>(this, OnUseWallItemMessage);
         }
 
         protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
@@ -54,29 +54,74 @@ namespace Turbo.Main.PacketHandlers
             });
         }
 
+        protected virtual async void OnGetItemDataMessage(GetItemDataMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            var room = session.Player.RoomObject?.Room;
+
+            if (room == null) return;
+
+            // post it note / wall item data
+        }
+
+        protected virtual async void OnGetRoomEntryDataMessage(GetRoomEntryDataMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            await _navigatorManager.ContinueEnteringRoom(session.Player);
+        }
+
         protected virtual void OnMoveAvatarMessage(MoveAvatarMessage message, ISession session)
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            ((MovingAvatarLogic)roomObject.Logic).WalkTo(new Point(message.X, message.Y), true);
+            session.Player.RoomObject?.Logic?.WalkTo(new Point(message.X, message.Y), true);
         }
 
         protected virtual void OnMoveObjectMessage(MoveObjectMessage message, ISession session)
         {
             if (session.Player == null) return;
 
+            session.Player.RoomObject?.Room?.RoomFurnitureManager?.MoveFloorFurniture(session.Player, message.ObjectId, message.X, message.Y, (Rotation)message.Direction);
+        }
+
+        protected virtual void OnMoveWallItemMessage(MoveWallItemMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            session.Player.RoomObject?.Room?.RoomFurnitureManager?.MoveWallFurniture(session.Player, message.ObjectId, message.Location);
+        }
+
+        protected virtual void OnPickupObjectMessage(PickupObjectMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            if (message.ObjectCategory == 10)
+            {
+                session.Player.RoomObject?.Room?.RoomFurnitureManager?.RemoveFloorFurniture(session.Player, message.ObjectId);
+
+                return;
+            }
+
+            if (message.ObjectCategory == 20)
+            {
+                session.Player.RoomObject?.Room?.RoomFurnitureManager?.RemoveWallFurniture(session.Player, message.ObjectId);
+
+                return;
+            }
+        }
+
+        protected virtual void OnPlaceObjectMessage(PlaceObjectMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
             IRoomObject roomObject = session.Player.RoomObject;
 
             if (roomObject == null) return;
-
-            roomObject.Room.RoomFurnitureManager.MoveFurniture(session.Player, message.ObjectId, message.X, message.Y, (Rotation)message.Direction);
         }
 
-        protected virtual void OnUseFurnitureMessage(UseFurnitureMessage message, ISession session)
+        protected virtual void OnRemoveItemMessage(RemoveItemMessage message, ISession session)
         {
             if (session.Player == null) return;
 
@@ -84,14 +129,35 @@ namespace Turbo.Main.PacketHandlers
 
             if (roomObject == null) return;
 
-            IRoomObject furnitureObject = roomObject.Room.RoomFurnitureManager.GetRoomObject(message.ObjectId);
+            // delete sticky
+        }
 
-            if (furnitureObject == null) return;
+        protected virtual void OnSetItemDataMessage(SetItemDataMessage message, ISession session)
+        {
+            if (session.Player == null) return;
 
-            if (furnitureObject.Logic is IFurnitureLogic furnitureLogic)
-            {
-                furnitureLogic.OnInteract(roomObject, message.Param);
-            }
+            // save sticky note
+        }
+
+        protected virtual void OnSetObjectDataMessage(SetObjectDataMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            // save strings of data, room background
+        }
+
+        protected virtual void OnUseFurnitureMessage(UseFurnitureMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            session.Player.RoomObject?.Room?.RoomFurnitureManager?.FloorObjects?.GetRoomObject(message.ObjectId)?.Logic?.OnInteract(session.Player.RoomObject, message.Param);
+        }
+
+        protected virtual void OnUseWallItemMessage(UseWallItemMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            session.Player.RoomObject?.Room?.RoomFurnitureManager?.WallObjects?.GetRoomObject(message.ObjectId)?.Logic?.OnInteract(session.Player.RoomObject, message.Param);
         }
     }
 }

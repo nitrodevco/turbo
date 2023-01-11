@@ -9,6 +9,6 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments
 {
     public class WiredWalksOnFurniArguments : WiredArguments
     {
-        public IRoomObject FurnitureObject { get; set; }
+        public IRoomObjectFloor FurnitureObject { get; set; }
     }
 }

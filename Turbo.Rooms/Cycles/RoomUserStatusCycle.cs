@@ -26,102 +26,92 @@ namespace Turbo.Rooms.Cycles
 
         public override async Task Cycle()
         {
-            IRoomUserManager roomUserManager = _room.RoomUserManager;
+            List<IRoomObjectAvatar> updatedAvatarObjects = new();
 
-            if (roomUserManager == null) return;
+            var avatarObjects = _room.RoomUserManager.AvatarObjects.RoomObjects.Values;
 
-            IList<IRoomObject> updatedRoomObjects = new List<IRoomObject>();
+            if (avatarObjects.Count == 0) return;
 
-            IDictionary<int, IRoomObject> roomObjects = roomUserManager.RoomObjects;
-
-            if (roomObjects.Count == 0) return;
-
-            foreach (IRoomObject roomObject in roomObjects.Values)
+            foreach (var avatarObject in avatarObjects)
             {
-                if (roomObject.Logic is not IMovingAvatarLogic) continue;
+                ProcessAvatarRoomObject(avatarObject);
 
-                ProcessRoomObject(roomObject);
+                if (!avatarObject.NeedsUpdate) continue;
 
-                if (!roomObject.NeedsUpdate) continue;
+                avatarObject.NeedsUpdate = false;
 
-                roomObject.NeedsUpdate = false;
-
-                updatedRoomObjects.Add(roomObject);
+                updatedAvatarObjects.Add(avatarObject);
             }
 
-            if (updatedRoomObjects.Count == 0) return;
+            if (updatedAvatarObjects.Count == 0) return;
 
             _room.SendComposer(new UserUpdateMessage
             {
-                RoomObjects = updatedRoomObjects
+                RoomObjects = updatedAvatarObjects
             });
 
-            foreach (IRoomObject roomObject in updatedRoomObjects)
+            foreach (var avatarObject in updatedAvatarObjects)
             {
-                IMovingAvatarLogic logic = (IMovingAvatarLogic)roomObject.Logic;
+                avatarObject.Logic.RemoveStatus(RoomObjectAvatarStatus.Sign);
 
-                logic.RemoveStatus(RoomObjectAvatarStatus.Sign);
-
-                roomObject.NeedsUpdate = false;
+                avatarObject.NeedsUpdate = false;
             }
         }
 
-        private void ProcessRoomObject(IRoomObject roomObject)
+        private void ProcessAvatarRoomObject(IRoomObjectAvatar avatarObject)
         {
-            IMovingAvatarLogic avatarLogic = (IMovingAvatarLogic)roomObject.Logic;
+            if (avatarObject == null) return;
 
-            if (!avatarLogic.IsWalking || avatarLogic.IsRolling) return;
+            if (!avatarObject.Logic.IsWalking || avatarObject.Logic.IsRolling) return;
 
-            avatarLogic.ProcessNextLocation();
+            avatarObject.Logic.ProcessNextLocation();
 
-            if (avatarLogic.NeedsRepathing) avatarLogic.ResetPath();
+            if (avatarObject.Logic.NeedsRepathing) avatarObject.Logic.ResetPath();
 
-            if (avatarLogic.CurrentPath.Count == 0)
+            if (avatarObject.Logic.CurrentPath.Count == 0)
             {
-                if (avatarLogic.BeforeGoalAction != null)
+                if (avatarObject.Logic.BeforeGoalAction != null)
                 {
-                    avatarLogic.InvokeBeforeGoalAction();
+                    avatarObject.Logic.InvokeBeforeGoalAction();
 
-                    if (avatarLogic.CurrentPath.Count == 0)
+                    if (avatarObject.Logic.CurrentPath.Count == 0)
                     {
-                        avatarLogic.StopWalking();
+                        avatarObject.Logic.StopWalking();
 
                         return;
                     }
                 }
                 else
                 {
-                    avatarLogic.StopWalking();
+                    avatarObject.Logic.StopWalking();
 
                     return;
                 }
             }
 
-            IPoint nextLocation = avatarLogic.CurrentPath[0];
+            IPoint nextLocation = avatarObject.Logic.CurrentPath[0];
 
-            avatarLogic.CurrentPath.RemoveAt(0);
+            avatarObject.Logic.CurrentPath.RemoveAt(0);
 
-            CheckStep(roomObject, nextLocation);
+            CheckStep(avatarObject, nextLocation);
         }
 
-        private void CheckStep(IRoomObject roomObject, IPoint locationNext)
+        private void CheckStep(IRoomObjectAvatar avatarObject, IPoint locationNext)
         {
-            IMovingAvatarLogic avatarLogic = (IMovingAvatarLogic)roomObject.Logic;
-
             if (locationNext == null)
             {
-                avatarLogic.StopWalking();
+                avatarObject.Logic.StopWalking();
 
                 return;
             }
 
-            bool isGoal = avatarLogic.CurrentPath.Count == 0;
-            IRoomTile currentTile = avatarLogic.GetCurrentTile();
+            bool isGoal = avatarObject.Logic.CurrentPath.Count == 0;
+            IRoomTile currentTile = avatarObject.Logic.GetCurrentTile();
             IRoomTile nextTile = _room.RoomMap.GetTile(locationNext);
 
             if ((currentTile == null) || (nextTile == null) || (currentTile == nextTile))
             {
-                avatarLogic.StopWalking();
+                avatarObject.Logic.StopWalking();
 
                 return;
             }
@@ -131,35 +121,35 @@ namespace Turbo.Rooms.Cycles
 
             if (Math.Abs(nextHeight - currentHeight) > Math.Abs(MAX_WALKING_HEIGHT))
             {
-                avatarLogic.StopWalking();
+                avatarObject.Logic.StopWalking();
 
                 return;
             }
 
             if (isGoal)
             {
-                if (!nextTile.IsOpen(roomObject) || ((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id)))
+                if (!nextTile.IsOpen(avatarObject) || ((nextTile.Avatars.Count > 0) && !nextTile.Avatars.ContainsKey(avatarObject.Id)))
                 {
-                    avatarLogic.StopWalking();
+                    avatarObject.Logic.StopWalking();
 
                     return;
                 }
             }
             else
             {
-                if ((nextTile.Users.Count > 0) && !nextTile.Users.ContainsKey(roomObject.Id))
+                if ((nextTile.Avatars.Count > 0) && !nextTile.Avatars.ContainsKey(avatarObject.Id))
                 {
-                    if(!_room.RoomDetails.BlockingDisabled) avatarLogic.NeedsRepathing = true;
+                    if (!_room.RoomDetails.BlockingDisabled) avatarObject.Logic.NeedsRepathing = true;
                 }
 
-                if (!nextTile.IsOpen(roomObject) || nextTile.CanSit(roomObject) || nextTile.CanLay(roomObject))
+                if (!nextTile.IsOpen(avatarObject) || nextTile.CanSit(avatarObject) || nextTile.CanLay(avatarObject))
                 {
-                    avatarLogic.NeedsRepathing = true;
+                    avatarObject.Logic.NeedsRepathing = true;
                 }
 
-                if (avatarLogic.NeedsRepathing)
+                if (avatarObject.Logic.NeedsRepathing)
                 {
-                    ProcessRoomObject(roomObject);
+                    ProcessAvatarRoomObject(avatarObject);
 
                     return;
                 }
@@ -167,12 +157,12 @@ namespace Turbo.Rooms.Cycles
 
             if (ALLOW_DIAGONALS)
             {
-                bool isSideValid = _room.RoomMap.GetValidDiagonalTile(roomObject, new Point(nextTile.Location.X, currentTile.Location.Y)) != null;
-                bool isOtherSideValid = _room.RoomMap.GetValidDiagonalTile(roomObject, new Point(currentTile.Location.X, nextTile.Location.Y)) != null;
+                bool isSideValid = _room.RoomMap.GetValidDiagonalTile(avatarObject, new Point(nextTile.Location.X, currentTile.Location.Y)) != null;
+                bool isOtherSideValid = _room.RoomMap.GetValidDiagonalTile(avatarObject, new Point(currentTile.Location.X, nextTile.Location.Y)) != null;
 
                 if (!isSideValid && !isOtherSideValid)
                 {
-                    avatarLogic.StopWalking();
+                    avatarObject.Logic.StopWalking();
 
                     return;
                 }
@@ -180,31 +170,28 @@ namespace Turbo.Rooms.Cycles
 
             if (currentTile.HighestObject != null)
             {
-                if ((currentTile.HighestObject != nextTile.HighestObject) && (currentTile.HighestObject.Logic is IFurnitureLogic furnitureLogic))
+                if (currentTile.HighestObject != nextTile.HighestObject)
                 {
-                    furnitureLogic.OnLeave(roomObject);
+                    currentTile.HighestObject.Logic.OnLeave(avatarObject);
                 }
             }
 
-            currentTile.RemoveRoomObject(roomObject);
-            nextTile.AddRoomObject(roomObject);
+            currentTile.RemoveRoomObject(avatarObject);
+            nextTile.AddRoomObject(avatarObject);
 
-            avatarLogic.RemoveStatus(RoomObjectAvatarStatus.Lay, RoomObjectAvatarStatus.Sit);
-            avatarLogic.AddStatus(RoomObjectAvatarStatus.Move, nextTile.Location.X + "," + nextTile.Location.Y + "," + nextHeight);
-            roomObject.Location.SetRotation(roomObject.Location.CalculateWalkRotation(locationNext));
-            avatarLogic.LocationNext = locationNext;
+            avatarObject.Logic.RemoveStatus(RoomObjectAvatarStatus.Lay, RoomObjectAvatarStatus.Sit);
+            avatarObject.Logic.AddStatus(RoomObjectAvatarStatus.Move, nextTile.Location.X + "," + nextTile.Location.Y + "," + nextHeight);
+            avatarObject.Location.SetRotation(avatarObject.Location.CalculateWalkRotation(locationNext));
+            avatarObject.Logic.LocationNext = locationNext;
 
             if (nextTile.HighestObject != null)
             {
-                if (nextTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic)
-                {
-                    furnitureLogic.BeforeStep(roomObject);
+                nextTile.HighestObject.Logic.BeforeStep(avatarObject);
 
-                    if (nextTile.HighestObject != currentTile.HighestObject) furnitureLogic.OnEnter(roomObject);
-                }
+                if (nextTile.HighestObject != currentTile.HighestObject) nextTile.HighestObject.Logic.OnEnter(avatarObject);
             }
 
-            roomObject.NeedsUpdate = true;
+            avatarObject.NeedsUpdate = true;
         }
     }
 }

@@ -1,14 +1,16 @@
-﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System;
+using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Database.Entities.Furniture;
+using Turbo.Core.Game.Rooms.Object.Logic;
 
 namespace Turbo.Furniture.Factories
 {
-	public class PlayerFurnitureFactory : IPlayerFurnitureFactory
-	{
+    public class PlayerFurnitureFactory : IPlayerFurnitureFactory
+    {
         private readonly IServiceProvider _provider;
 
         public PlayerFurnitureFactory(IServiceProvider provider)
@@ -16,7 +18,7 @@ namespace Turbo.Furniture.Factories
             _provider = provider;
         }
 
-        public IPlayerFurniture Create(FurnitureEntity furnitureEntity)
+        public IPlayerFurniture Create(IPlayerFurnitureContainer playerFurnitureContainer, FurnitureEntity furnitureEntity)
         {
             IFurnitureManager furnitureManager = _provider.GetService<IFurnitureManager>();
 
@@ -24,11 +26,13 @@ namespace Turbo.Furniture.Factories
 
             if (furnitureDefinition == null) return null;
 
-            ILogger<IFurniture> logger = _provider.GetService<ILogger<Furniture>>();
+            ILogger<IPlayerFurniture> logger = _provider.GetService<ILogger<PlayerFurniture>>();
             IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
+            IRoomObjectLogicFactory logicFactory = _provider.GetService<IRoomObjectLogicFactory>();
 
-            return new PlayerFurniture(logger, furnitureEntity, furnitureDefinition);
+            var stuffDataKey = logicFactory.GetStuffDataKeyForFurnitureType(furnitureDefinition.Logic);
+
+            return new PlayerFurniture(logger, playerFurnitureContainer, furnitureEntity, furnitureDefinition, stuffDataKey);
         }
-	}
+    }
 }
-

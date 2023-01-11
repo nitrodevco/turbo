@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Game.Furniture.Constants;
-using Turbo.Core.Game.Rooms.Object;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
-    public class FurnitureRollerLogic : FurnitureLogic
+    public class FurnitureRollerLogic : FurnitureFloorLogic
     {
         public override bool CanRoll() => false;
 

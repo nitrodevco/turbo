@@ -15,13 +15,13 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers
 
             string username = WiredData.StringParameter;
 
-            if((username != null) && (username != ""))
+            if ((username != null) && (username != ""))
             {
-                if (wiredArguments.UserObject.RoomObjectHolder is not IRoomObjectUserHolder userHolder) return false;
-                
+                if (wiredArguments.UserObject.RoomObjectHolder is not IRoomObjectAvatarHolder userHolder) return false;
+
                 if (!username.Equals(userHolder.Name)) return false;
             }
-            
+
             return true;
         }
 

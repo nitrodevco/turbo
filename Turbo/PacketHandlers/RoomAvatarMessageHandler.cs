@@ -37,11 +37,7 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            if (roomObject.Logic is AvatarLogic avatarLogic)
+            if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             {
                 avatarLogic.Expression((RoomObjectAvatarExpression)message.TypeCode);
             }
@@ -60,11 +56,7 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            if (roomObject.Logic is AvatarLogic avatarLogic)
+            if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             {
                 switch ((RoomObjectAvatarPosture)message.Posture)
                 {
@@ -79,11 +71,7 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            if (roomObject.Logic is AvatarLogic avatarLogic)
+            if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             {
                 avatarLogic.Dance((RoomObjectAvatarDanceType)message.Style);
             }
@@ -93,11 +81,7 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            if (roomObject.Logic is AvatarLogic avatarLogic)
+            if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             {
 
             }
@@ -107,11 +91,7 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            if (roomObject.Logic is AvatarLogic avatarLogic)
+            if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             {
                 avatarLogic.LookAtPoint(new Point(message.LocX, message.LocY));
             }
@@ -131,11 +111,7 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            if (roomObject.Logic is AvatarLogic avatarLogic)
+            if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             {
                 avatarLogic.Sign(message.SignId);
             }

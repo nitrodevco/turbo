@@ -9,7 +9,7 @@ namespace Turbo.Packets.Outgoing.Room.Engine
     /// </summary>
     public record ItemsMessage : IComposer
     {
-        public IList<IRoomObject> Objects { get; init; }
+        public IList<IRoomObjectWall> Objects { get; init; }
         public IDictionary<int, string> OwnersIdToUsername { get; init; }
     }
 }

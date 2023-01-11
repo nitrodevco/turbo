@@ -28,15 +28,15 @@ namespace Turbo.Rooms.Managers
         {
             if (!_logicFactory.Logics.TryGetValue(type, out Type logicType)) return false;
 
-            IList<IRoomObject> roomObjects = _room.RoomFurnitureManager.GetRoomObjectsWithLogic(logicType);
+            var roomObjects = _room.RoomFurnitureManager.GetFloorRoomObjectsWithLogic(logicType);
 
             if (roomObjects.Count == 0) return false;
 
             bool didTrigger = false;
 
-            foreach (IRoomObject roomObject in roomObjects)
+            foreach (var floorObject in roomObjects)
             {
-                if (!ProcessTrigger(roomObject, wiredArguments)) continue;
+                if (!ProcessTrigger(floorObject, wiredArguments)) continue;
 
                 didTrigger = true;
             }
@@ -44,7 +44,7 @@ namespace Turbo.Rooms.Managers
             return didTrigger;
         }
 
-        public bool ProcessTrigger(IRoomObject roomObject, IWiredArguments wiredArguments = null)
+        public bool ProcessTrigger(IRoomObjectFloor roomObject, IWiredArguments wiredArguments = null)
         {
             if (roomObject.Logic is not IFurnitureWiredLogic wiredLogic) return false;
 
@@ -63,11 +63,11 @@ namespace Turbo.Rooms.Managers
 
         public bool ProcessConditionsAtTile(IRoomTile roomTile, IWiredArguments wiredArguments = null)
         {
-            IList<IRoomObject> roomObjects = GetConditionsAtTile(roomTile);
+            var roomObjects = GetConditionsAtTile(roomTile);
 
-            if(roomObjects.Count > 0)
+            if (roomObjects.Count > 0)
             {
-                foreach(IRoomObject roomObject in roomObjects)
+                foreach (var roomObject in roomObjects)
                 {
                     if (!CanTrigger(roomObject, wiredArguments)) return false;
                 }
@@ -78,11 +78,11 @@ namespace Turbo.Rooms.Managers
 
         public bool ProcessActionsAtTile(IRoomTile roomTile, IWiredArguments wiredArguments = null)
         {
-            IList<IRoomObject> roomObjects = GetActionsAtTile(roomTile);
+            var roomObjects = GetActionsAtTile(roomTile);
 
             if (roomObjects.Count > 0)
             {
-                foreach (IRoomObject roomObject in roomObjects)
+                foreach (var roomObject in roomObjects)
                 {
                     if (!CanTrigger(roomObject, wiredArguments)) return false;
                 }
@@ -91,9 +91,9 @@ namespace Turbo.Rooms.Managers
             return true;
         }
 
-        public bool CanTrigger(IRoomObject roomObject, IWiredArguments wiredArguments = null)
+        public bool CanTrigger(IRoomObjectFloor roomObject, IWiredArguments wiredArguments = null)
         {
-            IFurnitureWiredLogic wiredLogic = (IFurnitureWiredLogic)roomObject.Logic;
+            var wiredLogic = (IFurnitureWiredLogic)roomObject.Logic;
 
             if (!wiredLogic.CanTrigger(wiredArguments)) return false;
 
@@ -102,34 +102,34 @@ namespace Turbo.Rooms.Managers
             return true;
         }
 
-        public IList<IRoomObject> GetActionsAtTile(IRoomTile roomTile)
+        public IList<IRoomObjectFloor> GetActionsAtTile(IRoomTile roomTile)
         {
-            IList<IRoomObject> roomObjects = new List<IRoomObject>();
+            var roomObjects = new List<IRoomObjectFloor>();
 
             if (roomTile.Furniture.Count > 0)
             {
-                foreach (IRoomObject roomObject in roomTile.Furniture.Values)
+                foreach (var floorObject in roomTile.Furniture.Values)
                 {
-                    if (roomObject.Logic is not FurnitureWiredActionLogic) continue;
+                    if (floorObject.Logic is not FurnitureWiredActionLogic) continue;
 
-                    roomObjects.Add(roomObject);
+                    roomObjects.Add(floorObject);
                 }
             }
 
             return roomObjects;
         }
 
-        public IList<IRoomObject> GetConditionsAtTile(IRoomTile roomTile)
+        public IList<IRoomObjectFloor> GetConditionsAtTile(IRoomTile roomTile)
         {
-            IList<IRoomObject> roomObjects = new List<IRoomObject>();
+            var roomObjects = new List<IRoomObjectFloor>();
 
-            if(roomTile.Furniture.Count > 0)
+            if (roomTile.Furniture.Count > 0)
             {
-                foreach(IRoomObject roomObject in roomTile.Furniture.Values)
+                foreach (var floorObject in roomTile.Furniture.Values)
                 {
-                    if (roomObject.Logic is not FurnitureWiredConditionLogic) continue;
+                    if (floorObject.Logic is not FurnitureWiredConditionLogic) continue;
 
-                    roomObjects.Add(roomObject);
+                    roomObjects.Add(floorObject);
                 }
             }
 

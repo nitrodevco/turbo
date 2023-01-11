@@ -1,17 +1,16 @@
 ﻿using System;
-using Turbo.Core.Game.Players.Inventory;
+using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Inventory.Furni;
-using Turbo.Packets.Incoming.Room.Furniture;
-using Turbo.Rooms.Object.Logic.Furniture;
+using Turbo.Core.PacketHandlers;
 
 namespace Turbo.Main.PacketHandlers
 {
-	public class InventoryMessageHandler
-	{
+    public class InventoryMessageHandler : IInventoryMessageHandler
+    {
         private readonly IPacketMessageHub _messageHub;
         private readonly IRoomManager _roomManager;
 
@@ -31,20 +30,9 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IPlayerFurnitureInventory playerFurnitureInventory = session.Player.PlayerInventory?.
+            IPlayerFurnitureInventory playerFurnitureInventory = session.Player.PlayerInventory.FurnitureInventory;
 
-            IRoomObject roomObject = session.Player.RoomObject;
-
-            if (roomObject == null) return;
-
-            IRoomObject diceObject = roomObject.Room.RoomFurnitureManager.GetRoomObject(message.ObjectId);
-
-            if (diceObject == null) return;
-
-            if (diceObject.Logic is FurnitureDiceLogic diceLogic)
-            {
-                diceLogic.ThrowDice(roomObject);
-            }
+            if (playerFurnitureInventory != null) playerFurnitureInventory.SendFurnitureToSession(session);
         }
 
         protected virtual void OnRequestFurniInventoryWhenNotInRoomMessage(RequestFurniInventoryWhenNotInRoomMessage message, ISession session)

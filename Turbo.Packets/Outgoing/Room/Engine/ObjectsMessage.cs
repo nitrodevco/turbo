@@ -10,6 +10,6 @@ namespace Turbo.Packets.Outgoing.Room.Engine
     public record ObjectsMessage : IComposer
     {
         public IDictionary<int, string> OwnersIdToUsername { get; init; }
-        public IList<IRoomObject> Objects { get; init; }
+        public IList<IRoomObjectFloor> Objects { get; init; }
     }
 }

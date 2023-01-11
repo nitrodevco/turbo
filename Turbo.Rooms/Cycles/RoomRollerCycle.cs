@@ -1,13 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-using Turbo.Core.Game;
-using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Rooms.Managers;
-using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Packets.Messages;
 using Turbo.Packets.Outgoing.Room.Engine;
@@ -28,14 +23,14 @@ namespace Turbo.Rooms.Cycles
 
         public RoomRollerCycle(IRoom room) : base(room)
         {
-            
+
         }
 
         public override async Task Cycle()
         {
             if (_remainingRollerCycles > -1)
             {
-                if(_lastRollingDatas != null)
+                if (_lastRollingDatas != null)
                 {
                     CompleteLastRolls();
                 }
@@ -50,17 +45,17 @@ namespace Turbo.Rooms.Cycles
                 _remainingRollerCycles = _rollerCycles;
             }
 
-            IList<IRoomObject> rollers = _room.RoomFurnitureManager.GetRoomObjectsWithLogic(typeof(FurnitureRollerLogic));
+            var rollers = _room.RoomFurnitureManager.GetFloorRoomObjectsWithLogic(typeof(FurnitureRollerLogic));
 
             if (rollers.Count == 0) return;
 
             List<IRollerData> rollingDatas = new();
 
-            foreach(IRoomObject roomObject in rollers)
+            foreach (var floorObject in rollers)
             {
-                IRollerData rollingData = new RollerData(_room, roomObject.Location, roomObject.Location.GetPointForward());
+                var rollingData = new RollerData(_room, floorObject.Location, floorObject.Location.GetPointForward());
 
-                rollingData.Roller = roomObject;
+                rollingData.Roller = floorObject;
 
                 if (!ProcessRollerData(rollingData)) continue;
 
@@ -72,24 +67,24 @@ namespace Turbo.Rooms.Cycles
             List<IPoint> points = new();
             List<IComposer> composers = new();
 
-            foreach(IRollerData rollingData in rollingDatas)
+            foreach (var rollingData in rollingDatas)
             {
                 points.Add(rollingData.Location);
                 points.Add(rollingData.LocationNext);
 
-                if(rollingData.Users.Count > 0)
+                if (rollingData.Avatars.Count > 0)
                 {
                     bool sent = false;
 
-                    foreach(IRollerItemData rollerItemData in rollingData.Users.Values)
+                    foreach (var rollerItemData in rollingData.Avatars.Values)
                     {
-                        if(!sent)
+                        if (!sent)
                         {
                             composers.Add(new SlideObjectBundleMessage
                             {
                                 OldPos = rollingData.Location,
                                 NewPos = rollingData.LocationNext,
-                                User = rollerItemData,
+                                Avatar = rollerItemData,
                                 Furniture = (rollingData.Furniture != null) ? rollingData.Furniture.Values.ToList() : null,
                                 RollerItemId = rollingData.Roller.Id
                             });
@@ -103,7 +98,7 @@ namespace Turbo.Rooms.Cycles
                         {
                             OldPos = rollingData.Location,
                             NewPos = rollingData.LocationNext,
-                            User = rollerItemData,
+                            Avatar = rollerItemData,
                             RollerItemId = rollingData.Roller.Id
                         });
                     }
@@ -125,7 +120,7 @@ namespace Turbo.Rooms.Cycles
                 rollingData.CommitRoll();
             }
 
-            if (composers.Count > 0) foreach (IComposer composer in composers) _room.SendComposer(composer);
+            if (composers.Count > 0) foreach (var composer in composers) _room.SendComposer(composer);
 
             _lastRollingDatas = rollingDatas;
             _lastRollingPoints = points;
@@ -140,96 +135,93 @@ namespace Turbo.Rooms.Cycles
                 _lastRollingPoints = null;
             }
 
-            foreach(IRollerData rollerData in _lastRollingDatas)
-            {
-                rollerData.CompleteRoll();
-            }
+            foreach (var rollerData in _lastRollingDatas) rollerData.CompleteRoll();
 
             _lastRollingDatas = null;
         }
 
         private bool ProcessRollerData(IRollerData rollingData)
         {
-            IRoomTile roomTile = _room.RoomMap.GetTile(rollingData.Location);
+            var roomTile = _room.RoomMap.GetTile(rollingData.Location);
 
             if (roomTile == null) return false;
 
-            foreach (IRoomObject roomObject in roomTile.Furniture.Values)
+            foreach (var floorObject in roomTile.Furniture.Values)
             {
-                if ((rollingData.Roller == roomObject) || (rollingData.Furniture.ContainsKey(roomObject.Id))) continue;
+                if ((rollingData.Roller == floorObject) || (rollingData.Furniture.ContainsKey(floorObject.Id))) continue;
 
-                ProcessRollingFurniture(rollingData, roomObject);
+                ProcessRollingFurniture(rollingData, floorObject);
             }
 
-            foreach (IRoomObject roomObject in roomTile.Users.Values)
+            foreach (var avatarObject in roomTile.Avatars.Values)
             {
-                if (rollingData.Users.ContainsKey(roomObject.Id)) continue;
+                if (rollingData.Avatars.ContainsKey(avatarObject.Id)) continue;
 
-                ProcessRollingUser(rollingData, roomObject);
+                ProcessRollingAvatar(rollingData, avatarObject);
             }
 
-            if ((rollingData.Users.Count == 0) && (rollingData.Furniture.Count == 0)) return false;
+            if ((rollingData.Avatars.Count == 0) && (rollingData.Furniture.Count == 0)) return false;
 
             return true;
         }
 
-        private bool ProcessRollingUser(IRollerData rollingData, IRoomObject roomObject, bool validateOnly = false)
+        private bool ProcessRollingAvatar(IRollerData rollingData, IRoomObjectAvatar avatarObject, bool validateOnly = false)
         {
-            if ((roomObject.Logic is not IMovingAvatarLogic movingAvatarLogic) || movingAvatarLogic.IsWalking) return false;
+            if (avatarObject.Logic.IsWalking) return false;
 
-            if (!roomObject.Location.Compare(rollingData.Location)) return false;
+            if (!avatarObject.Location.Compare(rollingData.Location)) return false;
 
-            if(rollingData.Roller != null)
+            if (rollingData.Roller != null)
             {
-                if (roomObject.Location.Z < ((IFurnitureLogic)rollingData.Roller.Logic).Height) return false;
+                if (avatarObject.Location.Z < rollingData.Roller.Logic.Height) return false;
             }
 
-            IRoomTile nextTile = _room.RoomMap.GetValidTile(roomObject, rollingData.LocationNext);
+            var nextTile = _room.RoomMap.GetValidTile(avatarObject, rollingData.LocationNext);
 
             if (nextTile == null) return false;
 
-            if(nextTile.HighestObject != null && nextTile.HighestObject.Logic is IFurnitureLogic nextTileLogic)
+            if (nextTile.HighestObject != null)
             {
-                if ((nextTile.Height - nextTileLogic.StackHeight) > roomObject.Location.Z) return false;
+                if ((nextTile.Height - nextTile.HighestObject.Logic.StackHeight) > avatarObject.Location.Z) return false;
             }
 
-            foreach(IRoomObject userObject in _room.RoomUserManager.RoomObjects.Values)
+            foreach (var existingAvatarObject in _room.RoomUserManager.AvatarObjects.RoomObjects.Values)
             {
-                if ((userObject == roomObject) || (userObject.Logic is not IMovingAvatarLogic avatarLogic)) continue;
+                if (existingAvatarObject == avatarObject) continue;
 
-                if (avatarLogic.LocationNext != null)
+                if (existingAvatarObject.Logic.LocationNext != null)
                 {
-                    if (avatarLogic.LocationNext.Compare(rollingData.LocationNext)) return false;
+                    if (existingAvatarObject.Logic.LocationNext.Compare(rollingData.LocationNext)) return false;
                 }
 
-                if (avatarLogic.IsWalking) continue;
+                if (existingAvatarObject.Logic.IsWalking) continue;
 
-                if (avatarLogic.IsRolling)
+                if (existingAvatarObject.Logic.IsRolling)
                 {
-                    if (avatarLogic.RollerData == rollingData) continue;
+                    if (existingAvatarObject.Logic.RollerData == rollingData) continue;
 
-                    if (avatarLogic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
+                    if (existingAvatarObject.Logic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
                 }
 
-                if (userObject.Location.Compare(rollingData.LocationNext)) return false;
+                if (existingAvatarObject.Location.Compare(rollingData.LocationNext)) return false;
             }
 
-            foreach (IRoomObject furnitureObject in _room.RoomFurnitureManager.RoomObjects.Values)
+            foreach (var existingFloorObject in _room.RoomFurnitureManager.FloorObjects.RoomObjects.Values)
             {
-                if (furnitureObject.Logic is not IFurnitureLogic furnitureLogic || (furnitureObject.Logic is FurnitureRollerLogic)) continue;
+                if (existingFloorObject.Logic is FurnitureRollerLogic) continue;
 
-                if (!furnitureLogic.IsRolling) continue;
+                if (!existingFloorObject.Logic.IsRolling) continue;
 
-                if (furnitureObject.Location.Compare(rollingData.Roller.Location)) continue;
+                if (existingFloorObject.Location.Compare(rollingData.Roller.Location)) continue;
 
-                if (furnitureLogic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
+                if (existingFloorObject.Logic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
             }
 
-            IRoomTile currentTile = movingAvatarLogic.GetCurrentTile();
+            var currentTile = avatarObject.Logic.GetCurrentTile();
 
             if (currentTile == null) return false;
 
-            if (currentTile.HighestObject != null && currentTile.HighestObject.Logic is IFurnitureLogic)
+            if (currentTile.HighestObject != null)
             {
                 if (currentTile.HighestObject.Logic is not FurnitureRollerLogic)
                 {
@@ -241,98 +233,94 @@ namespace Turbo.Rooms.Cycles
 
             double nextHeight = nextTile.GetWalkingHeight();
 
-            rollingData.Users.Add(roomObject.Id, new RollerItemData
+            rollingData.Avatars.Add(avatarObject.Id, new RollerItemData<IRoomObjectAvatar>
             {
-                RoomObject = roomObject,
-                Height = roomObject.Location.Z,
+                RoomObject = avatarObject,
+                Height = avatarObject.Location.Z,
                 HeightNext = nextHeight
             });
 
-            movingAvatarLogic.RollerData = rollingData;
+            avatarObject.Logic.RollerData = rollingData;
 
             return true;
         }
 
-        private bool ProcessRollingFurniture(IRollerData rollingData, IRoomObject roomObject, bool validateOnly = false)
+        private bool ProcessRollingFurniture(IRollerData rollingData, IRoomObjectFloor floorObject, bool validateOnly = false)
         {
-            if (!roomObject.Location.Compare(rollingData.Location)) return false;
+            if (!floorObject.Location.Compare(rollingData.Location)) return false;
 
-            if (roomObject.Logic is not IFurnitureLogic rollingObjectLogic) return false;
-
-            if (!rollingObjectLogic.CanRoll()) return false;
+            if (!floorObject.Logic.CanRoll()) return false;
 
             if (rollingData.Roller != null)
             {
-                if (roomObject.Location.Z < ((IFurnitureLogic)rollingData.Roller.Logic).Height) return false;
+                if (floorObject.Location.Z < rollingData.Roller.Logic.Height) return false;
             }
 
-            if (!_room.RoomFurnitureManager.IsValidPlacement(roomObject, rollingData.LocationNext)) return false;
+            if (!_room.RoomFurnitureManager.IsValidPlacement(floorObject, rollingData.LocationNext)) return false;
 
-            foreach (IRoomObject userObject in _room.RoomUserManager.RoomObjects.Values)
+            foreach (var existingAvatarObject in _room.RoomUserManager.AvatarObjects.RoomObjects.Values)
             {
-                if (userObject.Logic is not IMovingAvatarLogic avatarLogic) continue;
-
-                if (avatarLogic.LocationNext != null)
+                if (existingAvatarObject.Logic.LocationNext != null)
                 {
-                    if (avatarLogic.LocationNext.Compare(rollingData.LocationNext)) return false;
+                    if (existingAvatarObject.Logic.LocationNext.Compare(rollingData.LocationNext)) return false;
                 }
 
-                if (avatarLogic.IsWalking) continue;
+                if (existingAvatarObject.Logic.IsWalking) continue;
 
-                if (avatarLogic.IsRolling)
+                if (existingAvatarObject.Logic.IsRolling)
                 {
-                    if (avatarLogic.RollerData == rollingData) continue;
+                    if (existingAvatarObject.Logic.RollerData == rollingData) continue;
 
-                    if (avatarLogic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
+                    if (existingAvatarObject.Logic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
                 }
 
-                if (userObject.Location.Compare(rollingData.LocationNext)) return false;
+                if (existingAvatarObject.Location.Compare(rollingData.LocationNext)) return false;
             }
 
-            foreach (IRoomObject furnitureObject in _room.RoomFurnitureManager.RoomObjects.Values)
+            foreach (var existingFurnitureObject in _room.RoomFurnitureManager.FloorObjects.RoomObjects.Values)
             {
-                if (furnitureObject.Logic is not IFurnitureLogic furnitureLogic || (furnitureObject == roomObject) || (furnitureObject.Logic is FurnitureRollerLogic)) continue;
+                if ((existingFurnitureObject == floorObject) || (existingFurnitureObject.Logic is FurnitureRollerLogic)) continue;
 
-                if (furnitureLogic.IsRolling)
+                if (existingFurnitureObject.Logic.IsRolling)
                 {
-                    if (furnitureLogic.RollerData == rollingData) continue;
+                    if (existingFurnitureObject.Logic.RollerData == rollingData) continue;
 
-                    if (furnitureLogic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
+                    if (existingFurnitureObject.Logic.RollerData.LocationNext.Compare(rollingData.LocationNext)) return false;
                 }
 
-                if (furnitureObject.Location.Compare(rollingData.LocationNext)) return false;
+                if (existingFurnitureObject.Location.Compare(rollingData.LocationNext)) return false;
             }
 
             if (validateOnly) return true;
 
-            double nextHeight = roomObject.Location.Z;
+            double nextHeight = floorObject.Location.Z;
 
             if (rollingData.Roller != null)
             {
-                IRoomTile roomTileNext = _room.RoomMap.GetTile(rollingData.LocationNext);
+                var roomTileNext = _room.RoomMap.GetTile(rollingData.LocationNext);
 
                 if (roomTileNext == null) return false;
 
                 if (!roomTileNext.HasLogic(typeof(FurnitureRollerLogic)))
                 {
-                    nextHeight -= ((IFurnitureLogic)rollingData.Roller.Logic).StackHeight;
+                    nextHeight -= rollingData.Roller.Logic.StackHeight;
                 }
             }
             else
             {
-                IRoomTile roomTile = _room.RoomMap.GetTile(rollingData.Location);
+                var roomTile = _room.RoomMap.GetTile(rollingData.Location);
 
                 if (roomTile != null) nextHeight = roomTile.Height;
             }
 
-            rollingData.Furniture.Add(roomObject.Id, new RollerItemData
+            rollingData.Furniture.Add(floorObject.Id, new RollerItemData<IRoomObjectFloor>
             {
-                RoomObject = roomObject,
-                Height = roomObject.Location.Z,
+                RoomObject = floorObject,
+                Height = floorObject.Location.Z,
                 HeightNext = nextHeight
             });
 
-            rollingObjectLogic.RollerData = rollingData;
+            floorObject.Logic.RollerData = rollingData;
 
             return true;
         }

@@ -6,19 +6,21 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
-using Turbo.Rooms.Object.Logic.Furniture;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
-    public class MovingAvatarLogic : RollingObjectLogic, IMovingAvatarLogic
+    public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovingAvatarLogic
     {
+        public IRoomObjectAvatar RoomObject { get; private set; }
+        private IRollerData _rollerData;
+
         public IDictionary<string, string> Statuses { get; private set; }
 
         public IPoint LocationNext { get; set; }
         public IPoint LocationGoal { get; private set; }
         public IList<IPoint> CurrentPath { get; private set; }
-        public Action<IRoomObject> BeforeGoalAction { get; set; }
-        public Action<IRoomObject> GoalAction { get; set; }
+        public Action<IRoomObjectAvatar> BeforeGoalAction { get; set; }
+        public Action<IRoomObjectAvatar> GoalAction { get; set; }
 
         public bool NeedsRepathing { get; set; }
         public bool IsWalking { get; private set; }
@@ -27,6 +29,38 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public MovingAvatarLogic()
         {
             Statuses = new Dictionary<string, string>();
+        }
+
+        protected override void CleanUp()
+        {
+            _rollerData = null;
+
+            base.CleanUp();
+        }
+
+        public bool SetRoomObject(IRoomObjectAvatar roomObject)
+        {
+            if (roomObject == RoomObject) return true;
+
+            if (RoomObject != null)
+            {
+                RoomObject.SetLogic(null);
+            }
+
+            if (roomObject == null)
+            {
+                Dispose();
+
+                RoomObject = null;
+
+                return false;
+            }
+
+            RoomObject = roomObject;
+
+            RoomObject.SetLogic(this);
+
+            return true;
         }
 
         public virtual void WalkTo(IPoint location, bool selfWalk = false)
@@ -94,17 +128,17 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (currentTile == null || nextTile == null) return;
 
-            if(currentTile.HighestObject != null && currentTile.HighestObject.Logic is IFurnitureLogic currentLogic)
+            if (currentTile.HighestObject != null)
             {
-                if (currentTile.HighestObject != nextTile.HighestObject) currentLogic.OnLeave(RoomObject);
+                if (currentTile.HighestObject != nextTile.HighestObject) currentTile.HighestObject.Logic.OnLeave(RoomObject);
             }
 
             currentTile.RemoveRoomObject(RoomObject);
             nextTile.AddRoomObject(RoomObject);
 
-            if (nextTile.HighestObject != null && nextTile.HighestObject.Logic is IFurnitureLogic nextLogic)
+            if (nextTile.HighestObject != null)
             {
-                if (nextTile.HighestObject != currentTile.HighestObject) nextLogic.OnLeave(RoomObject);
+                if (nextTile.HighestObject != currentTile.HighestObject) nextTile.HighestObject.Logic.OnLeave(RoomObject);
             }
 
             ProcessNextLocation();
@@ -143,9 +177,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             if (!IsWalking) return;
 
             ClearWalking();
-
             InvokeCurrentLocation();
-
             InvokeGoalAction();
         }
 
@@ -192,9 +224,9 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             UpdateHeight(roomTile);
 
-            if ((roomTile.HighestObject != null) && (roomTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic))
+            if (roomTile.HighestObject != null)
             {
-                furnitureLogic.OnStep(RoomObject);
+                roomTile.HighestObject.Logic.OnStep(RoomObject);
             }
 
             RoomObject.NeedsUpdate = true;
@@ -228,9 +260,9 @@ namespace Turbo.Rooms.Object.Logic.Avatar
                 Lay(false);
             }
 
-            if ((roomTile.HighestObject != null) && (roomTile.HighestObject.Logic is FurnitureLogicBase furnitureLogic))
+            if (roomTile.HighestObject != null)
             {
-                furnitureLogic.OnStop(RoomObject);
+                roomTile.HighestObject.Logic.OnStop(RoomObject);
             }
 
             UpdateHeight();
@@ -317,9 +349,27 @@ namespace Turbo.Rooms.Object.Logic.Avatar
                 updated = true;
             }
 
-            if(updated) RoomObject.NeedsUpdate = true;
+            if (updated) RoomObject.NeedsUpdate = true;
         }
 
+        public IRoomTile GetCurrentTile() => RoomObject?.Room?.RoomMap?.GetTile(RoomObject.Location);
+
         public IRoomTile GetNextTile() => RoomObject?.Room?.RoomMap?.GetTile(LocationNext);
+
+        public bool IsRolling => _rollerData != null;
+
+        public IRollerData RollerData
+        {
+            get => _rollerData;
+            set
+            {
+                if (_rollerData != null)
+                {
+                    _rollerData.RemoveRoomObject(RoomObject);
+                }
+
+                _rollerData = value;
+            }
+        }
     }
 }

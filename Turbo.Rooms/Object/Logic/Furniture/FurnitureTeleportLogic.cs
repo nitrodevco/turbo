@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
@@ -15,14 +12,14 @@ using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
-    public class FurnitureTeleportLogic : FurnitureLogic
+    public class FurnitureTeleportLogic : FurnitureFloorLogic
     {
         private static readonly int _closedState = 0;
         private static readonly int _openState = 1;
         private static readonly int _animatingState = 2;
 
         private TeleportPairingDto _dto;
-        private IRoomObject _pendingRoomObject;
+        private IRoomObjectAvatar _pendingAvatar;
         private IPlayer _pendingPlayer;
         private bool _didFindTeleport;
         private bool _needsOpening;
@@ -35,9 +32,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             SetState(_closedState);
 
-            if(_dto == null)
+            if (_dto == null)
             {
-                if (RoomObject.RoomObjectHolder is IFurniture furniture)
+                if (RoomObject.RoomObjectHolder is IRoomFloorFurniture furniture)
                 {
                     _dto = await furniture.GetTeleportPairing();
                 }
@@ -48,14 +45,11 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public override void Dispose()
         {
-            if(_pendingRoomObject != null)
+            if (_pendingAvatar != null)
             {
-                if(_pendingRoomObject.Logic is IMovingAvatarLogic avatarLogic)
-                {
-                    avatarLogic.CanWalk = true;
+                _pendingAvatar.Logic.CanWalk = true;
 
-                    _pendingRoomObject = null;
-                }
+                _pendingAvatar = null;
             }
 
             if (_pendingPlayer != null) _pendingPlayer = null;
@@ -67,7 +61,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         {
             await base.Cycle();
 
-            if(_needsOpening)
+            if (_needsOpening)
             {
                 SetState(_openState);
 
@@ -81,82 +75,82 @@ namespace Turbo.Rooms.Object.Logic.Furniture
                 _needsClosing = false;
             }
 
-            if(_needsAnimating)
+            if (_needsAnimating)
             {
                 SetState(_animatingState);
 
                 _needsAnimating = false;
             }
 
-            if(_pendingPlayer != null)
+            if (_pendingPlayer != null)
             {
                 await ReceiveTeleport(_pendingPlayer);
             }
 
-            if (_pendingRoomObject == null) return;
+            if (_pendingAvatar == null) return;
 
-            if(_pendingRoomObject.Disposed || (_pendingRoomObject.Logic is not IMovingAvatarLogic avatarLogic))
+            if (_pendingAvatar.Disposed)
             {
                 SetState(_closedState);
 
-                _pendingRoomObject = null;
+                _pendingAvatar = null;
 
                 return;
             }
 
-            if (!_pendingRoomObject.Location.Compare(RoomObject.Location))
+            if (!_pendingAvatar.Location.Compare(RoomObject.Location))
             {
-                if (avatarLogic.IsWalking && avatarLogic.LocationGoal.Compare(RoomObject.Location)) return;
+                if (_pendingAvatar.Logic.IsWalking && _pendingAvatar.Logic.LocationGoal.Compare(RoomObject.Location)) return;
 
-                avatarLogic.CanWalk = true;
+                _pendingAvatar.Logic.CanWalk = true;
 
                 SetState(_closedState);
 
-                _pendingRoomObject = null;
-                
+                _pendingAvatar = null;
+
                 return;
             }
 
             IRoom remoteRoom = null;
 
-            if(_dto != null && _dto.RoomId != null)
+            if (_dto != null && _dto.RoomId != null)
             {
                 remoteRoom = await RoomObject.Room.RoomManager.GetRoom((int)_dto.RoomId);
             }
 
             bool didFail = false;
 
-            if(_dto == null || remoteRoom == null)
+            if (_dto == null || remoteRoom == null)
             {
                 didFail = true;
             }
             else
             {
-                if(remoteRoom.Id != RoomObject.Room.Id) await remoteRoom.InitAsync();
+                if (remoteRoom.Id != RoomObject.Room.Id) await remoteRoom.InitAsync();
 
                 int state = StuffData.GetState();
 
-                if(state == _openState)
+                if (state == _openState)
                 {
                     _needsClosing = true;
 
                     return;
                 }
 
-                else if(state == _closedState)
+                else if (state == _closedState)
                 {
                     _needsAnimating = true;
 
                     return;
                 }
 
-                else if(state == _animatingState)
+                else if (state == _animatingState)
                 {
-                    IRoomObject remoteFurniture = remoteRoom.RoomFurnitureManager.GetRoomObject(_dto.TeleportId);
+                    var remoteFurniture = remoteRoom.RoomFurnitureManager.GetFloorFurniture(_dto.TeleportId);
 
-                    if(!_didFindTeleport)
+                    if (!_didFindTeleport)
                     {
-                        if(remoteFurniture == null)
+                        if (remoteFurniture == null)
                         {
                             didFail = true;
                         }
@@ -168,28 +162,28 @@ namespace Turbo.Rooms.Object.Logic.Furniture
                         }
                     }
 
-                    if (remoteFurniture == null)
+                    if (remoteFurniture == null || remoteFurniture.RoomObject == null)
                     {
                         didFail = true;
                     }
 
-                    else if (remoteFurniture.Logic is FurnitureTeleportLogic teleportLogic)
+                    else if ((remoteFurniture.RoomObject is IRoomObjectFloor floorObject) && floorObject.Logic is FurnitureTeleportLogic teleportLogic)
                     {
-                        if(_pendingRoomObject != null && teleportLogic.StuffData.GetState() != _animatingState)
+                        if (_pendingAvatar != null && teleportLogic.StuffData.GetState() != _animatingState)
                         {
                             teleportLogic.SetState(_animatingState);
 
                             return;
                         }
-                        
+
                         SetState(_closedState);
 
-                        if(_pendingRoomObject.RoomObjectHolder is IPlayer player)
+                        if (_pendingAvatar.RoomObjectHolder is IPlayer player)
                         {
                             await teleportLogic.ReceiveTeleport(player);
                         }
 
-                        _pendingRoomObject = null;
+                        _pendingAvatar = null;
                     }
 
                     else
@@ -199,13 +193,14 @@ namespace Turbo.Rooms.Object.Logic.Furniture
                 }
             }
 
-            if(didFail)
+            if (didFail)
             {
-                _pendingRoomObject = null;
 
-                avatarLogic.WalkTo(RoomObject.Location.GetPointForward());
+                _pendingAvatar.Logic.WalkTo(RoomObject.Location.GetPointForward());
 
-                avatarLogic.CanWalk = true;
+                _pendingAvatar.Logic.CanWalk = true;
+
+                _pendingAvatar = null;
 
                 _needsClosing = true;
 
@@ -217,7 +212,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         {
             if (player.RoomObject == null || player.RoomObject.Disposed)
             {
-                _pendingRoomObject = null;
+                _pendingAvatar = null;
 
                 _needsClosing = true;
 
@@ -228,13 +223,13 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (player.RoomObject != null)
             {
-                if(player.RoomObject.Room != RoomObject.Room)
+                if (player.RoomObject.Room != RoomObject.Room)
                 {
                     await player.PlayerManager.EnterRoom(player, RoomObject.Room.Id, null, true, RoomObject.Location);
                 }
                 else
                 {
-                    if (player.RoomObject == null || player.RoomObject.Disposed || player.RoomObject.Logic is not IMovingAvatarLogic avatarLogic)
+                    if (player.RoomObject == null || player.RoomObject.Disposed)
                     {
                         _pendingPlayer = null;
 
@@ -243,7 +238,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
                         return;
                     }
 
-                    avatarLogic.CanWalk = false;
+                    player.RoomObject.Logic.CanWalk = false;
 
                     if (player.RoomObject.Location.Compare(RoomObject.Location))
                     {
@@ -256,49 +251,47 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
                         if (StuffData.GetState() == _openState)
                         {
-                            avatarLogic.WalkTo(RoomObject.Location.GetPointForward());
+                            player.RoomObject.Logic.WalkTo(RoomObject.Location.GetPointForward());
 
-                            avatarLogic.CanWalk = true;
+                            player.RoomObject.Logic.CanWalk = true;
 
                             _pendingPlayer = null;
                         }
-                        
+
                         _needsClosing = true;
                     }
                     else
                     {
-                        avatarLogic.GoTo(RoomObject.Location);
+                        player.RoomObject.Logic.GoTo(RoomObject.Location);
                     }
                 }
             }
         }
 
-        public override void OnInteract(IRoomObject roomObject, int param = 0)
+        public override void OnInteract(IRoomObjectAvatar avatar, int param = 0)
         {
-            if (_pendingRoomObject != null && roomObject != _pendingRoomObject) return;
-
-            if (roomObject.Logic is not IMovingAvatarLogic avatarLogic) return;
+            if (_pendingAvatar != null && avatar != _pendingAvatar) return;
 
             IPoint goalPoint = GetGoalPoint();
 
-            if (!roomObject.Location.Compare(goalPoint))
+            if (!avatar.Location.Compare(goalPoint))
             {
-                avatarLogic.WalkTo(goalPoint, true);
+                _pendingAvatar.Logic.WalkTo(goalPoint, true);
 
-                avatarLogic.BeforeGoalAction = new Action<IRoomObject>(p => OnInteract(p));
+                _pendingAvatar.Logic.BeforeGoalAction = new Action<IRoomObjectAvatar>(p => OnInteract(p));
 
                 return;
             }
 
             SetState(_openState);
 
-            avatarLogic.CanWalk = false;
+            _pendingAvatar.Logic.CanWalk = false;
 
-            _pendingRoomObject = roomObject;
+            _pendingAvatar = avatar;
 
-            if (roomObject.Location.Compare(RoomObject.Location)) return;
+            if (avatar.Location.Compare(RoomObject.Location)) return;
 
-            avatarLogic.WalkTo(RoomObject.Location);
+            _pendingAvatar.Logic.WalkTo(RoomObject.Location);
         }
 
         public override void OnPickup(IRoomManipulator roomManipulator)
@@ -308,11 +301,11 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             base.OnPickup(roomManipulator);
         }
 
-        public override bool CanWalk(IRoomObject roomObject = null)
+        public override bool CanWalk(IRoomObjectAvatar avatar = null)
         {
-            if ((_pendingRoomObject != null) && roomObject == _pendingRoomObject) return true;
+            if ((_pendingAvatar != null) && avatar == _pendingAvatar) return true;
 
-            return base.CanWalk(roomObject);
+            return base.CanWalk(avatar);
         }
 
         private IPoint GetGoalPoint()

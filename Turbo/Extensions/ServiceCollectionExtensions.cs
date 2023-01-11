@@ -65,6 +65,7 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IRoomFurnitureMessageHandler, RoomFurnitureMessageHandler>();
             services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
             services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
+            services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
         }
 
         public static void AddManagers(this IServiceCollection services)

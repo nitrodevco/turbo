@@ -2,7 +2,7 @@
 {
     public enum RoomTileState
     {
-        Closed,
-        Open
+        Closed = 0,
+        Open = 1
     }
 }

@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Object.Logic;
 
 namespace Turbo.Rooms.Cycles
 {
@@ -17,31 +14,28 @@ namespace Turbo.Rooms.Cycles
         {
             if (_room.RoomFurnitureManager != null)
             {
-                IDictionary<int, IRoomObject> roomObjects = _room.RoomFurnitureManager.RoomObjects;
+                var floorObjects = _room.RoomFurnitureManager.FloorObjects.RoomObjects;
 
-                if (roomObjects.Count > 0)
+                if (floorObjects.Count > 0)
                 {
-                    foreach (IRoomObject roomObject in roomObjects.Values)
-                    {
-                        if (!(roomObject.Logic is IRoomObjectLogic objectLogic)) continue;
+                    foreach (var floorObject in floorObjects.Values) await floorObject.Logic.Cycle();
+                }
 
-                        await objectLogic.Cycle();
-                    }
+                var wallObjects = _room.RoomFurnitureManager.FloorObjects.RoomObjects;
+
+                if (wallObjects.Count > 0)
+                {
+                    foreach (var wallObject in wallObjects.Values) await wallObject.Logic.Cycle();
                 }
             }
 
             if (_room.RoomUserManager != null)
             {
-                IDictionary<int, IRoomObject> roomObjects = _room.RoomUserManager.RoomObjects;
+                var avatarObjects = _room.RoomUserManager.AvatarObjects.RoomObjects;
 
-                if (roomObjects.Count > 0)
+                if (avatarObjects.Count > 0)
                 {
-                    foreach (IRoomObject roomObject in roomObjects.Values)
-                    {
-                        if (!(roomObject.Logic is IRoomObjectLogic objectLogic)) continue;
-
-                        await objectLogic.Cycle();
-                    }
+                    foreach (var avatarObject in avatarObjects.Values) await avatarObject.Logic.Cycle();
                 }
             }
         }

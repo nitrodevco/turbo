@@ -4,10 +4,10 @@ using Turbo.Inventory.Factories;
 
 namespace Turbo.Inventory
 {
-	public class PlayerInventory : IPlayerInventory
-	{
-        public readonly IPlayer Player;
-        public readonly IPlayerFurnitureInventory FurnitureInventory;
+    public class PlayerInventory : IPlayerInventory
+    {
+        public IPlayer Player { get; private set; }
+        public IPlayerFurnitureInventory FurnitureInventory { get; private set; }
 
         public bool IsInitialized { get; private set; }
         public bool IsDisposed { get; private set; }

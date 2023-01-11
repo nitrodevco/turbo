@@ -5,10 +5,11 @@ using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Core.Game.Rooms.Managers
 {
-    public interface IRoomUserManager : IRoomObjectContainer, IAsyncInitialisable, IAsyncDisposable
+    public interface IRoomUserManager : IAsyncInitialisable, IAsyncDisposable
     {
-        public IRoomObject GetRoomObjectByUserId(int userId);
-        public IRoomObject GetRoomObjectByUsername(string username);
-        public IRoomObject EnterRoom(IPlayer player, IPoint location = null);
+        public IRoomObjectContainer<IRoomObjectAvatar> AvatarObjects { get; }
+        public IRoomObjectAvatar GetRoomObjectByUserId(int userId);
+        public IRoomObjectAvatar GetRoomObjectByUsername(string username);
+        public IRoomObjectAvatar EnterRoom(IPlayer player, IPoint location = null);
     }
 }

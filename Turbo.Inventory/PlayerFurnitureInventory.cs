@@ -5,12 +5,16 @@ using Turbo.Core.Game.Inventory;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture.Factories;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Packets.Outgoing.Inventory.Furni;
 
 namespace Turbo.Inventory
 {
-	public class PlayerFurnitureInventory : IPlayerFurnitureInventory
-	{
-		private readonly IPlayer _player;
+    public class PlayerFurnitureInventory : IPlayerFurnitureInventory, IPlayerFurnitureContainer
+    {
+        private static int FurniPerFragment = 100;
+
+        private readonly IPlayer _player;
         private readonly IPlayerFurnitureFactory _playerFurnitureFactory;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -21,16 +25,16 @@ namespace Turbo.Inventory
         public bool IsDisposing { get; private set; }
 
         public PlayerFurnitureInventory(
-			IPlayer player,
+            IPlayer player,
             IPlayerFurnitureFactory playerFurnitureFactory,
             IServiceScopeFactory serviceScopeFactory)
-		{
-			_player = player;
+        {
+            _player = player;
             _playerFurnitureFactory = playerFurnitureFactory;
-			_serviceScopeFactory = serviceScopeFactory;
+            _serviceScopeFactory = serviceScopeFactory;
 
             Furniture = new Dictionary<int, IPlayerFurniture>();
-		}
+        }
 
         public async ValueTask InitAsync()
         {
@@ -52,25 +56,112 @@ namespace Turbo.Inventory
             IsDisposed = true;
         }
 
+        public IPlayerFurniture? GetFurniture(int id)
+        {
+            if (id <= 0) return null;
+
+            if (Furniture.TryGetValue(id, out IPlayerFurniture? furniture))
+            {
+                return furniture;
+            }
+
+            return null;
+        }
+
+        public void RemoveFurniture(params int[] ids)
+        {
+            foreach (int id in ids) RemoveFurniture(id);
+        }
+
+        public void RemoveFurniture(int id)
+        {
+            var furniture = GetFurniture(id);
+
+            if (furniture == null) return;
+
+            Furniture.Remove(id);
+
+            furniture.Dispose();
+        }
+
+        public void AddFurniture(params IRoomFloorFurniture[] furnitures)
+        {
+
+        }
+
+        public void RemoveAllFurniture()
+        {
+            foreach (int id in Furniture.Keys) RemoveFurniture(id);
+        }
+
+        public void SendFurnitureToSession(ISession session)
+        {
+            List<IPlayerFurniture> playerFurnitures = new();
+
+            int totalFragments = Furniture.Count % FurniPerFragment;
+            int currentFragment = 0;
+            int count = 0;
+
+            foreach (IPlayerFurniture playerFurniture in Furniture.Values)
+            {
+                playerFurnitures.Add(playerFurniture);
+
+                count++;
+
+                if (count == FurniPerFragment)
+                {
+                    session.Send(new FurniListMessage
+                    {
+                        TotalFragments = totalFragments,
+                        CurrentFragment = currentFragment,
+                        Furniture = playerFurnitures
+                    });
+
+                    playerFurnitures.Clear();
+                    count = 0;
+                    currentFragment++;
+                }
+            }
+
+            if (count <= 0) return;
+
+            session.Send(new FurniListMessage
+            {
+                TotalFragments = totalFragments,
+                CurrentFragment = currentFragment,
+                Furniture = playerFurnitures
+            });
+        }
+
         private async Task LoadFurniture()
         {
             Furniture.Clear();
 
-            // if refreshing, send the inventory invalidate packet
-
-            List<FurnitureEntity> entities;
+            List<FurnitureEntity> entities = new();
 
             using (var scope = _serviceScopeFactory.CreateScope())
             {
                 var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
-                entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
+
+                if (furnitureRepository != null)
+                {
+                    entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
+                }
             }
 
-            foreach (FurnitureEntity furnitureEntity in entities)
+            if (entities != null)
             {
-                IPlayerFurniture furniture = _playerFurnitureFactory.Create(furnitureEntity);
+                foreach (FurnitureEntity furnitureEntity in entities)
+                {
+                    IPlayerFurniture playerFurniture = _playerFurnitureFactory.Create(this, furnitureEntity);
 
-                Furniture.Add(furniture.Id, furniture);
+                    Furniture.Add(playerFurniture.Id, playerFurniture);
+                }
+            }
+
+            if (IsInitialized)
+            {
+                _player.Session?.Send(new FurniListInvalidateMessage());
             }
         }
     }

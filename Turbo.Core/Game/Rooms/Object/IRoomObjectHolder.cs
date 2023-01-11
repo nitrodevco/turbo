@@ -1,15 +1,17 @@
 ﻿using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms.Object.Constants;
 
 namespace Turbo.Core.Game.Rooms.Object
 {
-    public interface IRoomObjectHolder
+    public interface IRoomObjectHolder<T> where T : IRoomObject
     {
-        public IRoomObject RoomObject { get; }
+        public T RoomObject { get; }
 
-        public bool SetRoomObject(IRoomObject roomObject);
+        public Task<bool> SetupRoomObject();
+        public bool SetRoomObject(T roomObject);
         public void ClearRoomObject();
 
         public int Id { get; }
-        public string Type { get; }
+        public RoomObjectHolderType Type { get; }
     }
 }

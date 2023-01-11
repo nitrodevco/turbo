@@ -4,6 +4,7 @@ using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
+using Turbo.Core.Game.Furniture.Data;
 
 namespace Turbo.Rooms.Object.Logic
 {
@@ -21,7 +22,8 @@ namespace Turbo.Rooms.Object.Logic
             Logics.Add(RoomObjectLogicType.Bot, typeof(BotLogic));
             Logics.Add(RoomObjectLogicType.RentableBot, typeof(RentableBotLogic));
 
-            Logics.Add(RoomObjectLogicType.FurnitureDefault, typeof(FurnitureLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureDefaultFloor, typeof(FurnitureFloorLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureDefaultWall, typeof(FurnitureWallLogic));
             Logics.Add(RoomObjectLogicType.FurnitureStackHelper, typeof(FurnitureStackHelperLogic));
             Logics.Add(RoomObjectLogicType.FurnitureRoller, typeof(FurnitureRollerLogic));
             Logics.Add(RoomObjectLogicType.FurnitureGate, typeof(FurnitureGateLogic));
@@ -39,6 +41,18 @@ namespace Turbo.Rooms.Object.Logic
             if (!Logics.ContainsKey(type)) return null;
 
             return (IRoomObjectLogic)Activator.CreateInstance(Logics[type]);
+        }
+
+        public StuffDataKey GetStuffDataKeyForFurnitureType(string type)
+        {
+            if (!Logics.ContainsKey(type)) return StuffDataKey.LegacyKey;
+
+            if (Logics[type].IsAssignableFrom(typeof(FurnitureLogicBase)))
+            {
+                //var logicType = typeof(FurnitureLogicBase) Logics[type];
+            }
+
+            return StuffDataKey.LegacyKey;
         }
     }
 }
