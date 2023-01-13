@@ -121,6 +121,8 @@ namespace Turbo.Furniture
         {
             if (RoomObject != null)
             {
+                Save();
+
                 RoomObject.Dispose();
 
                 RoomObject = null;

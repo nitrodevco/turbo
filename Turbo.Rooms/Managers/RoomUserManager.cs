@@ -28,7 +28,7 @@ namespace Turbo.Rooms.Managers
             _room = room;
             _roomObjectFactory = roomObjectFactory;
 
-            AvatarObjects = new RoomObjectContainer<IRoomObjectAvatar>();
+            AvatarObjects = new RoomObjectContainer<IRoomObjectAvatar>(RemoveRoomObject);
         }
 
         public async ValueTask InitAsync()
@@ -38,7 +38,7 @@ namespace Turbo.Rooms.Managers
 
         public async ValueTask DisposeAsync()
         {
-            RemoveAllRoomObjects();
+            AvatarObjects.RemoveAllRoomObjects();
         }
 
         public IRoomObjectAvatar GetRoomObjectByUserId(int userId)
@@ -118,44 +118,21 @@ namespace Turbo.Rooms.Managers
             return AddRoomObject(roomObject, location);
         }
 
-        public void RemoveRoomObject(params IRoomObjectAvatar[] avatarObjects)
+        public void RemoveRoomObject(IRoomObjectAvatar avatarObject)
         {
-            foreach (var avatarObject in avatarObjects)
-            {
-                RemoveRoomObject(avatarObject.Id);
-            }
-        }
+            if (avatarObject == null || avatarObject.Disposed) return;
 
-        public void RemoveRoomObject(params int[] ids)
-        {
-            foreach (int id in ids)
-            {
-                RemoveRoomObject(id);
-            }
-        }
+            AvatarObjects.RemoveRoomObject(avatarObject);
 
-        public void RemoveRoomObject(int objectId)
-        {
-            var roomObject = AvatarObjects.GetRoomObject(objectId);
+            _room.RoomMap.RemoveRoomObjects(-1, avatarObject);
 
-            if (roomObject == null) return;
+            // if the avatar object was playing a game, remove it from that game
 
-            _room.RoomMap.RemoveRoomObjects(null, roomObject);
-
-            AvatarObjects.RemoveRoomObject(objectId);
-
-            // if the room object was playing a game, remove it from that game
-
-            roomObject.Dispose();
+            avatarObject.Dispose();
 
             UpdateTotalUsers();
 
             _room.TryDispose();
-        }
-
-        public void RemoveAllRoomObjects()
-        {
-            foreach (var objectId in AvatarObjects.RoomObjects.Keys) RemoveRoomObject(objectId);
         }
 
         public IRoomObjectAvatar EnterRoom(IPlayer player, IPoint location = null)

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Turbo.Core.Database.Dtos;
@@ -84,15 +85,25 @@ namespace Turbo.Furniture
 
         public bool SetRoom(IRoom room)
         {
-            if ((room == null) || ((_room != null) && (_room != room))) return false;
-
-            _room = room;
-
-            if (_furnitureEntity.RoomEntityId != room.Id)
+            if (room == null)
             {
-                _furnitureEntity.RoomEntityId = room.Id;
+                if (_furnitureEntity.RoomEntityId != null)
+                {
+                    _furnitureEntity.RoomEntityId = null;
 
-                Save();
+                    Save();
+                }
+            }
+            else
+            {
+                _room = room;
+
+                if (_furnitureEntity.RoomEntityId != room.Id)
+                {
+                    _furnitureEntity.RoomEntityId = room.Id;
+
+                    Save();
+                }
             }
 
             return true;
@@ -137,6 +148,8 @@ namespace Turbo.Furniture
         {
             if (RoomObject != null)
             {
+                Save();
+
                 RoomObject.Dispose();
 
                 RoomObject = null;

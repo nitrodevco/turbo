@@ -372,13 +372,11 @@ namespace Turbo.Rooms.Mapping
             });
         }
 
-        public void RemoveRoomObjects(IRoomManipulator roomManipulator, params IRoomObject[] roomObjects)
+        public void RemoveRoomObjects(int pickerId, params IRoomObject[] roomObjects)
         {
             if (roomObjects.Length <= 0) return;
 
             List<IPoint> points = new();
-
-            int pickerId = (roomManipulator == null) ? -1 : roomManipulator.Id;
 
             foreach (var roomObject in roomObjects)
             {
@@ -431,10 +429,10 @@ namespace Turbo.Rooms.Mapping
 
                 if (roomObject is IRoomObjectAvatar avatarObject)
                 {
+                    avatarObject.Logic.StopWalking();
+
                     avatarObject.Logic.GetCurrentTile()?.RemoveRoomObject(roomObject);
                     avatarObject.Logic.GetNextTile()?.RemoveRoomObject(roomObject);
-
-                    avatarObject.Logic.StopWalking();
 
                     if (_room.IsInitialized)
                     {

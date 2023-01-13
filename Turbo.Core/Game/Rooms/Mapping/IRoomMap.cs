@@ -19,7 +19,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public void AddRoomObjects(params IRoomObject[] roomObjects);
         public void MoveFloorRoomObject(IRoomObjectFloor floorObject, IPoint oldLocation, bool sendUpdate = true);
         public void MoveWallRoomObject(IRoomObjectWall wallObject, string oldLocation, bool sendUpdate = true);
-        public void RemoveRoomObjects(IRoomManipulator roomManipulator, params IRoomObject[] roomObjects);
+        public void RemoveRoomObjects(int pickerId, params IRoomObject[] roomObjects);
         public void UpdatePoints(bool updateAvatars = true, params IPoint[] points);
         public bool BlockingDisabled { get; }
     }

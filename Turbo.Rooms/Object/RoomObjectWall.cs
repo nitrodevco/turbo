@@ -24,14 +24,14 @@ namespace Turbo.Rooms.Object
         {
             if (_roomObjectContainer != null) _roomObjectContainer.RemoveRoomObject(Id);
 
-            SetLogic(null);
-
             if (RoomObjectHolder != null)
             {
                 RoomObjectHolder.ClearRoomObject();
 
                 RoomObjectHolder = null;
             }
+
+            SetLogic(null);
 
             _roomObjectContainer = null;
         }

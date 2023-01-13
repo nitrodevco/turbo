@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Turbo.Core.Game.Rooms.Object;
@@ -8,11 +9,13 @@ namespace Turbo.Rooms.Object
     {
         public IDictionary<int, T> RoomObjects { get; private set; }
 
+        private readonly Action<T> _onRemove;
         private int _counter;
 
-        public RoomObjectContainer()
+        public RoomObjectContainer(Action<T> onRemove)
         {
             RoomObjects = new Dictionary<int, T>();
+            _onRemove = onRemove;
         }
 
         public bool AddRoomObject(T roomObject)
@@ -42,37 +45,29 @@ namespace Turbo.Rooms.Object
 
         public void RemoveRoomObject(params int[] ids)
         {
-            if (ids.Count() == 1)
-            {
-                RoomObjects.Remove(ids[0]);
-
-                return;
-            }
-
             foreach (int id in ids)
             {
-                RoomObjects.Remove(id);
+                RemoveRoomObject(RoomObjects[id]);
             }
         }
 
         public void RemoveRoomObject(params T[] roomObjects)
         {
-            if (roomObjects.Count() == 1)
-            {
-                RoomObjects.Remove(roomObjects[0].Id);
-
-                return;
-            }
-
             foreach (T roomObject in roomObjects)
             {
+                var existingObject = GetRoomObject(roomObject.Id);
+
+                if (existingObject == null) continue;
+
                 RoomObjects.Remove(roomObject.Id);
+
+                _onRemove(roomObject);
             }
         }
 
         public void RemoveAllRoomObjects()
         {
-            RemoveRoomObject(RoomObjects.Keys.ToArray());
+            RemoveRoomObject(RoomObjects.Values.ToArray());
         }
 
         public int GetNextId() => ++_counter;

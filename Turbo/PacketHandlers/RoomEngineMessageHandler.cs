@@ -99,14 +99,14 @@ namespace Turbo.Main.PacketHandlers
 
             if (message.ObjectCategory == 10)
             {
-                session.Player.RoomObject?.Room?.RoomFurnitureManager?.RemoveFloorFurniture(session.Player, message.ObjectId);
+                session.Player.RoomObject?.Room?.RoomFurnitureManager?.RemoveFloorFurnitureByObjectId(session.Player, message.ObjectId);
 
                 return;
             }
 
             if (message.ObjectCategory == 20)
             {
-                session.Player.RoomObject?.Room?.RoomFurnitureManager?.RemoveWallFurniture(session.Player, message.ObjectId);
+                session.Player.RoomObject?.Room?.RoomFurnitureManager?.RemoveWallFurnitureByObjectId(session.Player, message.ObjectId);
 
                 return;
             }
