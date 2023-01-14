@@ -1,11 +1,10 @@
 ﻿using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Security;
 
 namespace Turbo.Core.Game.Rooms
 {
-    public interface IRoomManipulator
+    public interface IRoomManipulator : IPermissionHolder, ISessionHolder
     {
-        public ISession Session { get; }
-        public bool HasPermission(string permission);
         public int Id { get; }
     }
 }
