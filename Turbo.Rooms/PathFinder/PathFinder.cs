@@ -5,6 +5,7 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.PathFinder.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Utils;
+using Turbo.Core.Game;
 
 namespace Turbo.Rooms.PathFinder
 {
@@ -12,11 +13,8 @@ namespace Turbo.Rooms.PathFinder
     {
         private readonly IRoomMap _roomMap;
 
-        private HeuristicFormula _heuristicFormula = HeuristicFormula.Manhattan;
-        private bool _allowDiagonals = true;
         private bool _heavyDiagonals = true;
         private int _heuristicEstimate = 2;
-        private double _maxHeight = 2;
         private bool _tieBreaker;
 
         public PathFinder(IRoomMap roomMap)
@@ -73,7 +71,7 @@ namespace Turbo.Rooms.PathFinder
 
             openNodes.Push(currentNode);
 
-            IReadOnlyCollection<IPoint> walkingPoints = _allowDiagonals ? MovePoints.DiagonalPoints : MovePoints.StandardPoints;
+            IReadOnlyCollection<IPoint> walkingPoints = DefaultSettings.PathingAllowsDiagonals ? MovePoints.DiagonalPoints : MovePoints.StandardPoints;
 
             if (walkingPoints.Count == 0) return null;
 
@@ -151,7 +149,7 @@ namespace Turbo.Rooms.PathFinder
                     tempNode.LocationParent = currentNode.Location;
                     tempNode.G = gCost;
 
-                    switch (_heuristicFormula)
+                    switch (DefaultSettings.PathingFormula)
                     {
                         default:
                         case HeuristicFormula.Manhattan:
@@ -209,9 +207,9 @@ namespace Turbo.Rooms.PathFinder
             double currentHeight = currentTile.GetWalkingHeight();
             double nextHeight = nextTile.GetWalkingHeight();
 
-            if (Math.Abs(nextHeight - currentHeight) > Math.Abs(_maxHeight)) return false;
+            if (Math.Abs(nextHeight - currentHeight) > Math.Abs(DefaultSettings.MaximumStepHeight)) return false;
 
-            if (_allowDiagonals && !location.Compare(nextLocation))
+            if (DefaultSettings.PathingAllowsDiagonals && !location.Compare(nextLocation))
             {
                 bool isSideValid = (_roomMap.GetValidDiagonalTile(avatar, new Point(nextLocation.X, location.Y)) != null);
                 bool isOtherSideValid = (_roomMap.GetValidDiagonalTile(avatar, new Point(location.X, nextLocation.Y)) != null);

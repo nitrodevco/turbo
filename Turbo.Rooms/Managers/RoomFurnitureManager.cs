@@ -20,13 +20,12 @@ using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game;
 
 namespace Turbo.Rooms.Managers
 {
     public class RoomFurnitureManager : IRoomFurnitureManager
     {
-        public static readonly int MaxHeight = 40;
-
         private readonly IRoom _room;
         private readonly IFurnitureFactory _furnitureFactory;
         private readonly IRoomObjectFactory _roomObjectFactory;
@@ -350,7 +349,7 @@ namespace Turbo.Rooms.Managers
 
                 if ((roomTile.Avatars.Count > 0) && !roomObject.Logic.IsOpen()) return false;
 
-                if ((roomTile.Height + roomObject.Logic.StackHeight) > MaxHeight) return false;
+                if ((roomTile.Height + roomObject.Logic.StackHeight) > DefaultSettings.MaximumFurnitureHeight) return false;
 
                 if (roomTile.HasStackHelper) continue;
 
@@ -392,15 +391,14 @@ namespace Turbo.Rooms.Managers
             }
 
             var previous = roomObject.Location.Clone();
-            var tile = _room.RoomMap.GetTile(location);
 
-            var newLocation = tile.Location.Clone();
+            roomObject.Location.X = location.X;
+            roomObject.Location.Y = location.Y;
+            roomObject.Location.Rotation = location.Rotation;
 
-            newLocation.Rotation = location.Rotation;
+            var tile = _room.RoomMap.GetTile(roomObject.Location);
 
-            if ((tile != null) && (tile.HighestObject != roomObject) || tile.HasStackHelper) newLocation.Z = tile.Height;
-
-            roomObject.SetLocation(newLocation);
+            if ((tile != null) && (tile.HighestObject != roomObject) || tile.HasStackHelper) roomObject.Location.Z = tile.Height;
 
             roomObject.Logic.OnMove(manipulator);
 
