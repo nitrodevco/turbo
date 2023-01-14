@@ -196,7 +196,9 @@ namespace Turbo.Rooms.Managers
 
             foreach (var roomObject in AvatarObjects.RoomObjects.Values)
             {
-                if (roomObject.RoomObjectHolder is IPlayer) continue;
+                if (roomObject.RoomObjectHolder is not IPlayer player) continue;
+
+                // check if the player increases the total user count or not
 
                 totalUsers++;
             }

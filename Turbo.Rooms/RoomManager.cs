@@ -63,9 +63,10 @@ namespace Turbo.Rooms
 
         public IRoom GetOnlineRoom(int id)
         {
-            if (_rooms.TryGetValue(id, out IRoom room))
+            if (_rooms.TryGetValue(id, out var room))
             {
                 room.CancelDispose();
+
                 return room;
             }
 
@@ -74,7 +75,7 @@ namespace Turbo.Rooms
 
         public async Task<IRoom> GetOfflineRoom(int id)
         {
-            IRoom room = GetOnlineRoom(id);
+            var room = GetOnlineRoom(id);
 
             if (room != null) return room;
 
@@ -89,7 +90,7 @@ namespace Turbo.Rooms
                 if (roomEntity == null) return null;
 
                 var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-                PlayerUsernameDto dto = await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId);
+                var dto = await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId);
 
                 if (dto != null) playerName = dto.Name;
             }
@@ -105,7 +106,7 @@ namespace Turbo.Rooms
         {
             if (room == null) return null;
 
-            IRoom existing = GetOnlineRoom(room.Id);
+            var existing = GetOnlineRoom(room.Id);
 
             if (existing != null)
             {
@@ -123,13 +124,14 @@ namespace Turbo.Rooms
 
         public async ValueTask RemoveRoom(int id)
         {
-            IRoom room = GetOnlineRoom(id);
+            var room = GetOnlineRoom(id);
 
             if (room == null) return;
 
-            _rooms.TryRemove(new KeyValuePair<int, IRoom>(room.Id, room));
-
-            await room.DisposeAsync();
+            if (_rooms.TryRemove(new KeyValuePair<int, IRoom>(room.Id, room)))
+            {
+                await room.DisposeAsync();
+            }
         }
 
         public async ValueTask RemoveAllRooms()
@@ -206,7 +208,7 @@ namespace Turbo.Rooms
 
             if (_remainingTryDisposeTicks > -1) _remainingTryDisposeTicks--;
 
-            return Task.WhenAll(_rooms.Values.Select(x => Task.Run(async () => await x.Cycle())));
+            return Task.WhenAll(_rooms.Values.Select(room => Task.Run(async () => await room.Cycle())));
         }
 
         public IStorageQueue StorageQueue => _storageQueue;

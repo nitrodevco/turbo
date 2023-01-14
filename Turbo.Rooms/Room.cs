@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
@@ -78,8 +79,6 @@ namespace Turbo.Rooms
             if (RoomFurnitureManager != null) await RoomFurnitureManager.InitAsync();
             if (RoomUserManager != null) await RoomUserManager.InitAsync();
 
-            Logger.LogInformation("Room loaded");
-
             RoomCycleManager.Start();
 
             IsInitialized = true;
@@ -91,7 +90,9 @@ namespace Turbo.Rooms
 
             IsDisposing = true;
 
-            CancelDispose();
+            _remainingDisposeTicks = -1;
+
+            RoomCycleManager.Stop();
 
             if (RoomManager != null) await RoomManager.RemoveRoom(Id);
 
