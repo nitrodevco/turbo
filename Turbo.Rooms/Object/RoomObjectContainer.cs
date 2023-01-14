@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,14 +8,14 @@ namespace Turbo.Rooms.Object
 {
     public class RoomObjectContainer<T> : IRoomObjectContainer<T> where T : IRoomObject
     {
-        public IDictionary<int, T> RoomObjects { get; private set; }
+        public ConcurrentDictionary<int, T> RoomObjects { get; private set; }
 
         private readonly Action<T> _onRemove;
         private int _counter;
 
         public RoomObjectContainer(Action<T> onRemove)
         {
-            RoomObjects = new Dictionary<int, T>();
+            RoomObjects = new ConcurrentDictionary<int, T>();
             _onRemove = onRemove;
         }
 
@@ -22,20 +23,12 @@ namespace Turbo.Rooms.Object
         {
             if (roomObject == null) return false;
 
-            if (RoomObjects.Keys.Contains(roomObject.Id)) return false;
-
-            if (RoomObjects.Values.Contains(roomObject)) return false;
-
-            RoomObjects.Add(roomObject.Id, roomObject);
-
-            return true;
+            return RoomObjects.TryAdd(roomObject.Id, roomObject);
         }
 
         public T GetRoomObject(int id)
         {
-            if (id < 0) return default(T);
-
-            if (RoomObjects.TryGetValue(id, out T roomObject))
+            if ((id >= 0) && RoomObjects.TryGetValue(id, out T roomObject))
             {
                 return roomObject;
             }
@@ -47,7 +40,7 @@ namespace Turbo.Rooms.Object
         {
             foreach (int id in ids)
             {
-                RemoveRoomObject(RoomObjects[id]);
+                RemoveRoomObject(GetRoomObject(id));
             }
         }
 
@@ -55,11 +48,9 @@ namespace Turbo.Rooms.Object
         {
             foreach (T roomObject in roomObjects)
             {
-                var existingObject = GetRoomObject(roomObject.Id);
+                if (roomObject == null) continue;
 
-                if (existingObject == null) continue;
-
-                RoomObjects.Remove(roomObject.Id);
+                if (!RoomObjects.TryRemove(new KeyValuePair<int, T>(roomObject.Id, roomObject))) continue;
 
                 _onRemove(roomObject);
             }

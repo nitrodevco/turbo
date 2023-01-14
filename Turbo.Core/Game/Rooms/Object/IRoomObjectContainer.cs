@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace Turbo.Core.Game.Rooms.Object
 {
     public interface IRoomObjectContainer<T> where T : IRoomObject
     {
-        public IDictionary<int, T> RoomObjects { get; }
+        public ConcurrentDictionary<int, T> RoomObjects { get; }
 
         public bool AddRoomObject(T roomObject);
         public T GetRoomObject(int id);
