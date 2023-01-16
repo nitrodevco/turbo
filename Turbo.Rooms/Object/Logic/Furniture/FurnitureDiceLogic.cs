@@ -2,12 +2,13 @@
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
     public class FurnitureDiceLogic : FurnitureFloorLogic
     {
-        private static readonly int _diceCycles = 4;
+        private static readonly int[] _diceNumbers = new int[] { 1, 2, 3, 4, 5, 6 };
         private static readonly int _rollingState = -1;
         private static readonly int _closedState = 0;
 
@@ -26,7 +27,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
                 _remainingDiceCycles = -1;
 
-                SetState((int)Math.Floor(new Random().NextDouble() * (FurnitureDefinition.TotalStates - 1)) + 1);
+                SetState(_diceNumbers[new Random().Next(0, _diceNumbers.Length)]);
             }
         }
 
@@ -36,7 +37,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             SetState(_rollingState);
 
-            _remainingDiceCycles = _diceCycles;
+            _remainingDiceCycles = DefaultSettings.DiceCycles;
         }
 
         public virtual void DiceOff(IRoomObjectAvatar avatar)
