@@ -17,19 +17,19 @@ namespace Turbo.Core.Game.Rooms.Mapping
 
         public bool HasStackHelper { get; }
 
-        public IDictionary<int, IRoomObjectAvatar> Avatars { get; }
-        public IDictionary<int, IRoomObjectFloor> Furniture { get; }
+        public List<IRoomObjectAvatar> Avatars { get; }
+        public List<IRoomObjectFloor> Furniture { get; }
 
         public bool IsDoor { get; set; }
 
         public void AddRoomObject(IRoomObject roomObject);
         public void RemoveRoomObject(IRoomObject roomObject);
+        public IRoomObjectFloor GetFurnitureUnderneath(IRoomObjectFloor floorObject);
 
         public void ResetTileHeight();
         public double GetWalkingHeight();
         public bool HasLogic(Type type);
 
-        public bool IsOpen(IRoomObjectAvatar roomObject = null);
         public bool CanWalk(IRoomObjectAvatar roomObject = null);
         public bool CanSit(IRoomObjectAvatar roomObject = null);
         public bool CanLay(IRoomObjectAvatar roomObject = null);

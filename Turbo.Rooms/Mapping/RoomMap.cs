@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
@@ -95,11 +96,13 @@ namespace Turbo.Rooms.Mapping
 
             if (roomTile == null) return null;
 
+            if (roomTile.State == RoomTileState.Closed) return null;
+
             if (roomTile.IsDoor) return roomTile;
 
             if (roomTile.Avatars.Count > 0)
             {
-                foreach (var tileAvatarObject in roomTile.Avatars.Values)
+                foreach (var tileAvatarObject in roomTile.Avatars)
                 {
                     if (tileAvatarObject == avatarObject) return roomTile;
                 }
@@ -128,7 +131,7 @@ namespace Turbo.Rooms.Mapping
 
             if (roomTile.Avatars.Count > 0)
             {
-                foreach (var tileAvatarObject in roomTile.Avatars.Values)
+                foreach (var tileAvatarObject in roomTile.Avatars)
                 {
                     if (tileAvatarObject == avatarObject) return roomTile;
                 }
@@ -136,7 +139,7 @@ namespace Turbo.Rooms.Mapping
                 if (!blockingDisabled) return null;
             }
 
-            if (!roomTile.CanWalk(avatarObject) || roomTile.CanSit(avatarObject) || roomTile.CanLay(avatarObject)) return null;
+            if (roomTile.CanSit(avatarObject) || roomTile.CanLay(avatarObject) || !roomTile.CanWalk(avatarObject)) return null;
 
             return roomTile;
         }
@@ -267,14 +270,16 @@ namespace Turbo.Rooms.Mapping
                 {
                     _room.SendComposer(new ObjectAddMessage
                     {
-                        Object = floorObjects[0]
+                        Object = floorObjects[0],
+                        OwnerName = floorObjects[0].RoomObjectHolder?.PlayerName
                     });
                 }
                 else
                 {
                     _room.SendComposer(new ObjectsMessage
                     {
-                        Objects = floorObjects
+                        Objects = floorObjects,
+                        OwnersIdToUsername = floorObjects[0].Room?.RoomFurnitureManager?.FurnitureOwners
                     });
                 }
 
@@ -287,14 +292,16 @@ namespace Turbo.Rooms.Mapping
                 {
                     _room.SendComposer(new ItemAddMessage
                     {
-                        Object = wallObjects[0]
+                        Object = wallObjects[0],
+                        OwnerName = wallObjects[0].RoomObjectHolder?.PlayerName
                     });
                 }
                 else
                 {
                     _room.SendComposer(new ItemsMessage
                     {
-                        Objects = wallObjects
+                        Objects = wallObjects,
+                        OwnersIdToUsername = wallObjects[0].Room?.RoomFurnitureManager?.FurnitureOwners
                     });
                 }
             }
@@ -465,7 +472,7 @@ namespace Turbo.Rooms.Mapping
 
                 if (updateUsers && roomTile.Avatars.Count > 0)
                 {
-                    foreach (var avatarObject in roomTile.Avatars.Values)
+                    foreach (var avatarObject in roomTile.Avatars)
                     {
                         avatarObject.Logic.InvokeCurrentLocation();
 
@@ -477,7 +484,15 @@ namespace Turbo.Rooms.Mapping
 
                 roomTiles.Add(roomTile);
 
-                // check roomTiles count, if count equals max byte length, send height packet and clear the list
+                if (roomTiles.Count == Byte.MaxValue)
+                {
+                    _room.SendComposer(new HeightMapUpdateMessage
+                    {
+                        TilesToUpdate = roomTiles
+                    });
+
+                    roomTiles.Clear();
+                }
             }
 
             if (roomTiles.Count > 0)

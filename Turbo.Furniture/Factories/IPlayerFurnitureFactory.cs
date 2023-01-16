@@ -7,5 +7,6 @@ namespace Turbo.Furniture.Factories
     public interface IPlayerFurnitureFactory
     {
         public IPlayerFurniture Create(IPlayerFurnitureContainer playerFurnitureContainer, FurnitureEntity furnitureEntity);
+        public IPlayerFurniture CreateFromRoomFurniture(IPlayerFurnitureContainer playerFurnitureContainer, IRoomFurniture roomFurniture, int playerId);
     }
 }

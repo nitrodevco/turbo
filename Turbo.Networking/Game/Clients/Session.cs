@@ -65,8 +65,18 @@ namespace Turbo.Networking.Game.Clients
             if (Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
             {
                 IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(), composer);
-                if (queue) await _channel.WriteAsync(packet);
-                else await _channel.WriteAndFlushAsync(packet);
+
+                try
+                {
+                    if (queue) await _channel.WriteAsync(packet);
+                    else await _channel.WriteAndFlushAsync(packet);
+                }
+
+                catch (Exception exception)
+                {
+                    _logger.LogDebug(exception.Message);
+                }
+
                 _logger.LogDebug($"Sent {packet.Header}: {composer.GetType().Name}");
             }
             else

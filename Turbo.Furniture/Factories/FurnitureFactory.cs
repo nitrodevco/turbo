@@ -6,6 +6,7 @@ using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Inventory;
 
 namespace Turbo.Furniture.Factories
 {
@@ -39,6 +40,13 @@ namespace Turbo.Furniture.Factories
             return new RoomFloorFurniture(logger, roomFurnitureManager, furnitureManager, furnitureEntity, furnitureDefinition);
         }
 
+        public IRoomFloorFurniture CreateFloorFurnitureFromPlayerFurniture(IRoomFurnitureManager roomFurnitureManager, IPlayerFurniture playerFurniture)
+        {
+            if (playerFurniture is PlayerFurniture furniture) return CreateFloorFurniture(roomFurnitureManager, furniture.FurnitureEntity);
+
+            return null;
+        }
+
         public IRoomWallFurniture CreateWallFurniture(IRoomFurnitureManager roomFurnitureManager, FurnitureEntity furnitureEntity)
         {
             var furnitureManager = _provider.GetService<IFurnitureManager>();
@@ -51,6 +59,13 @@ namespace Turbo.Furniture.Factories
             IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
 
             return new RoomWallFurniture(logger, roomFurnitureManager, furnitureManager, furnitureEntity, furnitureDefinition);
+        }
+
+        public IRoomWallFurniture CreateWallFurnitureFromPlayerFurniture(IRoomFurnitureManager roomFurnitureManager, IPlayerFurniture playerFurniture)
+        {
+            if (playerFurniture is PlayerFurniture furniture) return CreateWallFurniture(roomFurnitureManager, furniture.FurnitureEntity);
+
+            return null;
         }
     }
 }

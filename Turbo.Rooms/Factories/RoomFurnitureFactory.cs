@@ -6,6 +6,7 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Furniture.Factories;
 using Turbo.Rooms.Managers;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms.Object.Logic;
 
 namespace Turbo.Rooms.Factories
 {
@@ -20,12 +21,13 @@ namespace Turbo.Rooms.Factories
 
         public IRoomFurnitureManager Create(IRoom room)
         {
-            IFurnitureFactory furnitureFactory = _provider.GetService<IFurnitureFactory>();
-            IRoomObjectFactory roomObjectFactory = _provider.GetService<IRoomObjectFactory>();
-            IPlayerManager playerManager = _provider.GetService<IPlayerManager>();
-            IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
+            var furnitureFactory = _provider.GetService<IFurnitureFactory>();
+            var roomObjectFactory = _provider.GetService<IRoomObjectFactory>();
+            var roomObjectLogicFactory = _provider.GetService<IRoomObjectLogicFactory>();
+            var playerManager = _provider.GetService<IPlayerManager>();
+            var scopeFactory = _provider.GetService<IServiceScopeFactory>();
 
-            return new RoomFurnitureManager(room, furnitureFactory, roomObjectFactory, playerManager, scopeFactory);
+            return new RoomFurnitureManager(room, furnitureFactory, roomObjectFactory, roomObjectLogicFactory, playerManager, scopeFactory);
         }
     }
 }

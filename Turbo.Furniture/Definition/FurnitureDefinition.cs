@@ -1,6 +1,7 @@
 ﻿using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Database.Entities.Furniture;
+using Turbo.Core.Game;
 
 namespace Turbo.Furniture.Definition
 {
@@ -22,7 +23,17 @@ namespace Turbo.Furniture.Definition
         public int TotalStates => _entity.TotalStates;
         public int X => _entity.X;
         public int Y => _entity.Y;
-        public double Z => _entity.Z;
+
+        public double Z
+        {
+            get
+            {
+                if (_entity.Z == 0) return DefaultSettings.MinimumStackHeight;
+
+                return _entity.Z;
+            }
+        }
+
         public bool CanStack => (bool)_entity.CanStack;
         public bool CanWalk => (bool)_entity.CanWalk;
         public bool CanSit => (bool)_entity.CanSit;

@@ -38,9 +38,18 @@ namespace Turbo.Rooms.Object.Logic
 
         public IRoomObjectLogic Create(string type)
         {
+            var logicType = GetLogicType(type);
+
+            if (logicType == null) return null;
+
+            return (IRoomObjectLogic)Activator.CreateInstance(logicType);
+        }
+
+        public Type GetLogicType(string type)
+        {
             if (!Logics.ContainsKey(type)) return null;
 
-            return (IRoomObjectLogic)Activator.CreateInstance(Logics[type]);
+            return Logics[type];
         }
 
         public StuffDataKey GetStuffDataKeyForFurnitureType(string type)

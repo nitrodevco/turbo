@@ -11,8 +11,10 @@ namespace Turbo.Furniture
     {
         private readonly ILogger<IPlayerFurniture> _logger;
 
-        private readonly IPlayerFurnitureContainer _playerFurnitureContainer;
         private readonly FurnitureEntity _furnitureEntity;
+
+        private IPlayerFurnitureContainer _playerFurnitureContainer;
+        protected bool _isDisposing;
 
         public IFurnitureDefinition FurnitureDefinition { get; private set; }
         public IStuffData StuffData { get; private set; }
@@ -34,9 +36,19 @@ namespace Turbo.Furniture
 
         public void Dispose()
         {
+            if (Disposed || _isDisposing) return;
 
+            _isDisposing = true;
+
+            if (_playerFurnitureContainer != null) _playerFurnitureContainer.RemoveFurniture(this);
+
+            _playerFurnitureContainer = null;
+            _isDisposing = false;
         }
 
         public int Id => _furnitureEntity.Id;
+
+        public FurnitureEntity FurnitureEntity => _furnitureEntity;
+        public bool Disposed => (_playerFurnitureContainer == null);
     }
 }

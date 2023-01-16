@@ -6,6 +6,7 @@ using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Core.Storage;
 
 namespace Turbo.Furniture.Factories
 {
@@ -33,6 +34,18 @@ namespace Turbo.Furniture.Factories
             var stuffDataKey = logicFactory.GetStuffDataKeyForFurnitureType(furnitureDefinition.Logic);
 
             return new PlayerFurniture(logger, playerFurnitureContainer, furnitureEntity, furnitureDefinition, stuffDataKey);
+        }
+
+        public IPlayerFurniture CreateFromRoomFurniture(IPlayerFurnitureContainer playerFurnitureContainer, IRoomFurniture roomFurniture, int playerId)
+        {
+            if (roomFurniture is not RoomFurniture furniture) return null;
+
+            furniture.FurnitureEntity.PlayerEntityId = playerId;
+            furniture.FurnitureEntity.RoomEntityId = null;
+
+            _provider.GetService<IStorageQueue>()?.SaveNow(furniture.FurnitureEntity);
+
+            return Create(playerFurnitureContainer, furniture.FurnitureEntity);
         }
     }
 }

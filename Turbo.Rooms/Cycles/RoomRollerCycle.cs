@@ -146,14 +146,14 @@ namespace Turbo.Rooms.Cycles
 
             if (roomTile == null) return false;
 
-            foreach (var floorObject in roomTile.Furniture.Values)
+            foreach (var floorObject in roomTile.Furniture)
             {
                 if ((rollingData.Roller == floorObject) || (rollingData.Furniture.ContainsKey(floorObject.Id))) continue;
 
                 ProcessRollingFurniture(rollingData, floorObject);
             }
 
-            foreach (var avatarObject in roomTile.Avatars.Values)
+            foreach (var avatarObject in roomTile.Avatars)
             {
                 if (rollingData.Avatars.ContainsKey(avatarObject.Id)) continue;
 

@@ -17,6 +17,7 @@ using Turbo.Core.Security;
 using Turbo.Core.Storage;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
+using Turbo.Core.Game;
 
 namespace Turbo.Main
 {
@@ -193,13 +194,15 @@ namespace Turbo.Main
 
                     _storageCycleRunning = false;
 
-                    await Task.Delay(10000);
+                    await Task.Delay(DefaultSettings.StoreCycleMs);
                 }
             });
         }
 
         private void StartGameCycle()
         {
+            if (_gameCycleStarted) return;
+
             _gameCycleStarted = true;
 
             _gameCycle = Task.Run(async () =>
@@ -222,7 +225,7 @@ namespace Turbo.Main
 
                     _gameCycleRunning = false;
 
-                    await Task.Delay(500);
+                    await Task.Delay(DefaultSettings.GameCycleMs);
                 }
             });
         }

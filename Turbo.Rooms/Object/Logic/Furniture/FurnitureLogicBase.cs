@@ -22,7 +22,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             FurnitureDefinition = furnitureDefinition;
 
-            IStuffData stuffData = CreateStuffDataFromJson(jsonString);
+            var stuffData = CreateStuffDataFromJson(jsonString);
 
             StuffData = stuffData;
 

@@ -116,9 +116,15 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
-            IRoomObject roomObject = session.Player.RoomObject;
+            if (message.WallLocation == null)
+            {
+                session.Player.RoomObject?.Room?.RoomFurnitureManager?.PlaceFloorFurnitureByFurniId(session.Player, message.ObjectId, new Point(message.X ?? 0, message.Y ?? 0, 0, (Rotation)message.Direction));
+            }
 
-            if (roomObject == null) return;
+            if (message.WallLocation != null && message.WallLocation.Length > 0)
+            {
+                session.Player.RoomObject?.Room?.RoomFurnitureManager?.PlaceWallFurnitureByFurniId(session.Player, message.ObjectId, message.WallLocation);
+            }
         }
 
         protected virtual void OnRemoveItemMessage(RemoveItemMessage message, ISession session)

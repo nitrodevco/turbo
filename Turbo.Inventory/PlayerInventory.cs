@@ -8,6 +8,7 @@ namespace Turbo.Inventory
     {
         public IPlayer Player { get; private set; }
         public IPlayerFurnitureInventory FurnitureInventory { get; private set; }
+        public IUnseenItemsManager UnseenItemsManager { get; private set; }
 
         public bool IsInitialized { get; private set; }
         public bool IsDisposed { get; private set; }
@@ -19,6 +20,7 @@ namespace Turbo.Inventory
         {
             Player = player;
             FurnitureInventory = playerFurnitureInventory;
+            UnseenItemsManager = new UnseenItemsManager(player);
         }
 
         public async ValueTask InitAsync()

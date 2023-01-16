@@ -9,12 +9,19 @@ namespace Turbo.Rooms.Utils
     {
         public static IList<IPoint> GetPoints(IRoomObjectFloor floorObject, IPoint point = null)
         {
-            IList<IPoint> points = new List<IPoint>();
+            if (floorObject == null) return null;
 
             point ??= floorObject.Location;
 
-            int width = floorObject.Logic.FurnitureDefinition.X;
-            int length = floorObject.Logic.FurnitureDefinition.Y;
+            return GetPoints(floorObject.Logic?.FurnitureDefinition?.X ?? 0, floorObject.Logic?.FurnitureDefinition?.Y ?? 0, point);
+        }
+
+        public static IList<IPoint> GetPoints(int width, int length, IPoint point)
+        {
+            if (point == null || (width < 1) || (length < 1)) return null;
+
+            IList<IPoint> points = new List<IPoint>();
+
             Rotation rotation = point.Rotation;
 
             if ((rotation == Rotation.East) || (rotation == Rotation.West))

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -21,6 +22,7 @@ using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game;
+using Turbo.Core.Game.Rooms.Object.Logic;
 
 namespace Turbo.Rooms.Managers
 {
@@ -29,6 +31,7 @@ namespace Turbo.Rooms.Managers
         private readonly IRoom _room;
         private readonly IFurnitureFactory _furnitureFactory;
         private readonly IRoomObjectFactory _roomObjectFactory;
+        private readonly IRoomObjectLogicFactory _roomObjectLogicFactory;
         private readonly IPlayerManager _playerManager;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -39,16 +42,20 @@ namespace Turbo.Rooms.Managers
         public IRoomObjectContainer<IRoomObjectFloor> FloorObjects { get; private set; }
         public IRoomObjectContainer<IRoomObjectWall> WallObjects { get; private set; }
 
+        private IDictionary<int, int> _pendingPickerIds;
+
         public RoomFurnitureManager(
             IRoom room,
             IFurnitureFactory furnitureFactory,
             IRoomObjectFactory roomObjectFactory,
+            IRoomObjectLogicFactory roomObjectLogicFactory,
             IPlayerManager playerManager,
             IServiceScopeFactory serviceScopeFactory)
         {
             _room = room;
             _furnitureFactory = furnitureFactory;
             _roomObjectFactory = roomObjectFactory;
+            _roomObjectLogicFactory = roomObjectLogicFactory;
             _playerManager = playerManager;
             _serviceScopeFactory = serviceScopeFactory;
 
@@ -58,6 +65,8 @@ namespace Turbo.Rooms.Managers
 
             FloorObjects = new RoomObjectContainer<IRoomObjectFloor>(RemoveFloorRoomObject);
             WallObjects = new RoomObjectContainer<IRoomObjectWall>(RemoveWallRoomObject);
+
+            _pendingPickerIds = new Dictionary<int, int>();
         }
 
         public async ValueTask InitAsync()
@@ -127,7 +136,7 @@ namespace Turbo.Rooms.Managers
         {
             if (floorHolder == null) return null;
 
-            var floorObject = _roomObjectFactory.CreateFloorObject(_room, FloorObjects, FloorObjects.GetNextId(), floorHolder.LogicType);
+            var floorObject = _roomObjectFactory.CreateFloorObject(_room, FloorObjects, floorHolder.Id, floorHolder.LogicType);
 
             if (floorObject == null) return null;
 
@@ -147,7 +156,14 @@ namespace Turbo.Rooms.Managers
 
             FloorObjects.RemoveRoomObject(floorObject);
 
-            _room.RoomMap.RemoveRoomObjects(-1, floorObject); // need to pass pickerId
+            int pickerId = -1;
+
+            if (_pendingPickerIds.Remove(floorObject.Id, out var picker))
+            {
+                pickerId = picker;
+            }
+
+            _room.RoomMap.RemoveRoomObjects(pickerId, floorObject);
 
             floorObject.Dispose();
         }
@@ -186,6 +202,9 @@ namespace Turbo.Rooms.Managers
 
             var pickerId = (pickupType == FurniturePickupType.SendToManipulator) ? manipulator.Id : floorFurniture.PlayerId;
 
+            _pendingPickerIds.Add(floorFurniture.Id, pickerId);
+
+            FloorFurniture.Remove(floorFurniture.Id);
             floorFurniture.ClearRoomObject();
 
             var player = _playerManager.GetPlayerById(pickerId);
@@ -200,7 +219,7 @@ namespace Turbo.Rooms.Managers
                 return;
             }
 
-            // add to inventory
+            player.PlayerInventory?.FurnitureInventory?.AddFurnitureFromRoom(floorFurniture);
 
             floorFurniture.Dispose();
         }
@@ -238,7 +257,7 @@ namespace Turbo.Rooms.Managers
         {
             if (wallHolder == null) return null;
 
-            var wallObject = _roomObjectFactory.CreateWallObject(_room, WallObjects, WallObjects.GetNextId(), wallHolder.LogicType);
+            var wallObject = _roomObjectFactory.CreateWallObject(_room, WallObjects, wallHolder.Id, wallHolder.LogicType);
 
             if (wallObject == null) return null;
 
@@ -258,7 +277,14 @@ namespace Turbo.Rooms.Managers
 
             WallObjects.RemoveRoomObject(wallObject);
 
-            _room.RoomMap.RemoveRoomObjects(-1, wallObject); // need to pass pickerId
+            int pickerId = -1;
+
+            if (_pendingPickerIds.Remove(wallObject.Id, out var picker))
+            {
+                pickerId = picker;
+            }
+
+            _room.RoomMap.RemoveRoomObjects(pickerId, wallObject);
 
             wallObject.Dispose();
         }
@@ -297,6 +323,9 @@ namespace Turbo.Rooms.Managers
 
             var pickerId = (pickupType == FurniturePickupType.SendToManipulator) ? manipulator.Id : wallFurniture.PlayerId;
 
+            _pendingPickerIds.Add(wallFurniture.Id, pickerId);
+
+            WallFurniture.Remove(wallFurniture.Id);
             wallFurniture.ClearRoomObject();
 
             var player = _playerManager.GetPlayerById(pickerId);
@@ -311,7 +340,7 @@ namespace Turbo.Rooms.Managers
                 return;
             }
 
-            // add to inventory
+            player.PlayerInventory?.FurnitureInventory?.AddFurnitureFromRoom(wallFurniture);
 
             wallFurniture.Dispose();
         }
@@ -332,12 +361,33 @@ namespace Turbo.Rooms.Managers
             return true;
         }
 
+        public bool CanPlaceOnTop(IRoomObjectFloor bottomObject, IFurnitureDefinition furnitureDefinition)
+        {
+            var logicType = _roomObjectLogicFactory.GetLogicType(furnitureDefinition.Logic);
+
+            if (logicType != null)
+            {
+                if (logicType.IsAssignableFrom(typeof(FurnitureStackHelperLogic))) return true;
+
+                if (logicType.IsAssignableFrom(typeof(FurnitureRollerLogic))) return false;
+            }
+
+            if (!bottomObject.Logic.CanStack() || bottomObject.Logic.CanSit() || bottomObject.Logic.CanLay()) return false;
+
+            if (bottomObject.Logic is FurnitureRollerLogic)
+            {
+                if ((furnitureDefinition.X > 1) || (furnitureDefinition.Y > 1)) return false;
+            }
+
+            return true;
+        }
+
         public bool IsValidPlacement(IRoomObjectFloor roomObject, IPoint point)
         {
-            bool isRotating = roomObject.Location.Rotation != point.Rotation;
-            IList<IPoint> affectedPoints = AffectedPoints.GetPoints(roomObject, point);
+            bool isRotating = (roomObject.Location.Compare(point) && roomObject.Location.Rotation != point.Rotation);
+            var affectedPoints = AffectedPoints.GetPoints(roomObject, point);
 
-            if (affectedPoints.Count == 0) return false;
+            if ((affectedPoints == null) || (affectedPoints.Count == 0)) return false;
 
             foreach (IPoint affectedPoint in affectedPoints)
             {
@@ -347,7 +397,7 @@ namespace Turbo.Rooms.Managers
 
                 // do we need to validate that all tiles base height is the same?
 
-                if ((roomTile.Avatars.Count > 0) && !roomObject.Logic.IsOpen()) return false;
+                if (roomTile.Avatars.Count > 0 && !isRotating) return false;
 
                 if ((roomTile.Height + roomObject.Logic.StackHeight) > DefaultSettings.MaximumFurnitureHeight) return false;
 
@@ -358,6 +408,37 @@ namespace Turbo.Rooms.Managers
                     if (isRotating && (roomTile.HighestObject == roomObject)) continue;
 
                     if ((roomTile.HighestObject != roomObject) && !CanPlaceOnTop(roomTile.HighestObject, roomObject)) return false;
+                }
+            }
+
+            return true;
+        }
+
+        public bool IsValidPlacement(IFurnitureDefinition furnitureDefinition, IPoint point)
+        {
+            if ((furnitureDefinition == null) || (point == null)) return false;
+
+            var affectedPoints = AffectedPoints.GetPoints(furnitureDefinition.X, furnitureDefinition.Y, point);
+
+            if ((affectedPoints == null) || (affectedPoints.Count == 0)) return false;
+
+            foreach (var affectedPoint in affectedPoints)
+            {
+                var roomTile = _room.RoomMap.GetTile(affectedPoint);
+
+                if (roomTile == null) return false;
+
+                // do we need to validate that all tiles base height is the same?
+
+                if ((roomTile.Avatars.Count > 0)) return false;
+
+                if ((roomTile.Height + furnitureDefinition.Z) > DefaultSettings.MaximumFurnitureHeight) return false;
+
+                if (roomTile.HasStackHelper) continue;
+
+                if (roomTile.HighestObject != null)
+                {
+                    if (!CanPlaceOnTop(roomTile.HighestObject, furnitureDefinition)) return false;
                 }
             }
 
@@ -375,7 +456,7 @@ namespace Turbo.Rooms.Managers
         {
             if (roomObject == null || roomObject.RoomObjectHolder is not IRoomFloorFurniture furniture) return false;
 
-            if (!_room?.RoomSecurityManager?.CanManipulateFurniture(manipulator, furniture) ?? false || !IsValidPlacement(roomObject, location))
+            if (!_room.RoomSecurityManager.CanManipulateFurniture(manipulator, furniture) || !IsValidPlacement(roomObject, location))
             {
                 if (manipulator != null)
                 {
@@ -400,9 +481,52 @@ namespace Turbo.Rooms.Managers
 
             if ((tile != null) && (tile.HighestObject != roomObject) || tile.HasStackHelper) roomObject.Location.Z = tile.Height;
 
+            _room.RoomMap.MoveFloorRoomObject(roomObject, previous);
+
             roomObject.Logic.OnMove(manipulator);
 
-            _room.RoomMap.MoveFloorRoomObject(roomObject, previous);
+            furniture.Save();
+
+            return true;
+        }
+
+        public async Task<bool> PlaceFloorFurnitureByFurniId(IPlayer player, int furniId, IPoint location)
+        {
+            if ((player == null) || (furniId < 0) || (location == null)) return false;
+
+            var playerFurniture = player.PlayerInventory?.FurnitureInventory?.GetFurniture(furniId);
+
+            if (playerFurniture == null) return false;
+
+            if (!_room.RoomSecurityManager.CanPlaceFurniture(player) || !IsValidPlacement(playerFurniture.FurnitureDefinition, location))
+            {
+                // cant place here
+                return false;
+            }
+
+            var newLocation = new Point(location.X, location.Y, 0, location.Rotation);
+
+            var tile = _room.RoomMap.GetTile(newLocation);
+
+            if (tile == null) return false;
+
+            newLocation.Z = tile.Height;
+
+            var furniture = _furnitureFactory.CreateFloorFurnitureFromPlayerFurniture(this, playerFurniture);
+
+            if (furniture == null) return false;
+
+            if (!furniture.SetRoom(_room) || !furniture.SetPlayer(player)) return false;
+
+            playerFurniture.Dispose();
+
+            FloorFurniture.Add(furniture.Id, furniture);
+
+            if (!FurnitureOwners.ContainsKey(player.Id)) FurnitureOwners.Add(player.Id, player.Name);
+
+            var floorObject = await CreateFloorRoomObjectAndAssign(furniture, newLocation);
+
+            if (floorObject != null) floorObject.Logic.OnPlace(player);
 
             furniture.Save();
 
@@ -420,7 +544,7 @@ namespace Turbo.Rooms.Managers
         {
             if (wallObject == null || wallObject.RoomObjectHolder is not IRoomWallFurniture furniture) return false;
 
-            if (!_room?.RoomSecurityManager?.CanManipulateFurniture(manipulator, furniture) ?? false)
+            if (!_room.RoomSecurityManager.CanManipulateFurniture(manipulator, furniture))
             {
                 if (manipulator != null)
                 {
@@ -439,9 +563,45 @@ namespace Turbo.Rooms.Managers
 
             wallObject.SetLocation(location);
 
+            _room.RoomMap.MoveWallRoomObject(wallObject, previous);
+
             wallObject.Logic.OnMove(manipulator);
 
-            _room.RoomMap.MoveWallRoomObject(wallObject, previous);
+            furniture.Save();
+
+            return true;
+        }
+
+        public async Task<bool> PlaceWallFurnitureByFurniId(IPlayer player, int furniId, string location)
+        {
+            // add wall validator
+            if ((player == null) || (location.Length == 0)) return false;
+
+            var playerFurniture = player.PlayerInventory?.FurnitureInventory?.GetFurniture(furniId);
+
+            if (playerFurniture == null) return false;
+
+            if (!_room.RoomSecurityManager.CanPlaceFurniture(player))
+            {
+                // cant place here
+                return false;
+            }
+
+            var furniture = _furnitureFactory.CreateWallFurnitureFromPlayerFurniture(this, playerFurniture);
+
+            if (furniture == null) return false;
+
+            if (!furniture.SetRoom(_room) || !furniture.SetPlayer(player)) return false;
+
+            playerFurniture.Dispose();
+
+            WallFurniture.Add(furniture.Id, furniture);
+
+            FurnitureOwners.TryAdd(player.Id, player.Name);
+
+            var wallObject = await CreateWallRoomObjectAndAssign(furniture, location);
+
+            if (wallObject != null) wallObject.Logic.OnPlace(player);
 
             furniture.Save();
 
@@ -600,18 +760,20 @@ namespace Turbo.Rooms.Managers
 
                 if (definition.Type.Equals(FurniType.Floor))
                 {
+                    if (FloorFurniture.ContainsKey(furnitureEntity.Id)) continue;
+
                     var furniture = _furnitureFactory.CreateFloorFurniture(this, furnitureEntity);
 
                     if (furniture == null) continue;
 
                     if (!furniture.SetRoom(_room)) continue;
 
-                    FloorFurniture.Add(furniture.Id, furniture);
-
                     if (FurnitureOwners.TryGetValue(furnitureEntity.PlayerEntityId, out string name))
                     {
-                        furniture.PlayerName = name;
+                        furniture.SetPlayer(furnitureEntity.PlayerEntityId, name);
                     }
+
+                    FloorFurniture.Add(furniture.Id, furniture);
 
                     await CreateFloorRoomObjectAndAssign(furniture, new Point(furniture.SavedX, furniture.SavedY, furniture.SavedZ, furniture.SavedRotation));
 
@@ -620,18 +782,20 @@ namespace Turbo.Rooms.Managers
 
                 if (definition.Type.Equals(FurniType.Wall))
                 {
+                    if (WallFurniture.ContainsKey(furnitureEntity.Id)) continue;
+
                     var furniture = _furnitureFactory.CreateWallFurniture(this, furnitureEntity);
 
                     if (furniture == null) continue;
 
                     if (!furniture.SetRoom(_room)) continue;
 
-                    WallFurniture.Add(furniture.Id, furniture);
-
                     if (FurnitureOwners.TryGetValue(furnitureEntity.PlayerEntityId, out string name))
                     {
-                        furniture.PlayerName = name;
+                        furniture.SetPlayer(furnitureEntity.PlayerEntityId, name);
                     }
+
+                    WallFurniture.Add(furniture.Id, furniture);
 
                     await CreateWallRoomObjectAndAssign(furniture, furniture.SavedWallLocation);
 

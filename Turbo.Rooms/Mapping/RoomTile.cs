@@ -5,14 +5,12 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Furniture;
+using Turbo.Core.Game;
 
 namespace Turbo.Rooms.Mapping
 {
     public class RoomTile : IRoomTile
     {
-        private static readonly int TILE_HEIGHT_DEFAULT = 32767;
-        private static readonly int TILE_HEIGHT_MULTIPLIER = 256;
-
         public IPoint Location { get; private set; }
         public double DefaultHeight { get; private set; }
 
@@ -21,8 +19,8 @@ namespace Turbo.Rooms.Mapping
         public RoomTileState State { get; private set; }
         public IRoomObjectFloor HighestObject { get; private set; }
 
-        public IDictionary<int, IRoomObjectAvatar> Avatars { get; private set; }
-        public IDictionary<int, IRoomObjectFloor> Furniture { get; private set; }
+        public List<IRoomObjectAvatar> Avatars { get; private set; }
+        public List<IRoomObjectFloor> Furniture { get; private set; }
 
         public bool IsDoor { get; set; }
         public bool HasStackHelper { get; private set; }
@@ -35,11 +33,11 @@ namespace Turbo.Rooms.Mapping
             DefaultHeight = height;
 
             Height = DefaultHeight;
-            RelativeHeight = TILE_HEIGHT_DEFAULT;
+            RelativeHeight = DefaultSettings.TileHeightDefault;
             State = state;
 
-            Avatars = new Dictionary<int, IRoomObjectAvatar>();
-            Furniture = new Dictionary<int, IRoomObjectFloor>();
+            Avatars = new List<IRoomObjectAvatar>();
+            Furniture = new List<IRoomObjectFloor>();
 
             ResetRelativeHeight();
         }
@@ -52,20 +50,14 @@ namespace Turbo.Rooms.Mapping
             {
                 if (IsDoor) return;
 
-                if (Avatars.ContainsKey(roomObject.Id)) return;
-
-                Avatars.Add(roomObject.Id, avatarObject);
+                if (!Avatars.Contains(avatarObject)) Avatars.Add(avatarObject);
 
                 return;
             }
 
             if (roomObject is IRoomObjectFloor floorObject)
             {
-                if (Furniture.ContainsKey(roomObject.Id)) return;
-
-                Furniture.Add(roomObject.Id, floorObject);
-
-                if ((floorObject.Logic.Height < Height) && floorObject.Logic is not FurnitureStackHelperLogic) return;
+                if (!Furniture.Contains(floorObject)) Furniture.Add(floorObject);
 
                 ResetHighestObject();
 
@@ -79,21 +71,33 @@ namespace Turbo.Rooms.Mapping
 
             if (roomObject is IRoomObjectAvatar avatarObject)
             {
-                Avatars.Remove(roomObject.Id);
+                if (Avatars.Contains(avatarObject)) Avatars.Remove(avatarObject);
 
                 return;
             }
 
             if (roomObject is IRoomObjectFloor floorObject)
             {
-                Furniture.Remove(roomObject.Id);
-
-                if ((floorObject != HighestObject) && floorObject.Logic is not FurnitureStackHelperLogic) return;
+                if (Furniture.Contains(floorObject)) Furniture.Remove(floorObject);
 
                 ResetHighestObject();
 
                 return;
             }
+        }
+
+        public IRoomObjectFloor GetFurnitureUnderneath(IRoomObjectFloor floorObject)
+        {
+            if (floorObject == null) return null;
+
+            var index = Furniture.IndexOf(floorObject);
+
+            if (index > 0)
+            {
+                return Furniture[index - 1];
+            }
+
+            return null;
         }
 
         public void ResetTileHeight()
@@ -118,7 +122,16 @@ namespace Turbo.Rooms.Mapping
 
             if (Furniture.Count > 0)
             {
-                foreach (var floorObject in Furniture.Values)
+                Furniture.Sort((a, b) =>
+                {
+                    if (a.Logic.Height == b.Logic.Height) return 0;
+
+                    if (b.Logic.Height > a.Logic.Height) return 1;
+
+                    return -1;
+                });
+
+                foreach (var floorObject in Furniture)
                 {
                     double height = floorObject.Logic.Height;
 
@@ -142,11 +155,11 @@ namespace Turbo.Rooms.Mapping
 
         private void ResetRelativeHeight()
         {
-            RelativeHeight = TILE_HEIGHT_DEFAULT;
+            RelativeHeight = DefaultSettings.TileHeightDefault;
 
             if ((State == RoomTileState.Closed) || !CanStack()) return;
 
-            RelativeHeight = (int)Math.Ceiling((decimal)(HasStackHelper ? _stackHelperHeight : Height) * TILE_HEIGHT_MULTIPLIER);
+            RelativeHeight = (int)Math.Ceiling((decimal)(HasStackHelper ? _stackHelperHeight : Height) * DefaultSettings.TileHeightMultiplier);
         }
 
         public double GetWalkingHeight()
@@ -166,7 +179,7 @@ namespace Turbo.Rooms.Mapping
 
         public bool HasLogic(Type type)
         {
-            foreach (var roomObject in Furniture.Values)
+            foreach (var roomObject in Furniture)
             {
                 if (roomObject.Logic.GetType() == type) return true;
             }
@@ -174,27 +187,25 @@ namespace Turbo.Rooms.Mapping
             return false;
         }
 
-        public bool IsOpen(IRoomObjectAvatar avatar = null)
+        public bool CanWalk(IRoomObjectAvatar avatar = null)
         {
             if (State == RoomTileState.Closed) return false;
 
-            if (HighestObject != null && !HighestObject.Logic.IsOpen(avatar))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        public bool CanWalk(IRoomObjectAvatar avatar = null)
-        {
             if (HighestObject != null)
             {
                 if (!HighestObject.Logic.IsOpen(avatar)) return false;
 
                 if (HasStackHelper && (_stackHelperHeight >= HighestObject.Logic.Height)) return false;
 
-                return true;
+                if (!CanSit(avatar) && !CanLay(avatar))
+                {
+                    var secondHighestObject = GetFurnitureUnderneath(HighestObject);
+
+                    if (secondHighestObject != null)
+                    {
+                        if ((secondHighestObject.Logic?.Height ?? 0) >= (HighestObject.Location?.Z ?? 0)) return false;
+                    }
+                }
             }
 
             if (HasStackHelper) return false;

@@ -48,11 +48,13 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public override void RefreshStuffData()
         {
-            RoomObject.Room.SendComposer(new ItemDataUpdateMessage
+            RefreshFurniture();
+
+            /* RoomObject.Room.SendComposer(new ItemDataUpdateMessage
             {
                 ItemId = RoomObject.Id,
                 ItemData = StuffData.GetLegacyString()
-            });
+            }); */
         }
 
         public override bool SetState(int state, bool refresh = true)
@@ -65,7 +67,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (RoomObject.RoomObjectHolder is IRoomWallFurniture wallFurniture) wallFurniture.Save();
 
-            if (refresh) RefreshFurniture();
+            if (refresh) RefreshStuffData();
 
             return true;
         }

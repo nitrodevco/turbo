@@ -11,14 +11,12 @@ using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
+using Turbo.Core.Game;
 
 namespace Turbo.Rooms.Cycles
 {
     public class RoomUserStatusCycle : RoomCycle
     {
-        private static readonly int MAX_WALKING_HEIGHT = 2;
-        private static readonly bool ALLOW_DIAGONALS = true;
-
         public RoomUserStatusCycle(IRoom room) : base(room)
         {
 
@@ -119,7 +117,7 @@ namespace Turbo.Rooms.Cycles
             double currentHeight = currentTile.GetWalkingHeight();
             double nextHeight = nextTile.GetWalkingHeight();
 
-            if (Math.Abs(nextHeight - currentHeight) > Math.Abs(MAX_WALKING_HEIGHT))
+            if (Math.Abs(nextHeight - currentHeight) > Math.Abs(DefaultSettings.MaximumStepHeight))
             {
                 avatarObject.Logic.StopWalking();
 
@@ -128,7 +126,7 @@ namespace Turbo.Rooms.Cycles
 
             if (isGoal)
             {
-                if (!nextTile.IsOpen(avatarObject) || ((nextTile.Avatars.Count > 0) && !nextTile.Avatars.ContainsKey(avatarObject.Id)))
+                if (!nextTile.CanWalk(avatarObject) || ((nextTile.Avatars.Count > 0) && !nextTile.Avatars.Contains(avatarObject)))
                 {
                     avatarObject.Logic.StopWalking();
 
@@ -137,12 +135,12 @@ namespace Turbo.Rooms.Cycles
             }
             else
             {
-                if ((nextTile.Avatars.Count > 0) && !nextTile.Avatars.ContainsKey(avatarObject.Id))
+                if ((nextTile.Avatars.Count > 0) && !nextTile.Avatars.Contains(avatarObject))
                 {
                     if (!_room.RoomDetails.BlockingDisabled) avatarObject.Logic.NeedsRepathing = true;
                 }
 
-                if (!nextTile.IsOpen(avatarObject) || nextTile.CanSit(avatarObject) || nextTile.CanLay(avatarObject))
+                if (!nextTile.CanWalk(avatarObject) || nextTile.CanSit(avatarObject) || nextTile.CanLay(avatarObject))
                 {
                     avatarObject.Logic.NeedsRepathing = true;
                 }
@@ -155,7 +153,7 @@ namespace Turbo.Rooms.Cycles
                 }
             }
 
-            if (ALLOW_DIAGONALS)
+            if (DefaultSettings.PathingAllowsDiagonals)
             {
                 bool isSideValid = _room.RoomMap.GetValidDiagonalTile(avatarObject, new Point(nextTile.Location.X, currentTile.Location.Y)) != null;
                 bool isOtherSideValid = _room.RoomMap.GetValidDiagonalTile(avatarObject, new Point(currentTile.Location.X, nextTile.Location.Y)) != null;

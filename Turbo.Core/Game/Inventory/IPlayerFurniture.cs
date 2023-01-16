@@ -10,6 +10,7 @@ namespace Turbo.Core.Game.Inventory
         public IStuffData StuffData { get; }
 
         public int Id { get; }
+        public bool Disposed { get; }
     }
 }
 

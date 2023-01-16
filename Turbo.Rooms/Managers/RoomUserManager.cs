@@ -21,6 +21,8 @@ namespace Turbo.Rooms.Managers
 
         public IRoomObjectContainer<IRoomObjectAvatar> AvatarObjects { get; private set; }
 
+        private bool _isDisposing;
+
         public RoomUserManager(
             IRoom room,
             IRoomObjectFactory roomObjectFactory)
@@ -38,7 +40,13 @@ namespace Turbo.Rooms.Managers
 
         public async ValueTask DisposeAsync()
         {
+            if (_isDisposing) return;
+
+            _isDisposing = true;
+
             AvatarObjects.RemoveAllRoomObjects();
+
+            _isDisposing = false;
         }
 
         public IRoomObjectAvatar GetRoomObjectByUserId(int userId)
@@ -137,7 +145,7 @@ namespace Turbo.Rooms.Managers
 
         public IRoomObjectAvatar EnterRoom(IPlayer player, IPoint location = null)
         {
-            if (player == null) return null;
+            if (_isDisposing || player == null) return null;
 
             var avatarObject = CreateRoomObjectAndAssign(player, location);
 

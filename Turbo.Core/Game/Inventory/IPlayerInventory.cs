@@ -7,6 +7,7 @@ namespace Turbo.Core.Game.Inventory
     {
         public IPlayer Player { get; }
         public IPlayerFurnitureInventory FurnitureInventory { get; }
+        public IUnseenItemsManager UnseenItemsManager { get; }
 
     }
 }

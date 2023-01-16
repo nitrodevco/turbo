@@ -106,13 +106,13 @@ namespace Turbo.Players
         {
             if (RoomObject != null)
             {
-                IRoom room = RoomObject.Room;
+                var room = RoomObject.Room;
+
+                if (room != null) room.RemoveObserver(Session);
 
                 RoomObject.Dispose();
 
                 RoomObject = null;
-
-                if (room != null) room.RemoveObserver(Session);
 
                 // update all messenger friends
             }

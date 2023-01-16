@@ -108,7 +108,7 @@ namespace Turbo.Rooms.Managers
 
             if (roomTile.Furniture.Count > 0)
             {
-                foreach (var floorObject in roomTile.Furniture.Values)
+                foreach (var floorObject in roomTile.Furniture)
                 {
                     if (floorObject.Logic is not FurnitureWiredActionLogic) continue;
 
@@ -125,7 +125,7 @@ namespace Turbo.Rooms.Managers
 
             if (roomTile.Furniture.Count > 0)
             {
-                foreach (var floorObject in roomTile.Furniture.Values)
+                foreach (var floorObject in roomTile.Furniture)
                 {
                     if (floorObject.Logic is not FurnitureWiredConditionLogic) continue;
 

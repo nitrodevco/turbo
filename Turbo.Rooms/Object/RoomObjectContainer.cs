@@ -52,7 +52,7 @@ namespace Turbo.Rooms.Object
 
                 if (!RoomObjects.TryRemove(new KeyValuePair<int, T>(roomObject.Id, roomObject))) continue;
 
-                _onRemove(roomObject);
+                if (_onRemove != null) _onRemove(roomObject);
             }
         }
 
