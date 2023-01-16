@@ -122,14 +122,7 @@ namespace Turbo.Rooms.Mapping
 
             if (Furniture.Count > 0)
             {
-                Furniture.Sort((a, b) =>
-                {
-                    if (a.Logic.Height == b.Logic.Height) return 0;
-
-                    if (b.Logic.Height > a.Logic.Height) return 1;
-
-                    return -1;
-                });
+                Furniture.Sort((a, b) => a.Logic.Height.CompareTo(b.Logic.Height));
 
                 foreach (var floorObject in Furniture)
                 {
