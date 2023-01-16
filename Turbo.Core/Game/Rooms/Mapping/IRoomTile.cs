@@ -27,6 +27,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public IRoomObjectFloor GetFurnitureUnderneath(IRoomObjectFloor floorObject);
 
         public void ResetTileHeight();
+        public void ResetHighestObject();
         public double GetWalkingHeight();
         public bool HasLogic(Type type);
 

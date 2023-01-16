@@ -14,7 +14,6 @@ namespace Turbo.Rooms.Mapping
         public IPoint Location { get; private set; }
         public double DefaultHeight { get; private set; }
 
-        public double Height { get; private set; }
         public int RelativeHeight { get; private set; }
         public RoomTileState State { get; private set; }
         public IRoomObjectFloor HighestObject { get; private set; }
@@ -25,6 +24,7 @@ namespace Turbo.Rooms.Mapping
         public bool IsDoor { get; set; }
         public bool HasStackHelper { get; private set; }
 
+        private double _height;
         private double _stackHelperHeight;
 
         public RoomTile(IPoint location, double height, RoomTileState state)
@@ -32,12 +32,13 @@ namespace Turbo.Rooms.Mapping
             Location = location;
             DefaultHeight = height;
 
-            Height = DefaultHeight;
             RelativeHeight = DefaultSettings.TileHeightDefault;
             State = state;
 
             Avatars = new List<IRoomObjectAvatar>();
             Furniture = new List<IRoomObjectFloor>();
+
+            _height = DefaultHeight;
 
             ResetRelativeHeight();
         }
@@ -102,23 +103,23 @@ namespace Turbo.Rooms.Mapping
 
         public void ResetTileHeight()
         {
-            Height = DefaultHeight;
+            _height = DefaultHeight;
 
             if (HighestObject != null)
             {
-                Height = HighestObject.Logic.Height;
+                _height = HighestObject.Logic.Height;
             }
 
             ResetRelativeHeight();
         }
 
-        private void ResetHighestObject()
+        public void ResetHighestObject()
         {
-            Height = DefaultHeight;
+            _height = DefaultHeight;
             HighestObject = null;
 
             HasStackHelper = false;
-            _stackHelperHeight = 0;
+            _stackHelperHeight = 0.0;
 
             if (Furniture.Count > 0)
             {
@@ -131,15 +132,15 @@ namespace Turbo.Rooms.Mapping
                     if (floorObject.Logic is FurnitureStackHelperLogic)
                     {
                         HasStackHelper = true;
-                        _stackHelperHeight = height;
+                        _stackHelperHeight = Math.Round((double)height, 3);
 
                         continue;
                     }
 
-                    if (height < Height) continue;
+                    if (height < _height) continue;
 
                     HighestObject = floorObject;
-                    Height = Math.Round((double)height, 3);
+                    _height = Math.Round((double)height, 3);
                 }
             }
 
@@ -152,12 +153,12 @@ namespace Turbo.Rooms.Mapping
 
             if ((State == RoomTileState.Closed) || !CanStack()) return;
 
-            RelativeHeight = (int)Math.Ceiling((decimal)(HasStackHelper ? _stackHelperHeight : Height) * DefaultSettings.TileHeightMultiplier);
+            RelativeHeight = (int)Math.Ceiling((decimal)(HasStackHelper ? _stackHelperHeight : _height) * DefaultSettings.TileHeightMultiplier);
         }
 
         public double GetWalkingHeight()
         {
-            double height = Height;
+            double height = _height;
 
             if (HighestObject != null)
             {
@@ -225,6 +226,16 @@ namespace Turbo.Rooms.Mapping
             if (HighestObject != null && !HighestObject.Logic.CanStack()) return false;
 
             return true;
+        }
+
+        public double Height
+        {
+            get
+            {
+                if (HasStackHelper) return _stackHelperHeight;
+
+                return _height;
+            }
         }
     }
 }

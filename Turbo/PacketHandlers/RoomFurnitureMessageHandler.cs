@@ -26,6 +26,7 @@ namespace Turbo.Main.PacketHandlers
             _roomManager = roomManager;
 
             _messageHub.Subscribe<ThrowDiceMessage>(this, OnThrowDiceMessage);
+            _messageHub.Subscribe<SetCustomStackingHeightMessage>(this, OnSetCustomStackingHeightMessage);
             _messageHub.Subscribe<DiceOffMessage>(this, OnDiceOffMessage);
         }
 
@@ -40,6 +41,20 @@ namespace Turbo.Main.PacketHandlers
             if (diceObject.Logic is FurnitureDiceLogic diceLogic)
             {
                 diceLogic.ThrowDice(session.Player.RoomObject);
+            }
+        }
+
+        protected virtual void OnSetCustomStackingHeightMessage(SetCustomStackingHeightMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            var stackHelperObject = session.Player.RoomObject?.Room.RoomFurnitureManager.FloorObjects.GetRoomObject(message.FurniId);
+
+            if (stackHelperObject == null) return;
+
+            if (stackHelperObject.Logic is FurnitureStackHelperLogic stackHelperLogic)
+            {
+                stackHelperLogic.SetStackHelperHeight(session.Player.RoomObject, message.Height);
             }
         }
 

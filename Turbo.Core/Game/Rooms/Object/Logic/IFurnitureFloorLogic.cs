@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Mapping;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic
@@ -19,6 +20,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public bool CanRoll();
         public bool IsOpen(IRoomObjectAvatar avatar = null);
         public IRoomTile GetCurrentTile();
+        public IList<IRoomTile> GetCurrentTiles();
         public double StackHeight { get; }
         public double Height { get; }
     }

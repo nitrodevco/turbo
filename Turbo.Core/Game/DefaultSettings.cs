@@ -12,8 +12,8 @@ namespace Turbo.Core.Game
         public static int StoreCycleMs = 10000;
         public static HeuristicFormula PathingFormula = HeuristicFormula.Manhattan;
         public static bool PathingAllowsDiagonals = true;
-        public static double MaximumStepHeight = 2;
-        public static double MaximumFurnitureHeight = 40;
+        public static double MaximumStepHeight = 2.0;
+        public static double MaximumFurnitureHeight = 40.0;
         public static int TileHeightDefault = 32767;
         public static int TileHeightMultiplier = 256;
         public static double MinimumStackHeight = 0.001;

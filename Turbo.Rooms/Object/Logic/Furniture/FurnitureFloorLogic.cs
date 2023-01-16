@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Packets.Outgoing.Room.Engine;
@@ -9,6 +11,7 @@ using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Furniture;
 using Turbo.Rooms.Object.Logic.Avatar;
+using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
@@ -173,6 +176,27 @@ namespace Turbo.Rooms.Object.Logic.Furniture
         public virtual bool IsOpen(IRoomObjectAvatar avatar = null) => CanWalk(avatar) || CanSit(avatar) || CanLay(avatar);
 
         public IRoomTile GetCurrentTile() => RoomObject?.Room?.RoomMap?.GetTile(RoomObject.Location);
+
+        public IList<IRoomTile> GetCurrentTiles()
+        {
+            var tiles = new List<IRoomTile>();
+
+            if (RoomObject != null)
+            {
+                var points = AffectedPoints.GetPoints(RoomObject);
+
+                foreach (var point in points)
+                {
+                    var tile = RoomObject.Room?.RoomMap?.GetTile(point);
+
+                    if (tile == null) continue;
+
+                    tiles.Add(tile);
+                }
+            }
+
+            return tiles;
+        }
 
         public virtual double StackHeight => FurnitureDefinition.Z;
 
