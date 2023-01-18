@@ -11,7 +11,7 @@ using Turbo.Packets.Outgoing.Inventory.Furni;
 using Turbo.Core.Game.Inventory.Constants;
 using Turbo.Core.Game;
 
-namespace Turbo.Inventory
+namespace Turbo.Inventory.Furniture
 {
     public class PlayerFurnitureInventory : IPlayerFurnitureInventory
     {

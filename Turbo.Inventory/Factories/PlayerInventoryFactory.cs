@@ -5,6 +5,9 @@ using Turbo.Core.Game.Players;
 using Turbo.Database.Entities.Players;
 using Turbo.Core.Game.Inventory;
 using Turbo.Furniture.Factories;
+using Turbo.Inventory.Furniture;
+using Turbo.Inventory.Badges;
+using Turbo.Core.Storage;
 
 namespace Turbo.Inventory.Factories
 {
@@ -19,15 +22,16 @@ namespace Turbo.Inventory.Factories
 
         public IPlayerInventory Create(IPlayer player)
         {
-            IServiceScopeFactory? scopeFactory = _provider.GetService<IServiceScopeFactory>();
+            var scopeFactory = _provider.GetService<IServiceScopeFactory>();
+            var playerFurnitureFactory = _provider.GetService<IPlayerFurnitureFactory>();
+            var storageQueue = _provider.GetService<IStorageQueue>();
 
-            IPlayerFurnitureFactory? playerFurnitureFactory = _provider.GetService<IPlayerFurnitureFactory>();
+            if (scopeFactory == null || playerFurnitureFactory == null || storageQueue == null) return null;
 
-            if (scopeFactory == null || playerFurnitureFactory == null) return null;
+            var playerFurnitureInventory = new PlayerFurnitureInventory(player, playerFurnitureFactory, scopeFactory);
+            var playerBadgeInventory = new PlayerBadgeInventory(player, storageQueue, scopeFactory);
 
-            IPlayerFurnitureInventory playerFurnitureInventory = new PlayerFurnitureInventory(player, playerFurnitureFactory, scopeFactory);
-
-            return new PlayerInventory(player, playerFurnitureInventory);
+            return new PlayerInventory(player, playerFurnitureInventory, playerBadgeInventory);
         }
     }
 }

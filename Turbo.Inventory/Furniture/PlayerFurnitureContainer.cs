@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using Turbo.Core.Game.Inventory;
 
-namespace Turbo.Inventory
+namespace Turbo.Inventory.Furniture
 {
     public class PlayerFurnitureContainer : IPlayerFurnitureContainer
     {

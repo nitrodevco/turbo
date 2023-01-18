@@ -26,6 +26,8 @@ namespace Turbo.Database.Entities.Players
         [Column("gender"), Required, DefaultValueSql("0")] // AvatarGender.Male
         public AvatarGender Gender { get; set; }
 
+        public List<PlayerBadgeEntity> PlayerBadges { get; set; }
+
         public PlayerSettingsEntity PlayerSettings { get; set; }
 
         public List<FurnitureEntity> Furniture { get; set; }

@@ -8,6 +8,7 @@ namespace Turbo.Inventory
     {
         public IPlayer Player { get; private set; }
         public IPlayerFurnitureInventory FurnitureInventory { get; private set; }
+        public IPlayerBadgeInventory BadgeInventory { get; private set; }
         public IUnseenItemsManager UnseenItemsManager { get; private set; }
 
         public bool IsInitialized { get; private set; }
@@ -16,10 +17,12 @@ namespace Turbo.Inventory
 
         public PlayerInventory(
             IPlayer player,
-            IPlayerFurnitureInventory playerFurnitureInventory)
+            IPlayerFurnitureInventory playerFurnitureInventory,
+            IPlayerBadgeInventory playerBadgeInventory)
         {
             Player = player;
             FurnitureInventory = playerFurnitureInventory;
+            BadgeInventory = playerBadgeInventory;
             UnseenItemsManager = new UnseenItemsManager(player);
         }
 
@@ -27,6 +30,7 @@ namespace Turbo.Inventory
         {
             if (IsInitialized) return;
 
+            if (BadgeInventory != null) await BadgeInventory.InitAsync();
             if (FurnitureInventory != null) await FurnitureInventory.InitAsync();
 
             IsInitialized = true;
@@ -38,6 +42,7 @@ namespace Turbo.Inventory
 
             IsDisposing = true;
 
+            if (BadgeInventory != null) await BadgeInventory.DisposeAsync();
             if (FurnitureInventory != null) await FurnitureInventory.DisposeAsync();
 
             IsDisposed = true;

@@ -7,7 +7,7 @@ using Turbo.Database.Context;
 
 #nullable disable
 
-namespace Turbo.Database.Migrations
+namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboContext))]
     partial class TurboContextModelSnapshot : ModelSnapshot
@@ -297,6 +297,44 @@ namespace Turbo.Database.Migrations
                     b.ToTable("navigator_event_categories");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerBadgeEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<string>("BadgeCode")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("badge_code");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.Property<int?>("SlotId")
+                        .HasColumnType("int")
+                        .HasColumnName("slot_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerEntityId", "BadgeCode")
+                        .IsUnique();
+
+                    b.ToTable("player_badges");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -504,8 +542,7 @@ namespace Turbo.Database.Migrations
                     b.Property<DateTime>("LastActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
-                        .HasColumnName("last_active")
-                        .HasDefaultValueSql("NOW()");
+                        .HasColumnName("last_active");
 
                     b.Property<int>("MuteType")
                         .ValueGeneratedOnAdd()
@@ -826,6 +863,17 @@ namespace Turbo.Database.Migrations
                     b.Navigation("FurnitureEntityTwo");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerBadgeEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany("PlayerBadges")
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlayerEntity");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerSettingsEntity", b =>
                 {
                     b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
@@ -932,6 +980,8 @@ namespace Turbo.Database.Migrations
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerEntity", b =>
                 {
                     b.Navigation("Furniture");
+
+                    b.Navigation("PlayerBadges");
 
                     b.Navigation("PlayerSettings");
 

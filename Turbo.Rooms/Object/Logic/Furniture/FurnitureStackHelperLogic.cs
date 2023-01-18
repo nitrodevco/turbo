@@ -6,6 +6,7 @@ using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Packets.Outgoing.Room.Furniture;
+using Turbo.Core.Game.Furniture.Constants;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
@@ -78,12 +79,17 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             ResetHeight();
         }
 
+        public override void OnInteract(IRoomObjectAvatar avatar, int param)
+        {
+            return;
+        }
+
         public override bool CanStack() => false;
 
         public override bool CanRoll() => false;
 
-        public override bool CanToggle(IRoomObjectAvatar avatar) => false;
-
         public override bool IsOpen(IRoomObjectAvatar avatar = null) => false;
+
+        public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Controller;
     }
 }

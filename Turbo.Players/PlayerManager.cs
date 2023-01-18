@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Collections;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ using Turbo.Core.Storage;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
 using Turbo.Players.Factories;
+using Turbo.Core.Game.Inventory;
+using Turbo.Core.Database.Dtos;
 
 namespace Turbo.Players
 {
@@ -152,6 +155,28 @@ namespace Turbo.Players
         public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null)
         {
             await _navigatorManager.EnterRoom(player, roomId, password, skipState, location);
+        }
+
+        public async Task<IList<IPlayerBadge>> GetPlayerActiveBadges(int playerId)
+        {
+            if (playerId <= 0) return null;
+
+            var player = GetPlayerById(playerId);
+
+            if (player == null)
+            {
+                IList<PlayerBadgeDto> entities = new List<PlayerBadgeDto>();
+
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var playerBadgeRepository = scope.ServiceProvider.GetService<IPlayerBadgeRepository>();
+                    entities = await playerBadgeRepository.FindActiveByPlayerIdAsync(playerId);
+                }
+
+                return (IList<IPlayerBadge>)entities;
+            }
+
+            return player.PlayerInventory?.BadgeInventory?.ActiveBadges;
         }
 
         public IStorageQueue StorageQueue => _storageQueue;

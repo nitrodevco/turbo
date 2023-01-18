@@ -66,6 +66,7 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
             services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
             services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
+            services.AddTransient<IUserMessageHandler, UserMessageHandler>();
         }
 
         public static void AddManagers(this IServiceCollection services)
@@ -102,6 +103,7 @@ namespace Turbo.Main.Extensions
         {
             services.AddScoped<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
             services.AddScoped<IFurnitureRepository, FurnitureRepository>();
+            services.AddScoped<IPlayerBadgeRepository, PlayerBadgeRepository>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             services.AddScoped<IRoomModelRepository, RoomModelRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();

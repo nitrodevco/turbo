@@ -11,6 +11,7 @@ namespace Turbo.Main.PacketHandlers
         private readonly IRoomFurnitureMessageHandler _roomFurnitureMessageHandler;
         private readonly IRoomSessionMessageHandler _roomSessionMessageHandler;
         private readonly IInventoryMessageHandler _inventoryMessageHandler;
+        private readonly IUserMessageHandler _userMessageHandler;
 
         public PacketHandlerManager(
             INavigatorMessageHandler navigatorMessageHandler,
@@ -19,7 +20,8 @@ namespace Turbo.Main.PacketHandlers
             IRoomFurnitureMessageHandler roomFurnitureMessageHandler,
             IRoomSessionMessageHandler roomSessionMessageHandler,
             IAuthenticationMessageHandler authenticationMessageHandler,
-            IInventoryMessageHandler inventoryMessageHandler)
+            IInventoryMessageHandler inventoryMessageHandler,
+            IUserMessageHandler userMessageHandler)
         {
             _authenticationMessageHandler = authenticationMessageHandler;
             _navigatorMessageHandler = navigatorMessageHandler;
@@ -28,6 +30,7 @@ namespace Turbo.Main.PacketHandlers
             _roomEngineMessageHandler = roomEngineMessageHandler;
             _roomSessionMessageHandler = roomSessionMessageHandler;
             _inventoryMessageHandler = inventoryMessageHandler;
+            _userMessageHandler = userMessageHandler;
         }
     }
 }

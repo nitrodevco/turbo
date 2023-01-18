@@ -18,6 +18,8 @@ namespace Turbo.Core.Game
         public static int TileHeightMultiplier = 256;
         public static double MinimumStackHeight = 0.001;
         public static int FurniPerFragment = 100;
+        public static int BadgesPerFragment = 100;
+        public static int MaxActiveBadges = 5;
         public static int DiceCycles = 4;
     }
 }

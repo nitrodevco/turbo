@@ -44,8 +44,12 @@ namespace Turbo.Main
                     services.AddSingleton<IEmulatorConfig>(turboConfig);
 
                     var connectionString = $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
+
                     services.AddDbContext<IEmulatorContext, TurboContext>(options => options
-                        .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+                        .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options =>
+                        {
+                            options.MigrationsAssembly("Turbo.Main");
+                        })
                         .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
                         .EnableDetailedErrors()
                         .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
