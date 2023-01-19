@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Linq;
 using Turbo.Core.Game.Furniture;
@@ -8,13 +9,18 @@ using Turbo.Core.Game.Rooms.Object.Logic.Wired.Data;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Data;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Definition;
-using System;
 using Turbo.Core.Game.Furniture.Data;
 using Turbo.Core.Utilities;
+using Turbo.Packets.Outgoing.Wired;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Game;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Core.Game.Rooms;
 
 namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 {
-    public class FurnitureWiredLogic : FurnitureFloorLogic, IFurnitureWiredLogic
+    public abstract class FurnitureWiredLogic : FurnitureFloorLogic, IFurnitureWiredLogic
     {
         private static readonly int _offState = 0;
         private static readonly int _onState = 1;
@@ -38,9 +44,13 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
         public void SetupWiredData(string jsonString = null)
         {
-            IWiredData wiredData = CreateWiredDataFromJson(jsonString);
+            var wiredData = CreateWiredDataFromJson(jsonString);
 
-            if (ValidateWiredData(wiredData)) _wiredData = wiredData;
+            ValidateWiredData(wiredData);
+
+            wiredData.SetRoomObject(RoomObject);
+
+            _wiredData = wiredData;
         }
 
         public virtual IWiredData CreateWiredDataFromJson(string jsonString = null)
@@ -87,6 +97,21 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
             return true;
         }
 
+        public virtual bool SaveWiredData(IRoomObjectAvatar avatar, IWiredData wiredData)
+        {
+            if (!CanToggle(avatar)) return false;
+
+            ValidateWiredData(wiredData);
+
+            wiredData.SetRoomObject(RoomObject);
+
+            _wiredData = wiredData;
+
+            if (RoomObject.RoomObjectHolder is IRoomFloorFurniture floorFurniture) floorFurniture.Save();
+
+            return true;
+        }
+
         public override async Task Cycle()
         {
             if (_needsOffState)
@@ -101,7 +126,9 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
         {
             if (!CanToggle(avatar)) return;
 
-            // send wired config (class specific)
+            if (avatar.RoomObjectHolder is not IPlayer player) return;
+
+            SendConfigToSession(player.Session);
         }
 
         public virtual bool CanTrigger(IWiredArguments wiredArguments = null)
@@ -136,6 +163,8 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
             ProcessAnimation();
         }
 
+        public abstract void SendConfigToSession(ISession session);
+
         protected virtual void ProcessAnimation()
         {
             SetState(_onState);
@@ -148,5 +177,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
         public virtual int Cooldown => 50;
         public virtual int CooldownPlayer => 350;
+
+        public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Controller;
     }
 }

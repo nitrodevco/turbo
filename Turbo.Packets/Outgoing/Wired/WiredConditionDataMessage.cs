@@ -3,8 +3,7 @@ using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Wired
 {
-    public record WiredConditionDataMessage : IComposer
+    public record WiredConditionDataMessage : WiredDataMessage
     {
-        public IRoomObject WiredConditionObject { get; init; }
     }
 }

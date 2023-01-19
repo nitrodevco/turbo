@@ -48,7 +48,7 @@ namespace Turbo.Rooms.Managers
         {
             if (roomObject.Logic is not IFurnitureWiredLogic wiredLogic) return false;
 
-            IRoomTile roomTile = wiredLogic.GetCurrentTile();
+            var roomTile = wiredLogic.GetCurrentTile();
 
             if (roomTile == null) return false;
 
@@ -93,7 +93,7 @@ namespace Turbo.Rooms.Managers
 
         public bool CanTrigger(IRoomObjectFloor roomObject, IWiredArguments wiredArguments = null)
         {
-            var wiredLogic = (IFurnitureWiredLogic)roomObject.Logic;
+            if (roomObject.Logic is not IFurnitureWiredLogic wiredLogic) return false;
 
             if (!wiredLogic.CanTrigger(wiredArguments)) return false;
 
@@ -106,7 +106,7 @@ namespace Turbo.Rooms.Managers
         {
             var roomObjects = new List<IRoomObjectFloor>();
 
-            if (roomTile.Furniture.Count > 0)
+            if (roomTile != null && roomTile.Furniture.Count > 0)
             {
                 foreach (var floorObject in roomTile.Furniture)
                 {
@@ -123,7 +123,7 @@ namespace Turbo.Rooms.Managers
         {
             var roomObjects = new List<IRoomObjectFloor>();
 
-            if (roomTile.Furniture.Count > 0)
+            if (roomTile != null && roomTile.Furniture.Count > 0)
             {
                 foreach (var floorObject in roomTile.Furniture)
                 {

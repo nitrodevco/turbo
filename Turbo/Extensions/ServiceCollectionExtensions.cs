@@ -67,6 +67,7 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
             services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
             services.AddTransient<IUserMessageHandler, UserMessageHandler>();
+            services.AddTransient<IWiredMessageHandler, WiredMessageHandler>();
         }
 
         public static void AddManagers(this IServiceCollection services)

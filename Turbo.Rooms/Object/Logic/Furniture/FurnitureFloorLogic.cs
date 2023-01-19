@@ -85,7 +85,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnEnter(IRoomObjectAvatar avatar)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_ON_FURNI, new WiredArguments
+            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerWalksOnFurni, new WiredArguments
             {
                 UserObject = avatar,
                 FurnitureObject = RoomObject
@@ -96,7 +96,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnLeave(IRoomObjectAvatar avatar)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_OFF_FURNI, new WiredArguments
+            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerWalksOffFurni, new WiredArguments
             {
                 UserObject = avatar,
                 FurnitureObject = RoomObject
@@ -137,7 +137,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public override void OnInteract(IRoomObjectAvatar avatar, int param)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_STATE_CHANGED, new WiredArguments
+            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerStateChanged, new WiredArguments
             {
                 UserObject = avatar,
                 FurnitureObject = RoomObject

@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms.Object.Logic.Wired.Data;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Data.Types;
+using Turbo.Packets.Outgoing.Wired;
+using Turbo.Core.Networking.Game.Clients;
 
 namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers
 {
@@ -18,6 +20,16 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers
             return JsonSerializer.Deserialize<WiredTriggerData>(jsonString);
         }
 
-        public override WiredTriggerData WiredData => (WiredTriggerData)_wiredData;
+        public override void SendConfigToSession(ISession session)
+        {
+            if (session == null) return;
+
+            session.Send(new WiredTriggerDataMessage
+            {
+                WiredData = WiredData
+            });
+        }
+
+        public override IWiredTriggerData WiredData => (IWiredTriggerData)_wiredData;
     }
 }

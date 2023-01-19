@@ -31,9 +31,9 @@ namespace Turbo.Rooms.Object.Logic
             Logics.Add(RoomObjectLogicType.FurnitureDice, typeof(FurnitureDiceLogic));
 
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, typeof(FurnitureWiredTriggerEnterRoomLogic));
-            Logics.Add(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_ON_FURNI, typeof(FurnitureWiredTriggerWalksOnFurni));
-            Logics.Add(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_WALKS_OFF_FURNI, typeof(FurnitureWiredTriggerWalksOffFurni));
-            Logics.Add(RoomObjectLogicType.FURNITURE_WIRED_TRIGGER_STATE_CHANGED, typeof(FurnitureWiredTriggerStateChangeLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerWalksOnFurni, typeof(FurnitureWiredTriggerWalksOnFurni));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerWalksOffFurni, typeof(FurnitureWiredTriggerWalksOffFurni));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerStateChanged, typeof(FurnitureWiredTriggerStateChangeLogic));
         }
 
         public IRoomObjectLogic Create(string type)

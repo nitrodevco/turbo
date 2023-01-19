@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Core.Game.Rooms.Object.Logic.Wired.Data
 {
     public interface IWiredData
     {
+        public bool SetFromMessage(IMessageEvent update);
+        public bool SetRoomObject(IRoomObjectFloor roomObject);
         public int Id { get; }
         public int SpriteId { get; }
         public int WiredType { get; }

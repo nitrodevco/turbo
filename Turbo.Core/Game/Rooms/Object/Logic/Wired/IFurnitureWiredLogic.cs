@@ -6,6 +6,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic.Wired
     {
         public void SetupWiredData(string jsonString = null);
         public IWiredData CreateWiredDataFromJson(string jsonString = null);
+        public bool SaveWiredData(IRoomObjectAvatar avatar, IWiredData wiredData);
 
         public bool CanTrigger(IWiredArguments wiredArguments = null);
         public void OnTriggered(IWiredArguments wiredArguments = null);

@@ -3,8 +3,7 @@ using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Wired
 {
-    public record WiredTriggerDataMessage : IComposer
+    public record WiredTriggerDataMessage : WiredDataMessage
     {
-        public IRoomObject WiredTriggerObject { get; init; }
     }
 }

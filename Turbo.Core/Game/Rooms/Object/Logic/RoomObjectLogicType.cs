@@ -47,8 +47,8 @@
         public static readonly string FURNITURE_WIRED_TRIGGER_PERIODICALLY = "wf_trg_periodically";
         public static readonly string FURNITURE_WIRED_TRIGGER_SAYS_SOMETHING = "wf_trg_says_something";
         public static readonly string FURNITURE_WIRED_TRIGGER_SCORE_ACHIEVED = "wf_trg_score_achieved";
-        public static readonly string FURNITURE_WIRED_TRIGGER_STATE_CHANGED = "wf_trg_state_changed";
-        public static readonly string FURNITURE_WIRED_TRIGGER_WALKS_OFF_FURNI = "wf_trg_walks_off_furni";
-        public static readonly string FURNITURE_WIRED_TRIGGER_WALKS_ON_FURNI = "wf_trg_walks_on_furni";
+        public static readonly string FurnitureWiredTriggerStateChanged = "wf_trg_state_changed";
+        public static readonly string FurnitureWiredTriggerWalksOffFurni = "wf_trg_walks_off_furni";
+        public static readonly string FurnitureWiredTriggerWalksOnFurni = "wf_trg_walks_on_furni";
     }
 }
