@@ -24,6 +24,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
 
         public void AddRoomObject(IRoomObject roomObject);
         public void RemoveRoomObject(IRoomObject roomObject);
+        public IRoomObjectFloor GetFurnitureAbove(IRoomObjectFloor floorObject);
         public IRoomObjectFloor GetFurnitureUnderneath(IRoomObjectFloor floorObject);
 
         public void ResetTileHeight();

@@ -87,6 +87,20 @@ namespace Turbo.Rooms.Mapping
             }
         }
 
+        public IRoomObjectFloor GetFurnitureAbove(IRoomObjectFloor floorObject)
+        {
+            if (floorObject == null) return null;
+
+            var index = Furniture.IndexOf(floorObject);
+
+            if ((index >= 0) && (index < (Furniture.Count - 1)))
+            {
+                return Furniture[index + 1];
+            }
+
+            return null;
+        }
+
         public IRoomObjectFloor GetFurnitureUnderneath(IRoomObjectFloor floorObject)
         {
             if (floorObject == null) return null;

@@ -4,6 +4,7 @@ using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
+using Turbo.Rooms.Object.Logic.Furniture.Wired.Conditions;
 using Turbo.Core.Game.Furniture.Data;
 
 namespace Turbo.Rooms.Object.Logic
@@ -34,6 +35,21 @@ namespace Turbo.Rooms.Object.Logic
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerWalksOnFurni, typeof(FurnitureWiredTriggerWalksOnFurni));
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerWalksOffFurni, typeof(FurnitureWiredTriggerWalksOffFurni));
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerStateChanged, typeof(FurnitureWiredTriggerStateChangeLogic));
+
+            #region Wired Conditions
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionActorIsWearingBadge, typeof(FurnitureWiredConditionActorIsWearingBadge));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotActorWearsBadge, typeof(FurnitureWiredConditionNotActorWearsBadge));
+
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionHasStackedFurnis, typeof(FurnitureWiredConditionHasStackedFurnis));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotHasStackedFurnis, typeof(FurnitureWiredConditionNotHasStackedFurnis));
+
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionTriggererOnFurni, typeof(FurnitureWiredConditionTriggererOnFurni));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotTriggererOnFurni, typeof(FurnitureWiredConditionNotTriggererOnFurni));
+
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionFurniHasAvatars, typeof(FurnitureWiredConditionFurniHasAvatars));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotFurniHasAvatars, typeof(FurnitureWiredConditionNotFurniHasAvatars));
+
+            #endregion
         }
 
         public IRoomObjectLogic Create(string type)

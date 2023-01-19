@@ -26,6 +26,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
         private static readonly int _onState = 1;
 
         protected IWiredData _wiredData;
+        protected IList<IRoomObjectFloor> _selectedFloorObjects;
 
         private long _lastRun;
         private Dictionary<int, long> _lastRunPlayers;
@@ -46,8 +47,6 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
         {
             var wiredData = CreateWiredDataFromJson(jsonString);
 
-            ValidateWiredData(wiredData);
-
             wiredData.SetRoomObject(RoomObject);
 
             _wiredData = wiredData;
@@ -62,36 +61,29 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
         protected virtual bool ValidateWiredData(IWiredData wiredData)
         {
+            if (_selectedFloorObjects == null)
+            {
+                _selectedFloorObjects = new List<IRoomObjectFloor>();
+            }
+            else
+            {
+                _selectedFloorObjects.Clear();
+            }
+
             if (wiredData.SelectionIds.Count > 0)
             {
-                List<int> furnitureIds = new();
-
                 foreach (int id in wiredData.SelectionIds)
                 {
-                    if (furnitureIds.Count == wiredData.SelectionLimit) break;
+                    if (_selectedFloorObjects.Count == wiredData.SelectionLimit) break;
 
                     var furniture = RoomObject.Room.RoomFurnitureManager.GetFloorFurniture(id);
 
-                    if (furniture == null) continue;
+                    if (furniture == null || furniture.RoomObject == null) continue;
 
-                    furnitureIds.Add(id);
+                    _selectedFloorObjects.Add(furniture.RoomObject);
                 }
 
-                ((List<int>)wiredData.SelectionIds).Sort();
-                furnitureIds.Sort();
-
-                string previous = string.Join(",", wiredData.SelectionIds);
-                string valid = string.Join(",", furnitureIds);
-
-                if (!previous.Equals(valid))
-                {
-                    wiredData.SelectionIds = furnitureIds;
-
-                    if (RoomObject.RoomObjectHolder is IRoomFloorFurniture furniture)
-                    {
-                        furniture.Save();
-                    }
-                }
+                wiredData.SelectionIds = _selectedFloorObjects.Select(floorObject => floorObject.Id).ToList();
             }
 
             return true;
@@ -135,6 +127,11 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
         {
             if (_wiredData == null) return false;
 
+            if (RequiresAvatar)
+            {
+                if (wiredArguments.UserObject == null) return false;
+            }
+
             long lastRun = TimeUtilities.GetCurrentMilliseconds();
 
             if ((lastRun - _lastRun) < Cooldown) return false;
@@ -154,6 +151,8 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
             }
 
             _lastRun = lastRun;
+
+            ValidateWiredData(_wiredData);
 
             return true;
         }
@@ -177,6 +176,8 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
 
         public virtual int Cooldown => 50;
         public virtual int CooldownPlayer => 350;
+
+        public virtual bool RequiresAvatar => false;
 
         public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Controller;
     }
