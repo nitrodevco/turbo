@@ -1,11 +1,12 @@
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Turbo.Core;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Navigator;
@@ -17,7 +18,6 @@ using Turbo.Core.Security;
 using Turbo.Core.Storage;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
-using Turbo.Core.Game;
 
 namespace Turbo.Main
 {
@@ -112,6 +112,7 @@ namespace Turbo.Main
 
             await _securityManager.InitAsync();
             await _furnitureManager.InitAsync();
+            await _catalogManager.InitAsync();
             await _roomManager.InitAsync();
             await _navigatorManager.InitAsync();
 
@@ -150,6 +151,7 @@ namespace Turbo.Main
             _storageCycleStarted = false;
 
             // Todo: Dispose all services here
+            await _catalogManager.DisposeAsync();
             await _roomManager.DisposeAsync();
             await _navigatorManager.DisposeAsync();
             await _furnitureManager.DisposeAsync();

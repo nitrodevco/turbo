@@ -1,15 +1,15 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Extensions.DependencyInjection;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Furniture;
-using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Inventory;
+using Turbo.Core.Game.Inventory.Constants;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture.Factories;
-using Turbo.Core.Networking.Game.Clients;
 using Turbo.Packets.Outgoing.Inventory.Furni;
-using Turbo.Core.Game.Inventory.Constants;
-using Turbo.Core.Game;
 
 namespace Turbo.Inventory.Furniture
 {
@@ -83,6 +83,26 @@ namespace Turbo.Inventory.Furniture
             _player.Session?.Send(new FurniListRemoveMessage
             {
                 ItemId = playerFurniture.Id
+            });
+        }
+
+        public async ValueTask GiveFurniture(int definitionId)
+        {
+            if (definitionId <= 0) return;
+
+            var playerFurniture = await _playerFurnitureFactory.CreateFromDefinitionId(Furniture, definitionId, _player.Id);
+
+            if (playerFurniture == null) return;
+
+            Furniture.AddFurniture(playerFurniture);
+
+            _player.PlayerInventory?.UnseenItemsManager?.Add(UnseenItemCategory.Furni, playerFurniture.Id);
+
+            if (!_requested) return;
+
+            _player.Session?.Send(new FurniListAddOrUpdateMessage
+            {
+                Furniture = playerFurniture
             });
         }
 

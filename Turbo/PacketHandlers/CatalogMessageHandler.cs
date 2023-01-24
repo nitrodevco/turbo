@@ -29,6 +29,7 @@ namespace Turbo.PacketHandlers
 
             _messageHub.Subscribe<GetCatalogIndexMessage>(this, OnGetCatalogIndexMessage);
             _messageHub.Subscribe<GetCatalogPageMessage>(this, OnGetCatalogPageMessage);
+            _messageHub.Subscribe<PurchaseFromCatalogMessage>(this, OnPurchaseFromCatalogMessage);
         }
 
         public void OnGetCatalogIndexMessage(GetCatalogIndexMessage message, ISession session)
@@ -71,6 +72,13 @@ namespace Turbo.PacketHandlers
                 AcceptSeasonCurrencyAsCredits = false,
                 FrontPageItems = new List<ICatalogFrontPageItem>()
             });
+        }
+
+        public void OnPurchaseFromCatalogMessage(PurchaseFromCatalogMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            _catalogManager.PurchaseOffer(session.Player, message.PageId, message.OfferId, message.ExtraParam, message.Quantity);
         }
     }
 }

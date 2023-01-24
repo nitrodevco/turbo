@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Definition;
+using Turbo.Core.Game.Players;
 
 namespace Turbo.Core.Game.Catalog
 {
@@ -13,6 +14,7 @@ namespace Turbo.Core.Game.Catalog
 
         public void SetPage(ICatalogPage catalogPage);
         public void AddProduct(ICatalogProduct catalogProduct);
+        public Task<ICatalogOffer> Purchase(IPlayer player, string extraParam, int quantity);
 
         public int Id { get; }
         public int PageId { get; }

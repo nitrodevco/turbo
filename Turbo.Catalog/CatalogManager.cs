@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Game.Players;
 using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Repositories.Catalog;
+using Turbo.Packets.Outgoing.Catalog;
 
 namespace Turbo.Catalog
 {
@@ -53,6 +55,26 @@ namespace Turbo.Catalog
             if (catalogType == null || !Catalogs.ContainsKey(catalogType)) return null;
 
             return Catalogs[catalogType]?.GetRootForPlayer(player);
+        }
+
+        public async ValueTask PurchaseOffer(IPlayer player, int pageId, int offerId, string extraParam, int quantity)
+        {
+            var offer = await Catalogs[CatalogType.Normal]?.PurchaseOffer(player, pageId, offerId, extraParam, quantity);
+
+            if (offer == null)
+            {
+                player.Session?.Send(new PurchaseNotAllowedMessage
+                {
+                    ErrorCode = PurchaseNotAllowedEnum.Unknown
+                });
+
+                return;
+            }
+
+            player.Session?.Send(new PurchaseOkMessage
+            {
+                Offer = offer
+            });
         }
     }
 }

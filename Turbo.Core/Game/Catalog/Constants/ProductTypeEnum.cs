@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Turbo.Core.Game.Catalog.Constants
 {
-    public class ProductType
+    public class ProductTypeEnum
     {
         public const string Wall = "i";
         public const string Floor = "s";

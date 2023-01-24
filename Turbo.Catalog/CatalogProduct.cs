@@ -1,6 +1,9 @@
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Catalog;
+using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Game.Furniture.Definition;
+using Turbo.Core.Game.Players;
 using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Catalog
@@ -36,6 +39,32 @@ namespace Turbo.Catalog
             if ((furnitureDefinition == null) || (furnitureDefinition.Id != _entity.FurnitureDefinitionEntityId)) return;
 
             FurnitureDefinition = furnitureDefinition;
+        }
+
+        public bool CanPlayerRecieveProduct(IPlayer player)
+        {
+            if (player == null) return false;
+
+            // does player have badge
+            // does player have effect
+
+            return true;
+        }
+
+        public async ValueTask GiveProductToPlayer(IPlayer player)
+        {
+            if (player == null) return;
+
+            if ((ProductType.Equals(ProductTypeEnum.Floor) || ProductType.Equals(ProductTypeEnum.Wall)) && FurnitureDefinitionId != -1)
+            {
+                await player.PlayerInventory.FurnitureInventory.GiveFurniture(FurnitureDefinitionId);
+            }
+
+            else if (ProductType.Equals(ProductTypeEnum.Badge))
+            {
+                //player.PlayerInventory?.BadgeInventory?.
+                // send purchase error if recipient already has badge
+            }
         }
 
         public int Id => _entity.Id;

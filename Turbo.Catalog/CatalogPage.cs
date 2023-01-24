@@ -1,8 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Catalog;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Database.Entities.Catalog;
 using Turbo.Packets.Outgoing.Catalog;
@@ -65,6 +67,11 @@ namespace Turbo.Catalog
         public virtual void CacheOfferIds()
         {
             OfferIds = Offers.Keys.ToList();
+        }
+
+        public async Task<ICatalogOffer> PurchaseOffer(IPlayer player, int offerId, string extraParam, int quantity)
+        {
+            return await Offers[offerId]?.Purchase(player, extraParam, quantity);
         }
 
         public virtual int Id => _entity.Id;

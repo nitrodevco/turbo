@@ -70,6 +70,15 @@ namespace Turbo.Catalog
             return Pages[pageId];
         }
 
+        public async Task<ICatalogOffer> PurchaseOffer(IPlayer player, int pageId, int offerId, string extraParam, int quantity)
+        {
+            var page = GetPageForPlayer(player, pageId, offerId);
+
+            if (page == null) return null;
+
+            return await page.PurchaseOffer(player, offerId, extraParam, quantity);
+        }
+
         private void BuildCatalog()
         {
             Root = _catalogFactory.CreateRoot();

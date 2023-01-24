@@ -1,12 +1,13 @@
+using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
-using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
-using Turbo.Database.Entities.Furniture;
+using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Storage;
+using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Factories
 {
@@ -46,6 +47,18 @@ namespace Turbo.Furniture.Factories
             _provider.GetService<IStorageQueue>()?.SaveNow(furniture.FurnitureEntity);
 
             return Create(playerFurnitureContainer, furniture.FurnitureEntity);
+        }
+
+        public async Task<IPlayerFurniture> CreateFromDefinitionId(IPlayerFurnitureContainer playerFurnitureContainer, int furnitureDefinitonId, int playerId)
+        {
+            var furnitureEntity = new FurnitureEntity();
+
+            furnitureEntity.PlayerEntityId = playerId;
+            furnitureEntity.FurnitureDefinitionEntityId = furnitureDefinitonId;
+
+            await _provider.GetService<IStorageQueue>()?.SaveNow(furnitureEntity);
+
+            return Create(playerFurnitureContainer, furnitureEntity);
         }
     }
 }

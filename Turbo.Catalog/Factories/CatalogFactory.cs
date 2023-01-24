@@ -66,7 +66,7 @@ namespace Turbo.Catalog.Factories
 
             var product = new CatalogProduct(logger, entity);
 
-            if (product.ProductType.Equals(ProductType.Floor) || product.ProductType.Equals(ProductType.Wall))
+            if (product.ProductType.Equals(ProductTypeEnum.Floor) || product.ProductType.Equals(ProductTypeEnum.Wall))
             {
                 var furnitureManager = _provider.GetService<IFurnitureManager>();
 
