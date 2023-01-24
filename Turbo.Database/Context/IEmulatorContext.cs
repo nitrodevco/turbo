@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System;
+﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
@@ -14,6 +15,9 @@ namespace Turbo.Database.Context
 {
     public interface IEmulatorContext : IDisposable
     {
+        public DbSet<CatalogOfferEntity> CatalogOffers { get; set; }
+        public DbSet<CatalogPageEntity> CatalogPages { get; set; }
+        public DbSet<CatalogProductEntity> CatalogProducts { get; set; }
         public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }
         public DbSet<FurnitureEntity> Furnitures { get; set; }
         public DbSet<FurnitureTeleportLinkEntity> FurnitureTeleportLinks { get; set; }

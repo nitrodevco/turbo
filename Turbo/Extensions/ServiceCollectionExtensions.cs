@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Turbo.Catalog;
+using Turbo.Catalog.Factories;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Navigator;
@@ -13,6 +14,7 @@ using Turbo.Core.Plugins;
 using Turbo.Core.Security;
 using Turbo.Core.Storage;
 using Turbo.Database.Queue;
+using Turbo.Database.Repositories.Catalog;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
@@ -20,6 +22,7 @@ using Turbo.Database.Repositories.Room;
 using Turbo.Database.Repositories.Security;
 using Turbo.Furniture;
 using Turbo.Furniture.Factories;
+using Turbo.Inventory.Factories;
 using Turbo.Main.PacketHandlers;
 using Turbo.Navigator;
 using Turbo.Networking;
@@ -29,6 +32,7 @@ using Turbo.Networking.Game;
 using Turbo.Networking.Game.Clients;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
+using Turbo.PacketHandlers;
 using Turbo.Packets;
 using Turbo.Packets.Revisions;
 using Turbo.Players;
@@ -39,7 +43,6 @@ using Turbo.Rooms.Factories;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic;
 using Turbo.Security;
-using Turbo.Inventory.Factories;
 
 namespace Turbo.Main.Extensions
 {
@@ -68,6 +71,7 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
             services.AddTransient<IUserMessageHandler, UserMessageHandler>();
             services.AddTransient<IWiredMessageHandler, WiredMessageHandler>();
+            services.AddTransient<ICatalogMessageHandler, CatalogMessageHandler>();
         }
 
         public static void AddManagers(this IServiceCollection services)
@@ -98,10 +102,14 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
             services.AddSingleton<IRoomWiredFactory, RoomWiredFactory>();
+            services.AddSingleton<ICatalogFactory, CatalogFactory>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
         {
+            services.AddScoped<ICatalogOfferRepository, CatalogOfferRepository>();
+            services.AddScoped<ICatalogPageRepository, CatalogPageRepository>();
+            services.AddScoped<ICatalogProductRepository, CatalogProductRepository>();
             services.AddScoped<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
             services.AddScoped<IFurnitureRepository, FurnitureRepository>();
             services.AddScoped<IPlayerBadgeRepository, PlayerBadgeRepository>();

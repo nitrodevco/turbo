@@ -132,6 +132,11 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
                 if (wiredArguments.UserObject == null) return false;
             }
 
+            if (RequiresFurni)
+            {
+                if (wiredArguments.FurnitureObject == null) return false;
+            }
+
             long lastRun = TimeUtilities.GetCurrentMilliseconds();
 
             if ((lastRun - _lastRun) < Cooldown) return false;
@@ -178,6 +183,8 @@ namespace Turbo.Rooms.Object.Logic.Furniture.Wired
         public virtual int CooldownPlayer => 350;
 
         public virtual bool RequiresAvatar => false;
+
+        public virtual bool RequiresFurni => false;
 
         public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Controller;
     }

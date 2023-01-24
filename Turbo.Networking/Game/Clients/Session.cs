@@ -1,7 +1,7 @@
-using DotNetty.Transport.Channels;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
+using DotNetty.Transport.Channels;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;

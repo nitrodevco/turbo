@@ -21,7 +21,7 @@
         NotUserCountIn = 16,
         NotActorInTeam = 17,
         NotHasStackedFurnis = 18,
-        NotFurniIsOfType = 19,
+        NotStuffTypeMatches = 19,
         NotStuffsInFormation = 20,
         NotActorInGroup = 21,
         NotActorWearsBadge = 22,

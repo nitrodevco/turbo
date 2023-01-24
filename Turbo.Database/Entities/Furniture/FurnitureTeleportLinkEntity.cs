@@ -14,10 +14,10 @@ namespace Turbo.Database.Entities.Furniture
         [Column("furniture_one_id")]
         public int FurnitureEntityOneId { get; set; }
 
-        public FurnitureEntity FurnitureEntityOne { get; set; }
-
         [Column("furniture_two_id")]
         public int FurnitureEntityTwoId { get; set; }
+
+        public FurnitureEntity FurnitureEntityOne { get; set; }
 
         public FurnitureEntity FurnitureEntityTwo { get; set; }
     }

@@ -11,8 +11,8 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    [Migration("20230116171504_PlayerBadges")]
-    partial class PlayerBadges
+    [Migration("20230124060511_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -20,6 +20,204 @@ namespace Turbo.Main.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("CanBundle")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("can_bundle")
+                        .HasDefaultValueSql("1");
+
+                    b.Property<bool>("CanGift")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("can_gift")
+                        .HasDefaultValueSql("1");
+
+                    b.Property<int>("CatalogPageEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("page_id");
+
+                    b.Property<int>("ClubLevel")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("club_level")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<int>("CostCredits")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("cost_credits")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<int>("CostCurrency")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("cost_currency")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<int?>("CurrencyType")
+                        .HasColumnType("int")
+                        .HasColumnName("currency_type");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<string>("LocalizationId")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("localization_id");
+
+                    b.Property<bool>("Visible")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("visible")
+                        .HasDefaultValueSql("1");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CatalogPageEntityId");
+
+                    b.ToTable("catalog_offers");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogPageEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("Icon")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("icon")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<string>("ImageData")
+                        .HasColumnType("longtext")
+                        .HasColumnName("image_data");
+
+                    b.Property<string>("Layout")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("longtext")
+                        .HasColumnName("layout")
+                        .HasDefaultValueSql("default_3x3");
+
+                    b.Property<string>("Localization")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("localization");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
+
+                    b.Property<int?>("ParentEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("parent_id");
+
+                    b.Property<string>("TextData")
+                        .HasColumnType("longtext")
+                        .HasColumnName("text_data");
+
+                    b.Property<bool>("Visible")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("visible")
+                        .HasDefaultValueSql("1");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentEntityId");
+
+                    b.ToTable("catalog_pages");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogProductEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("CatalogOfferEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("offer_id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<string>("ExtraParam")
+                        .HasColumnType("longtext")
+                        .HasColumnName("extra_param");
+
+                    b.Property<int?>("FurnitureDefinitionEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("definition_id");
+
+                    b.Property<string>("ProductType")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("product_type");
+
+                    b.Property<int>("Quantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("quantity")
+                        .HasDefaultValueSql("1");
+
+                    b.Property<int>("UniqueRemaining")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("unique_remaining")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<int>("UniqueSize")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("unique_size")
+                        .HasDefaultValueSql("0");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CatalogOfferEntityId");
+
+                    b.HasIndex("FurnitureDefinitionEntityId");
+
+                    b.ToTable("catalog_products");
+                });
 
             modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", b =>
                 {
@@ -29,48 +227,56 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("id");
 
                     b.Property<bool?>("CanGroup")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_group")
                         .HasDefaultValueSql("1");
 
                     b.Property<bool?>("CanLay")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_lay")
                         .HasDefaultValueSql("0");
 
                     b.Property<bool?>("CanRecycle")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_recycle")
                         .HasDefaultValueSql("0");
 
                     b.Property<bool?>("CanSell")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_sell")
                         .HasDefaultValueSql("1");
 
                     b.Property<bool?>("CanSit")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_sit")
                         .HasDefaultValueSql("0");
 
                     b.Property<bool?>("CanStack")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_stack")
                         .HasDefaultValueSql("1");
 
                     b.Property<bool?>("CanTrade")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_trade")
                         .HasDefaultValueSql("1");
 
                     b.Property<bool?>("CanWalk")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_walk")
@@ -456,24 +662,28 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("id");
 
                     b.Property<bool?>("AllowEditing")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("allow_editing")
                         .HasDefaultValueSql("1");
 
                     b.Property<bool?>("AllowPets")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("allow_pets")
                         .HasDefaultValueSql("0");
 
                     b.Property<bool?>("AllowPetsEat")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("allow_pets_eat")
                         .HasDefaultValueSql("0");
 
                     b.Property<bool?>("AllowWalkThrough")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("allow_walk_through")
@@ -530,6 +740,7 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("description");
 
                     b.Property<bool?>("HideWalls")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("hide_walls")
@@ -646,6 +857,7 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("id");
 
                     b.Property<bool?>("Custom")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("custom")
@@ -680,6 +892,7 @@ namespace Turbo.Main.Migrations
                         .HasDefaultValueSql("0");
 
                     b.Property<bool?>("Enabled")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("enabled")
@@ -714,6 +927,10 @@ namespace Turbo.Main.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateExpires")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_expires");
 
                     b.Property<DateTime>("DateUpdated")
                         .ValueGeneratedOnAddOrUpdate()
@@ -819,6 +1036,43 @@ namespace Turbo.Main.Migrations
                         .IsUnique();
 
                     b.ToTable("security_tickets");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Catalog.CatalogPageEntity", "Page")
+                        .WithMany("Offers")
+                        .HasForeignKey("CatalogPageEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Page");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogPageEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Catalog.CatalogPageEntity", "ParentEntity")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentEntityId");
+
+                    b.Navigation("ParentEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogProductEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Catalog.CatalogOfferEntity", "Offer")
+                        .WithMany("Products")
+                        .HasForeignKey("CatalogOfferEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", "FurnitureDefinition")
+                        .WithMany()
+                        .HasForeignKey("FurnitureDefinitionEntityId");
+
+                    b.Navigation("FurnitureDefinition");
+
+                    b.Navigation("Offer");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureEntity", b =>
@@ -972,6 +1226,18 @@ namespace Turbo.Main.Migrations
                         .IsRequired();
 
                     b.Navigation("PlayerEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogPageEntity", b =>
+                {
+                    b.Navigation("Children");
+
+                    b.Navigation("Offers");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", b =>

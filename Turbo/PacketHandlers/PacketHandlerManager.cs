@@ -13,6 +13,7 @@ namespace Turbo.Main.PacketHandlers
         private readonly IInventoryMessageHandler _inventoryMessageHandler;
         private readonly IUserMessageHandler _userMessageHandler;
         private readonly IWiredMessageHandler _wiredMessageHandler;
+        private readonly ICatalogMessageHandler _catalogMessageHandler;
 
         public PacketHandlerManager(
             INavigatorMessageHandler navigatorMessageHandler,
@@ -23,7 +24,8 @@ namespace Turbo.Main.PacketHandlers
             IAuthenticationMessageHandler authenticationMessageHandler,
             IInventoryMessageHandler inventoryMessageHandler,
             IUserMessageHandler userMessageHandler,
-            IWiredMessageHandler wiredMessageHandler)
+            IWiredMessageHandler wiredMessageHandler,
+            ICatalogMessageHandler catalogMessageHandler)
         {
             _authenticationMessageHandler = authenticationMessageHandler;
             _navigatorMessageHandler = navigatorMessageHandler;
@@ -34,6 +36,7 @@ namespace Turbo.Main.PacketHandlers
             _inventoryMessageHandler = inventoryMessageHandler;
             _userMessageHandler = userMessageHandler;
             _wiredMessageHandler = wiredMessageHandler;
+            _catalogMessageHandler = catalogMessageHandler;
         }
     }
 }

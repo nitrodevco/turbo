@@ -165,7 +165,7 @@ namespace Turbo.Players
 
             if (player == null)
             {
-                IList<PlayerBadgeDto> entities = new List<PlayerBadgeDto>();
+                List<PlayerBadgeDto> entities = new();
 
                 using (var scope = _serviceScopeFactory.CreateScope())
                 {

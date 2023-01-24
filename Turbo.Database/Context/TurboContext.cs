@@ -1,12 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Attributes;
 using Turbo.Database.Entities;
+using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
@@ -17,6 +18,9 @@ namespace Turbo.Database.Context
 {
     public class TurboContext : DbContext, IEmulatorContext
     {
+        public DbSet<CatalogOfferEntity> CatalogOffers { get; set; }
+        public DbSet<CatalogPageEntity> CatalogPages { get; set; }
+        public DbSet<CatalogProductEntity> CatalogProducts { get; set; }
         public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }
         public DbSet<FurnitureEntity> Furnitures { get; set; }
         public DbSet<FurnitureTeleportLinkEntity> FurnitureTeleportLinks { get; set; }

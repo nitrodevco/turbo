@@ -22,5 +22,6 @@ namespace Turbo.Core.Game
         public static int MaxActiveBadges = 5;
         public static int DiceCycles = 4;
         public static int WiredFurniSelectionLimit = 5;
+        public static string Delimiter = ";";
     }
 }

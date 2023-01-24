@@ -56,7 +56,6 @@
         public static readonly string FurnitureWiredConditionWearingEffect = "wf_cnd_wearing_effect";
         public static readonly string FurnitureWiredConditionActorInTeam = "wf_cnd_actor_in_team";
         public static readonly string FurnitureWiredConditionHasHandItem = "wf_cnd_has_handitem";
-        public static readonly string FurnitrueWiredConditionUserCount = "wf_cnd_user_count_in";
 
         public static readonly string FurnitureWiredConditionActorIsWearingBadge = "wf_cnd_wearing_badge";
         public static readonly string FurnitureWiredConditionNotActorWearsBadge = "wf_cnd_not_wearing_b";
@@ -69,6 +68,9 @@
 
         public static readonly string FurnitureWiredConditionFurniHasAvatars = "wf_cnd_furnis_hv_avtrs";
         public static readonly string FurnitureWiredConditionNotFurniHasAvatars = "wf_cnd_not_hv_avtrs";
+
+        public static readonly string FurnitrueWiredConditionUserCountIn = "wf_cnd_user_count_in";
+        public static readonly string FurnitureWiredConditionNotUserCountIn = "wf_cnd_not_user_count";
 
 
         public static readonly string FurnitureWiredConditionTimeMoreThan = "wf_cnd_time_more_than";
@@ -83,7 +85,6 @@
         public static readonly string FurnitureWiredConditionNotHaveAvatars = "wf_cnd_not_hv_avtrs";
         public static readonly string FurnitureWiredConditionNotMatchSnapshot = "wf_cnd_not_match_snap";
         public static readonly string FurnitureWiredConditionNotStuffIs = "wf_cnd_not_stuff_is";
-        public static readonly string FurnitureWiredConditionNotUserCount = "wf_cnd_not_user_count";
         #endregion
 
         #endregion

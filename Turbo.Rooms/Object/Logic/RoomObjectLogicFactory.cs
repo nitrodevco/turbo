@@ -49,6 +49,9 @@ namespace Turbo.Rooms.Object.Logic
             Logics.Add(RoomObjectLogicType.FurnitureWiredConditionFurniHasAvatars, typeof(FurnitureWiredConditionFurniHasAvatars));
             Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotFurniHasAvatars, typeof(FurnitureWiredConditionNotFurniHasAvatars));
 
+            Logics.Add(RoomObjectLogicType.FurnitrueWiredConditionUserCountIn, typeof(FurnitureWiredConditionUserCountIn));
+            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotUserCountIn, typeof(FurnitureWiredConditionNotUserCountIn));
+
             #endregion
         }
 

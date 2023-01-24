@@ -15,19 +15,19 @@ namespace Turbo.Database.Entities.Room
         [Column("model"), Required]
         public string Model { get; set; }
 
-        [Column("door_x"), DefaultValueSql("0")]
+        [Column("door_x"), Required, DefaultValueSql("0")]
         public int DoorX { get; set; }
 
-        [Column("door_y"), DefaultValueSql("0")]
+        [Column("door_y"), Required, DefaultValueSql("0")]
         public int DoorY { get; set; }
 
-        [Column("door_rotation"), DefaultValueSql("0")] // Rotation.North
+        [Column("door_rotation"), Required, DefaultValueSql("0")] // Rotation.North
         public Rotation DoorRotation { get; set; }
 
-        [Column("enabled"), DefaultValueSql("1")]
+        [Column("enabled"), Required, DefaultValueSql("1")]
         public bool? Enabled { get; set; }
 
-        [Column("custom"), DefaultValueSql("0")]
+        [Column("custom"), Required, DefaultValueSql("0")]
         public bool? Custom { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace Turbo.Database.Entities.Players
     [Table("player_settings"), Index(nameof(PlayerEntityId), IsUnique = true)]
     public class PlayerSettingsEntity : Entity
     {
-        [Column("player_id")]
+        [Column("player_id"), Required]
         public int PlayerEntityId { get; set; }
 
         public PlayerEntity PlayerEntity { get; set; }

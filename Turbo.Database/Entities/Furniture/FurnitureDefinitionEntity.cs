@@ -29,40 +29,40 @@ namespace Turbo.Database.Entities.Furniture
         [Column("total_states"), DefaultValueSql("0")]
         public int TotalStates { get; set; }
 
-        [Column("x"), DefaultValueSql("1")]
+        [Column("x"), Required, DefaultValueSql("1")]
         public int X { get; set; }
 
-        [Column("y"), DefaultValueSql("1")]
+        [Column("y"), Required, DefaultValueSql("1")]
         public int Y { get; set; }
 
-        [Column("z", TypeName = "double(10,3)"), DefaultValueSql("0")]
+        [Column("z", TypeName = "double(10,3)"), Required, DefaultValueSql("0")]
         public double Z { get; set; }
 
-        [Column("can_stack"), DefaultValueSql("1")]
+        [Column("can_stack"), Required, DefaultValueSql("1")]
         public bool? CanStack { get; set; }
 
-        [Column("can_walk"), DefaultValueSql("0")]
+        [Column("can_walk"), Required, DefaultValueSql("0")]
         public bool? CanWalk { get; set; }
 
-        [Column("can_sit"), DefaultValueSql("0")]
+        [Column("can_sit"), Required, DefaultValueSql("0")]
         public bool? CanSit { get; set; }
 
-        [Column("can_lay"), DefaultValueSql("0")]
+        [Column("can_lay"), Required, DefaultValueSql("0")]
         public bool? CanLay { get; set; }
 
-        [Column("can_recycle"), DefaultValueSql("0")]
+        [Column("can_recycle"), Required, DefaultValueSql("0")]
         public bool? CanRecycle { get; set; }
 
-        [Column("can_trade"), DefaultValueSql("1")]
+        [Column("can_trade"), Required, DefaultValueSql("1")]
         public bool? CanTrade { get; set; }
 
-        [Column("can_group"), DefaultValueSql("1")]
+        [Column("can_group"), Required, DefaultValueSql("1")]
         public bool? CanGroup { get; set; }
 
-        [Column("can_sell"), DefaultValueSql("1")]
+        [Column("can_sell"), Required, DefaultValueSql("1")]
         public bool? CanSell { get; set; }
 
-        [Column("usage_policy"), DefaultValueSql("1")] // FurniUsagePolicy.Controller
+        [Column("usage_policy"), Required, DefaultValueSql("1")] // FurniUsagePolicy.Controller
         public FurniUsagePolicy UsagePolicy { get; set; }
 
         [Column("extra_data")]

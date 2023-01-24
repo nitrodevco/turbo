@@ -52,10 +52,11 @@ namespace Turbo.Rooms.Managers
 
             if (roomTile == null) return false;
 
-            var conditionsPassed = ProcessConditionsAtTile(roomTile, wiredArguments);
-            var triggerPassed = CanTrigger(roomObject, wiredArguments);
+            if (!CanTrigger(roomObject, wiredArguments)) return false;
 
-            if (conditionsPassed && triggerPassed) ProcessActionsAtTile(roomTile, wiredArguments);
+            if (!ProcessConditionsAtTile(roomTile, wiredArguments)) return false;
+
+            ProcessActionsAtTile(roomTile, wiredArguments);
 
             return true;
         }

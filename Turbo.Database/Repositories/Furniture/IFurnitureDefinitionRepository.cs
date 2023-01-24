@@ -6,6 +6,6 @@ namespace Turbo.Database.Repositories.Furniture
 {
     public interface IFurnitureDefinitionRepository : IBaseRepository<FurnitureDefinitionEntity>
     {
-        Task<List<FurnitureDefinitionEntity>> FindAllAsync();
+        public Task<List<FurnitureDefinitionEntity>> FindAllAsync();
     }
 }
