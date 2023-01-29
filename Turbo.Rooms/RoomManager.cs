@@ -1,14 +1,15 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Storage;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
@@ -17,7 +18,7 @@ using Turbo.Rooms.Mapping;
 
 namespace Turbo.Rooms
 {
-    public class RoomManager : IRoomManager
+    public class RoomManager : Component, IRoomManager
     {
         private static readonly int _tryDisposeTicks = 1200;
 
@@ -46,12 +47,12 @@ namespace Turbo.Rooms
             _models = new Dictionary<int, IRoomModel>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
             await LoadModels();
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
             await RemoveAllRooms();
         }
@@ -122,7 +123,7 @@ namespace Turbo.Rooms
             return null;
         }
 
-        public async ValueTask RemoveRoom(int id)
+        public async Task RemoveRoom(int id)
         {
             var room = GetOnlineRoom(id);
 
@@ -134,7 +135,7 @@ namespace Turbo.Rooms
             }
         }
 
-        public async ValueTask RemoveAllRooms()
+        public async Task RemoveAllRooms()
         {
             if (_rooms.Count == 0) return;
 
@@ -176,7 +177,7 @@ namespace Turbo.Rooms
             return null;
         }
 
-        private async ValueTask LoadModels()
+        private async Task LoadModels()
         {
             _models.Clear();
 

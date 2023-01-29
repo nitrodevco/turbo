@@ -1,12 +1,13 @@
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
@@ -15,7 +16,7 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Navigator
 {
-    public class NavigatorManager : INavigatorManager
+    public class NavigatorManager : Component, INavigatorManager
     {
         private readonly IRoomManager _roomManager;
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -35,14 +36,12 @@ namespace Turbo.Navigator
             _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
-
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-
         }
 
         public int GetPendingRoomId(int userId)

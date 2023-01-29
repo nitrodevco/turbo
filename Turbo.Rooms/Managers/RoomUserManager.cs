@@ -7,14 +7,15 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Packets.Messages;
+using Turbo.Core.Utilities;
 using Turbo.Packets.Outgoing.Room.Action;
 using Turbo.Packets.Outgoing.Room.Engine;
-using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object;
+using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomUserManager : IRoomUserManager
+    public class RoomUserManager : Component, IRoomUserManager
     {
         private readonly IRoom _room;
         private readonly IRoomObjectFactory _roomObjectFactory;
@@ -33,20 +34,13 @@ namespace Turbo.Rooms.Managers
             AvatarObjects = new RoomObjectContainer<IRoomObjectAvatar>(RemoveRoomObject);
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
-
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-            if (_isDisposing) return;
-
-            _isDisposing = true;
-
             AvatarObjects.RemoveAllRoomObjects();
-
-            _isDisposing = false;
         }
 
         public IRoomObjectAvatar GetRoomObjectByUserId(int userId)

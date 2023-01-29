@@ -1,16 +1,17 @@
 using Microsoft.Extensions.DependencyInjection;
-using Turbo.Core.Game.Players;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Inventory;
+using Turbo.Core.Game.Players;
+using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Storage;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
-using Turbo.Core.Networking.Game.Clients;
 using Turbo.Packets.Outgoing.Inventory.Badges;
-using Turbo.Core.Game;
-using Turbo.Core.Storage;
 
 namespace Turbo.Inventory.Badges
 {
-    public class PlayerBadgeInventory : IPlayerBadgeInventory
+    public class PlayerBadgeInventory : Component, IPlayerBadgeInventory
     {
         private readonly IPlayer _player;
         private readonly IStorageQueue _storageQueue;
@@ -34,12 +35,12 @@ namespace Turbo.Inventory.Badges
             ActiveBadges = new List<IPlayerBadge>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
             await LoadBadges();
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
             Badges.Clear();
             ActiveBadges.Clear();

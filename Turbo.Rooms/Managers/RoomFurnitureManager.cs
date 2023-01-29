@@ -1,17 +1,21 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Database.Dtos;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Furniture.Definition;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
@@ -20,13 +24,10 @@ using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
-using Turbo.Core.Game.Players;
-using Turbo.Core.Game;
-using Turbo.Core.Game.Rooms.Object.Logic;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomFurnitureManager : IRoomFurnitureManager
+    public class RoomFurnitureManager : Component, IRoomFurnitureManager
     {
         private readonly IRoom _room;
         private readonly IFurnitureFactory _furnitureFactory;
@@ -69,14 +70,13 @@ namespace Turbo.Rooms.Managers
             _pendingPickerIds = new Dictionary<int, int>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
             await LoadFurniture();
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-            // dispose the wall and floor furni
         }
 
         public IRoomFloorFurniture GetFloorFurniture(int id)

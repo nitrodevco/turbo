@@ -6,6 +6,7 @@ using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Inventory.Constants;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture.Factories;
@@ -13,7 +14,7 @@ using Turbo.Packets.Outgoing.Inventory.Furni;
 
 namespace Turbo.Inventory.Furniture
 {
-    public class PlayerFurnitureInventory : IPlayerFurnitureInventory
+    public class PlayerFurnitureInventory : Component, IPlayerFurnitureInventory
     {
         private readonly IPlayer _player;
         private readonly IPlayerFurnitureFactory _playerFurnitureFactory;
@@ -35,12 +36,12 @@ namespace Turbo.Inventory.Furniture
             Furniture = new PlayerFurnitureContainer(RemoveFurniture);
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
             await LoadFurniture();
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
             Furniture.PlayerFurniture.Clear();
         }
@@ -86,7 +87,7 @@ namespace Turbo.Inventory.Furniture
             });
         }
 
-        public async ValueTask GiveFurniture(int definitionId)
+        public async Task GiveFurniture(int definitionId)
         {
             if (definitionId <= 0) return;
 
@@ -137,8 +138,6 @@ namespace Turbo.Inventory.Furniture
                     currentFragment++;
                 }
             }
-
-            if (count <= 0) return;
 
             session.Send(new FurniListMessage
             {

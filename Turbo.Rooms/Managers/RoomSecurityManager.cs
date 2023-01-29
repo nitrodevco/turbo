@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
@@ -9,16 +11,15 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Packets.Messages;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Permissions;
-using Turbo.Core.Game.Furniture;
-using Turbo.Core.Game.Furniture.Constants;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomSecurityManager : IRoomSecurityManager
+    public class RoomSecurityManager : Component, IRoomSecurityManager
     {
         private readonly IRoom _room;
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -35,14 +36,13 @@ namespace Turbo.Rooms.Managers
             Rights = new List<int>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
             await LoadRights();
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-
         }
 
         public bool IsStrictOwner(IRoomManipulator manipulator)

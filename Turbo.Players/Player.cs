@@ -1,17 +1,18 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Players;
-using Turbo.Core.Game.Inventory;
 using Turbo.Inventory.Factories;
 
 namespace Turbo.Players
 {
-    public class Player : IPlayer
+    public class Player : Component, IPlayer
     {
         public ILogger<IPlayer> Logger { get; private set; }
         public IPlayerManager PlayerManager { get; private set; }
@@ -37,24 +38,13 @@ namespace Turbo.Players
             PlayerInventory = playerInventoryFactory.Create(this);
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
-            if (IsInitialized) return;
-
-            // load roles
-            // load messenger
-
             await PlayerInventory.InitAsync();
-
-            IsInitialized = true;
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-            if (IsDisposing) return;
-
-            IsDisposing = true;
-
             ClearRoomObject();
 
             if (PlayerManager != null) await PlayerManager.RemovePlayer(Id);
@@ -67,8 +57,6 @@ namespace Turbo.Players
             await PlayerInventory.DisposeAsync();
 
             await Session.DisposeAsync();
-
-            IsDisposed = true;
         }
 
         public bool SetSession(ISession session)

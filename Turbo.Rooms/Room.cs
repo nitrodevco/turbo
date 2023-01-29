@@ -1,7 +1,7 @@
 ﻿using System;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
@@ -11,6 +11,7 @@ using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Room;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
@@ -22,7 +23,7 @@ using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
 
 namespace Turbo.Rooms
 {
-    public class Room : IRoom
+    public class Room : Component, IRoom
     {
         private static readonly int _disposeTicks = 120;
 
@@ -69,39 +70,30 @@ namespace Turbo.Rooms
             _roomObservers = new List<ISession>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
-            if (IsInitialized) return;
-
             await LoadMapping();
 
-            if (RoomSecurityManager != null) await RoomSecurityManager.InitAsync();
-            if (RoomFurnitureManager != null) await RoomFurnitureManager.InitAsync();
-            if (RoomUserManager != null) await RoomUserManager.InitAsync();
+            await RoomSecurityManager.InitAsync();
+            await RoomFurnitureManager.InitAsync();
+            await RoomUserManager.InitAsync();
 
             RoomCycleManager.Start();
-
-            IsInitialized = true;
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-            if (IsDisposing) return;
-
-            IsDisposing = true;
-
             _remainingDisposeTicks = -1;
 
             RoomCycleManager.Stop();
 
-            if (RoomManager != null) await RoomManager.RemoveRoom(Id);
+            await RoomManager.RemoveRoom(Id);
 
-            if (RoomCycleManager != null) RoomCycleManager.Dispose();
-            if (RoomUserManager != null) await RoomUserManager.DisposeAsync();
-            if (RoomFurnitureManager != null) await RoomFurnitureManager.DisposeAsync();
-            if (RoomSecurityManager != null) await RoomSecurityManager.DisposeAsync();
+            RoomCycleManager.Dispose();
 
-            IsDisposed = true;
+            await RoomUserManager.DisposeAsync();
+            await RoomFurnitureManager.DisposeAsync();
+            await RoomSecurityManager.DisposeAsync();
         }
 
         public void TryDispose()

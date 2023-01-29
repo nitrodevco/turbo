@@ -1,19 +1,16 @@
 ﻿using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Utilities;
 using Turbo.Inventory.Factories;
 
 namespace Turbo.Inventory
 {
-    public class PlayerInventory : IPlayerInventory
+    public class PlayerInventory : Component, IPlayerInventory
     {
         public IPlayer Player { get; private set; }
         public IPlayerFurnitureInventory FurnitureInventory { get; private set; }
         public IPlayerBadgeInventory BadgeInventory { get; private set; }
         public IUnseenItemsManager UnseenItemsManager { get; private set; }
-
-        public bool IsInitialized { get; private set; }
-        public bool IsDisposed { get; private set; }
-        public bool IsDisposing { get; private set; }
 
         public PlayerInventory(
             IPlayer player,
@@ -26,26 +23,16 @@ namespace Turbo.Inventory
             UnseenItemsManager = new UnseenItemsManager(player);
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
-            if (IsInitialized) return;
-
-            if (BadgeInventory != null) await BadgeInventory.InitAsync();
-            if (FurnitureInventory != null) await FurnitureInventory.InitAsync();
-
-            IsInitialized = true;
+            await BadgeInventory.InitAsync();
+            await FurnitureInventory.InitAsync();
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-            if (IsDisposing) return;
-
-            IsDisposing = true;
-
-            if (BadgeInventory != null) await BadgeInventory.DisposeAsync();
-            if (FurnitureInventory != null) await FurnitureInventory.DisposeAsync();
-
-            IsDisposed = true;
+            await BadgeInventory.DisposeAsync();
+            await FurnitureInventory.DisposeAsync();
         }
     }
 }

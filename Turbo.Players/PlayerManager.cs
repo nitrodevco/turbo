@@ -1,23 +1,24 @@
 ﻿using System.Collections;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Dtos;
+using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Storage;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
 using Turbo.Players.Factories;
-using Turbo.Core.Game.Inventory;
-using Turbo.Core.Database.Dtos;
 
 namespace Turbo.Players
 {
-    public class PlayerManager : IPlayerManager
+    public class PlayerManager : Component, IPlayerManager
     {
         private readonly ILogger<IPlayerManager> _logger;
         private readonly IStorageQueue _storageQueue;
@@ -43,7 +44,12 @@ namespace Turbo.Players
             _players = new ConcurrentDictionary<int, IPlayer>();
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnInit()
+        {
+
+        }
+
+        protected override async Task OnDispose()
         {
             await RemoveAllPlayers();
         }
@@ -124,7 +130,7 @@ namespace Turbo.Players
             return player;
         }
 
-        public async ValueTask RemovePlayer(int id)
+        public async Task RemovePlayer(int id)
         {
             if (id <= 0) return;
 
@@ -137,7 +143,7 @@ namespace Turbo.Players
             await player.DisposeAsync();
         }
 
-        public async ValueTask RemoveAllPlayers()
+        public async Task RemoveAllPlayers()
         {
             foreach (int id in _players.Keys)
             {
@@ -155,6 +161,26 @@ namespace Turbo.Players
         public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null)
         {
             await _navigatorManager.EnterRoom(player, roomId, password, skipState, location);
+        }
+
+        public async Task<string> GetPlayerName(int playerId)
+        {
+            var player = GetPlayerById(playerId);
+
+            if (player != null) return player.Name;
+
+            var name = "";
+
+            using (var scope = _serviceScopeFactory.CreateScope())
+            {
+                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+
+                var dto = await playerRepository.FindUsernameAsync(playerId);
+
+                if (dto != null) name = dto.Name;
+            }
+
+            return name;
         }
 
         public async Task<IList<IPlayerBadge>> GetPlayerActiveBadges(int playerId)

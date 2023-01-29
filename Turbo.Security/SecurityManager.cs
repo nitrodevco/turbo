@@ -1,12 +1,13 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Security;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Security;
 using Turbo.Database.Repositories.Security;
 
 namespace Turbo.Security
 {
-    public class SecurityManager : ISecurityManager
+    public class SecurityManager : Component, ISecurityManager
     {
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
@@ -15,12 +16,11 @@ namespace Turbo.Security
             _serviceScopeFactory = scopeFactory;
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
-
         }
 
-        public async ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
 
         }

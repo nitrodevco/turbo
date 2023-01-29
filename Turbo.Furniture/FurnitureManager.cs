@@ -1,18 +1,19 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Storage;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture.Definition;
 
 namespace Turbo.Furniture
 {
-    public class FurnitureManager : IFurnitureManager
+    public class FurnitureManager : Component, IFurnitureManager
     {
         private readonly ILogger<FurnitureManager> _logger;
         private readonly IServiceScopeFactory _serviceScopeFactory;
@@ -32,14 +33,13 @@ namespace Turbo.Furniture
             _furnitureDefinitions = new Dictionary<int, IFurnitureDefinition>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
             await LoadDefinitions();
         }
 
-        public ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-            return ValueTask.CompletedTask;
         }
 
         public IFurnitureDefinition GetFurnitureDefinition(int id)
@@ -62,7 +62,7 @@ namespace Turbo.Furniture
             }
         }
 
-        private async ValueTask LoadDefinitions()
+        private async Task LoadDefinitions()
         {
             // when definitions are reloaded
             // we need all furniture to reload their definitions
