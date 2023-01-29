@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Rooms.PathFinder.Constants;
 
@@ -23,5 +24,10 @@ namespace Turbo.Core.Game
         public static int DiceCycles = 4;
         public static int WiredFurniSelectionLimit = 5;
         public static string Delimiter = ";";
+        public static int MaximumChatDistance = 50;
+        public static Regex RoomNameRegex = new Regex("^(?=.*[A-Z,a-z,0-9]).{3,60}$");
+        public static Regex RoomDescriptionRegex = new Regex("^(?=.*[A-Z,a-z,0-9]).{1,60}$");
+        public static Regex RoomPasswordRegex = new Regex("^(?=.*[A-Z,a-z,0-9]).{1,60}$");
+        public static int MaximumUsersPerRoom = 100;
     }
 }
