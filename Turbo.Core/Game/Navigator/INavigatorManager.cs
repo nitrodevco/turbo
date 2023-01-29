@@ -2,10 +2,11 @@
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Core.Utilities;
 
 namespace Turbo.Core.Game.Navigator
 {
-    public interface INavigatorManager : IAsyncInitialisable, IAsyncDisposable
+    public interface INavigatorManager : IComponent
     {
         public int GetPendingRoomId(int userId);
         public void SetPendingRoomId(int userId, int roomId, bool approved = false);

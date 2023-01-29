@@ -3,10 +3,11 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Packets.Messages;
+using Turbo.Core.Utilities;
 
 namespace Turbo.Core.Game.Rooms.Managers
 {
-    public interface IRoomUserManager : IAsyncInitialisable, IAsyncDisposable
+    public interface IRoomUserManager : IComponent
     {
         public IRoomObjectContainer<IRoomObjectAvatar> AvatarObjects { get; }
         public IRoomObjectAvatar GetRoomObjectByUserId(int userId);

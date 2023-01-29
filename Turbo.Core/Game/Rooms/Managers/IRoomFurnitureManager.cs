@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
-using Turbo.Core.Game.Players;
+using Turbo.Core.Utilities;
 
 namespace Turbo.Core.Game.Rooms.Managers
 {
-    public interface IRoomFurnitureManager : IAsyncInitialisable, IAsyncDisposable
+    public interface IRoomFurnitureManager : IComponent
     {
         public IDictionary<int, string> FurnitureOwners { get; }
         public IRoomObjectContainer<IRoomObjectFloor> FloorObjects { get; }

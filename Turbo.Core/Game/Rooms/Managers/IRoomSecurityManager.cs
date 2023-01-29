@@ -1,14 +1,17 @@
 ﻿using System;
-using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Packets.Messages;
+using System.Collections.Generic;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms.Constants;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Packets.Messages;
+using Turbo.Core.Utilities;
 
 namespace Turbo.Core.Game.Rooms.Managers
 {
-    public interface IRoomSecurityManager : IAsyncInitialisable, IAsyncDisposable
+    public interface IRoomSecurityManager : IComponent
     {
+        public IList<int> Rights { get; }
         public bool IsStrictOwner(IRoomManipulator manipulator);
         public bool IsOwner(IRoomManipulator manipulator);
         public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator);

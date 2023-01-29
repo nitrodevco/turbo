@@ -1,6 +1,6 @@
 namespace Turbo.Core.PacketHandlers
 {
-    public interface IUserMessageHandler
+    public class IRoomSettingsMessageHandler
     {
 
     }

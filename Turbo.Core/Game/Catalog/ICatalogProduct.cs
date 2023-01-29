@@ -13,7 +13,7 @@ namespace Turbo.Core.Game.Catalog
         public void SetOffer(ICatalogOffer catalogOffer);
         public void SetFurnitureDefinition(IFurnitureDefinition furnitureDefinition);
         public bool CanPlayerRecieveProduct(IPlayer player);
-        public ValueTask GiveProductToPlayer(IPlayer player);
+        public Task GiveProductToPlayer(IPlayer player);
 
         public int Id { get; }
         public int OfferId { get; }

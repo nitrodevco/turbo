@@ -2,12 +2,18 @@
 {
     public enum RoomSettingsErrorType
     {
+        RoomNotFound = 1,
+        NotOwner = 2,
+        InvalidDoorMode = 3,
+        InvalidUserLimit = 4,
         InvalidPassword = 5,
+        InvalidCategory = 6,
         InvalidName = 7,
         BadName = 8,
+        InvalidDescription = 9,
         BadDescription = 10,
-        BadTags = 11,
-        InvalidTags = 12,
-        ToManyTags = 13
+        InvalidTag = 11,
+        BadTag = 12,
+        TagTooLong = 13
     }
 }

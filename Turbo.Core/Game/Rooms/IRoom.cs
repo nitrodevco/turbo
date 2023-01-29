@@ -1,15 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
+using Turbo.Core.Utilities;
 
 namespace Turbo.Core.Game.Rooms
 {
-    public interface IRoom : IAsyncInitialisable, IAsyncDisposable, ICyclable
+    public interface IRoom : IComponent, ICyclable
     {
         public ILogger<IRoom> Logger { get; }
         public IRoomManager RoomManager { get; }
