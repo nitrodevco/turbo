@@ -44,10 +44,6 @@ namespace Turbo.Rooms
         private object _roomObserverLock = new();
         private int _remainingDisposeTicks = -1;
 
-        public bool IsInitialized { get; private set; }
-        public bool IsDisposed { get; private set; }
-        public bool IsDisposing { get; private set; }
-
         public Room(
             ILogger<IRoom> logger,
             IRoomManager roomManager,

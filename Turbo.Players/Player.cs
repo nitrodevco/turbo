@@ -22,10 +22,6 @@ namespace Turbo.Players
         public ISession Session { get; private set; }
         public IRoomObjectAvatar RoomObject { get; private set; }
 
-        public bool IsInitialized { get; private set; }
-        public bool IsDisposed { get; private set; }
-        public bool IsDisposing { get; private set; }
-
         public Player(
             ILogger<IPlayer> logger,
             IPlayerManager playerManager,

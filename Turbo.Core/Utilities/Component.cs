@@ -8,7 +8,7 @@ namespace Turbo.Core.Utilities
     public abstract class Component : IComponent
     {
         public bool IsInitialized { get; private set; }
-        public bool Disposed { get; private set; }
+        public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
 
         public async ValueTask InitAsync()
@@ -22,13 +22,13 @@ namespace Turbo.Core.Utilities
 
         public async ValueTask DisposeAsync()
         {
-            if (Disposed || IsDisposing) return;
+            if (IsDisposed || IsDisposing) return;
 
             IsDisposing = true;
 
             await OnDispose();
 
-            Disposed = true;
+            IsDisposed = true;
             IsDisposing = false;
         }
 

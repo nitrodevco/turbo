@@ -24,10 +24,6 @@ namespace Turbo.Core.Game.Rooms
         public IRoomModel RoomModel { get; }
         public IRoomMap RoomMap { get; }
 
-        public bool IsInitialized { get; }
-        public bool IsDisposed { get; }
-        public bool IsDisposing { get; }
-
         public void TryDispose();
         public void CancelDispose();
 
