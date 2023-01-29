@@ -1,13 +1,14 @@
-﻿using Turbo.Core.Packets.Messages;
+﻿using Turbo.Core.Game.Rooms.Constants;
+using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.Room.Chat
 {
-    public record RoomChatSettings : IComposer
+    public record RoomChatSettingsMessage : IComposer
     {
-        public int ChatMode { get; init; }
-        public int ChatWeight { get; init; }
-        public int ChatSpeed { get; init; }
+        public RoomChatModeType ChatMode { get; init; }
+        public RoomChatWeightType ChatWeight { get; init; }
+        public RoomChatSpeedType ChatSpeed { get; init; }
         public int ChatDistance { get; init; }
-        public int ChatProtection { get; init; }
+        public RoomChatProtectionType ChatProtection { get; init; }
     }
 }
