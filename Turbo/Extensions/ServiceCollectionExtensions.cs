@@ -61,17 +61,18 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<ISessionFactory, SessionFactory>();
 
             // Packet Handlers
-            services.AddTransient<IPacketHandlerManager, PacketHandlerManager>();
+            services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
+            services.AddTransient<ICatalogMessageHandler, CatalogMessageHandler>();
+            services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
             services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();
+            services.AddTransient<IPacketHandlerManager, PacketHandlerManager>();
             services.AddTransient<IRoomAvatarMessageHandler, RoomAvatarMessageHandler>();
             services.AddTransient<IRoomEngineMessageHandler, RoomEngineMessageHandler>();
             services.AddTransient<IRoomFurnitureMessageHandler, RoomFurnitureMessageHandler>();
             services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
-            services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
-            services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
+            services.AddTransient<IRoomSettingsMessageHandler, RoomSettingsMessageHandler>();
             services.AddTransient<IUserMessageHandler, UserMessageHandler>();
             services.AddTransient<IWiredMessageHandler, WiredMessageHandler>();
-            services.AddTransient<ICatalogMessageHandler, CatalogMessageHandler>();
         }
 
         public static void AddManagers(this IServiceCollection services)

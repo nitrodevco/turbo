@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Catalog;
+using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
@@ -30,6 +31,7 @@ namespace Turbo.PacketHandlers
             _messageHub.Subscribe<GetCatalogIndexMessage>(this, OnGetCatalogIndexMessage);
             _messageHub.Subscribe<GetCatalogPageMessage>(this, OnGetCatalogPageMessage);
             _messageHub.Subscribe<PurchaseFromCatalogMessage>(this, OnPurchaseFromCatalogMessage);
+            _messageHub.Subscribe<GetProductOfferMessage>(this, OnGetProductOfferMessage);
         }
 
         public void OnGetCatalogIndexMessage(GetCatalogIndexMessage message, ISession session)
@@ -79,6 +81,20 @@ namespace Turbo.PacketHandlers
             if (session.Player == null) return;
 
             _catalogManager.PurchaseOffer(session.Player, message.PageId, message.OfferId, message.ExtraParam, message.Quantity);
+        }
+
+        public void OnGetProductOfferMessage(GetProductOfferMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            var offer = _catalogManager.Catalogs[CatalogType.Normal]?.GetOfferForPlayer(session.Player, message.OfferId);
+
+            if (offer == null) return;
+
+            session.Send(new ProductOfferMessage
+            {
+                Offer = offer
+            });
         }
     }
 }
