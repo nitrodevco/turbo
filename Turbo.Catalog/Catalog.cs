@@ -10,12 +10,13 @@ using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Repositories.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class Catalog : ICatalog
+    public class Catalog : Component, ICatalog
     {
         private readonly ILogger<ICatalog> _logger;
         private readonly IFurnitureManager _furnitureManager;
@@ -46,14 +47,14 @@ namespace Turbo.Catalog
             Products = new Dictionary<int, ICatalogProduct>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
             await LoadCatalog();
         }
 
-        public ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-            return ValueTask.CompletedTask;
+
         }
 
         public ICatalogPage GetRootForPlayer(IPlayer player)
@@ -68,6 +69,13 @@ namespace Turbo.Catalog
             if (player == null || !Pages.ContainsKey(pageId)) return null;
 
             return Pages[pageId];
+        }
+
+        public ICatalogOffer GetOfferForPlayer(IPlayer player, int offerId)
+        {
+            if (player == null || !Offers.ContainsKey(offerId)) return null;
+
+            return Offers[offerId];
         }
 
         public async Task<ICatalogOffer> PurchaseOffer(IPlayer player, int pageId, int offerId, string extraParam, int quantity)

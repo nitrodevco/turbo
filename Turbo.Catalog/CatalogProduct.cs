@@ -51,7 +51,7 @@ namespace Turbo.Catalog
             return true;
         }
 
-        public async ValueTask GiveProductToPlayer(IPlayer player)
+        public async Task GiveProductToPlayer(IPlayer player)
         {
             if (player == null) return;
 

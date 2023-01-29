@@ -10,13 +10,14 @@ using Turbo.Catalog.Factories;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Repositories.Catalog;
 using Turbo.Packets.Outgoing.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class CatalogManager : ICatalogManager
+    public class CatalogManager : Component, ICatalogManager
     {
         private readonly ILogger<ICatalogManager> _logger;
         private readonly ICatalogFactory _catalogFactory;
@@ -36,18 +37,18 @@ namespace Turbo.Catalog
             Catalogs = new Dictionary<string, ICatalog>();
         }
 
-        public async ValueTask InitAsync()
+        protected override async Task OnInit()
         {
-            ICatalog normalCatalog = _catalogFactory.CreateCatalog(CatalogType.Normal);
+            var normalCatalog = _catalogFactory.CreateCatalog(CatalogType.Normal);
 
             await normalCatalog.InitAsync();
 
             Catalogs.Add(normalCatalog.CatalogType, normalCatalog);
         }
 
-        public ValueTask DisposeAsync()
+        protected override async Task OnDispose()
         {
-            return ValueTask.CompletedTask;
+
         }
 
         public ICatalogPage GetRootForPlayer(IPlayer player, string catalogType)
@@ -57,7 +58,7 @@ namespace Turbo.Catalog
             return Catalogs[catalogType]?.GetRootForPlayer(player);
         }
 
-        public async ValueTask PurchaseOffer(IPlayer player, int pageId, int offerId, string extraParam, int quantity)
+        public async Task PurchaseOffer(IPlayer player, int pageId, int offerId, string extraParam, int quantity)
         {
             var offer = await Catalogs[CatalogType.Normal]?.PurchaseOffer(player, pageId, offerId, extraParam, quantity);
 
