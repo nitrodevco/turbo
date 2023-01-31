@@ -20,7 +20,7 @@ namespace Turbo.Database.Repositories.Catalog
         public async Task<CatalogProductEntity> FindAsync(int id) => await _context.CatalogProducts
             .FirstOrDefaultAsync(page => page.Id == id);
 
-        public async Task<IList<CatalogProductEntity>> FindAllAsync() => await _context.CatalogProducts
+        public async Task<List<CatalogProductEntity>> FindAllAsync() => await _context.CatalogProducts
             .ToListAsync();
     }
 }

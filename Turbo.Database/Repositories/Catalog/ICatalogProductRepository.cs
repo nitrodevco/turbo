@@ -6,6 +6,6 @@ namespace Turbo.Database.Repositories.Catalog
 {
     public interface ICatalogProductRepository : IBaseRepository<CatalogProductEntity>
     {
-        public Task<IList<CatalogProductEntity>> FindAllAsync();
+        public Task<List<CatalogProductEntity>> FindAllAsync();
     }
 }

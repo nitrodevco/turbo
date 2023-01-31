@@ -8,16 +8,18 @@ namespace Turbo.Core.Utilities
     public abstract class Component : IComponent
     {
         public bool IsInitialized { get; private set; }
+        public bool IsInitializing { get; private set; }
         public bool IsDisposed { get; private set; }
         public bool IsDisposing { get; private set; }
 
         public async ValueTask InitAsync()
         {
-            if (IsInitialized) return;
+            if (IsInitialized || IsInitializing) return;
 
             await OnInit();
 
             IsInitialized = true;
+            IsInitializing = false;
         }
 
         public async ValueTask DisposeAsync()

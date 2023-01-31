@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using Turbo.Database.Entities.Players;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Entities.Room
 {
@@ -13,6 +14,9 @@ namespace Turbo.Database.Entities.Room
 
         [Column("player_id"), Required]
         public int PlayerEntityId { get; set; }
+
+        [Column("date_expires"), Required]
+        public DateTime DateExpires { get; set; }
 
         public RoomEntity RoomEntity { get; set; }
 

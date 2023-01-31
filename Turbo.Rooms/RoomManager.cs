@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Database.Dtos;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
@@ -20,7 +23,7 @@ namespace Turbo.Rooms
 {
     public class RoomManager : Component, IRoomManager
     {
-        private static readonly int _tryDisposeTicks = 1200;
+        private static readonly SemaphoreSlim _roomLock = new(1, 1);
 
         private readonly ILogger<IRoomManager> _logger;
         private readonly IStorageQueue _storageQueue;
@@ -30,7 +33,7 @@ namespace Turbo.Rooms
         private readonly ConcurrentDictionary<int, IRoom> _rooms;
         private readonly IDictionary<int, IRoomModel> _models;
 
-        private int _remainingTryDisposeTicks = _tryDisposeTicks;
+        private int _remainingTryDisposeTicks = DefaultSettings.RoomTryDisposeTicks;
 
         public RoomManager(
             ILogger<IRoomManager> logger,
@@ -76,31 +79,41 @@ namespace Turbo.Rooms
 
         public async Task<IRoom> GetOfflineRoom(int id)
         {
-            var room = GetOnlineRoom(id);
+            await _roomLock.WaitAsync();
 
-            if (room != null) return room;
-
-            RoomEntity roomEntity = null;
-            string playerName = null;
-
-            using (var scope = _serviceScopeFactory.CreateScope())
+            try
             {
-                var roomRepository = scope.ServiceProvider.GetService<IRoomRepository>();
-                roomEntity = await roomRepository.FindAsync(id);
+                var room = GetOnlineRoom(id);
 
-                if (roomEntity == null) return null;
+                if (room != null) return room;
 
-                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-                var dto = await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId);
+                RoomEntity roomEntity = null;
+                string playerName = null;
 
-                if (dto != null) playerName = dto.Name;
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var roomRepository = scope.ServiceProvider.GetService<IRoomRepository>();
+                    roomEntity = await roomRepository.FindAsync(id);
+
+                    if (roomEntity == null) return null;
+
+                    var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+                    var dto = await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId);
+
+                    if (dto != null) playerName = dto.Name;
+                }
+
+                room = _roomFactory.Create(roomEntity);
+
+                room.RoomDetails.PlayerName = playerName;
+
+                return await AddRoom(room);
             }
 
-            room = _roomFactory.Create(roomEntity);
-
-            room.RoomDetails.PlayerName = playerName;
-
-            return await AddRoom(room);
+            finally
+            {
+                _roomLock.Release();
+            }
         }
 
         public async Task<IRoom> AddRoom(IRoom room)
@@ -204,7 +217,7 @@ namespace Turbo.Rooms
             {
                 TryDisposeAllRooms();
 
-                _remainingTryDisposeTicks = _tryDisposeTicks;
+                _remainingTryDisposeTicks = DefaultSettings.RoomTryDisposeTicks;
             }
 
             if (_remainingTryDisposeTicks > -1) _remainingTryDisposeTicks--;

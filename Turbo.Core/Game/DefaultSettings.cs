@@ -29,5 +29,7 @@ namespace Turbo.Core.Game
         public static Regex RoomDescriptionRegex = new Regex("^(?=.*[A-Z,a-z,0-9]).{1,60}$");
         public static Regex RoomPasswordRegex = new Regex("^(?=.*[A-Z,a-z,0-9]).{1,60}$");
         public static int MaximumUsersPerRoom = 100;
+        public static int RoomDisposeTicks = 120;
+        public static int RoomTryDisposeTicks = 1200;
     }
 }

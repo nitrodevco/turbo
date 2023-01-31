@@ -12,6 +12,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
         public RoomObjectAvatarDanceType DanceType { get; private set; }
         public bool IsIdle { get; private set; }
+        public bool IsKicked { get; private set; }
 
         private int _remainingIdleCycles;
         private int _remainingHeadCycles;

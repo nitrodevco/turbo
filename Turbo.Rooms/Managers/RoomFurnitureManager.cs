@@ -744,7 +744,7 @@ namespace Turbo.Rooms.Managers
                     {
                         foreach (PlayerUsernameDto dto in usernames)
                         {
-                            FurnitureOwners.Add(dto.Id, dto.Name);
+                            if (!FurnitureOwners.ContainsKey(dto.Id)) FurnitureOwners.Add(dto.Id, dto.Name);
                         }
                     }
                 }

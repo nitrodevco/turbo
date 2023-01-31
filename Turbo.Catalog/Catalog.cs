@@ -129,9 +129,9 @@ namespace Turbo.Catalog
             Offers.Clear();
             Products.Clear();
 
-            IList<CatalogPageEntity> pageEntities = null;
-            IList<CatalogOfferEntity> offerEntities = null;
-            IList<CatalogProductEntity> productEntities = null;
+            List<CatalogPageEntity> pageEntities = null;
+            List<CatalogOfferEntity> offerEntities = null;
+            List<CatalogProductEntity> productEntities = null;
 
             using (var scope = _serviceScopeFactory.CreateScope())
             {
@@ -142,6 +142,8 @@ namespace Turbo.Catalog
 
             if (pageEntities != null)
             {
+                pageEntities = pageEntities.OrderBy(entity => entity.Name).ToList();
+
                 foreach (var pageEntity in pageEntities)
                 {
                     if (!pageEntity.Visible) continue;

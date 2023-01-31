@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
@@ -25,8 +26,6 @@ namespace Turbo.Rooms
 {
     public class Room : Component, IRoom
     {
-        private static readonly int _disposeTicks = 120;
-
         public ILogger<IRoom> Logger { get; private set; }
         public IRoomManager RoomManager { get; private set; }
         public IRoomDetails RoomDetails { get; private set; }
@@ -104,7 +103,7 @@ namespace Turbo.Rooms
 
             // clear the users waiting at the door
 
-            _remainingDisposeTicks = _disposeTicks;
+            _remainingDisposeTicks = DefaultSettings.RoomDisposeTicks;
         }
 
         public void CancelDispose()

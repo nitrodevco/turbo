@@ -66,6 +66,7 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
             services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();
             services.AddTransient<IPacketHandlerManager, PacketHandlerManager>();
+            services.AddTransient<IRoomActionMessageHandler, RoomActionMessageHandler>();
             services.AddTransient<IRoomAvatarMessageHandler, RoomAvatarMessageHandler>();
             services.AddTransient<IRoomEngineMessageHandler, RoomEngineMessageHandler>();
             services.AddTransient<IRoomFurnitureMessageHandler, RoomFurnitureMessageHandler>();
@@ -115,11 +116,12 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IFurnitureRepository, FurnitureRepository>();
             services.AddScoped<IPlayerBadgeRepository, PlayerBadgeRepository>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
+            services.AddScoped<IRoomBanRepository, RoomBanRepository>();
             services.AddScoped<IRoomModelRepository, RoomModelRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IRoomRightRepository, RoomRightRepository>();
             services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
             services.AddScoped<INavigatorEventCategoryRepository, NavigatorEventCategoryRepository>();
-            services.AddScoped<IRoomRightRepository, RoomRightRepository>();
         }
     }
 }

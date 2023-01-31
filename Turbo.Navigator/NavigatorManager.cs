@@ -114,7 +114,7 @@ namespace Turbo.Navigator
 
             player.ClearRoomObject();
 
-            IRoom room = await _roomManager.GetRoom(roomId);
+            var room = await _roomManager.GetRoom(roomId);
 
             if (room != null) await room.InitAsync();
 
@@ -131,10 +131,21 @@ namespace Turbo.Navigator
                 return;
             }
 
-            // check ban
-
             if (!room.RoomSecurityManager.IsOwner(player))
             {
+                if (room.RoomSecurityManager.IsPlayerRoomBanned(player))
+                {
+                    ClearPendingRoomId(player.Id);
+
+                    await player.Session.Send(new CantConnectMessage
+                    {
+                        Reason = CantConnectReason.Banned,
+                        Parameter = ""
+                    });
+
+                    return;
+                }
+
                 if (room.RoomDetails.UsersNow >= room.RoomDetails.UsersMax)
                 {
                     ClearPendingRoomId(player.Id);
@@ -224,7 +235,7 @@ namespace Turbo.Navigator
 
             int roomId = _pendingRoomIds[player.Id].RoomId;
 
-            IRoom room = await _roomManager.GetRoom(roomId);
+            var room = await _roomManager.GetRoom(roomId);
 
             if (room == null)
             {

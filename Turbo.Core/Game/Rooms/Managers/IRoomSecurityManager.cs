@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Packets.Messages;
@@ -14,8 +16,11 @@ namespace Turbo.Core.Game.Rooms.Managers
         public IList<int> Rights { get; }
         public bool IsStrictOwner(IRoomManipulator manipulator);
         public bool IsOwner(IRoomManipulator manipulator);
+        public bool IsPlayerRoomBanned(IPlayer player);
         public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator);
         public void RefreshControllerLevel(IRoomObjectAvatar avatarObject);
+        public Task AdjustRightsForPlayerId(IRoomManipulator manipulator, int playerId, bool flag);
+        public Task RemoveAllRights(IRoomManipulator manipulator);
         public void SendOwnersComposer(IComposer composer);
         public void SendRightsComposer(IComposer composer);
         public bool CanManipulateFurniture(IRoomManipulator manipulator, IRoomFurniture furniture);

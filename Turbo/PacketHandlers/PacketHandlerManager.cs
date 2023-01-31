@@ -8,6 +8,7 @@ namespace Turbo.Main.PacketHandlers
         private readonly ICatalogMessageHandler _catalogMessageHandler;
         private readonly IInventoryMessageHandler _inventoryMessageHandler;
         private readonly INavigatorMessageHandler _navigatorMessageHandler;
+        private readonly IRoomActionMessageHandler _roomActionMessageHandler;
         private readonly IRoomAvatarMessageHandler _roomAvatarMessageHandler;
         private readonly IRoomEngineMessageHandler _roomEngineMessageHandler;
         private readonly IRoomFurnitureMessageHandler _roomFurnitureMessageHandler;
@@ -21,6 +22,7 @@ namespace Turbo.Main.PacketHandlers
             ICatalogMessageHandler catalogMessageHandler,
             IInventoryMessageHandler inventoryMessageHandler,
             INavigatorMessageHandler navigatorMessageHandler,
+            IRoomActionMessageHandler roomActionMessageHandler,
             IRoomAvatarMessageHandler roomAvatarMessageHandler,
             IRoomEngineMessageHandler roomEngineMessageHandler,
             IRoomFurnitureMessageHandler roomFurnitureMessageHandler,
@@ -33,6 +35,7 @@ namespace Turbo.Main.PacketHandlers
             _catalogMessageHandler = catalogMessageHandler;
             _inventoryMessageHandler = inventoryMessageHandler;
             _navigatorMessageHandler = navigatorMessageHandler;
+            _roomActionMessageHandler = roomActionMessageHandler;
             _roomAvatarMessageHandler = roomAvatarMessageHandler;
             _roomEngineMessageHandler = roomEngineMessageHandler;
             _roomFurnitureMessageHandler = roomFurnitureMessageHandler;

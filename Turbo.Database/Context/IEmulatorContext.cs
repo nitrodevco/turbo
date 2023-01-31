@@ -36,7 +36,11 @@ namespace Turbo.Database.Context
         public int SaveChanges();
         public Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default);
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+        public EntityEntry Add([NotNull] object entity);
+        public EntityEntry<TEntity> Add<TEntity>([NotNull] TEntity entity) where TEntity : class;
         public EntityEntry Update([NotNull] object entity);
         public EntityEntry<TEntity> Update<TEntity>([NotNull] TEntity entity) where TEntity : class;
+        public EntityEntry Remove([NotNull] object entity);
+        public EntityEntry<TEntity> Remove<TEntity>([NotNull] TEntity entity) where TEntity : class;
     }
 }
