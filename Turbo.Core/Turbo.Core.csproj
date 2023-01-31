@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
