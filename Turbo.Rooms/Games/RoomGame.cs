@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Games;
 using Turbo.Core.Game.Rooms.Games.Constants;
 using Turbo.Core.Game.Rooms.Games.Teams;
@@ -12,12 +13,16 @@ namespace Turbo.Rooms.Games
 {
     public class RoomGame : IRoomGame
     {
+        private readonly IRoom _room;
+
         public IDictionary<GameTeamColor, IRoomGameTeam> Teams { get; private set; }
 
         public RoomGame(
-
+            IRoom room
         )
         {
+            _room = room;
+
             Teams = new Dictionary<GameTeamColor, IRoomGameTeam>();
         }
 

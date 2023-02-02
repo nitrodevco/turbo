@@ -12,6 +12,8 @@ namespace Turbo.Rooms.Games.Teams
         public IRoomGameTeam Team { get; private set; }
         public IRoomObjectAvatar Avatar { get; private set; }
 
+        public int Score { get; private set; }
+
         public RoomGamePlayer(
             IRoomGameTeam team,
             IRoomObjectAvatar avatar
@@ -19,6 +21,16 @@ namespace Turbo.Rooms.Games.Teams
         {
             Team = team;
             Avatar = avatar;
+        }
+
+        public void Reset()
+        {
+            Score = 0;
+        }
+
+        public void AdjustScore(int amount)
+        {
+            Score += amount;
         }
     }
 }

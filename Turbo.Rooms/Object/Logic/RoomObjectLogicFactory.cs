@@ -4,6 +4,9 @@ using Turbo.Core.Game.Furniture.Data;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
+using Turbo.Rooms.Object.Logic.Furniture.Games.BattleBanzai;
+using Turbo.Rooms.Object.Logic.Furniture.Games.BattleBanzai.Gates;
+using Turbo.Rooms.Object.Logic.Furniture.Games.BattleBanzai.ScoreBoards;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Conditions;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 
@@ -31,10 +34,26 @@ namespace Turbo.Rooms.Object.Logic
             Logics.Add(RoomObjectLogicType.FurnitureTeleport, typeof(FurnitureTeleportLogic));
             Logics.Add(RoomObjectLogicType.FurnitureDice, typeof(FurnitureDiceLogic));
 
+            #region Battle Banzai
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiTeleport, typeof(FurnitureBattleBanzaiTeleportLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiTile, typeof(FurnitureBattleBanzaiTileLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiTimer, typeof(FurnitureBattleBanzaiTimerLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiGateBlue, typeof(FurnitureBattleBanzaiGateBlueLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiGateGreen, typeof(FurnitureBattleBanzaiGateGreenLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiGateRed, typeof(FurnitureBattleBanzaiGateRedLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiGateYellow, typeof(FurnitureBattleBanzaiGateYellowLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiScoreboardBlue, typeof(FurnitureBattleBanzaiScoreboardBlueLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiScoreboardGreen, typeof(FurnitureBattleBanzaiScoreboardGreenLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiScoreboardRed, typeof(FurnitureBattleBanzaiScoreboardRedLogic));
+            Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiScoreboardYellow, typeof(FurnitureBattleBanzaiScoreboardYellowLogic));
+            #endregion
+
+            #region Wired Triggers
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, typeof(FurnitureWiredTriggerEnterRoomLogic));
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerWalksOnFurni, typeof(FurnitureWiredTriggerWalksOnFurni));
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerWalksOffFurni, typeof(FurnitureWiredTriggerWalksOffFurni));
             Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerStateChanged, typeof(FurnitureWiredTriggerStateChangeLogic));
+            #endregion
 
             #region Wired Conditions
             Logics.Add(RoomObjectLogicType.FurnitureWiredConditionActorIsWearingBadge, typeof(FurnitureWiredConditionActorIsWearingBadge));
