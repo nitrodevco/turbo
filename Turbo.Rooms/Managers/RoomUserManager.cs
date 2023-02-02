@@ -76,7 +76,7 @@ namespace Turbo.Rooms.Managers
                 return null;
             }
 
-            _room.RoomMap.AddRoomObjects(avatarObject);
+            _room.RoomMap.AddAvatarObject(avatarObject);
 
             AvatarObjects.AddRoomObject(avatarObject);
 
@@ -124,7 +124,7 @@ namespace Turbo.Rooms.Managers
 
             AvatarObjects.RemoveRoomObject(avatarObject);
 
-            _room.RoomMap.RemoveRoomObjects(-1, avatarObject);
+            _room.RoomMap.RemoveAvatarObject(avatarObject);
 
             // if the avatar object was playing a game, remove it from that game
 
@@ -151,7 +151,6 @@ namespace Turbo.Rooms.Managers
                 if (existingAvatarObject.Logic is AvatarLogic avatarLogic)
                 {
                     var danceType = avatarLogic.DanceType;
-                    var isIdle = avatarLogic.IsIdle;
 
                     if (danceType > RoomObjectAvatarDanceType.None)
                     {
@@ -162,12 +161,12 @@ namespace Turbo.Rooms.Managers
                         });
                     }
 
-                    if (isIdle)
+                    if (existingAvatarObject.Logic is PlayerLogic playerLogic)
                     {
-                        composers.Add(new SleepMessage
+                        if (playerLogic.IsIdle) composers.Add(new SleepMessage
                         {
                             ObjectId = existingAvatarObject.Id,
-                            Sleeping = isIdle
+                            Sleeping = playerLogic.IsIdle
                         });
                     }
                 }

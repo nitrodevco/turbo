@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,6 +23,25 @@ namespace Turbo.Database.Repositories.Room
         public async Task<List<RoomBanEntity>> FindAllByRoomIdAsync(int roomId) => await _context.RoomBans
             .Where(entity => entity.RoomEntityId == roomId)
             .ToListAsync();
+
+        public async Task<bool> BanPlayerIdAsync(int roomId, int playerId, DateTime expiration)
+        {
+            var entity = await _context.RoomBans.FirstOrDefaultAsync(entity => (entity.RoomEntityId == roomId) && (entity.PlayerEntityId == playerId));
+
+            if (entity != null) return false;
+
+            entity = new RoomBanEntity();
+
+            entity.RoomEntityId = roomId;
+            entity.PlayerEntityId = playerId;
+            entity.DateExpires = expiration;
+
+            _context.Add(entity);
+
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
 
         public async Task<bool> RemoveBanEntityAsync(RoomBanEntity entity)
         {

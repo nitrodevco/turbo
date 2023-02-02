@@ -133,7 +133,7 @@ namespace Turbo.Navigator
 
             if (!room.RoomSecurityManager.IsOwner(player))
             {
-                if (room.RoomSecurityManager.IsPlayerRoomBanned(player))
+                if (room.RoomSecurityManager.IsPlayerBanned(player))
                 {
                     ClearPendingRoomId(player.Id);
 

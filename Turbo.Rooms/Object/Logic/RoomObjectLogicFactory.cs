@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Turbo.Core.Game.Furniture.Data;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture;
-using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Conditions;
-using Turbo.Core.Game.Furniture.Data;
+using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 
 namespace Turbo.Rooms.Object.Logic
 {
@@ -18,7 +18,7 @@ namespace Turbo.Rooms.Object.Logic
         {
             Logics = new Dictionary<string, Type>();
 
-            Logics.Add(RoomObjectLogicType.User, typeof(AvatarLogic));
+            Logics.Add(RoomObjectLogicType.User, typeof(PlayerLogic));
             Logics.Add(RoomObjectLogicType.Pet, typeof(PetLogic));
             Logics.Add(RoomObjectLogicType.Bot, typeof(BotLogic));
             Logics.Add(RoomObjectLogicType.RentableBot, typeof(RentableBotLogic));

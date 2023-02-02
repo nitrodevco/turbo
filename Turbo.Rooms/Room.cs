@@ -237,5 +237,7 @@ namespace Turbo.Rooms
         }
 
         public int Id => RoomDetails.Id;
+
+        public bool IsGroupRoom => false;
     }
 }

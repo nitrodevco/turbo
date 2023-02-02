@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Action;
@@ -7,21 +8,14 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 {
     public class AvatarLogic : MovingAvatarLogic
     {
-        private static readonly int _idleCycles = 1200;
-        private static readonly int _headTurnCycles = 6;
-
         public RoomObjectAvatarDanceType DanceType { get; private set; }
-        public bool IsIdle { get; private set; }
-        public bool IsKicked { get; private set; }
 
-        private int _remainingIdleCycles;
         private int _remainingHeadCycles;
 
         public override bool OnReady()
         {
             if (!base.OnReady()) return false;
 
-            _remainingIdleCycles = _idleCycles;
             _remainingHeadCycles = -1;
 
             return true;
@@ -30,20 +24,6 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public override async Task Cycle()
         {
             await base.Cycle();
-
-            if (_remainingIdleCycles > -1)
-            {
-                if (_remainingIdleCycles == 0)
-                {
-                    Idle(true);
-
-                    _remainingIdleCycles = -1;
-
-                    return;
-                }
-
-                _remainingIdleCycles--;
-            }
 
             if (_remainingHeadCycles > -1)
             {
@@ -62,59 +42,80 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             }
         }
 
-        public override void WalkTo(IPoint location, bool selfWalk = false)
+        public override void InvokeCurrentLocation()
         {
-            base.WalkTo(location, selfWalk);
+            var roomTile = GetCurrentTile();
 
-            Idle(false);
+            if (roomTile == null) return;
+
+            if (!roomTile.CanSit() || !roomTile.CanLay())
+            {
+                Sit(false);
+                Lay(false);
+            }
+
+            base.InvokeCurrentLocation();
         }
 
-        public override void GoTo(IPoint location, bool selfWalk = false)
-        {
-            base.GoTo(location, selfWalk);
-
-            Idle(false);
-        }
-
-        public override void Sit(bool flag = true, double height = 0.50, Rotation? rotation = null)
+        public virtual bool Sit(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
             if (flag)
             {
+                if (HasStatus(RoomObjectAvatarStatus.Sit)) return false;
+
                 Dance(RoomObjectAvatarDanceType.None);
+                RemoveStatus(RoomObjectAvatarStatus.Lay);
+
+                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
+
+                RoomObject.Location.SetRotation(rotation);
+
+                AddStatus(RoomObjectAvatarStatus.Sit, string.Format("{0:N3}", height));
+            }
+            else
+            {
+                if (!HasStatus(RoomObjectAvatarStatus.Sit)) return false;
+
+                RemoveStatus(RoomObjectAvatarStatus.Sit);
             }
 
-            Idle(false);
-
-            base.Sit(flag, height, rotation);
+            return true;
         }
 
-        public override void Lay(bool flag = true, double height = 0.50, Rotation? rotation = null)
+        public virtual bool Lay(bool flag = true, double height = 0.50, Rotation? rotation = null)
         {
             if (flag)
             {
+                if (HasStatus(RoomObjectAvatarStatus.Lay)) return false;
+
                 Dance(RoomObjectAvatarDanceType.None);
+                RemoveStatus(RoomObjectAvatarStatus.Sit);
+
+                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
+
+                RoomObject.Location.SetRotation(rotation);
+
+                AddStatus(RoomObjectAvatarStatus.Lay, string.Format("{0:N3}", height));
+            }
+            else
+            {
+                if (!HasStatus(RoomObjectAvatarStatus.Lay)) return false;
+
+                RemoveStatus(RoomObjectAvatarStatus.Lay);
             }
 
-            Idle(false);
-
-            base.Lay(flag, height, rotation);
+            return true;
         }
 
-        public void LookAtPoint(IPoint point, bool headOnly = false, bool selfInvoked = true)
+        public virtual bool LookAtPoint(IPoint point, bool headOnly = false, bool selfInvoked = true)
         {
-            if (selfInvoked) Idle(false);
-
-            if (IsWalking || IsIdle) return;
-
-            if (RoomObject.Location.Compare(point)) return;
-
-            if (HasStatus(RoomObjectAvatarStatus.Lay)) return;
+            if (RoomObject.Location.Compare(point) || HasStatus(RoomObjectAvatarStatus.Lay)) return false;
 
             if (headOnly || HasStatus(RoomObjectAvatarStatus.Sit))
             {
                 RoomObject.Location.HeadRotation = RoomObject.Location.CalculateHeadRotation(point);
 
-                _remainingHeadCycles = _headTurnCycles;
+                _remainingHeadCycles = DefaultSettings.HeadTurnCycles;
             }
             else
             {
@@ -122,18 +123,18 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             }
 
             RoomObject.NeedsUpdate = true;
+
+            return true;
         }
 
-        public void Dance(RoomObjectAvatarDanceType danceType)
+        public virtual bool Dance(RoomObjectAvatarDanceType danceType)
         {
-            if (danceType == DanceType) return;
+            if (danceType == DanceType) return false;
 
-            if (HasStatus(RoomObjectAvatarStatus.Sit, RoomObjectAvatarStatus.Lay)) return;
+            if (HasStatus(RoomObjectAvatarStatus.Sit, RoomObjectAvatarStatus.Lay)) return false;
 
             // check if the dance type is valid
             // check if the dance is hc only and validate subscription status
-
-            Idle(false);
 
             DanceType = danceType;
 
@@ -142,65 +143,35 @@ namespace Turbo.Rooms.Object.Logic.Avatar
                 ObjectId = RoomObject.Id,
                 DanceStyle = (int)danceType
             });
+
+            return true;
         }
 
-        public void Expression(RoomObjectAvatarExpression expressionType)
+        public virtual bool Expression(RoomObjectAvatarExpression expressionType)
         {
-            if (expressionType == RoomObjectAvatarExpression.Idle)
-            {
-                Idle(true);
-
-                return;
-            }
+            if (expressionType == RoomObjectAvatarExpression.Idle) return false;
 
             // check if the expression type is valid
             // check if the expression is hc only and validate subscription status
-
-            Idle(false);
 
             RoomObject.Room.SendComposer(new ExpressionMessage
             {
                 ObjectId = RoomObject.Id,
                 ExpressionType = (int)expressionType
             });
+
+            return true;
         }
 
-        public void Sign(int sign)
+        public virtual bool Sign(int sign)
         {
-            if (sign < 0 || sign > 17) return;
+            if (sign < 0 || sign > 17) return false;
 
-            if (HasStatus(RoomObjectAvatarStatus.Lay)) return;
-
-            Idle(false);
+            if (HasStatus(RoomObjectAvatarStatus.Lay)) return false;
 
             AddStatus(RoomObjectAvatarStatus.Sign, sign.ToString());
-        }
 
-        public void Idle(bool flag)
-        {
-            if (!flag)
-            {
-                ResetIdleCycle();
-            }
-            else
-            {
-                _remainingIdleCycles = -1;
-            }
-
-            if (flag == IsIdle) return;
-
-            IsIdle = flag;
-
-            RoomObject.Room.SendComposer(new SleepMessage
-            {
-                ObjectId = RoomObject.Id,
-                Sleeping = IsIdle
-            });
-        }
-
-        private void ResetIdleCycle()
-        {
-            _remainingIdleCycles = _idleCycles;
+            return true;
         }
     }
 }

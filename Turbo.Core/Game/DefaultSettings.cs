@@ -31,5 +31,8 @@ namespace Turbo.Core.Game
         public static int MaximumUsersPerRoom = 100;
         public static int RoomDisposeTicks = 120;
         public static int RoomTryDisposeTicks = 1200;
+        public static int HeadTurnCycles = 6;
+        public static int AvatarIdleCycles = 1200;
+        public static int RollerCycles = 4;
     }
 }

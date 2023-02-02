@@ -125,7 +125,7 @@ namespace Turbo.Rooms.Managers
                 return null;
             }
 
-            _room.RoomMap.AddRoomObjects(floorObject);
+            _room.RoomMap.AddFloorObject(floorObject);
 
             FloorObjects.AddRoomObject(floorObject);
 
@@ -163,7 +163,7 @@ namespace Turbo.Rooms.Managers
                 pickerId = picker;
             }
 
-            _room.RoomMap.RemoveRoomObjects(pickerId, floorObject);
+            _room.RoomMap.RemoveFloorObject(floorObject, pickerId);
 
             floorObject.Dispose();
         }
@@ -246,7 +246,7 @@ namespace Turbo.Rooms.Managers
                 return null;
             }
 
-            _room.RoomMap.AddRoomObjects(wallObject);
+            _room.RoomMap.AddWallObject(wallObject);
 
             WallObjects.AddRoomObject(wallObject);
 
@@ -284,7 +284,7 @@ namespace Turbo.Rooms.Managers
                 pickerId = picker;
             }
 
-            _room.RoomMap.RemoveRoomObjects(pickerId, wallObject);
+            _room.RoomMap.RemoveWallObject(wallObject, pickerId);
 
             wallObject.Dispose();
         }

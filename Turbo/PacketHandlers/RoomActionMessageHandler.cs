@@ -46,9 +46,17 @@ namespace Turbo.PacketHandlers
             await session.Player.RoomObject?.Room?.RoomSecurityManager?.AdjustRightsForPlayerId(session.Player, message.PlayerId, true);
         }
 
-        private void OnBanUserWithDurationMessage(BanUserWithDurationMessage message, ISession session)
+        private async Task OnBanUserWithDurationMessage(BanUserWithDurationMessage message, ISession session)
         {
             if (session.Player == null) return;
+
+            var durationMs = 0.0;
+
+            if (message.BanType.Equals("RWUAM_BAN_USER_HOUR")) durationMs = 3600000.0;
+            if (message.BanType.Equals("RWUAM_BAN_USER_DAY")) durationMs = 86400000.0;
+            if (message.BanType.Equals("RWUAM_BAN_USER_PERM")) durationMs = 15768000000.0; // 5 years
+
+            await session.Player.RoomObject?.Room?.RoomSecurityManager?.BanPlayerIdWithDuration(session.Player, message.PlayerId, durationMs);
         }
 
         private void OnLetUserInMessage(LetUserInMessage message, ISession session)
@@ -79,7 +87,7 @@ namespace Turbo.PacketHandlers
 
         private void OnRoomUserKickMessage(RoomUserKickMessage message, ISession session)
         {
-            if (session.Player == null) return;
+            session.Player.RoomObject?.Room?.RoomSecurityManager?.KickPlayer(session.Player, message.PlayerId);
         }
 
         private void OnRoomUserMuteMessage(RoomUserMuteMessage message, ISession session)

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Object.Logic.Furniture;
-using Turbo.Core.Game;
 
 namespace Turbo.Rooms.Mapping
 {
@@ -93,10 +93,7 @@ namespace Turbo.Rooms.Mapping
 
             var index = Furniture.IndexOf(floorObject);
 
-            if ((index >= 0) && (index < (Furniture.Count - 1)))
-            {
-                return Furniture[index + 1];
-            }
+            if ((index >= 0) && (index < (Furniture.Count - 1))) return Furniture[index + 1];
 
             return null;
         }
@@ -107,10 +104,7 @@ namespace Turbo.Rooms.Mapping
 
             var index = Furniture.IndexOf(floorObject);
 
-            if (index > 0)
-            {
-                return Furniture[index - 1];
-            }
+            if (index > 0) return Furniture[index - 1];
 
             return null;
         }
@@ -119,10 +113,7 @@ namespace Turbo.Rooms.Mapping
         {
             _height = DefaultHeight;
 
-            if (HighestObject != null)
-            {
-                _height = HighestObject.Logic.Height;
-            }
+            if (HighestObject != null) _height = HighestObject.Logic.Height;
 
             ResetRelativeHeight();
         }
@@ -176,10 +167,7 @@ namespace Turbo.Rooms.Mapping
 
             if (HighestObject != null)
             {
-                if (HighestObject.Logic.CanSit() || HighestObject.Logic.CanLay())
-                {
-                    height -= HighestObject.Logic.StackHeight;
-                }
+                if (HighestObject.Logic.CanSit() || HighestObject.Logic.CanLay()) height -= HighestObject.Logic.StackHeight;
             }
 
             return Math.Round((double)height, 3);
@@ -240,6 +228,16 @@ namespace Turbo.Rooms.Mapping
             if (HighestObject != null && !HighestObject.Logic.CanStack()) return false;
 
             return true;
+        }
+
+        public void BeforeStep(IRoomObjectAvatar avatar)
+        {
+            HighestObject?.Logic?.BeforeStep(avatar);
+        }
+
+        public void OnStep(IRoomObjectAvatar avatar)
+        {
+            HighestObject?.Logic?.OnStep(avatar);
         }
 
         public double Height

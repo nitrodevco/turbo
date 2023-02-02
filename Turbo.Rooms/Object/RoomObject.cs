@@ -8,9 +8,7 @@ namespace Turbo.Rooms.Object
     public abstract class RoomObject : IRoomObject
     {
         public IRoom Room { get; private set; }
-
         public int Id { get; private set; }
-
         public bool NeedsUpdate { get; set; }
 
         protected bool _isDisposing;

@@ -54,7 +54,7 @@ namespace Turbo.Main.PacketHandlers
             });
         }
 
-        protected virtual async void OnGetItemDataMessage(GetItemDataMessage message, ISession session)
+        protected virtual void OnGetItemDataMessage(GetItemDataMessage message, ISession session)
         {
             if (session.Player == null) return;
 

@@ -47,9 +47,41 @@ namespace Turbo.PacketHandlers
             if (session.Player == null) return;
         }
 
-        protected virtual void OnGetBannedUsersFromRoomMessage(GetBannedUsersFromRoomMessage message, ISession session)
+        protected virtual async void OnGetBannedUsersFromRoomMessage(GetBannedUsersFromRoomMessage message, ISession session)
         {
             if (session.Player == null) return;
+
+            var room = await _roomManager.GetOfflineRoom(message.RoomId);
+
+            if (room == null) return;
+
+            await room.RoomSecurityManager.InitAsync();
+
+            if (!room.RoomSecurityManager.IsOwner(session.Player)) return;
+
+            Dictionary<int, string> bans = new();
+
+            foreach (var playerId in room.RoomSecurityManager.Bans.Keys)
+            {
+                var player = _playerManager.GetPlayerById(playerId);
+
+                if (player != null)
+                {
+                    bans.Add(player.Id, player.Name);
+                }
+                else
+                {
+                    var username = await _playerManager.GetPlayerName(playerId);
+
+                    bans.Add(playerId, username);
+                }
+            }
+
+            await session.Send(new BannedUsersFromRoomMessage
+            {
+                RoomId = room.Id,
+                Players = bans
+            });
         }
 
         protected virtual void OnGetCustomRoomFilterMessage(GetCustomRoomFilterMessage message, ISession session)

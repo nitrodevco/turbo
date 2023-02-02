@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -11,7 +12,6 @@ using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Utils;
-using Turbo.Core.Game;
 
 namespace Turbo.Rooms.Cycles
 {
@@ -26,15 +26,9 @@ namespace Turbo.Rooms.Cycles
         {
             List<IRoomObjectAvatar> updatedAvatarObjects = new();
 
-            var avatarObjects = _room.RoomUserManager.AvatarObjects.RoomObjects.Values;
-
-            if (avatarObjects.Count == 0) return;
-
-            foreach (var avatarObject in avatarObjects)
+            foreach (var avatarObject in _room.RoomUserManager.AvatarObjects.RoomObjects.Values)
             {
-                ProcessAvatarRoomObject(avatarObject);
-
-                if (!avatarObject.NeedsUpdate) continue;
+                if (avatarObject.Disposed || !ProcessAvatarRoomObject(avatarObject) || !avatarObject.NeedsUpdate) continue;
 
                 avatarObject.NeedsUpdate = false;
 
@@ -56,42 +50,47 @@ namespace Turbo.Rooms.Cycles
             }
         }
 
-        private void ProcessAvatarRoomObject(IRoomObjectAvatar avatarObject)
+        private bool ProcessAvatarRoomObject(IRoomObjectAvatar avatarObject)
         {
-            if (avatarObject == null) return;
-
-            if (!avatarObject.Logic.IsWalking || avatarObject.Logic.IsRolling) return;
+            if (avatarObject == null || avatarObject.Logic.IsRolling) return false;
 
             avatarObject.Logic.ProcessNextLocation();
 
+            if (avatarObject.Disposed) return false;
+
             if (avatarObject.Logic.NeedsRepathing) avatarObject.Logic.ResetPath();
 
-            if (avatarObject.Logic.CurrentPath.Count == 0)
+            if (avatarObject.Logic.IsWalking)
             {
-                if (avatarObject.Logic.BeforeGoalAction != null)
+                if (avatarObject.Logic.CurrentPath.Count == 0)
                 {
-                    avatarObject.Logic.InvokeBeforeGoalAction();
+                    if (avatarObject.Logic.BeforeGoalAction != null)
+                    {
+                        avatarObject.Logic.InvokeBeforeGoalAction();
 
-                    if (avatarObject.Logic.CurrentPath.Count == 0)
+                        if (avatarObject.Logic.CurrentPath.Count == 0)
+                        {
+                            avatarObject.Logic.StopWalking();
+
+                            return true;
+                        }
+                    }
+                    else
                     {
                         avatarObject.Logic.StopWalking();
 
-                        return;
+                        return true;
                     }
                 }
-                else
-                {
-                    avatarObject.Logic.StopWalking();
 
-                    return;
-                }
+                var nextLocation = avatarObject.Logic.CurrentPath[0];
+
+                avatarObject.Logic.CurrentPath.RemoveAt(0);
+
+                CheckStep(avatarObject, nextLocation);
             }
 
-            IPoint nextLocation = avatarObject.Logic.CurrentPath[0];
-
-            avatarObject.Logic.CurrentPath.RemoveAt(0);
-
-            CheckStep(avatarObject, nextLocation);
+            return true;
         }
 
         private void CheckStep(IRoomObjectAvatar avatarObject, IPoint locationNext)
@@ -103,9 +102,9 @@ namespace Turbo.Rooms.Cycles
                 return;
             }
 
-            bool isGoal = avatarObject.Logic.CurrentPath.Count == 0;
-            IRoomTile currentTile = avatarObject.Logic.GetCurrentTile();
-            IRoomTile nextTile = _room.RoomMap.GetTile(locationNext);
+            var isGoal = avatarObject.Logic.CurrentPath.Count == 0;
+            var currentTile = avatarObject.Logic.GetCurrentTile();
+            var nextTile = _room.RoomMap.GetTile(locationNext);
 
             if ((currentTile == null) || (nextTile == null) || (currentTile == nextTile))
             {
@@ -114,8 +113,8 @@ namespace Turbo.Rooms.Cycles
                 return;
             }
 
-            double currentHeight = currentTile.GetWalkingHeight();
-            double nextHeight = nextTile.GetWalkingHeight();
+            var currentHeight = currentTile.GetWalkingHeight();
+            var nextHeight = nextTile.GetWalkingHeight();
 
             if (Math.Abs(nextHeight - currentHeight) > Math.Abs(DefaultSettings.MaximumStepHeight))
             {
@@ -168,10 +167,7 @@ namespace Turbo.Rooms.Cycles
 
             if (currentTile.HighestObject != null)
             {
-                if (currentTile.HighestObject != nextTile.HighestObject)
-                {
-                    currentTile.HighestObject.Logic.OnLeave(avatarObject);
-                }
+                if (currentTile.HighestObject != nextTile.HighestObject) currentTile.HighestObject.Logic.OnLeave(avatarObject);
             }
 
             currentTile.RemoveRoomObject(avatarObject);
@@ -182,10 +178,10 @@ namespace Turbo.Rooms.Cycles
             avatarObject.Location.SetRotation(avatarObject.Location.CalculateWalkRotation(locationNext));
             avatarObject.Logic.LocationNext = locationNext;
 
+            nextTile.BeforeStep(avatarObject);
+
             if (nextTile.HighestObject != null)
             {
-                nextTile.HighestObject.Logic.BeforeStep(avatarObject);
-
                 if (nextTile.HighestObject != currentTile.HighestObject) nextTile.HighestObject.Logic.OnEnter(avatarObject);
             }
 

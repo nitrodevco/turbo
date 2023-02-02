@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
@@ -13,10 +14,7 @@ namespace Turbo.Rooms.Cycles
 {
     public class RoomRollerCycle : RoomCycle
     {
-        private readonly static int _rollerCycles = 4;
-        private readonly static double _maxFallingHeight = 0.5;
-
-        private int _remainingRollerCycles = _rollerCycles;
+        private int _remainingRollerCycles = DefaultSettings.RollerCycles;
 
         private List<IRollerData> _lastRollingDatas;
         private List<IPoint> _lastRollingPoints;
@@ -28,102 +26,105 @@ namespace Turbo.Rooms.Cycles
 
         public override async Task Cycle()
         {
-            if (_remainingRollerCycles > -1)
+            await Task.Run(() =>
             {
-                if (_lastRollingDatas != null)
+                if (_remainingRollerCycles > -1)
                 {
-                    CompleteLastRolls();
-                }
-
-                if (_remainingRollerCycles > 0)
-                {
-                    _remainingRollerCycles--;
-                }
-
-                if (_remainingRollerCycles != 0) return;
-
-                _remainingRollerCycles = _rollerCycles;
-            }
-
-            var rollers = _room.RoomFurnitureManager.GetFloorRoomObjectsWithLogic(typeof(FurnitureRollerLogic));
-
-            if (rollers.Count == 0) return;
-
-            List<IRollerData> rollingDatas = new();
-
-            foreach (var floorObject in rollers)
-            {
-                var rollingData = new RollerData(_room, floorObject.Location, floorObject.Location.GetPointForward());
-
-                rollingData.Roller = floorObject;
-
-                if (!ProcessRollerData(rollingData)) continue;
-
-                rollingDatas.Add(rollingData);
-            }
-
-            if (rollingDatas.Count == 0) return;
-
-            List<IPoint> points = new();
-            List<IComposer> composers = new();
-
-            foreach (var rollingData in rollingDatas)
-            {
-                points.Add(rollingData.Location);
-                points.Add(rollingData.LocationNext);
-
-                if (rollingData.Avatars.Count > 0)
-                {
-                    bool sent = false;
-
-                    foreach (var rollerItemData in rollingData.Avatars.Values)
+                    if (_lastRollingDatas != null)
                     {
-                        if (!sent)
+                        CompleteLastRolls();
+                    }
+
+                    if (_remainingRollerCycles > 0)
+                    {
+                        _remainingRollerCycles--;
+                    }
+
+                    if (_remainingRollerCycles != 0) return;
+
+                    _remainingRollerCycles = DefaultSettings.RollerCycles;
+                }
+
+                var rollers = _room.RoomFurnitureManager.GetFloorRoomObjectsWithLogic(typeof(FurnitureRollerLogic));
+
+                if (rollers.Count == 0) return;
+
+                List<IRollerData> rollingDatas = new();
+
+                foreach (var floorObject in rollers)
+                {
+                    var rollingData = new RollerData(_room, floorObject.Location, floorObject.Location.GetPointForward());
+
+                    rollingData.Roller = floorObject;
+
+                    if (!ProcessRollerData(rollingData)) continue;
+
+                    rollingDatas.Add(rollingData);
+                }
+
+                if (rollingDatas.Count == 0) return;
+
+                List<IPoint> points = new();
+                List<IComposer> composers = new();
+
+                foreach (var rollingData in rollingDatas)
+                {
+                    points.Add(rollingData.Location);
+                    points.Add(rollingData.LocationNext);
+
+                    if (rollingData.Avatars.Count > 0)
+                    {
+                        bool sent = false;
+
+                        foreach (var rollerItemData in rollingData.Avatars.Values)
                         {
+                            if (!sent)
+                            {
+                                composers.Add(new SlideObjectBundleMessage
+                                {
+                                    OldPos = rollingData.Location,
+                                    NewPos = rollingData.LocationNext,
+                                    Avatar = rollerItemData,
+                                    Furniture = (rollingData.Furniture != null) ? rollingData.Furniture.Values.ToList() : null,
+                                    RollerItemId = rollingData.Roller.Id
+                                });
+
+                                sent = true;
+
+                                continue;
+                            }
+
                             composers.Add(new SlideObjectBundleMessage
                             {
                                 OldPos = rollingData.Location,
                                 NewPos = rollingData.LocationNext,
                                 Avatar = rollerItemData,
-                                Furniture = (rollingData.Furniture != null) ? rollingData.Furniture.Values.ToList() : null,
                                 RollerItemId = rollingData.Roller.Id
                             });
-
-                            sent = true;
-
-                            continue;
                         }
-
-                        composers.Add(new SlideObjectBundleMessage
-                        {
-                            OldPos = rollingData.Location,
-                            NewPos = rollingData.LocationNext,
-                            Avatar = rollerItemData,
-                            RollerItemId = rollingData.Roller.Id
-                        });
                     }
-                }
-                else
-                {
-                    if (rollingData.Furniture.Count > 0)
+                    else
                     {
-                        composers.Add(new SlideObjectBundleMessage
+                        if (rollingData.Furniture.Count > 0)
                         {
-                            OldPos = rollingData.Location,
-                            NewPos = rollingData.LocationNext,
-                            Furniture = rollingData.Furniture.Values.ToList(),
-                            RollerItemId = rollingData.Roller.Id
-                        });
+                            composers.Add(new SlideObjectBundleMessage
+                            {
+                                OldPos = rollingData.Location,
+                                NewPos = rollingData.LocationNext,
+                                Furniture = rollingData.Furniture.Values.ToList(),
+                                RollerItemId = rollingData.Roller.Id
+                            });
+                        }
                     }
+
+                    rollingData.CommitRoll();
                 }
 
-                rollingData.CommitRoll();
-            }
+                if (composers.Count > 0) foreach (var composer in composers) _room.SendComposer(composer);
 
-            if (composers.Count > 0) foreach (var composer in composers) _room.SendComposer(composer);
-
-            _lastRollingDatas = rollingDatas;
-            _lastRollingPoints = points;
+                _lastRollingDatas = rollingDatas;
+                _lastRollingPoints = points;
+            });
         }
 
         private void CompleteLastRolls()

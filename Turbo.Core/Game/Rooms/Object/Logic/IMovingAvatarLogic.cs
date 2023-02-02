@@ -24,7 +24,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void ResetPath();
         public void StopWalking();
         public void ClearPath();
-        public void ProcessNextLocation();
+        public bool ProcessNextLocation();
         public void UpdateHeight(IRoomTile roomTile = null);
         public void InvokeCurrentLocation();
         public void InvokeBeforeGoalAction();

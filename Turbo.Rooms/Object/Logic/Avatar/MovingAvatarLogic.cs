@@ -42,10 +42,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             if (roomObject == RoomObject) return true;
 
-            if (RoomObject != null)
-            {
-                RoomObject.SetLogic(null);
-            }
+            RoomObject?.SetLogic(null);
 
             if (roomObject == null)
             {
@@ -67,9 +64,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             NeedsRepathing = false;
 
-            if (location == null) return;
-
-            if (!CanWalk && selfWalk) return;
+            if ((location == null) || (!CanWalk && selfWalk)) return;
 
             location = location.Clone();
 
@@ -79,7 +74,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (RoomObject.Location.Compare(location)) return;
 
-            IRoomTile roomTile = RoomObject.Room.RoomMap.GetValidTile(RoomObject, location);
+            var roomTile = RoomObject.Room.RoomMap.GetValidTile(RoomObject, location);
 
             if (roomTile == null)
             {
@@ -100,18 +95,14 @@ namespace Turbo.Rooms.Object.Logic.Avatar
                 }
             }
 
-            IList<IPoint> path = RoomObject.Room.RoomMap.PathFinder.MakePath(RoomObject, location);
-
-            WalkPath(location, path);
+            WalkPath(location, RoomObject.Room.RoomMap.PathFinder.MakePath(RoomObject, location));
         }
 
         public virtual void GoTo(IPoint location, bool selfWalk = false)
         {
             NeedsRepathing = false;
 
-            if (location == null) return;
-
-            if (!CanWalk && selfWalk) return;
+            if ((location == null) || (!CanWalk && selfWalk)) return;
 
             location = location.Clone();
 
@@ -123,8 +114,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             LocationNext = location;
 
-            IRoomTile currentTile = GetCurrentTile();
-            IRoomTile nextTile = GetNextTile();
+            var currentTile = GetCurrentTile();
+            var nextTile = GetNextTile();
 
             if (currentTile == null || nextTile == null) return;
 
@@ -172,7 +163,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             WalkTo(LocationGoal, true);
         }
 
-        public void StopWalking()
+        public virtual void StopWalking()
         {
             if (!IsWalking) return;
 
@@ -194,7 +185,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             if (RoomObject != null) RemoveStatus(RoomObjectAvatarStatus.Move);
         }
 
-        public void ClearPath()
+        public virtual void ClearPath()
         {
             if (CurrentPath == null) return;
 
@@ -202,73 +193,56 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             LocationNext = null;
         }
 
-        public void ProcessNextLocation()
+        public virtual bool ProcessNextLocation()
         {
-            if ((RoomObject == null) || (LocationNext == null)) return;
+            if ((RoomObject == null) || (LocationNext == null)) return false;
 
             RoomObject.Location.X = LocationNext.X;
             RoomObject.Location.Y = LocationNext.Y;
 
             LocationNext = null;
 
-            IRoomTile roomTile = GetCurrentTile();
+            var roomTile = GetCurrentTile();
 
-            if (roomTile == null || roomTile.IsDoor)
+            if (roomTile == null)
             {
                 StopWalking();
 
-                if (roomTile.IsDoor) RoomObject.Dispose();
-
-                return;
+                return true;
             }
 
             UpdateHeight(roomTile);
 
-            if (roomTile.HighestObject != null)
-            {
-                roomTile.HighestObject.Logic.OnStep(RoomObject);
-            }
+            roomTile.OnStep(RoomObject);
 
             RoomObject.NeedsUpdate = true;
+
+            return true;
         }
 
-        public void UpdateHeight(IRoomTile roomTile = null)
+        public virtual void UpdateHeight(IRoomTile roomTile = null)
         {
             roomTile ??= GetCurrentTile();
 
             if (roomTile == null) return;
 
-            double height = roomTile.GetWalkingHeight();
-            double oldHeight = RoomObject.Location.Z;
+            var height = roomTile.GetWalkingHeight();
+            var oldHeight = RoomObject.Location.Z;
 
             if (height == oldHeight) return;
 
             RoomObject.Location.Z = height;
-
             RoomObject.NeedsUpdate = true;
         }
 
-        public void InvokeCurrentLocation()
+        public virtual void InvokeCurrentLocation()
         {
-            IRoomTile roomTile = GetCurrentTile();
-
-            if (roomTile == null) return;
-
-            if (!roomTile.CanSit() || !roomTile.CanLay())
-            {
-                Sit(false);
-                Lay(false);
-            }
-
-            if (roomTile.HighestObject != null)
-            {
-                roomTile.HighestObject.Logic.OnStop(RoomObject);
-            }
+            GetCurrentTile()?.HighestObject?.Logic?.OnStop(RoomObject);
 
             UpdateHeight();
         }
 
-        public void InvokeBeforeGoalAction()
+        public virtual void InvokeBeforeGoalAction()
         {
             if (BeforeGoalAction == null) return;
 
@@ -277,7 +251,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             BeforeGoalAction = null;
         }
 
-        public void InvokeGoalAction()
+        public virtual void InvokeGoalAction()
         {
             if (GoalAction == null) return;
 
@@ -286,43 +260,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             GoalAction = null;
         }
 
-        public virtual void Sit(bool flag = true, double height = 0.50, Rotation? rotation = null)
-        {
-            if (flag)
-            {
-                RemoveStatus(RoomObjectAvatarStatus.Lay);
-
-                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
-
-                RoomObject.Location.SetRotation(rotation);
-
-                AddStatus(RoomObjectAvatarStatus.Sit, string.Format("{0:N3}", height));
-            }
-            else
-            {
-                RemoveStatus(RoomObjectAvatarStatus.Sit);
-            }
-        }
-
-        public virtual void Lay(bool flag = true, double height = 0.50, Rotation? rotation = null)
-        {
-            if (flag)
-            {
-                RemoveStatus(RoomObjectAvatarStatus.Sit);
-
-                rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
-
-                RoomObject.Location.SetRotation(rotation);
-
-                AddStatus(RoomObjectAvatarStatus.Lay, string.Format("{0:N3}", height));
-            }
-            else
-            {
-                RemoveStatus(RoomObjectAvatarStatus.Lay);
-            }
-        }
-
-        public void AddStatus(string type, string value)
+        public virtual void AddStatus(string type, string value)
         {
             if (string.IsNullOrWhiteSpace(type)) return;
 
@@ -332,7 +270,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             RoomObject.NeedsUpdate = true;
         }
 
-        public bool HasStatus(params string[] types) => types != null && types.Length != 0 && types.Any(x => Statuses.ContainsKey(x));
+        public virtual bool HasStatus(params string[] types) => types != null && types.Length != 0 && types.Any(x => Statuses.ContainsKey(x));
 
         public void RemoveStatus(params string[] types)
         {

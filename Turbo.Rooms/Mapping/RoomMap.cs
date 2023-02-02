@@ -83,7 +83,7 @@ namespace Turbo.Rooms.Mapping
 
             var roomTile = _map[point.X][point.Y];
 
-            if (roomTile.State == RoomTileState.Closed) return null;
+            if (roomTile == null || roomTile.State == RoomTileState.Closed) return null;
 
             return roomTile;
         }
@@ -94,18 +94,13 @@ namespace Turbo.Rooms.Mapping
 
             var roomTile = GetTile(point);
 
-            if (roomTile == null) return null;
-
-            if (roomTile.State == RoomTileState.Closed) return null;
+            if (roomTile == null || (roomTile.State == RoomTileState.Closed)) return null;
 
             if (roomTile.IsDoor) return roomTile;
 
             if (roomTile.Avatars.Count > 0)
             {
-                foreach (var tileAvatarObject in roomTile.Avatars)
-                {
-                    if (tileAvatarObject == avatarObject) return roomTile;
-                }
+                if (roomTile.Avatars.Contains(avatarObject)) return roomTile;
 
                 if (blockingDisabled)
                 {
@@ -125,16 +120,13 @@ namespace Turbo.Rooms.Mapping
 
             var roomTile = GetTile(point);
 
-            if (roomTile == null) return null;
+            if (roomTile == null || (roomTile.State == RoomTileState.Closed)) return null;
 
             if (roomTile.IsDoor) return roomTile;
 
             if (roomTile.Avatars.Count > 0)
             {
-                foreach (var tileAvatarObject in roomTile.Avatars)
-                {
-                    if (tileAvatarObject == avatarObject) return roomTile;
-                }
+                if (roomTile.Avatars.Contains(avatarObject)) return roomTile;
 
                 if (!blockingDisabled) return null;
             }
@@ -148,9 +140,9 @@ namespace Turbo.Rooms.Mapping
         {
             var pillowPoints = AffectedPoints.GetPillowPoints(floorObject);
 
-            originalPoint = originalPoint.Clone();
-
             if ((pillowPoints == null) || (pillowPoints.Count == 0)) return null;
+
+            originalPoint = originalPoint.Clone();
 
             foreach (var point in pillowPoints)
             {
@@ -188,10 +180,7 @@ namespace Turbo.Rooms.Mapping
 
                 var height = roomTile.Height;
 
-                if (roomTile.HighestObject == floorObject)
-                {
-                    height -= roomTile.HighestObject.Logic.Height;
-                }
+                if (roomTile.HighestObject == floorObject) height -= roomTile.HighestObject.Logic.Height;
 
                 if (height < highestTile.Height) continue;
 
@@ -201,123 +190,77 @@ namespace Turbo.Rooms.Mapping
             return highestTile;
         }
 
-        public void AddRoomObjects(params IRoomObject[] roomObjects)
+        public void AddFloorObject(IRoomObjectFloor floorObject)
         {
-            if (roomObjects.Length <= 0) return;
+            if (floorObject == null) return;
 
-            List<IRoomObjectFloor> floorObjects = new();
-            List<IRoomObjectWall> wallObjects = new();
-            List<IRoomObjectAvatar> avatarObjects = new();
             List<IPoint> points = new();
 
-            foreach (IRoomObject roomObject in roomObjects)
+            var affectedPoints = AffectedPoints.GetPoints(floorObject);
+
+            if (affectedPoints.Count > 0)
             {
-                if (roomObject is IRoomObjectFloor floorObject)
+                foreach (var affectedPoint in affectedPoints)
                 {
-                    var affectedPoints = AffectedPoints.GetPoints(floorObject);
+                    var roomTile = GetTile(affectedPoint);
 
-                    if (affectedPoints.Count > 0)
-                    {
-                        foreach (var affectedPoint in affectedPoints)
-                        {
-                            var roomTile = GetTile(affectedPoint);
+                    if (roomTile == null) continue;
 
-                            if (roomTile != null)
-                            {
-                                roomTile.AddRoomObject(floorObject);
+                    roomTile.AddRoomObject(floorObject);
 
-                                points.Add(affectedPoint);
-                            }
-                        }
-                    }
-
-                    floorObjects.Add(floorObject);
-
-                    continue;
-                }
-
-                if (roomObject is IRoomObjectWall wallObject)
-                {
-                    wallObjects.Add(wallObject);
-
-                    continue;
-                }
-
-                if (roomObject is IRoomObjectAvatar avatarObject)
-                {
-                    var roomTile = GetTile(avatarObject.Location);
-
-                    if (roomTile != null)
-                    {
-                        roomTile.AddRoomObject(roomObject);
-                    }
-
-                    avatarObject.Logic.InvokeCurrentLocation();
-
-                    roomObject.NeedsUpdate = false;
-
-                    avatarObjects.Add(avatarObject);
-
-                    continue;
+                    points.Add(affectedPoint);
                 }
             }
 
             if (!_room.IsInitialized) return;
 
-            if (floorObjects.Count > 0)
+            _room.SendComposer(new ObjectAddMessage
             {
-                if (floorObjects.Count == 1)
-                {
-                    _room.SendComposer(new ObjectAddMessage
-                    {
-                        Object = floorObjects[0],
-                        OwnerName = floorObjects[0].RoomObjectHolder?.PlayerName
-                    });
-                }
-                else
-                {
-                    _room.SendComposer(new ObjectsMessage
-                    {
-                        Objects = floorObjects,
-                        OwnersIdToUsername = floorObjects[0].Room?.RoomFurnitureManager?.FurnitureOwners
-                    });
-                }
+                Object = floorObject,
+                OwnerName = floorObject.RoomObjectHolder?.PlayerName ?? ""
+            });
 
-                UpdatePoints(true, points.ToArray());
-            }
+            UpdatePoints(true, points.ToArray());
+        }
 
-            if (wallObjects.Count > 0)
+        public void AddWallObject(IRoomObjectWall wallObject)
+        {
+            if (wallObject == null) return;
+
+            if (!_room.IsInitialized) return;
+
+            _room.SendComposer(new ItemAddMessage
             {
-                if (wallObjects.Count == 1)
-                {
-                    _room.SendComposer(new ItemAddMessage
-                    {
-                        Object = wallObjects[0],
-                        OwnerName = wallObjects[0].RoomObjectHolder?.PlayerName
-                    });
-                }
-                else
-                {
-                    _room.SendComposer(new ItemsMessage
-                    {
-                        Objects = wallObjects,
-                        OwnersIdToUsername = wallObjects[0].Room?.RoomFurnitureManager?.FurnitureOwners
-                    });
-                }
-            }
+                Object = wallObject,
+                OwnerName = wallObject.RoomObjectHolder?.PlayerName ?? ""
+            });
+        }
 
-            if (avatarObjects.Count > 0)
+        public void AddAvatarObject(IRoomObjectAvatar avatarObject)
+        {
+            if (avatarObject == null) return;
+
+            var roomTile = GetTile(avatarObject.Location);
+
+            if (roomTile != null) roomTile.AddRoomObject(avatarObject);
+
+            avatarObject.Logic.InvokeCurrentLocation();
+
+            avatarObject.NeedsUpdate = false;
+
+            if (!_room.IsInitialized) return;
+
+            var list = new List<IRoomObjectAvatar>() { avatarObject };
+
+            _room.SendComposer(new UsersMessage
             {
-                _room.SendComposer(new UsersMessage
-                {
-                    RoomObjects = avatarObjects
-                });
+                RoomObjects = list
+            });
 
-                _room.SendComposer(new UserUpdateMessage
-                {
-                    RoomObjects = avatarObjects
-                });
-            }
+            _room.SendComposer(new UserUpdateMessage
+            {
+                RoomObjects = list
+            });
         }
 
         public void MoveFloorRoomObject(IRoomObjectFloor floorObject, IPoint oldLocation, bool sendUpdate = true)
@@ -361,7 +304,7 @@ namespace Turbo.Rooms.Mapping
 
             if (!_room.IsInitialized) return;
 
-            UpdatePoints(true, points.ToArray());
+            if (points.Count > 0) UpdatePoints(true, points.ToArray());
 
             if (sendUpdate) _room.SendComposer(new ObjectUpdateMessage
             {
@@ -379,82 +322,76 @@ namespace Turbo.Rooms.Mapping
             });
         }
 
-        public void RemoveRoomObjects(int pickerId, params IRoomObject[] roomObjects)
+        public void RemoveFloorObject(IRoomObjectFloor floorObject, int pickerId = -1)
         {
-            if (roomObjects.Length <= 0) return;
+            if (floorObject == null) return;
 
             List<IPoint> points = new();
 
-            foreach (var roomObject in roomObjects)
+            var affectedPoints = AffectedPoints.GetPoints(floorObject);
+
+            if (affectedPoints.Count > 0)
             {
-                if (roomObject is IRoomObjectFloor floorObject)
+                foreach (var affectedPoint in affectedPoints)
                 {
-                    var affectedPoints = AffectedPoints.GetPoints(floorObject);
+                    var roomTile = GetTile(affectedPoint);
 
-                    if (affectedPoints.Count > 0)
-                    {
-                        foreach (var affectedPoint in affectedPoints)
-                        {
-                            var roomTile = GetTile(affectedPoint);
+                    if (roomTile == null) continue;
 
-                            if (roomTile != null)
-                            {
-                                roomTile.RemoveRoomObject(roomObject);
+                    roomTile.RemoveRoomObject(floorObject);
 
-                                points.Add(affectedPoint);
-                            }
-                        }
-                    }
-
-                    if (_room.IsInitialized)
-                    {
-                        _room.SendComposer(new ObjectRemoveMessage
-                        {
-                            Id = floorObject.Id,
-                            IsExpired = false,
-                            PickerId = pickerId,
-                            Delay = 0
-                        });
-                    }
-
-                    continue;
-                }
-
-                if (roomObject is IRoomObjectWall wallObject)
-                {
-                    if (_room.IsInitialized)
-                    {
-                        _room.SendComposer(new ItemRemoveMessage
-                        {
-                            ItemId = wallObject.Id,
-                            PickerId = pickerId
-                        });
-                    }
-
-                    continue;
-                }
-
-                if (roomObject is IRoomObjectAvatar avatarObject)
-                {
-                    avatarObject.Logic.StopWalking();
-
-                    avatarObject.Logic.GetCurrentTile()?.RemoveRoomObject(roomObject);
-                    avatarObject.Logic.GetNextTile()?.RemoveRoomObject(roomObject);
-
-                    if (_room.IsInitialized)
-                    {
-                        _room.SendComposer(new UserRemoveMessage
-                        {
-                            Id = roomObject.Id
-                        });
-                    }
+                    points.Add(affectedPoint);
                 }
             }
 
-            if (_room.IsInitialized && (points.Count > 0))
+            if (!_room.IsInitialized) return;
+
+            _room.SendComposer(new ObjectRemoveMessage
             {
-                UpdatePoints(true, points.ToArray());
+                Id = floorObject.Id,
+                IsExpired = false,
+                PickerId = pickerId,
+                Delay = 0
+            });
+
+            if (points.Count > 0) UpdatePoints(true, points.ToArray());
+        }
+
+        public void RemoveWallObject(IRoomObjectWall wallObject, int pickerId = -1)
+        {
+            if (wallObject == null) return;
+
+            if (!_room.IsInitialized) return;
+
+            _room.SendComposer(new ItemRemoveMessage
+            {
+                ItemId = wallObject.Id,
+                PickerId = pickerId
+            });
+        }
+
+        public void RemoveAvatarObject(IRoomObjectAvatar avatarObject)
+        {
+            if (avatarObject == null) return;
+
+            avatarObject.Logic.StopWalking();
+
+            var currentTile = avatarObject.Logic.GetCurrentTile();
+
+            if (currentTile != null)
+            {
+                currentTile.HighestObject?.Logic?.OnLeave(avatarObject);
+                currentTile.RemoveRoomObject(avatarObject);
             }
+
+            avatarObject.Logic.GetNextTile()?.RemoveRoomObject(avatarObject);
+
+            if (!_room.IsInitialized) return;
+
+            _room.SendComposer(new UserRemoveMessage
+            {
+                Id = avatarObject.Id
+            });
         }
 
         public void UpdatePoints(bool updateUsers = true, params IPoint[] points)

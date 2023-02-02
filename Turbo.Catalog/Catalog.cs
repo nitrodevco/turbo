@@ -142,7 +142,7 @@ namespace Turbo.Catalog
 
             if (pageEntities != null)
             {
-                pageEntities = pageEntities.OrderBy(entity => entity.Name).ToList();
+                pageEntities = pageEntities.OrderBy(entity => entity.Localization).ToList();
 
                 foreach (var pageEntity in pageEntities)
                 {

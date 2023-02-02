@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
-using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Object.Logic;
-using Turbo.Packets.Outgoing.Room.Engine;
-using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
-using Turbo.Core.Game.Rooms.Mapping;
-using Turbo.Core.Game.Rooms.Utils;
-using Turbo.Core.Game.Rooms.Constants;
+using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Furniture;
+using Turbo.Core.Game.Rooms.Constants;
+using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Logic.Avatar;
+using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
@@ -117,21 +117,20 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnStop(IRoomObjectAvatar avatar)
         {
-            if (avatar.Logic is AvatarLogic avatarLogic)
+            if (avatar.Logic is not AvatarLogic avatarLogic) return;
+
+            if (CanSit())
             {
-                if (CanSit())
-                {
-                    avatarLogic.Sit(true, StackHeight, RoomObject.Location.Rotation);
+                avatarLogic.Sit(true, StackHeight, RoomObject.Location.Rotation);
 
-                    return;
-                }
+                return;
+            }
 
-                if (CanLay())
-                {
-                    avatarLogic.Lay(true, StackHeight, RoomObject.Location.Rotation);
+            if (CanLay())
+            {
+                avatarLogic.Lay(true, StackHeight, RoomObject.Location.Rotation);
 
-                    return;
-                }
+                return;
             }
         }
 

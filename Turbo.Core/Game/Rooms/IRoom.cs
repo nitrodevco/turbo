@@ -33,5 +33,6 @@ namespace Turbo.Core.Game.Rooms
         public void SendComposer(IComposer composer);
 
         public int Id { get; }
+        public bool IsGroupRoom { get; }
     }
 }
