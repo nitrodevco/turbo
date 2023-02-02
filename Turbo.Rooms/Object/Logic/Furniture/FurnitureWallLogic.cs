@@ -5,10 +5,12 @@ using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Furniture;
+using Turbo.Rooms.Object.Attributes;
 using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
+    [RoomObjectLogic("default_wall")]
     public class FurnitureWallLogic : FurnitureLogicBase, IFurnitureWallLogic
     {
         public IRoomObjectWall RoomObject { get; private set; }

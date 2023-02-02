@@ -3,9 +3,11 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic.Wired;
 using Turbo.Core.Game.Rooms.Object.Logic.Wired.Constants;
+using Turbo.Rooms.Object.Attributes;
 
 namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Conditions
 {
+    [RoomObjectLogic("wf_cnd_has_furni_on")]
     public class FurnitureWiredConditionHasStackedFurnis : FurnitureWiredConditionLogic
     {
         protected static int _anyFurni = 0;

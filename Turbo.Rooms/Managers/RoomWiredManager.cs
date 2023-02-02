@@ -24,6 +24,26 @@ namespace Turbo.Rooms.Managers
             _logicFactory = logicFactory;
         }
 
+        public bool ProcessTriggers<T>(IWiredArguments wiredArguments = null)
+        {
+            if (!_logicFactory.Logics.Values.Contains(typeof(T))) return false;
+            
+            var roomObjects = _room.RoomFurnitureManager.GetFloorRoomObjectsWithLogic(typeof(T));
+
+            if (roomObjects.Count == 0) return false;
+
+            var didTrigger = false;
+
+            foreach (var floorObject in roomObjects)
+            {
+                if (!ProcessTrigger(floorObject, wiredArguments)) continue;
+
+                didTrigger = true;
+            }
+
+            return didTrigger;
+        }
+
         public bool ProcessTriggers(string type, IWiredArguments wiredArguments = null)
         {
             if (!_logicFactory.Logics.TryGetValue(type, out Type logicType)) return false;
@@ -32,7 +52,7 @@ namespace Turbo.Rooms.Managers
 
             if (roomObjects.Count == 0) return false;
 
-            bool didTrigger = false;
+            var didTrigger = false;
 
             foreach (var floorObject in roomObjects)
             {

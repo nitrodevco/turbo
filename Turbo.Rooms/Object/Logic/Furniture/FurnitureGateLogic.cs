@@ -1,9 +1,12 @@
 ﻿using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Rooms.Object.Attributes;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
+    [RoomObjectLogic("gate")]
     public class FurnitureGateLogic : FurnitureFloorLogic
     {
         private static readonly int _gateClosedState = 0;

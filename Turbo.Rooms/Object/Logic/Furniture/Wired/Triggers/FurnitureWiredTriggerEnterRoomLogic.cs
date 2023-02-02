@@ -2,9 +2,11 @@
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic.Wired;
 using Turbo.Core.Game.Rooms.Object.Logic.Wired.Constants;
+using Turbo.Rooms.Object.Attributes;
 
 namespace Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers
 {
+    [RoomObjectLogic("wf_trg_enter_room")]
     public class FurnitureWiredTriggerEnterRoomLogic : FurnitureWiredTriggerLogic
     {
         public override bool CanTrigger(IWiredArguments wiredArguments = null)

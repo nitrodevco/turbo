@@ -9,12 +9,15 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Object.Attributes;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
+using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
+    [RoomObjectLogic("default_floor")]
     public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFurnitureFloorLogic
     {
         public IRoomObjectFloor RoomObject { get; private set; }
@@ -85,7 +88,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnEnter(IRoomObjectAvatar avatar)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerWalksOnFurni, new WiredArguments
+            RoomObject.Room.RoomWiredManager.ProcessTriggers<FurnitureWiredTriggerWalksOnFurniLogic>(new WiredArguments
             {
                 UserObject = avatar,
                 FurnitureObject = RoomObject
@@ -96,7 +99,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnLeave(IRoomObjectAvatar avatar)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerWalksOffFurni, new WiredArguments
+            RoomObject.Room.RoomWiredManager.ProcessTriggers<FurnitureWiredTriggerWalksOffFurniLogic>(new WiredArguments
             {
                 UserObject = avatar,
                 FurnitureObject = RoomObject
@@ -136,7 +139,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public override void OnInteract(IRoomObjectAvatar avatar, int param)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerStateChanged, new WiredArguments
+            RoomObject.Room.RoomWiredManager.ProcessTriggers<FurnitureWiredTriggerStateChangeLogic>(new WiredArguments
             {
                 UserObject = avatar,
                 FurnitureObject = RoomObject

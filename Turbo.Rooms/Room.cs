@@ -21,6 +21,7 @@ using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
 using Turbo.Rooms.Object.Logic.Furniture.Wired;
 using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
+using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 
 namespace Turbo.Rooms
 {
@@ -184,7 +185,7 @@ namespace Turbo.Rooms
 
             AddObserver(player.Session);
 
-            RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, new WiredArguments
+            RoomWiredManager.ProcessTriggers<FurnitureWiredTriggerEnterRoomLogic>(new WiredArguments
             {
                 UserObject = roomObject
             });
