@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
@@ -52,6 +53,12 @@ namespace Turbo.Main.PacketHandlers
             // set player online
             // send required composers for hotel view
             await session.Send(new AuthenticationOKMessage());
+            await session.Send(new UserRightsMessage
+            {
+                ClubLevel = ClubLevelEnum.Vip,
+                SecurityLevel = SecurityLevelEnum.Moderator,
+                IsAmbassador = false
+            });
             await session.Send(new NavigatorSettingsMessage
             {
                 HomeRoomId = 0,
