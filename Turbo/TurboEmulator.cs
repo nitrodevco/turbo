@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Turbo.Core;
+using Turbo.Core.EventHandlers;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Furniture;
@@ -41,6 +42,7 @@ namespace Turbo.Main
         private readonly IPlayerManager _playerManager;
         private readonly ISessionManager _sessionManager;
         private readonly IPacketHandlerManager _packetHandlers;
+        private readonly IEventHandlerManager _eventHandlers;
 
         private Task _storageCycle;
         private bool _storageCycleStarted;
@@ -63,7 +65,8 @@ namespace Turbo.Main
             INavigatorManager navigatorManager,
             IPlayerManager playerManager,
             ISessionManager sessionManager,
-            IPacketHandlerManager packetHandlers)
+            IPacketHandlerManager packetHandlers,
+            IEventHandlerManager eventHandlers)
         {
             _appLifetime = appLifetime;
             _logger = logger;
@@ -78,6 +81,7 @@ namespace Turbo.Main
             _playerManager = playerManager;
             _sessionManager = sessionManager;
             _packetHandlers = packetHandlers;
+            _eventHandlers = eventHandlers;
         }
 
         /// <summary>

@@ -1,10 +1,10 @@
+using System;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
-using System;
-using System.Diagnostics.CodeAnalysis;
 using Turbo.Core.Configuration;
 using Turbo.Database.Context;
 using Turbo.Main.Configuration;

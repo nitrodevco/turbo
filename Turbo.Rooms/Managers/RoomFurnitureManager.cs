@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Database.Dtos;
+using Turbo.Core.Events;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
@@ -19,6 +20,7 @@ using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
+using Turbo.Events.Game.Rooms.Furniture;
 using Turbo.Furniture.Factories;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object;
@@ -30,6 +32,7 @@ namespace Turbo.Rooms.Managers
     public class RoomFurnitureManager : Component, IRoomFurnitureManager
     {
         private readonly IRoom _room;
+        private readonly ITurboEventHub _eventHub;
         private readonly IFurnitureFactory _furnitureFactory;
         private readonly IRoomObjectFactory _roomObjectFactory;
         private readonly IRoomObjectLogicFactory _roomObjectLogicFactory;
@@ -47,6 +50,7 @@ namespace Turbo.Rooms.Managers
 
         public RoomFurnitureManager(
             IRoom room,
+            ITurboEventHub turboEventHub,
             IFurnitureFactory furnitureFactory,
             IRoomObjectFactory roomObjectFactory,
             IRoomObjectLogicFactory roomObjectLogicFactory,
@@ -54,6 +58,7 @@ namespace Turbo.Rooms.Managers
             IServiceScopeFactory serviceScopeFactory)
         {
             _room = room;
+            _eventHub = turboEventHub;
             _furnitureFactory = furnitureFactory;
             _roomObjectFactory = roomObjectFactory;
             _roomObjectLogicFactory = roomObjectLogicFactory;
@@ -194,6 +199,14 @@ namespace Turbo.Rooms.Managers
 
         public void RemoveFloorFurniture(IRoomManipulator manipulator, IRoomFloorFurniture floorFurniture)
         {
+            var message = _eventHub.Dispatch<RemoveFloorFurnitureEvent>(new RemoveFloorFurnitureEvent
+            {
+                Manipulator = manipulator,
+                Furniture = floorFurniture
+            });
+
+            if (message.IsCancelled) return;
+
             if (floorFurniture == null) return;
 
             var pickupType = _room?.RoomSecurityManager?.GetFurniturePickupType(manipulator, floorFurniture) ?? FurniturePickupType.None;
@@ -315,6 +328,14 @@ namespace Turbo.Rooms.Managers
 
         public void RemoveWallFurniture(IRoomManipulator manipulator, IRoomWallFurniture wallFurniture)
         {
+            var message = _eventHub.Dispatch<RemoveWallFurnitureEvent>(new RemoveWallFurnitureEvent
+            {
+                Manipulator = manipulator,
+                Furniture = wallFurniture
+            });
+
+            if (message.IsCancelled) return;
+
             if (wallFurniture == null) return;
 
             var pickupType = _room?.RoomSecurityManager?.GetFurniturePickupType(manipulator, wallFurniture) ?? FurniturePickupType.None;
@@ -454,6 +475,14 @@ namespace Turbo.Rooms.Managers
 
         public bool MoveFloorFurniture(IRoomManipulator manipulator, IRoomObjectFloor roomObject, IPoint location)
         {
+            var message = _eventHub.Dispatch<MoveFloorFurnitureEvent>(new MoveFloorFurnitureEvent
+            {
+                Manipulator = manipulator,
+                FloorObject = roomObject
+            });
+
+            if (message.IsCancelled) return false;
+
             if (roomObject == null || roomObject.RoomObjectHolder is not IRoomFloorFurniture furniture) return false;
 
             if (!_room.RoomSecurityManager.CanManipulateFurniture(manipulator, furniture) || !IsValidPlacement(roomObject, location))
@@ -492,6 +521,15 @@ namespace Turbo.Rooms.Managers
 
         public async Task<bool> PlaceFloorFurnitureByFurniId(IPlayer player, int furniId, IPoint location)
         {
+            var message = await _eventHub.DispatchAsync<PlaceFloorFurnitureEvent>(new PlaceFloorFurnitureEvent
+            {
+                Player = player,
+                FurniId = furniId,
+                Location = location
+            });
+
+            if (message.IsCancelled) return false;
+
             if ((player == null) || (furniId < 0) || (location == null)) return false;
 
             var playerFurniture = player.PlayerInventory?.FurnitureInventory?.GetFurniture(furniId);
@@ -542,6 +580,15 @@ namespace Turbo.Rooms.Managers
 
         public bool MoveWallFurniture(IRoomManipulator manipulator, IRoomObjectWall wallObject, string location)
         {
+            var message = _eventHub.Dispatch<MoveWallFurnitureEvent>(new MoveWallFurnitureEvent
+            {
+                Manipulator = manipulator,
+                WallObject = wallObject,
+                Location = location
+            });
+
+            if (message.IsCancelled) return false;
+
             if (wallObject == null || wallObject.RoomObjectHolder is not IRoomWallFurniture furniture) return false;
 
             if (!_room.RoomSecurityManager.CanManipulateFurniture(manipulator, furniture))
@@ -574,8 +621,16 @@ namespace Turbo.Rooms.Managers
 
         public async Task<bool> PlaceWallFurnitureByFurniId(IPlayer player, int furniId, string location)
         {
-            // add wall validator
-            if ((player == null) || (location.Length == 0)) return false;
+            var message = await _eventHub.DispatchAsync<PlaceWallFurnitureEvent>(new PlaceWallFurnitureEvent
+            {
+                Player = player,
+                FurniId = furniId,
+                Location = location
+            });
+
+            if (message.IsCancelled) return false;
+
+            if ((player == null) || (furniId < 0) || (location.Length == 0)) return false;
 
             var playerFurniture = player.PlayerInventory?.FurnitureInventory?.GetFurniture(furniId);
 

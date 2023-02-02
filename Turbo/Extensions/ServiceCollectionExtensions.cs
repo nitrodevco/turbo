@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Turbo.Catalog;
 using Turbo.Catalog.Factories;
+using Turbo.Core.EventHandlers;
+using Turbo.Core.Events;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Navigator;
@@ -20,6 +22,8 @@ using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
 using Turbo.Database.Repositories.Security;
+using Turbo.EventHandlers;
+using Turbo.Events;
 using Turbo.Furniture;
 using Turbo.Furniture.Factories;
 using Turbo.Inventory.Factories;
@@ -59,6 +63,11 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<INetworkEventLoopGroup, NetworkEventLoopGroup>();
             services.AddSingleton<IPacketMessageHub, PacketMessageHub>();
             services.AddSingleton<ISessionFactory, SessionFactory>();
+            services.AddSingleton<ITurboEventHub, TurboEventHub>();
+
+            // Event Handlers
+            services.AddTransient<IEventHandlerManager, EventHandlerManager>();
+            services.AddTransient<ITestEventHandler, TestEventHandler>();
 
             // Packet Handlers
             services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
