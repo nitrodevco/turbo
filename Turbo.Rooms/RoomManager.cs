@@ -166,7 +166,7 @@ namespace Turbo.Rooms
             }
         }
 
-        public IRoomModel GetModel(int id)
+        public async Task<IRoomModel> GetModel(int id)
         {
             if (_models.TryGetValue(id, out IRoomModel model))
             {

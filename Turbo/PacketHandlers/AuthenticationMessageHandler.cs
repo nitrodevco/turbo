@@ -50,7 +50,6 @@ namespace Turbo.Main.PacketHandlers
                 return;
             }
 
-            // set player online
             // send required composers for hotel view
             await session.Send(new AuthenticationOKMessage());
             await session.Send(new UserRightsMessage

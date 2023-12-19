@@ -20,10 +20,6 @@ namespace Turbo.Rooms.Managers
             _room = room;
 
             _cycles = new List<ICyclable>();
-
-            _cycles.Add(new RoomObjectCycle(_room));
-            _cycles.Add(new RoomRollerCycle(_room));
-            _cycles.Add(new RoomUserStatusCycle(_room));
         }
 
         public void Start()
@@ -37,6 +33,20 @@ namespace Turbo.Rooms.Managers
         }
 
         public void Dispose() => _cycles.Clear();
+
+        public void AddCycle(ICyclable cycle)
+        {
+            if ((cycle == null) || _cycles.Contains(cycle)) return;
+
+            _cycles.Add(cycle);
+        }
+
+        public void RemoveCycle(ICyclable cycle)
+        {
+            if(cycle == null || !_cycles.Contains(cycle)) return;
+
+            _cycles.Remove(cycle);
+        }
 
         public async Task Cycle()
         {

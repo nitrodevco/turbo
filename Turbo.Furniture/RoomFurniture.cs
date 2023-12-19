@@ -53,7 +53,9 @@ namespace Turbo.Furniture
 
             OnDispose();
 
-            if (FurnitureEntity != null) _furnitureManager.StorageQueue.SaveNow(FurnitureEntity);
+            // only save if changes
+
+            if (FurnitureEntity != null) _furnitureManager.StorageQueue.Add(FurnitureEntity);
         }
 
         protected abstract void OnDispose();
@@ -67,37 +69,27 @@ namespace Turbo.Furniture
 
         protected abstract void OnSave();
 
-        public bool SetRoom(IRoom room)
+        public void SetRoom(IRoom room)
         {
             if (room == null)
             {
+                _room = null;
+
                 if (FurnitureEntity.RoomEntityId != null)
                 {
                     FurnitureEntity.RoomEntityId = null;
 
                     Save();
                 }
+
+                return;
             }
-            else
-            {
-                _room = room;
+            
+            _room = room;
 
-                if (FurnitureEntity.RoomEntityId != room.Id)
-                {
-                    FurnitureEntity.RoomEntityId = room.Id;
-
-                    Save();
-                }
-            }
-
-            return true;
-        }
-
-        public void ClearRoom()
-        {
-            if (FurnitureEntity.RoomEntityId == null) return;
-
-            FurnitureEntity.RoomEntityId = null;
+            if (FurnitureEntity.RoomEntityId == room.Id) return;
+            
+            FurnitureEntity.RoomEntityId = room.Id;
 
             Save();
         }
@@ -113,13 +105,13 @@ namespace Turbo.Furniture
         {
             if (playerId <= 0) return false;
 
-            if (FurnitureEntity.PlayerEntityId != playerId)
+            if(FurnitureEntity.PlayerEntityId != playerId)
             {
                 FurnitureEntity.PlayerEntityId = playerId;
 
                 Save();
             }
-
+            
             if (playerName.Length > 0) PlayerName = playerName;
 
             return true;

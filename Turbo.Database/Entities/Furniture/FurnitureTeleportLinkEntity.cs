@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Database.Entities.Furniture
 {
@@ -17,8 +18,10 @@ namespace Turbo.Database.Entities.Furniture
         [Column("furniture_two_id")]
         public int FurnitureEntityTwoId { get; set; }
 
+        [ForeignKey(nameof(FurnitureEntityOneId))]
         public FurnitureEntity FurnitureEntityOne { get; set; }
 
+        [ForeignKey(nameof(FurnitureEntityTwoId))]
         public FurnitureEntity FurnitureEntityTwo { get; set; }
     }
 }

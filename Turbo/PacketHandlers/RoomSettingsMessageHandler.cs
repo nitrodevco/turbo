@@ -174,7 +174,7 @@ namespace Turbo.PacketHandlers
 
             if (!room.RoomSecurityManager.IsOwner(session.Player)) return;
 
-            if (!await room.RoomDetails.UpdateSettingsForPlayer(session.Player, message)) return;
+            if (!room.RoomDetails.UpdateSettingsForPlayer(session.Player, message)) return;
 
             await session.Send(new RoomSettingsSavedMessage
             {

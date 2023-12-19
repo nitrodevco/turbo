@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Database.Attributes;
+using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Entities.Room
@@ -98,8 +99,10 @@ namespace Turbo.Database.Entities.Room
         [Column("last_active"), DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public DateTime LastActive { get; set; }
 
+        [ForeignKey(nameof(PlayerEntityId))]
         public PlayerEntity PlayerEntity { get; set; }
 
+        [ForeignKey(nameof(RoomModelEntityId))]
         public RoomModelEntity RoomModelEntity { get; set; }
 
         public List<RoomBanEntity> RoomBans { get; set; }

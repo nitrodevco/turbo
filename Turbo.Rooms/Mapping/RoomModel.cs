@@ -25,7 +25,7 @@ namespace Turbo.Rooms.Mapping
         private IList<IList<RoomTileState>> _tileStates;
         private IList<IList<int>> _tileHeights;
 
-        public bool DidGenerate { get; private set; }
+        public bool IsValid { get; private set; }
 
         public RoomModel(RoomModelEntity modelEntity)
         {
@@ -54,7 +54,7 @@ namespace Turbo.Rooms.Mapping
             _tileStates = new List<IList<RoomTileState>>();
             _tileHeights = new List<IList<int>>();
 
-            DidGenerate = false;
+            IsValid = false;
 
             if (generate) Generate();
         }
@@ -137,7 +137,7 @@ namespace Turbo.Rooms.Mapping
             }
 
             DoorLocation = new Point(_modelEntity.DoorX, _modelEntity.DoorY, (double)doorTileHeight, _modelEntity.DoorRotation, _modelEntity.DoorRotation);
-            DidGenerate = true;
+            IsValid = true;
         }
 
         public RoomTileState GetTileState(int x, int y)

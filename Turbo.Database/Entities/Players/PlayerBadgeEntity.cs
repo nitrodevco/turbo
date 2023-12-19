@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Database.Entities.Players
 {
@@ -16,6 +17,7 @@ namespace Turbo.Database.Entities.Players
         [Column("slot_id")]
         public int? SlotId { get; set; }
 
+        [ForeignKey(nameof(PlayerEntityId))]
         public PlayerEntity PlayerEntity { get; set; }
     }
 }

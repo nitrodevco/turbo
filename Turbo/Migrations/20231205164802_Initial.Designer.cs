@@ -10,9 +10,9 @@ using Turbo.Database.Context;
 
 namespace Turbo.Main.Migrations
 {
-    [DbContext(typeof(TurboContext))]
-    [Migration("20230124060511_InitialCreate")]
-    partial class InitialCreate
+    [DbContext(typeof(TurboDbContext))]
+    [Migration("20231205164802_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,13 +28,15 @@ namespace Turbo.Main.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<bool>("CanBundle")
+                    b.Property<bool?>("CanBundle")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_bundle")
                         .HasDefaultValueSql("1");
 
-                    b.Property<bool>("CanGift")
+                    b.Property<bool?>("CanGift")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("can_gift")
@@ -81,7 +83,8 @@ namespace Turbo.Main.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("localization_id");
 
-                    b.Property<bool>("Visible")
+                    b.Property<bool?>("Visible")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("visible")
@@ -145,7 +148,8 @@ namespace Turbo.Main.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("text_data");
 
-                    b.Property<bool>("Visible")
+                    b.Property<bool?>("Visible")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("visible")
@@ -630,6 +634,10 @@ namespace Turbo.Main.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateExpires")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_expires");
 
                     b.Property<DateTime>("DateUpdated")
                         .ValueGeneratedOnAddOrUpdate()

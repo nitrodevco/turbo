@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Database.Attributes;
+using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Entities.Security
@@ -21,6 +22,7 @@ namespace Turbo.Database.Entities.Security
         [Column("is_locked"), DefaultValueSql("0")]
         public bool? IsLocked { get; set; }
 
+        [ForeignKey(nameof(PlayerEntityId))]
         public PlayerEntity PlayerEntity { get; set; }
     }
 }

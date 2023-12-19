@@ -48,7 +48,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             var roomTile = GetCurrentTile();
 
-            if (IsKicked || (roomTile != null && roomTile.IsDoor))
+            if (IsKicked || (roomTile != null && roomTile.IsDoor && DidMove))
             {
                 RoomObject.Dispose();
 

@@ -22,6 +22,7 @@ namespace Turbo.Database.Context
         public DbSet<FurnitureEntity> Furnitures { get; set; }
         public DbSet<FurnitureTeleportLinkEntity> FurnitureTeleportLinks { get; set; }
         public DbSet<PlayerBadgeEntity> PlayerBadges { get; set; }
+        public DbSet<PlayerCurrencyEntity> PlayerCurrencies { get; set; }
         public DbSet<PlayerEntity> Players { get; set; }
         public DbSet<PlayerSettingsEntity> PlayerSettings { get; set; }
         public DbSet<RoomBanEntity> RoomBans { get; set; }

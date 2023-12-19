@@ -554,7 +554,9 @@ namespace Turbo.Rooms.Managers
 
             if (furniture == null) return false;
 
-            if (!furniture.SetRoom(_room) || !furniture.SetPlayer(player)) return false;
+            furniture.SetRoom(_room);
+
+            if (!furniture.SetPlayer(player)) return false;
 
             playerFurniture.Dispose();
 
@@ -580,7 +582,7 @@ namespace Turbo.Rooms.Managers
 
         public bool MoveWallFurniture(IRoomManipulator manipulator, IRoomObjectWall wallObject, string location)
         {
-            var message = _eventHub.Dispatch<MoveWallFurnitureEvent>(new MoveWallFurnitureEvent
+            var message = _eventHub.Dispatch(new MoveWallFurnitureEvent
             {
                 Manipulator = manipulator,
                 WallObject = wallObject,
@@ -646,7 +648,9 @@ namespace Turbo.Rooms.Managers
 
             if (furniture == null) return false;
 
-            if (!furniture.SetRoom(_room) || !furniture.SetPlayer(player)) return false;
+            furniture.SetRoom(_room);
+
+            if (!furniture.SetPlayer(player)) return false;
 
             playerFurniture.Dispose();
 
@@ -821,7 +825,7 @@ namespace Turbo.Rooms.Managers
 
                     if (furniture == null) continue;
 
-                    if (!furniture.SetRoom(_room)) continue;
+                    furniture.SetRoom(_room);
 
                     if (FurnitureOwners.TryGetValue(furnitureEntity.PlayerEntityId, out string name))
                     {
@@ -843,7 +847,7 @@ namespace Turbo.Rooms.Managers
 
                     if (furniture == null) continue;
 
-                    if (!furniture.SetRoom(_room)) continue;
+                    furniture.SetRoom(_room);
 
                     if (FurnitureOwners.TryGetValue(furnitureEntity.PlayerEntityId, out string name))
                     {

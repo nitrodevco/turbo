@@ -5,6 +5,7 @@ using Turbo.Database.Entities.Room;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Turbo.Database.Attributes;
+using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Database.Entities.Furniture
 {
@@ -41,10 +42,13 @@ namespace Turbo.Database.Entities.Furniture
         [Column("wired_data")]
         public string? WiredData { get; set; }
 
+        [ForeignKey(nameof(PlayerEntityId))]
         public PlayerEntity PlayerEntity { get; set; }
 
+        [ForeignKey(nameof(FurnitureDefinitionEntityId))]
         public FurnitureDefinitionEntity FurnitureDefinitionEntity { get; set; }
 
+        [ForeignKey(nameof(RoomEntityId))]
         public RoomEntity RoomEntity { get; set; }
     }
 }

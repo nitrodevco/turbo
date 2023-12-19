@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.RoomSettings
+namespace Turbo.Packets.Incoming.Navigator
 {
     public record DeleteRoomMessage : IMessageEvent
     {

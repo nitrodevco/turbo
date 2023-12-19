@@ -39,6 +39,7 @@ namespace Turbo.Furniture
         {
             if (RoomObject != null)
             {
+                System.Console.WriteLine("orig: " + FurnitureEntity.X + "," + FurnitureEntity.Y + " new:" + RoomObject.Location.X + "," + RoomObject.Location.Y);
                 FurnitureEntity.X = RoomObject.Location.X;
                 FurnitureEntity.Y = RoomObject.Location.Y;
                 FurnitureEntity.Z = RoomObject.Location.Z;
@@ -86,14 +87,13 @@ namespace Turbo.Furniture
 
         public void ClearRoomObject()
         {
-            if (RoomObject != null)
-            {
-                Save();
+            if(RoomObject == null) return;
 
-                RoomObject.Dispose();
+            Save();
 
-                RoomObject = null;
-            }
+            RoomObject.Dispose();
+
+            RoomObject = null;
         }
 
         public async Task<TeleportPairingDto> GetTeleportPairing()

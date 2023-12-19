@@ -82,11 +82,11 @@ namespace Turbo.Catalog
         public int CostCredits => _entity.CostCredits;
         public int CostCurrency => _entity.CostCurrency;
         public int? CurrencyType => _entity.CurrencyType;
-        public bool CanGift => _entity.CanGift;
-        public bool CanBundle => _entity.CanBundle;
+        public bool CanGift => _entity.CanGift ?? false;
+        public bool CanBundle => _entity.CanBundle ?? false;
         public int ClubLevel => _entity.ClubLevel;
         public bool IsPet => (Products.Count >= 1) ? Products[0].ProductType.Equals(ProductTypeEnum.Pet) : false;
         public string PreviewImage => "";
-        public bool Visible => _entity.Visible;
+        public bool Visible => _entity.Visible ?? false;
     }
 }

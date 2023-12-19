@@ -15,6 +15,7 @@ namespace Turbo.Core.Game.Players
         public IPlayerManager PlayerManager { get; }
         public IPlayerDetails PlayerDetails { get; }
         public IPlayerInventory PlayerInventory { get; }
+        public IPlayerWallet PlayerWallet { get; }
 
         public new int Id { get; }
         public new string Name { get; }

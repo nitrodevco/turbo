@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Players;
 using Turbo.Inventory.Factories;
 
@@ -21,8 +22,16 @@ namespace Turbo.Players.Factories
             ILogger<IPlayer> logger = _provider.GetService<ILogger<Player>>();
             IPlayerManager playerManager = _provider.GetService<IPlayerManager>();
             IPlayerInventoryFactory playerInventoryFactory = _provider.GetService<IPlayerInventoryFactory>();
+            IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
 
-            return new Player(logger, playerManager, playerEntity, playerInventoryFactory);
+            return new Player(logger, playerManager, CreatePlayerDetails(playerEntity), playerInventoryFactory, scopeFactory);
+        }
+
+        public IPlayerDetails CreatePlayerDetails(PlayerEntity playerEntity)
+        {
+            IStorageQueue storageQueue = _provider.GetService<IStorageQueue>();
+
+            return new PlayerDetails(playerEntity, storageQueue);
         }
     }
 }

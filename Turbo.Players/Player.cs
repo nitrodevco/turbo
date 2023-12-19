@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
@@ -18,6 +20,7 @@ namespace Turbo.Players
         public IPlayerManager PlayerManager { get; private set; }
         public IPlayerDetails PlayerDetails { get; private set; }
         public IPlayerInventory PlayerInventory { get; private set; }
+        public IPlayerWallet PlayerWallet { get; private set; }
 
         public ISession Session { get; private set; }
         public IRoomObjectAvatar RoomObject { get; private set; }
@@ -25,17 +28,22 @@ namespace Turbo.Players
         public Player(
             ILogger<IPlayer> logger,
             IPlayerManager playerManager,
-            PlayerEntity playerEntity,
-            IPlayerInventoryFactory playerInventoryFactory)
+            IPlayerDetails playerDetails,
+            IPlayerInventoryFactory playerInventoryFactory,
+            IServiceScopeFactory serviceScopeFactory)
         {
             Logger = logger;
             PlayerManager = playerManager;
-            PlayerDetails = new PlayerDetails(this, playerEntity);
+            PlayerDetails = playerDetails;
             PlayerInventory = playerInventoryFactory.Create(this);
+            PlayerWallet = new PlayerWallet(this, serviceScopeFactory);
         }
 
         protected override async Task OnInit()
         {
+            PlayerDetails.PlayerStatus = PlayerStatusEnum.Online;
+
+            await PlayerWallet.InitAsync();
             await PlayerInventory.InitAsync();
         }
 
@@ -45,13 +53,14 @@ namespace Turbo.Players
 
             if (PlayerManager != null) await PlayerManager.RemovePlayer(Id);
 
-            // set offline in PlayerDetails
+            PlayerDetails.PlayerStatus = PlayerStatusEnum.Offline;
 
             // dispose messenger
             // dispose roles
 
+            await PlayerWallet.DisposeAsync();
             await PlayerInventory.DisposeAsync();
-
+            await PlayerDetails.SaveNow();
             await Session.DisposeAsync();
         }
 
@@ -85,7 +94,7 @@ namespace Turbo.Players
 
             return true;
         }
-
+        
         public void ClearRoomObject()
         {
             if (RoomObject != null)

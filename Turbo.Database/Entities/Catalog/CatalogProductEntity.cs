@@ -33,7 +33,10 @@ namespace Turbo.Database.Entities.Catalog
         [Column("unique_remaining"), Required, DefaultValueSql("0")]
         public int UniqueRemaining { get; set; }
 
+        [ForeignKey(nameof(CatalogOfferEntityId))]
         public CatalogOfferEntity Offer { get; set; }
+
+        [ForeignKey(nameof(FurnitureDefinitionEntityId))]
         public FurnitureDefinitionEntity FurnitureDefinition { get; set; }
     }
 }

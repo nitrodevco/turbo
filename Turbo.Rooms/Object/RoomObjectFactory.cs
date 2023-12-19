@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Rooms;
+﻿using Turbo.Core.Game;
+using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 
@@ -30,7 +31,16 @@ namespace Turbo.Rooms.Object
 
             var roomObject = new RoomObjectFloor(room, roomObjectContainer, id);
 
-            roomObject.SetLogic((IFurnitureFloorLogic)_logicFactory.Create(logicType));
+            var logic = _logicFactory.Create(logicType);
+
+            if (logic != null && logic is not IFurnitureFloorLogic)
+            {
+                logic.Dispose();
+
+                logic = _logicFactory.Create(DefaultSettings.DefaultFloorLogicName);
+            }
+
+            roomObject.SetLogic((IFurnitureFloorLogic)logic);
 
             return roomObject;
         }
@@ -41,7 +51,16 @@ namespace Turbo.Rooms.Object
 
             var roomObject = new RoomObjectWall(room, roomObjectContainer, id);
 
-            roomObject.SetLogic((IFurnitureWallLogic)_logicFactory.Create(logicType));
+            var logic = _logicFactory.Create(logicType);
+
+            if (logic != null && logic is not IFurnitureWallLogic)
+            {
+                logic.Dispose();
+
+                logic = _logicFactory.Create(DefaultSettings.DefaultWallLogicName);
+            }
+
+            roomObject.SetLogic((IFurnitureWallLogic)logic);
 
             return roomObject;
         }

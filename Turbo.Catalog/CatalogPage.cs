@@ -71,7 +71,14 @@ namespace Turbo.Catalog
 
         public async Task<ICatalogOffer> PurchaseOffer(IPlayer player, int offerId, string extraParam, int quantity)
         {
-            return await Offers[offerId]?.Purchase(player, extraParam, quantity);
+            if(player == null) return null;
+
+            if(Offers.TryGetValue(offerId, out var offer))
+            {
+                return await offer.Purchase(player, extraParam, quantity);
+            }
+
+            return null;
         }
 
         public virtual int Id => _entity.Id;
@@ -81,6 +88,6 @@ namespace Turbo.Catalog
         public virtual string Name => _entity.Name;
         public virtual string Localization => _entity.Localization;
         public virtual string Layout => _entity.Layout;
-        public virtual bool Visible => _entity.Visible;
+        public virtual bool Visible => _entity.Visible ?? false;
     }
 }

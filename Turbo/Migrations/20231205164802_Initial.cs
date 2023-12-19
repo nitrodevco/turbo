@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Turbo.Main.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -426,6 +426,7 @@ namespace Turbo.Main.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     room_id = table.Column<int>(type: "int", nullable: false),
                     player_id = table.Column<int>(type: "int", nullable: false),
+                    date_expires = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)

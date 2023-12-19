@@ -38,7 +38,7 @@ namespace Turbo.Furniture
             if (RoomObject != null)
             {
                 FurnitureEntity.WallPosition = RoomObject.WallLocation;
-
+                
                 if (RoomObject.Logic.StuffData != null)
                 {
                     FurnitureEntity.StuffData = JsonSerializer.Serialize(RoomObject.Logic.StuffData, RoomObject.Logic.StuffData.GetType());
@@ -68,14 +68,13 @@ namespace Turbo.Furniture
 
         public void ClearRoomObject()
         {
-            if (RoomObject != null)
-            {
-                Save();
+            if(RoomObject == null) return;
+            
+            Save();
 
-                RoomObject.Dispose();
+            RoomObject.Dispose();
 
-                RoomObject = null;
-            }
+            RoomObject = null;
         }
 
         public string SavedWallLocation => FurnitureEntity.WallPosition;

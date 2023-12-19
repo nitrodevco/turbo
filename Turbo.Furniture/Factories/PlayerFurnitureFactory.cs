@@ -44,7 +44,7 @@ namespace Turbo.Furniture.Factories
             furniture.FurnitureEntity.PlayerEntityId = playerId;
             furniture.FurnitureEntity.RoomEntityId = null;
 
-            _provider.GetService<IStorageQueue>()?.SaveNow(furniture.FurnitureEntity);
+            furniture.Save();
 
             return Create(playerFurnitureContainer, furniture.FurnitureEntity);
         }
@@ -56,7 +56,11 @@ namespace Turbo.Furniture.Factories
             furnitureEntity.PlayerEntityId = playerId;
             furnitureEntity.FurnitureDefinitionEntityId = furnitureDefinitonId;
 
-            await _provider.GetService<IStorageQueue>()?.SaveNow(furnitureEntity);
+            var storageQueue = _provider.GetService<IStorageQueue>();
+
+            storageQueue?.Add(furnitureEntity);
+
+            await storageQueue.SaveNow();
 
             return Create(playerFurnitureContainer, furnitureEntity);
         }

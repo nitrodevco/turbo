@@ -16,7 +16,7 @@ using Turbo.Database.Entities.Security;
 
 namespace Turbo.Database.Context
 {
-    public class TurboContext : DbContext, IEmulatorContext
+    public class TurboDbContext : DbContext, IEmulatorContext
     {
         public DbSet<CatalogOfferEntity> CatalogOffers { get; set; }
         public DbSet<CatalogPageEntity> CatalogPages { get; set; }
@@ -25,6 +25,7 @@ namespace Turbo.Database.Context
         public DbSet<FurnitureEntity> Furnitures { get; set; }
         public DbSet<FurnitureTeleportLinkEntity> FurnitureTeleportLinks { get; set; }
         public DbSet<PlayerBadgeEntity> PlayerBadges { get; set; }
+        public DbSet<PlayerCurrencyEntity> PlayerCurrencies { get; set; }
         public DbSet<PlayerEntity> Players { get; set; }
         public DbSet<PlayerSettingsEntity> PlayerSettings { get; set; }
         public DbSet<RoomBanEntity> RoomBans { get; set; }
@@ -35,7 +36,7 @@ namespace Turbo.Database.Context
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
 
-        public TurboContext(DbContextOptions<TurboContext> options) : base(options) { }
+        public TurboDbContext(DbContextOptions<TurboDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -74,7 +75,7 @@ namespace Turbo.Database.Context
 
             List<Type> types = asm.GetTypes().ToList();
 
-            var dbSets = typeof(TurboContext).GetProperties().Where(p => p.PropertyType.Name.ToLower().Contains("dbset")).ToList();
+            var dbSets = typeof(TurboDbContext).GetProperties().Where(p => p.PropertyType.Name.ToLower().Contains("dbset")).ToList();
 
             List<Type> dbSetTypes = new();
 

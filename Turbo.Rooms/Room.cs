@@ -16,6 +16,7 @@ using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Room;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Cycles;
 using Turbo.Rooms.Factories;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
@@ -63,6 +64,10 @@ namespace Turbo.Rooms
             RoomUserManager = roomUserFactory.Create(this);
 
             _roomObservers = new List<ISession>();
+
+            RoomCycleManager.AddCycle(new RoomObjectCycle(this));
+            RoomCycleManager.AddCycle(new RoomRollerCycle(this));
+            RoomCycleManager.AddCycle(new RoomUserStatusCycle(this));
         }
 
         protected override async Task OnInit()
@@ -124,9 +129,9 @@ namespace Turbo.Rooms
 
             RoomModel = null;
 
-            IRoomModel roomModel = RoomManager.GetModel(RoomDetails.ModelId);
+            IRoomModel roomModel = await RoomManager.GetModel(RoomDetails.ModelId);
 
-            if ((roomModel == null) || (!roomModel.DidGenerate)) return;
+            if ((roomModel == null) || (!roomModel.IsValid)) return;
 
             RoomModel = roomModel;
             RoomMap = new RoomMap(this);
@@ -158,7 +163,32 @@ namespace Turbo.Rooms
                 WallThickness = (int)RoomDetails.ThicknessWall
             });
 
-            // send the paint
+            if(RoomDetails.PaintWall != 0.0)
+            {
+                player.Session.SendQueue(new RoomPropertyMessage
+                {
+                    Property = RoomPropertyType.WALLPAPER,
+                    Value = RoomDetails.PaintWall.ToString()
+                });
+            }
+
+            if (RoomDetails.PaintFloor != 0.0)
+            {
+                player.Session.SendQueue(new RoomPropertyMessage
+                {
+                    Property = RoomPropertyType.FLOOR,
+                    Value = RoomDetails.PaintFloor.ToString()
+                });
+            }
+
+            if (RoomDetails.PaintLandscape != 0.0)
+            {
+                player.Session.SendQueue(new RoomPropertyMessage
+                {
+                    Property = RoomPropertyType.LANDSCAPE,
+                    Value = RoomDetails.PaintLandscape.ToString()
+                });
+            }
 
             // would be nice to send this from the navigator so we aren't duplicating code
             player.Session.SendQueue(new GetGuestRoomResultMessage
@@ -176,18 +206,21 @@ namespace Turbo.Rooms
 
             RoomFurnitureManager.SendFurnitureToSession(player.Session);
 
-            var roomObject = RoomUserManager.EnterRoom(player, location);
-
-            if (roomObject != null) RoomSecurityManager.RefreshControllerLevel(roomObject);
+            AddObserver(player.Session);
 
             // apply muted from security
 
-            AddObserver(player.Session);
+            var roomObject = RoomUserManager.EnterRoom(player, location);
 
-            RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, new WiredArguments
+            if(roomObject != null)
             {
-                UserObject = roomObject
-            });
+                RoomSecurityManager.RefreshControllerLevel(roomObject);
+
+                RoomWiredManager.ProcessTriggers(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, new WiredArguments
+                {
+                    UserObject = roomObject
+                });
+            }
         }
 
         public void AddObserver(ISession session)

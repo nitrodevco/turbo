@@ -12,7 +12,7 @@ namespace Turbo.Core.Game.Rooms
         public IRoom GetOnlineRoom(int id);
         public Task<IRoom> GetOfflineRoom(int id);
         public Task RemoveRoom(int id);
-        public IRoomModel GetModel(int id);
+        public Task <IRoomModel> GetModel(int id);
         public IRoomModel GetModelByName(string name);
 
         public IStorageQueue StorageQueue { get; }

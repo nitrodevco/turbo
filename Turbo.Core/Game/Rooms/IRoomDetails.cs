@@ -7,7 +7,8 @@ namespace Turbo.Core.Game.Rooms
 {
     public interface IRoomDetails
     {
-        public Task<bool> UpdateSettingsForPlayer(IPlayer player, IRoomSettings message);
+        public void Save();
+        public bool UpdateSettingsForPlayer(IPlayer player, IRoomSettings message);
 
         public int Id { get; }
         public string Name { get; }

@@ -124,6 +124,7 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
             services.AddScoped<IFurnitureRepository, FurnitureRepository>();
             services.AddScoped<IPlayerBadgeRepository, PlayerBadgeRepository>();
+            services.AddScoped<IPlayerCurrencyRepository, PlayerCurrencyRepository>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             services.AddScoped<IRoomBanRepository, RoomBanRepository>();
             services.AddScoped<IRoomModelRepository, RoomModelRepository>();

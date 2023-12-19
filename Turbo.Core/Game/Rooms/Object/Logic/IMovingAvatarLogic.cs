@@ -12,6 +12,7 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
 
         public IDictionary<string, string> Statuses { get; }
         public IPoint LocationNext { get; set; }
+        public IPoint LocationPrevious { get; }
         public IPoint LocationGoal { get; }
         public IList<IPoint> CurrentPath { get; }
         public Action<IRoomObjectAvatar> BeforeGoalAction { get; set; }
@@ -34,5 +35,6 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
         public void RemoveStatus(params string[] types);
         public IRoomTile GetCurrentTile();
         public IRoomTile GetNextTile();
+        public bool DidMove { get; }
     }
 }

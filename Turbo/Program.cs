@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,7 +37,7 @@ namespace Turbo.Main
                         .ReadFrom.Configuration(hostContext.Configuration)
                         .Enrich.FromLogContext()
                         .WriteTo.Console()
-                        .CreateLogger();
+                        .CreateLogger(); 
 
                     // Configuration
                     var turboConfig = new TurboConfig();
@@ -45,14 +46,20 @@ namespace Turbo.Main
 
                     var connectionString = $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
 
-                    services.AddDbContext<IEmulatorContext, TurboContext>(options => options
-                        .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options =>
+                    services.AddDbContext<IEmulatorContext, TurboDbContext>(
+                        options =>
                         {
-                            options.MigrationsAssembly("Turbo.Main");
-                        })
-                        .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
-                        .EnableDetailedErrors()
-                        .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
+                            options
+                            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options =>
+                            {
+                                options.MigrationsAssembly("Turbo.Main");
+                            })
+                            .ConfigureWarnings(warnings => warnings
+                                .Ignore(CoreEventId.RedundantIndexRemoved))
+                            .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
+                            .EnableDetailedErrors()
+                            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                        }
                     );
 
                     services.AddRepositories();

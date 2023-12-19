@@ -29,8 +29,8 @@ namespace Turbo.PacketHandlers
             _messageHub.Subscribe<MuteAllInRoomMessage>(this, OnMuteAllInRoomMessage);
             _messageHub.Subscribe<RemoveAllRightsMessage>(this, OnRemoveAllRightsMessage);
             _messageHub.Subscribe<RemoveRightsMessage>(this, OnRemoveRightsMessage);
-            _messageHub.Subscribe<RoomUserKickMessage>(this, OnRoomUserKickMessage);
-            _messageHub.Subscribe<RoomUserMuteMessage>(this, OnRoomUserMuteMessage);
+            _messageHub.Subscribe<KickUserMessage>(this, OnRoomUserKickMessage);
+            _messageHub.Subscribe<MuteUserMessage>(this, OnRoomUserMuteMessage);
             _messageHub.Subscribe<UnbanUserFromRoomMessage>(this, OnUnbanUserFromRoomMessage);
         }
 
@@ -85,12 +85,12 @@ namespace Turbo.PacketHandlers
             foreach (var playerId in message.PlayerIds) await roomSecurityManager.AdjustRightsForPlayerId(session.Player, playerId, false);
         }
 
-        private void OnRoomUserKickMessage(RoomUserKickMessage message, ISession session)
+        private void OnRoomUserKickMessage(KickUserMessage message, ISession session)
         {
             session.Player.RoomObject?.Room?.RoomSecurityManager?.KickPlayer(session.Player, message.PlayerId);
         }
 
-        private void OnRoomUserMuteMessage(RoomUserMuteMessage message, ISession session)
+        private void OnRoomUserMuteMessage(MuteUserMessage message, ISession session)
         {
             if (session.Player == null) return;
         }

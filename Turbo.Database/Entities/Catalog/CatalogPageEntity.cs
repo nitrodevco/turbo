@@ -33,10 +33,13 @@ namespace Turbo.Database.Entities.Catalog
         public string? TextData { get; set; }
 
         [Column("visible"), Required, DefaultValueSql("1")]
-        public bool Visible { get; set; }
+        public bool? Visible { get; set; }
 
+        [ForeignKey(nameof(ParentEntityId))]
         public CatalogPageEntity ParentEntity { get; set; }
+
         public IList<CatalogPageEntity> Children { get; set; }
+
         public IList<CatalogOfferEntity> Offers { get; set; }
     }
 }

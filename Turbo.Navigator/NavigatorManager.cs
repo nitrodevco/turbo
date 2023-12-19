@@ -9,6 +9,7 @@ using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Navigator;
+using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Packets.Shared.Navigator;
@@ -76,10 +77,7 @@ namespace Turbo.Navigator
 
             int pendingRoomId = GetPendingRoomId(player.Id);
 
-            if (pendingRoomId == -1)
-            {
-                if (player.Session != null) player.Session.Send(new CloseConnectionMessage());
-            }
+            if (pendingRoomId == -1) player.Session?.Send(new CloseConnectionMessage());
         }
 
         public async Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool roomForward = false)
@@ -175,12 +173,9 @@ namespace Turbo.Navigator
                         {
                             ClearPendingRoomId(player.Id);
 
-                            // generic password error
-
-                            await player.Session.Send(new CantConnectMessage
+                            await player.Session.Send(new GenericErrorMessage
                             {
-                                Reason = CantConnectReason.Closed,
-                                Parameter = ""
+                                ErrorCode = RoomGenericErrorType.InvalidPassword
                             });
 
                             return;

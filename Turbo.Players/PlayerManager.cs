@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -77,20 +78,29 @@ namespace Turbo.Players
 
         public async Task<IPlayer> GetOfflinePlayerById(int id)
         {
-            IPlayer player = GetPlayerById(id);
+            var player = GetPlayerById(id);
 
             if (player != null) return player;
 
-            PlayerEntity playerEntity;
-            using (var scope = _serviceScopeFactory.CreateScope())
+            try
             {
-                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-                playerEntity = await playerRepository.FindAsync(id);
+                PlayerEntity playerEntity = null;
+
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+                    playerEntity = await playerRepository.FindAsync(id);
+                }
+
+                if (playerEntity == null) return null;
+
+                player = _playerFactory.Create(playerEntity);
             }
 
-            if (playerEntity == null) return null;
+            catch (Exception ex)
+            {
 
-            player = _playerFactory.Create(playerEntity);
+            }
 
             return player;
         }

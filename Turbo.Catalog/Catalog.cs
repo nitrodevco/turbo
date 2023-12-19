@@ -64,23 +64,27 @@ namespace Turbo.Catalog
             return Root;
         }
 
-        public ICatalogPage GetPageForPlayer(IPlayer player, int pageId, int offerId)
+        public ICatalogPage GetPageForPlayer(IPlayer player, int pageId)
         {
-            if (player == null || !Pages.ContainsKey(pageId)) return null;
+            if(player == null) return null;
 
-            return Pages[pageId];
+            if(Pages.TryGetValue(pageId, out var page)) return page;
+
+            return null;
         }
 
         public ICatalogOffer GetOfferForPlayer(IPlayer player, int offerId)
         {
-            if (player == null || !Offers.ContainsKey(offerId)) return null;
+            if(player == null) return null;
 
-            return Offers[offerId];
+            if(Offers.TryGetValue(offerId, out var offer)) return offer;
+
+            return null;
         }
 
         public async Task<ICatalogOffer> PurchaseOffer(IPlayer player, int pageId, int offerId, string extraParam, int quantity)
         {
-            var page = GetPageForPlayer(player, pageId, offerId);
+            var page = GetPageForPlayer(player, pageId);
 
             if (page == null) return null;
 
@@ -146,7 +150,7 @@ namespace Turbo.Catalog
 
                 foreach (var pageEntity in pageEntities)
                 {
-                    if (!pageEntity.Visible) continue;
+                    if (!pageEntity.Visible ?? false) continue;
 
                     var catalogPage = _catalogFactory.CreatePage(pageEntity);
 

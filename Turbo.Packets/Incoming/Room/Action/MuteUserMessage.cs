@@ -2,7 +2,7 @@
 
 namespace Turbo.Packets.Incoming.Room.Action
 {
-    public record RoomUserMuteMessage : IMessageEvent
+    public record MuteUserMessage : IMessageEvent
     {
         public int PlayerId { get; init; }
         public int RoomId { get; init; }

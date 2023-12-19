@@ -21,7 +21,7 @@ namespace Turbo.Rooms.Cycles
                     foreach (var floorObject in floorObjects.Values) await floorObject.Logic.Cycle();
                 }
 
-                var wallObjects = _room.RoomFurnitureManager.FloorObjects.RoomObjects;
+                var wallObjects = _room.RoomFurnitureManager.WallObjects.RoomObjects;
 
                 if (wallObjects.Count > 0)
                 {

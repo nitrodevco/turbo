@@ -6,6 +6,7 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
@@ -17,6 +18,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public IDictionary<string, string> Statuses { get; private set; }
 
         public IPoint LocationNext { get; set; }
+        public IPoint LocationPrevious { get; private set; }
         public IPoint LocationGoal { get; private set; }
         public IList<IPoint> CurrentPath { get; private set; }
         public Action<IRoomObjectAvatar> BeforeGoalAction { get; set; }
@@ -197,8 +199,16 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             if ((RoomObject == null) || (LocationNext == null)) return false;
 
-            RoomObject.Location.X = LocationNext.X;
-            RoomObject.Location.Y = LocationNext.Y;
+            if(RoomObject.Location != null)
+            {
+                LocationPrevious ??= new Point();
+
+                LocationPrevious.X = RoomObject.Location.X;
+                LocationPrevious.Y = RoomObject.Location.Y;
+
+                RoomObject.Location.X = LocationNext.X;
+                RoomObject.Location.Y = LocationNext.Y;
+            }
 
             LocationNext = null;
 
@@ -309,5 +319,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
                 _rollerData = value;
             }
         }
+
+        public bool DidMove => LocationPrevious != null && LocationPrevious.Compare(RoomObject?.Location);
     }
 }

@@ -9,8 +9,7 @@ namespace Turbo.Core.Game.Furniture
     {
         public IFurnitureDefinition FurnitureDefinition { get; }
         public void Save();
-        public bool SetRoom(IRoom room);
-        public void ClearRoom();
+        public void SetRoom(IRoom room);
         public bool SetPlayer(IPlayer player);
         public bool SetPlayer(int playerId, string playerName = "");
         public string LogicType { get; }

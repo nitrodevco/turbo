@@ -1,80 +1,84 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms.Object.Constants;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Players
 {
     public class PlayerDetails : IPlayerDetails
     {
-        private readonly IPlayer _player;
         private readonly PlayerEntity _playerEntity;
+        private readonly IStorageQueue _storageQueue;
 
-        public PlayerDetails(IPlayer player, PlayerEntity playerEntity)
+        public PlayerDetails(PlayerEntity playerEntity, IStorageQueue storageQueue)
         {
-            _player = player;
             _playerEntity = playerEntity;
+            _storageQueue = storageQueue;
         }
 
         public void Save()
         {
-            _player.PlayerManager.StorageQueue.Add(_playerEntity);
+            _storageQueue.Add(_playerEntity);
         }
 
-        public int Id
+        public async Task SaveNow()
         {
-            get
-            {
-                return _playerEntity.Id;
-            }
+            await _storageQueue.SaveNow(_playerEntity);
         }
 
-        public string Name
-        {
-            get
-            {
-                return _playerEntity.Name;
-            }
-        }
+        public int Id => _playerEntity.Id;
+
+        public string Name => _playerEntity.Name;
 
         public string Motto
         {
-            get
+            get => _playerEntity.Motto == null ? "" : _playerEntity.Motto;
+            set
             {
-                return _playerEntity.Motto == null ? "" : _playerEntity.Motto;
+                _playerEntity.Motto = value;
+
+                Save();
             }
         }
 
         public string Figure
         {
-            get
+            get => _playerEntity.Figure;
+            set
             {
-                return _playerEntity.Figure;
+                _playerEntity.Figure = value;
+
+                Save();
             }
         }
 
         public AvatarGender Gender
         {
-            get
+            get => _playerEntity.Gender;
+            set
             {
-                return _playerEntity.Gender;
+                _playerEntity.Gender = value;
+
+                Save();
             }
         }
 
-        public DateTime DateCreated
+        public PlayerStatusEnum PlayerStatus
         {
-            get
+            get => _playerEntity.PlayerStatus;
+            set
             {
-                return _playerEntity.DateCreated;
+                _playerEntity.PlayerStatus = value;
+
+                Save();
             }
         }
 
-        public DateTime DateUpdated
-        {
-            get
-            {
-                return _playerEntity.DateUpdated;
-            }
-        }
+        public DateTime DateCreated => _playerEntity.DateCreated;
+
+        public DateTime DateUpdated => _playerEntity.DateUpdated;
     }
 }
