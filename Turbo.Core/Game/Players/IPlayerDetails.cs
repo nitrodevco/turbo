@@ -7,8 +7,6 @@ namespace Turbo.Core.Game.Players
 {
     public interface IPlayerDetails
     {
-        public void Save();
-        public Task SaveNow();
         public int Id { get; }
         public string Name { get; }
         public string Motto { get; set; }

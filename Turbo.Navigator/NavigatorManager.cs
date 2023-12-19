@@ -17,25 +17,12 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Navigator
 {
-    public class NavigatorManager : Component, INavigatorManager
+    public class NavigatorManager(
+        IRoomManager _roomManager,
+        INavigatorEventCategoryRepository _navigatorEventCategoryRepository,
+        ILogger<INavigatorManager> _logger) : Component, INavigatorManager
     {
-        private readonly IRoomManager _roomManager;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly ILogger<INavigatorManager> _logger;
-
-        private readonly IDictionary<int, IPendingRoomInfo> _pendingRoomIds;
-
-        public NavigatorManager(
-            IRoomManager roomManager,
-            IServiceScopeFactory serviceScopeFactory,
-            ILogger<INavigatorManager> logger)
-        {
-            _roomManager = roomManager;
-            _serviceScopeFactory = serviceScopeFactory;
-            _logger = logger;
-
-            _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
-        }
+        private readonly IDictionary<int, IPendingRoomInfo> _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
 
         protected override async Task OnInit()
         {
@@ -278,16 +265,12 @@ namespace Turbo.Navigator
 
         public async Task SendNavigatorEventCategories(IPlayer player)
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var categoriesRepo = scope.ServiceProvider.GetRequiredService<INavigatorEventCategoryRepository>();
-                var categories = await categoriesRepo.FindAllAsync();
+            var categories = await _navigatorEventCategoryRepository.FindAllAsync();
 
-                await player.Session.Send(new NavigatorEventCategoriesMessage
-                {
-                    EventCategories = categories
-                });
-            }
+            await player.Session.Send(new NavigatorEventCategoriesMessage
+            {
+                EventCategories = categories
+            });
         }
     }
 }

@@ -6,7 +6,7 @@ using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Rooms.Object.Logic;
-using Turbo.Core.Storage;
+using Turbo.Database.Context;
 using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Factories
@@ -15,7 +15,8 @@ namespace Turbo.Furniture.Factories
     {
         private readonly IServiceProvider _provider;
 
-        public PlayerFurnitureFactory(IServiceProvider provider)
+        public PlayerFurnitureFactory(
+            IServiceProvider provider)
         {
             _provider = provider;
         }
@@ -56,11 +57,11 @@ namespace Turbo.Furniture.Factories
             furnitureEntity.PlayerEntityId = playerId;
             furnitureEntity.FurnitureDefinitionEntityId = furnitureDefinitonId;
 
-            var storageQueue = _provider.GetService<IStorageQueue>();
+            var emulatorContext = _provider.GetService<IEmulatorContext>();
 
-            storageQueue?.Add(furnitureEntity);
+            emulatorContext.Add(furnitureEntity);
 
-            await storageQueue.SaveNow();
+            await emulatorContext.SaveChangesAsync();
 
             return Create(playerFurnitureContainer, furnitureEntity);
         }

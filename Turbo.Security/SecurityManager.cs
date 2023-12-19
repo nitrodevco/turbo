@@ -9,11 +9,11 @@ namespace Turbo.Security
 {
     public class SecurityManager : Component, ISecurityManager
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ISecurityTicketRepository _securityTicketRepository;
 
-        public SecurityManager(IServiceScopeFactory scopeFactory)
+        public SecurityManager(ISecurityTicketRepository securityTicketRepository)
         {
-            _serviceScopeFactory = scopeFactory;
+            _securityTicketRepository = securityTicketRepository;
         }
 
         protected override async Task OnInit()
@@ -29,22 +29,15 @@ namespace Turbo.Security
         {
             if ((ticket == null) || (ticket.Length == 0)) return 0;
 
-            SecurityTicketEntity securityTicketEntity;
+            var securityTicketEntity = await _securityTicketRepository.FindByTicketAsync(ticket);
 
-            using (var scope = _serviceScopeFactory.CreateScope())
+            if (securityTicketEntity == null) return 0;
+            
+            if ((bool)!securityTicketEntity.IsLocked)
             {
-                var securityTicketRepository = scope.ServiceProvider.GetService<ISecurityTicketRepository>();
-
-                securityTicketEntity = await securityTicketRepository.FindByTicketAsync(ticket);
-
-                if (securityTicketEntity == null) return 0;
-
-                if ((bool)!securityTicketEntity.IsLocked)
-                {
-                    securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);
-
-                    // check timestamp for expiration, if time now is greater than expiration, return 0;
-                }
+                _securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);
+                
+                // check timestamp for expiration, if time now is greater than expiration, return 0;
             }
 
             return securityTicketEntity.PlayerEntityId;

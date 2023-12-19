@@ -11,7 +11,6 @@ using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
-using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
@@ -19,31 +18,14 @@ using Turbo.Players.Factories;
 
 namespace Turbo.Players
 {
-    public class PlayerManager : Component, IPlayerManager
+    public class PlayerManager(
+        ILogger<IPlayerManager> _logger,
+        IPlayerFactory _playerFactory,
+        INavigatorManager _navigatorManager,
+        IPlayerRepository _playerRepository,
+        IPlayerBadgeRepository _playerBadgeRepository) : Component, IPlayerManager
     {
-        private readonly ILogger<IPlayerManager> _logger;
-        private readonly IStorageQueue _storageQueue;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IPlayerFactory _playerFactory;
-        private readonly INavigatorManager _navigatorManager;
-
-        private readonly IDictionary<int, IPlayer> _players;
-
-        public PlayerManager(
-            ILogger<IPlayerManager> logger,
-            IStorageQueue storageQueue,
-            IServiceScopeFactory scopeFactory,
-            IPlayerFactory playerFactory,
-            INavigatorManager navigatorManager)
-        {
-            _logger = logger;
-            _storageQueue = storageQueue;
-            _serviceScopeFactory = scopeFactory;
-            _playerFactory = playerFactory;
-            _navigatorManager = navigatorManager;
-
-            _players = new ConcurrentDictionary<int, IPlayer>();
-        }
+        private readonly IDictionary<int, IPlayer> _players = new ConcurrentDictionary<int, IPlayer>();
 
         protected override async Task OnInit()
         {
@@ -84,13 +66,7 @@ namespace Turbo.Players
 
             try
             {
-                PlayerEntity playerEntity = null;
-
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-                    playerEntity = await playerRepository.FindAsync(id);
-                }
+                var playerEntity = await _playerRepository.FindAsync(id);
 
                 if (playerEntity == null) return null;
 
@@ -179,18 +155,7 @@ namespace Turbo.Players
 
             if (player != null) return player.Name;
 
-            var name = "";
-
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-
-                var dto = await playerRepository.FindUsernameAsync(playerId);
-
-                if (dto != null) name = dto.Name;
-            }
-
-            return name;
+            return (await _playerRepository.FindUsernameAsync(playerId))?.Name ?? "";
         }
 
         public async Task<IList<IPlayerBadge>> GetPlayerActiveBadges(int playerId)
@@ -201,20 +166,12 @@ namespace Turbo.Players
 
             if (player == null)
             {
-                List<PlayerBadgeDto> entities = new();
-
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    var playerBadgeRepository = scope.ServiceProvider.GetService<IPlayerBadgeRepository>();
-                    entities = await playerBadgeRepository.FindActiveByPlayerIdAsync(playerId);
-                }
-
+                var entities = await _playerBadgeRepository.FindActiveByPlayerIdAsync(playerId);
+                
                 return (IList<IPlayerBadge>)entities;
             }
 
             return player.PlayerInventory?.BadgeInventory?.ActiveBadges;
         }
-
-        public IStorageQueue StorageQueue => _storageQueue;
     }
 }

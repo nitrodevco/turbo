@@ -52,10 +52,6 @@ namespace Turbo.Furniture
             _isDisposing = true;
 
             OnDispose();
-
-            // only save if changes
-
-            if (FurnitureEntity != null) _furnitureManager.StorageQueue.Add(FurnitureEntity);
         }
 
         protected abstract void OnDispose();
@@ -63,8 +59,6 @@ namespace Turbo.Furniture
         public void Save()
         {
             OnSave();
-
-            _furnitureManager.StorageQueue.Add(FurnitureEntity);
         }
 
         protected abstract void OnSave();

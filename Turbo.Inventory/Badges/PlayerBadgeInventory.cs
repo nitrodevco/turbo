@@ -4,7 +4,6 @@ using Turbo.Core.Game;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
-using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
@@ -15,25 +14,19 @@ namespace Turbo.Inventory.Badges
     public class PlayerBadgeInventory : Component, IPlayerBadgeInventory
     {
         private readonly IPlayer _player;
-        private readonly IStorageQueue _storageQueue;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IPlayerBadgeRepository _playerBadgeRepository;
 
-        public IDictionary<string, IPlayerBadge> Badges { get; private set; }
-        public IList<IPlayerBadge> ActiveBadges { get; private set; }
+        public IDictionary<string, IPlayerBadge> Badges { get; private set; } = new Dictionary<string, IPlayerBadge>();
+        public IList<IPlayerBadge> ActiveBadges { get; private set; } = new List<IPlayerBadge>();
 
         private bool _requested;
 
         public PlayerBadgeInventory(
             IPlayer player,
-            IStorageQueue storageQueue,
-            IServiceScopeFactory serviceScopeFactory)
+            IPlayerBadgeRepository playerBadgeRepository)
         {
             _player = player;
-            _storageQueue = storageQueue;
-            _serviceScopeFactory = serviceScopeFactory;
-
-            Badges = new Dictionary<string, IPlayerBadge>();
-            ActiveBadges = new List<IPlayerBadge>();
+            _playerBadgeRepository = playerBadgeRepository;
         }
 
         protected override async Task OnInit()
@@ -120,23 +113,13 @@ namespace Turbo.Inventory.Badges
             Badges.Clear();
             ActiveBadges.Clear();
 
-            List<PlayerBadgeEntity> entities = new();
-
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var playerBadgeRepository = scope.ServiceProvider.GetService<IPlayerBadgeRepository>();
-
-                if (playerBadgeRepository != null)
-                {
-                    entities = await playerBadgeRepository.FindAllByPlayerIdAsync(_player.Id);
-                }
-            }
+            var entities = await _playerBadgeRepository.FindAllByPlayerIdAsync(_player.Id);
 
             if (entities != null)
             {
                 foreach (var playerBadgeEntity in entities)
                 {
-                    IPlayerBadge playerBadge = new PlayerBadge(playerBadgeEntity, _storageQueue);
+                    IPlayerBadge playerBadge = new PlayerBadge(playerBadgeEntity);
 
                     Badges.Add(playerBadge.BadgeCode, playerBadge);
 

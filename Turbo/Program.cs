@@ -58,8 +58,9 @@ namespace Turbo.Main
                                 .Ignore(CoreEventId.RedundantIndexRemoved))
                             .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
                             .EnableDetailedErrors()
-                            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                        }
+                            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
+                        },
+                        ServiceLifetime.Singleton
                     );
 
                     services.AddRepositories();

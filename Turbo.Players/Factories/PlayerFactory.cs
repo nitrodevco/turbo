@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using System;
 using Turbo.Core.Game.Players;
-using Turbo.Core.Storage;
 using Turbo.Database.Entities.Players;
 using Turbo.Inventory.Factories;
 
@@ -29,9 +28,7 @@ namespace Turbo.Players.Factories
 
         public IPlayerDetails CreatePlayerDetails(PlayerEntity playerEntity)
         {
-            IStorageQueue storageQueue = _provider.GetService<IStorageQueue>();
-
-            return new PlayerDetails(playerEntity, storageQueue);
+            return new PlayerDetails(playerEntity);
         }
     }
 }

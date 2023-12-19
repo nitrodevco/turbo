@@ -7,20 +7,11 @@ using Turbo.Rooms.Cycles;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomCycleManager : IRoomCycleManager
+    public class RoomCycleManager(IRoom _room) : IRoomCycleManager
     {
-        private readonly IRoom _room;
-
-        public List<ICyclable> _cycles;
+        public List<ICyclable> _cycles = new();
 
         private bool _running;
-
-        public RoomCycleManager(IRoom room)
-        {
-            _room = room;
-
-            _cycles = new List<ICyclable>();
-        }
 
         public void Start()
         {

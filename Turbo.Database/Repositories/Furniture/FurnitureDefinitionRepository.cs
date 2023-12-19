@@ -19,6 +19,7 @@ namespace Turbo.Database.Repositories.Furniture
             .FirstOrDefaultAsync(definition => definition.Id == id);
 
         public async Task<List<FurnitureDefinitionEntity>> FindAllAsync() => await _context.FurnitureDefinitions
+            .AsNoTracking()
             .ToListAsync();
     }
 }

@@ -3,32 +3,12 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms.Object.Constants;
-using Turbo.Core.Storage;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Players
 {
-    public class PlayerDetails : IPlayerDetails
+    public class PlayerDetails(PlayerEntity _playerEntity) : IPlayerDetails
     {
-        private readonly PlayerEntity _playerEntity;
-        private readonly IStorageQueue _storageQueue;
-
-        public PlayerDetails(PlayerEntity playerEntity, IStorageQueue storageQueue)
-        {
-            _playerEntity = playerEntity;
-            _storageQueue = storageQueue;
-        }
-
-        public void Save()
-        {
-            _storageQueue.Add(_playerEntity);
-        }
-
-        public async Task SaveNow()
-        {
-            await _storageQueue.SaveNow(_playerEntity);
-        }
-
         public int Id => _playerEntity.Id;
 
         public string Name => _playerEntity.Name;
@@ -39,8 +19,6 @@ namespace Turbo.Players
             set
             {
                 _playerEntity.Motto = value;
-
-                Save();
             }
         }
 
@@ -50,8 +28,6 @@ namespace Turbo.Players
             set
             {
                 _playerEntity.Figure = value;
-
-                Save();
             }
         }
 
@@ -61,8 +37,6 @@ namespace Turbo.Players
             set
             {
                 _playerEntity.Gender = value;
-
-                Save();
             }
         }
 
@@ -72,8 +46,6 @@ namespace Turbo.Players
             set
             {
                 _playerEntity.PlayerStatus = value;
-
-                Save();
             }
         }
 

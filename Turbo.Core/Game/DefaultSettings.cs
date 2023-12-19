@@ -10,7 +10,7 @@ namespace Turbo.Core.Game
     public class DefaultSettings
     {
         public static int GameCycleMs = 500;
-        public static int StoreCycleMs = 1000;
+        public static int StoreCycleMs = 2000;
         public static HeuristicFormula PathingFormula = HeuristicFormula.Manhattan;
         public static bool PathingAllowsDiagonals = true;
         public static double MaximumStepHeight = 2.0;

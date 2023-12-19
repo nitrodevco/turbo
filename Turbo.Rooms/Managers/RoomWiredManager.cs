@@ -11,18 +11,10 @@ using Turbo.Rooms.Object.Logic.Furniture.Wired.Conditions;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomWiredManager : IRoomWiredManager
+    public class RoomWiredManager(
+        IRoom _room,
+        IRoomObjectLogicFactory _logicFactory) : IRoomWiredManager
     {
-        private readonly IRoom _room;
-        private readonly IRoomObjectLogicFactory _logicFactory;
-
-        public RoomWiredManager(
-            IRoom room,
-            IRoomObjectLogicFactory logicFactory)
-        {
-            _room = room;
-            _logicFactory = logicFactory;
-        }
 
         public bool ProcessTriggers(string type, IWiredArguments wiredArguments = null)
         {

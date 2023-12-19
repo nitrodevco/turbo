@@ -21,30 +21,32 @@ namespace Turbo.Catalog
         private readonly ILogger<ICatalog> _logger;
         private readonly IFurnitureManager _furnitureManager;
         private readonly ICatalogFactory _catalogFactory;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly ICatalogPageRepository _pageRepository;
+        private readonly ICatalogOfferRepository _offerRepository;
+        private readonly ICatalogProductRepository _productRepository;
         private readonly string _catalogType;
 
         public ICatalogPage Root { get; private set; }
-        public IDictionary<int, ICatalogPage> Pages { get; private set; }
-        public IDictionary<int, ICatalogOffer> Offers { get; private set; }
-        public IDictionary<int, ICatalogProduct> Products { get; private set; }
+        public IDictionary<int, ICatalogPage> Pages { get; private set; } = new Dictionary<int, ICatalogPage>();
+        public IDictionary<int, ICatalogOffer> Offers { get; private set; } = new Dictionary<int, ICatalogOffer>();
+        public IDictionary<int, ICatalogProduct> Products { get; private set; } = new Dictionary<int, ICatalogProduct>();
 
         public Catalog(
             ILogger<ICatalog> logger,
             IFurnitureManager furnitureManager,
             ICatalogFactory catalogFactory,
-            IServiceScopeFactory scopeFactory,
+            ICatalogPageRepository catalogPageRepository,
+            ICatalogOfferRepository catalogOfferRepository,
+            ICatalogProductRepository catalogProductRepository,
             string catalogType)
         {
             _logger = logger;
             _furnitureManager = furnitureManager;
             _catalogFactory = catalogFactory;
-            _serviceScopeFactory = scopeFactory;
+            _pageRepository = catalogPageRepository;
+            _offerRepository = catalogOfferRepository;
+            _productRepository = catalogProductRepository;
             _catalogType = catalogType;
-
-            Pages = new Dictionary<int, ICatalogPage>();
-            Offers = new Dictionary<int, ICatalogOffer>();
-            Products = new Dictionary<int, ICatalogProduct>();
         }
 
         protected override async Task OnInit()
@@ -133,16 +135,9 @@ namespace Turbo.Catalog
             Offers.Clear();
             Products.Clear();
 
-            List<CatalogPageEntity> pageEntities = null;
-            List<CatalogOfferEntity> offerEntities = null;
-            List<CatalogProductEntity> productEntities = null;
-
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                pageEntities = await scope.ServiceProvider.GetService<ICatalogPageRepository>()?.FindAllAsync();
-                offerEntities = await scope.ServiceProvider.GetService<ICatalogOfferRepository>()?.FindAllAsync();
-                productEntities = await scope.ServiceProvider.GetService<ICatalogProductRepository>()?.FindAllAsync();
-            }
+            var pageEntities = await _pageRepository.FindAllAsync();
+            var offerEntities = await _offerRepository.FindAllAsync();
+            var productEntities = await _productRepository.FindAllAsync();
 
             if (pageEntities != null)
             {

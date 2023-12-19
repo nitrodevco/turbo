@@ -18,7 +18,7 @@ namespace Turbo.Inventory.Furniture
     {
         private readonly IPlayer _player;
         private readonly IPlayerFurnitureFactory _playerFurnitureFactory;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IFurnitureRepository _furnitureRepository;
 
         public IPlayerFurnitureContainer Furniture { get; private set; }
 
@@ -27,11 +27,11 @@ namespace Turbo.Inventory.Furniture
         public PlayerFurnitureInventory(
             IPlayer player,
             IPlayerFurnitureFactory playerFurnitureFactory,
-            IServiceScopeFactory serviceScopeFactory)
+            IFurnitureRepository furnitureRepository)
         {
             _player = player;
             _playerFurnitureFactory = playerFurnitureFactory;
-            _serviceScopeFactory = serviceScopeFactory;
+            _furnitureRepository = furnitureRepository;
 
             Furniture = new PlayerFurnitureContainer(RemoveFurniture);
         }
@@ -153,17 +153,7 @@ namespace Turbo.Inventory.Furniture
         {
             Furniture.PlayerFurniture.Clear();
 
-            List<FurnitureEntity> entities = new();
-
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
-
-                if (furnitureRepository != null)
-                {
-                    entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
-                }
-            }
+            var entities = await _furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
 
             if (entities != null)
             {

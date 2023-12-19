@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
-using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
@@ -16,21 +15,19 @@ namespace Turbo.Furniture
     public class FurnitureManager : Component, IFurnitureManager
     {
         private readonly ILogger<FurnitureManager> _logger;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IStorageQueue _storageQueue;
+        private readonly IFurnitureDefinitionRepository _furnitureDefinitionRepository;
+        private readonly IFurnitureRepository _furnitureRepository;
 
-        private IDictionary<int, IFurnitureDefinition> _furnitureDefinitions;
+        private IDictionary<int, IFurnitureDefinition> _furnitureDefinitions = new Dictionary<int, IFurnitureDefinition>();
 
         public FurnitureManager(
             ILogger<FurnitureManager> logger,
-            IStorageQueue storageQueue,
-            IServiceScopeFactory scopeFactory)
+            IFurnitureDefinitionRepository furnitureDefinitionRepository,
+            IFurnitureRepository furnitureRepository)
         {
             _logger = logger;
-            _storageQueue = storageQueue;
-            _serviceScopeFactory = scopeFactory;
-
-            _furnitureDefinitions = new Dictionary<int, IFurnitureDefinition>();
+            _furnitureRepository = furnitureRepository;
+            _furnitureDefinitionRepository = furnitureDefinitionRepository;
         }
 
         protected override async Task OnInit()
@@ -54,12 +51,7 @@ namespace Turbo.Furniture
 
         public async Task<TeleportPairingDto> GetTeleportPairing(int furnitureId)
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
-
-                return await furnitureRepository.GetTeleportPairingAsync(furnitureId);
-            }
+            return await _furnitureRepository.GetTeleportPairingAsync(furnitureId);
         }
 
         private async Task LoadDefinitions()
@@ -69,13 +61,7 @@ namespace Turbo.Furniture
 
             _furnitureDefinitions.Clear();
 
-            List<FurnitureDefinitionEntity> entities;
-
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var furnitureDefinitionRepository = scope.ServiceProvider.GetService<IFurnitureDefinitionRepository>();
-                entities = await furnitureDefinitionRepository.FindAllAsync();
-            }
+            var entities = await _furnitureDefinitionRepository.FindAllAsync();
 
             entities.ForEach(entity =>
             {
@@ -86,7 +72,5 @@ namespace Turbo.Furniture
 
             _logger.LogInformation("Loaded {0} furniture definitions", _furnitureDefinitions.Count);
         }
-
-        public IStorageQueue StorageQueue => _storageQueue;
     }
 }

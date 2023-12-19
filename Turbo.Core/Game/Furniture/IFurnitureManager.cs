@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture.Definition;
-using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 
 namespace Turbo.Core.Game.Furniture
@@ -11,6 +10,5 @@ namespace Turbo.Core.Game.Furniture
     {
         public IFurnitureDefinition GetFurnitureDefinition(int id);
         public Task<TeleportPairingDto> GetTeleportPairing(int furnitureId);
-        public IStorageQueue StorageQueue { get; }
     }
 }

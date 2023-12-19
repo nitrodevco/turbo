@@ -6,8 +6,8 @@ using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Game.Furniture;
-using Turbo.Core.Storage;
 using Turbo.Database.Entities.Catalog;
+using Turbo.Database.Repositories.Catalog;
 
 namespace Turbo.Catalog.Factories
 {
@@ -24,11 +24,11 @@ namespace Turbo.Catalog.Factories
         {
             var logger = _provider.GetService<ILogger<ICatalog>>();
             var furnitureManager = _provider.GetService<IFurnitureManager>();
-            var scopeFactory = _provider.GetService<IServiceScopeFactory>();
+            var catalogPageRepository = _provider.GetService<ICatalogPageRepository>();
+            var catalogOfferRepository = _provider.GetService<ICatalogOfferRepository>();
+            var catalogProductRepository = _provider.GetService<ICatalogProductRepository>();
 
-            if (logger == null || furnitureManager == null || scopeFactory == null) return null;
-
-            return new Catalog(logger, furnitureManager, this, scopeFactory, catalogType);
+            return new Catalog(logger, furnitureManager, this, catalogPageRepository, catalogOfferRepository, catalogProductRepository, catalogType);
         }
 
         public ICatalogPage CreateRoot()

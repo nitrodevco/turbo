@@ -60,7 +60,6 @@ namespace Turbo.Players
 
             await PlayerWallet.DisposeAsync();
             await PlayerInventory.DisposeAsync();
-            await PlayerDetails.SaveNow();
             await Session.DisposeAsync();
         }
 

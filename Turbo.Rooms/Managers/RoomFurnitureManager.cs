@@ -37,16 +37,17 @@ namespace Turbo.Rooms.Managers
         private readonly IRoomObjectFactory _roomObjectFactory;
         private readonly IRoomObjectLogicFactory _roomObjectLogicFactory;
         private readonly IPlayerManager _playerManager;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        private readonly IFurnitureRepository _furnitureRepository;
+        private readonly IPlayerRepository _playerRepository;
 
-        public IDictionary<int, IRoomFloorFurniture> FloorFurniture { get; private set; }
-        public IDictionary<int, IRoomWallFurniture> WallFurniture { get; private set; }
-        public IDictionary<int, string> FurnitureOwners { get; private set; }
+        public IDictionary<int, IRoomFloorFurniture> FloorFurniture { get; private set; } = new Dictionary<int, IRoomFloorFurniture>();
+        public IDictionary<int, IRoomWallFurniture> WallFurniture { get; private set; } = new Dictionary<int, IRoomWallFurniture>();
+        public IDictionary<int, string> FurnitureOwners { get; private set; } = new Dictionary<int, string>();
 
         public IRoomObjectContainer<IRoomObjectFloor> FloorObjects { get; private set; }
         public IRoomObjectContainer<IRoomObjectWall> WallObjects { get; private set; }
 
-        private IDictionary<int, int> _pendingPickerIds;
+        private IDictionary<int, int> _pendingPickerIds = new Dictionary<int, int>();
 
         public RoomFurnitureManager(
             IRoom room,
@@ -55,7 +56,8 @@ namespace Turbo.Rooms.Managers
             IRoomObjectFactory roomObjectFactory,
             IRoomObjectLogicFactory roomObjectLogicFactory,
             IPlayerManager playerManager,
-            IServiceScopeFactory serviceScopeFactory)
+            IFurnitureRepository furnitureRepository,
+            IPlayerRepository playerRepository)
         {
             _room = room;
             _eventHub = turboEventHub;
@@ -63,16 +65,11 @@ namespace Turbo.Rooms.Managers
             _roomObjectFactory = roomObjectFactory;
             _roomObjectLogicFactory = roomObjectLogicFactory;
             _playerManager = playerManager;
-            _serviceScopeFactory = serviceScopeFactory;
-
-            FloorFurniture = new Dictionary<int, IRoomFloorFurniture>();
-            WallFurniture = new Dictionary<int, IRoomWallFurniture>();
-            FurnitureOwners = new Dictionary<int, string>();
+            _furnitureRepository = furnitureRepository;
+            _playerRepository = playerRepository;
 
             FloorObjects = new RoomObjectContainer<IRoomObjectFloor>(RemoveFloorRoomObject);
             WallObjects = new RoomObjectContainer<IRoomObjectWall>(RemoveWallRoomObject);
-
-            _pendingPickerIds = new Dictionary<int, int>();
         }
 
         protected override async Task OnInit()
@@ -779,32 +776,24 @@ namespace Turbo.Rooms.Managers
             WallFurniture.Clear();
             FurnitureOwners.Clear();
 
-            List<FurnitureEntity> entities;
+            var entities = await _furnitureRepository.FindAllByRoomIdAsync(_room.Id);
 
-            using (var scope = _serviceScopeFactory.CreateScope())
+            List<int> playerIds = new();
+
+            foreach (FurnitureEntity furnitureEntity in entities)
             {
-                var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
-                entities = await furnitureRepository.FindAllByRoomIdAsync(_room.Id);
+                if (!playerIds.Contains(furnitureEntity.PlayerEntityId)) playerIds.Add(furnitureEntity.PlayerEntityId);
+            }
 
-                List<int> playerIds = new();
+            if (playerIds.Count > 0)
+            {
+                var usernames = await _playerRepository.FindUsernamesAsync(playerIds);
 
-                foreach (FurnitureEntity furnitureEntity in entities)
+                if (usernames.Count > 0)
                 {
-                    if (!playerIds.Contains(furnitureEntity.PlayerEntityId)) playerIds.Add(furnitureEntity.PlayerEntityId);
-                }
-
-                if (playerIds.Count > 0)
-                {
-                    var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-
-                    IList<PlayerUsernameDto> usernames = await playerRepository.FindUsernamesAsync(playerIds);
-
-                    if (usernames.Count > 0)
+                    foreach (PlayerUsernameDto dto in usernames)
                     {
-                        foreach (PlayerUsernameDto dto in usernames)
-                        {
-                            if (!FurnitureOwners.ContainsKey(dto.Id)) FurnitureOwners.Add(dto.Id, dto.Name);
-                        }
+                        if (!FurnitureOwners.ContainsKey(dto.Id)) FurnitureOwners.Add(dto.Id, dto.Name);
                     }
                 }
             }
