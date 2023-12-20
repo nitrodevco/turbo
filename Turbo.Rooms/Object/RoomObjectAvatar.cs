@@ -1,3 +1,4 @@
+using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
@@ -80,6 +81,66 @@ namespace Turbo.Rooms.Object
             Location.HeadRotation = point.HeadRotation;
 
             NeedsUpdate = true;
+        }
+
+        private void Save()
+        {
+            // implement saving for objects that need saving
+        }
+
+        public int X
+        {
+            get => Location.X;
+            set
+            {
+                Location.X = value;
+
+                Save();
+            }
+        }
+
+        public int Y
+        {
+            get => Location.Y;
+            set
+            {
+                Location.Y = value;
+
+                Save();
+            }
+        }
+
+        public double Z
+        {
+            get => Location.Z;
+            set
+            {
+                Location.Z = value;
+
+                Save();
+            }
+        }
+
+        public Rotation Rotation
+        {
+            get => Location.Rotation;
+            set
+            {
+                Location.Rotation = value;
+
+                Save();
+            }
+        }
+
+        public Rotation HeadRotation
+        {
+            get => Location.HeadRotation;
+            set
+            {
+                Location.HeadRotation = value;
+
+                Save();
+            }
         }
     }
 }

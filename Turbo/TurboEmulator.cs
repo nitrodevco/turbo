@@ -127,7 +127,7 @@ namespace Turbo.Main
             await _furnitureManager.DisposeAsync();
             await _roomManager.DisposeAsync();
             await _playerManager.DisposeAsync();
-            await _emulatorContext.SaveChangesAsync();
+            await _emulatorContext.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using Turbo.Core.Events;
 using Turbo.Core.Game.Furniture.Data;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Object.Logic.Avatar;
@@ -8,19 +9,18 @@ using Turbo.Rooms.Object.Logic.Furniture;
 using Turbo.Rooms.Object.Logic.Furniture.Games.BattleBanzai;
 using Turbo.Rooms.Object.Logic.Furniture.Games.BattleBanzai.Gates;
 using Turbo.Rooms.Object.Logic.Furniture.Games.BattleBanzai.ScoreBoards;
-using Turbo.Rooms.Object.Logic.Furniture.Wired.Conditions;
-using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 
 namespace Turbo.Rooms.Object.Logic
 {
     public class RoomObjectLogicFactory : IRoomObjectLogicFactory
     {
-        public IDictionary<string, Type> Logics { get; private set; }
+        private readonly ITurboEventHub _eventHub;
+        public IDictionary<string, Type> Logics { get; } = new Dictionary<string, Type>();
 
 
-        public RoomObjectLogicFactory()
+        public RoomObjectLogicFactory(ITurboEventHub eventHub)
         {
-            Logics = new Dictionary<string, Type>();
+            _eventHub = eventHub;
 
             Logics.Add(RoomObjectLogicType.User, typeof(PlayerLogic));
             Logics.Add(RoomObjectLogicType.Pet, typeof(PetLogic));
@@ -48,31 +48,6 @@ namespace Turbo.Rooms.Object.Logic
             Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiScoreboardRed, typeof(FurnitureBattleBanzaiScoreboardRedLogic));
             Logics.Add(RoomObjectLogicType.FurnitureBattleBanzaiScoreboardYellow, typeof(FurnitureBattleBanzaiScoreboardYellowLogic));
             #endregion
-
-            #region Wired Triggers
-            Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerEnterRoom, typeof(FurnitureWiredTriggerEnterRoomLogic));
-            Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerWalksOnFurni, typeof(FurnitureWiredTriggerWalksOnFurni));
-            Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerWalksOffFurni, typeof(FurnitureWiredTriggerWalksOffFurni));
-            Logics.Add(RoomObjectLogicType.FurnitureWiredTriggerStateChanged, typeof(FurnitureWiredTriggerStateChangeLogic));
-            #endregion
-
-            #region Wired Conditions
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionActorIsWearingBadge, typeof(FurnitureWiredConditionActorIsWearingBadge));
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotActorWearsBadge, typeof(FurnitureWiredConditionNotActorWearsBadge));
-
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionHasStackedFurnis, typeof(FurnitureWiredConditionHasStackedFurnis));
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotHasStackedFurnis, typeof(FurnitureWiredConditionNotHasStackedFurnis));
-
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionTriggererOnFurni, typeof(FurnitureWiredConditionTriggererOnFurni));
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotTriggererOnFurni, typeof(FurnitureWiredConditionNotTriggererOnFurni));
-
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionFurniHasAvatars, typeof(FurnitureWiredConditionFurniHasAvatars));
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotFurniHasAvatars, typeof(FurnitureWiredConditionNotFurniHasAvatars));
-
-            Logics.Add(RoomObjectLogicType.FurnitrueWiredConditionUserCountIn, typeof(FurnitureWiredConditionUserCountIn));
-            Logics.Add(RoomObjectLogicType.FurnitureWiredConditionNotUserCountIn, typeof(FurnitureWiredConditionNotUserCountIn));
-
-            #endregion
         }
 
         public IRoomObjectLogic Create(string type)
@@ -81,7 +56,11 @@ namespace Turbo.Rooms.Object.Logic
 
             if (logicType == null) return null;
 
-            return (IRoomObjectLogic)Activator.CreateInstance(logicType);
+            var instance = (IRoomObjectLogic)Activator.CreateInstance(logicType);
+
+            instance.SetEventHub(_eventHub);
+
+            return instance;
         }
 
         public Type GetLogicType(string type)

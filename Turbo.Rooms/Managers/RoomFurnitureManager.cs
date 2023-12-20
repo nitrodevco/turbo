@@ -499,13 +499,13 @@ namespace Turbo.Rooms.Managers
 
             var previous = roomObject.Location.Clone();
 
-            roomObject.Location.X = location.X;
-            roomObject.Location.Y = location.Y;
-            roomObject.Location.Rotation = location.Rotation;
+            roomObject.X = location.X;
+            roomObject.Y = location.Y;
+            roomObject.Rotation = location.Rotation;
 
             var tile = _room.RoomMap.GetTile(roomObject.Location);
 
-            if ((tile != null) && (tile.HighestObject != roomObject) || tile.HasStackHelper) roomObject.Location.Z = tile.Height;
+            if ((tile != null) && (tile.HighestObject != roomObject) || tile.HasStackHelper) roomObject.Z = tile.Height;
 
             _room.RoomMap.MoveFloorRoomObject(roomObject, previous);
 

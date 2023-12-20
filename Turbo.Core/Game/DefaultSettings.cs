@@ -22,7 +22,6 @@ namespace Turbo.Core.Game
         public static int BadgesPerFragment = 100;
         public static int MaxActiveBadges = 5;
         public static int DiceCycles = 4;
-        public static int WiredFurniSelectionLimit = 5;
         public static string Delimiter = ";";
         public static int MaximumChatDistance = 50;
         public static Regex RoomNameRegex = new Regex("^(?=.*[A-Z,a-z,0-9]).{3,60}$");

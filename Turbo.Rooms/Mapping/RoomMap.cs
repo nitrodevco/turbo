@@ -14,18 +14,16 @@ namespace Turbo.Rooms.Mapping
     public class RoomMap : IRoomMap
     {
         private readonly IRoom _room;
-        private readonly IDictionary<int, IDictionary<int, IRoomTile>> _map;
+        private readonly IDictionary<int, IDictionary<int, IRoomTile>> _map = new Dictionary<int, IDictionary<int, IRoomTile>>();
 
         public byte[,] Map { get; private set; }
-        public IList<IRoomTile> Tiles { get; init; }
+        public IList<IRoomTile> Tiles { get; private set; } = new List<IRoomTile>();
         public IPathFinder PathFinder { get; init; }
 
         public RoomMap(IRoom room)
         {
             _room = room;
-            _map = new Dictionary<int, IDictionary<int, IRoomTile>>();
 
-            Tiles = new List<IRoomTile>();
             PathFinder = new PathFinder.PathFinder(this);
         }
 

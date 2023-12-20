@@ -7,17 +7,11 @@ using Turbo.Database.Repositories.Security;
 
 namespace Turbo.Security
 {
-    public class SecurityManager : Component, ISecurityManager
+    public class SecurityManager(ISecurityTicketRepository _securityTicketRepository) : Component, ISecurityManager
     {
-        private readonly ISecurityTicketRepository _securityTicketRepository;
-
-        public SecurityManager(ISecurityTicketRepository securityTicketRepository)
-        {
-            _securityTicketRepository = securityTicketRepository;
-        }
-
         protected override async Task OnInit()
         {
+
         }
 
         protected override async Task OnDispose()

@@ -54,15 +54,15 @@ namespace Turbo.Database.Context
             foreach (var plugin in plugins)
             {
                 // Load assembly
-                var assembly = Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), plugin));
+                var assembly = Assembly.LoadFrom(Path.Combine(Directory.GetCurrentDirectory(), plugin));
 
                 var entityTypes = assembly.GetTypes()
-                  .Where(t => t.GetCustomAttributes(typeof(TurboEntity), inherit: true).Any());
+                  .Where(t => t.GetCustomAttributes(typeof(TurboEntity), inherit: true).Length != 0);
 
                 foreach (var type in entityTypes)
                 {
                     entityMethod.MakeGenericMethod(type)
-                        .Invoke(modelBuilder, new object[] { });
+                        .Invoke(modelBuilder, []);
                 }
             }
         }

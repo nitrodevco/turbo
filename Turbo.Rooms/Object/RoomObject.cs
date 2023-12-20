@@ -1,4 +1,5 @@
-﻿using Turbo.Core.Game.Rooms;
+﻿using System;
+using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
@@ -28,8 +29,8 @@ namespace Turbo.Rooms.Object
 
             OnDispose();
 
-            Id = -1;
             Room = null;
+            Id = -1;
             NeedsUpdate = false;
             _isDisposing = false;
         }

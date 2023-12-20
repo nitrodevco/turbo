@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.Marshalling;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
@@ -137,7 +138,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             ProcessNextLocation();
             InvokeCurrentLocation();
 
-            RoomObject.Location.SetRotation(location.Rotation);
+            RoomObject.Rotation = location.Rotation;
+            RoomObject.HeadRotation = location.Rotation;
         }
 
         private void WalkPath(IPoint goal, IList<IPoint> path)
@@ -203,11 +205,11 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             {
                 LocationPrevious ??= new Point();
 
-                LocationPrevious.X = RoomObject.Location.X;
-                LocationPrevious.Y = RoomObject.Location.Y;
+                LocationPrevious.X = RoomObject.X;
+                LocationPrevious.Y = RoomObject.Y;
 
-                RoomObject.Location.X = LocationNext.X;
-                RoomObject.Location.Y = LocationNext.Y;
+                RoomObject.X = LocationNext.X;
+                RoomObject.Y = LocationNext.Y;
             }
 
             LocationNext = null;
@@ -241,7 +243,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (height == oldHeight) return;
 
-            RoomObject.Location.Z = height;
+            RoomObject.Z = height;
+
             RoomObject.NeedsUpdate = true;
         }
 

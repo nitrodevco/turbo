@@ -18,7 +18,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (currentTile == null || RoomObject == null) return;
 
-            RoomObject.Location.Z = currentTile.DefaultHeight;
+            RoomObject.Z = currentTile.DefaultHeight;
 
             RefreshFurniture();
         }
@@ -52,7 +52,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (newHeight > DefaultSettings.MaximumFurnitureHeight) newHeight = DefaultSettings.MaximumFurnitureHeight;
 
-            RoomObject.Location.Z = newHeight;
+            RoomObject.Z = newHeight;
 
             var points = new List<IPoint>();
 

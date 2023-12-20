@@ -80,7 +80,6 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
             services.AddTransient<IRoomSettingsMessageHandler, RoomSettingsMessageHandler>();
             services.AddTransient<IUserMessageHandler, UserMessageHandler>();
-            services.AddTransient<IWiredMessageHandler, WiredMessageHandler>();
         }
 
         public static void AddManagers(this IServiceCollection services)
@@ -109,7 +108,6 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomFurnitureFactory, RoomFurnitureFactory>();
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
-            services.AddSingleton<IRoomWiredFactory, RoomWiredFactory>();
             services.AddSingleton<ICatalogFactory, CatalogFactory>();
         }
 

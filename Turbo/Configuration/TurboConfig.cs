@@ -36,5 +36,9 @@ namespace Turbo.Main.Configuration
         public bool DatabaseLoggingEnabled { get; set; }
 
         public int NetworkWorkerThreads { get; set; }
+
+        public List<string> PluginOrder { get; set; }
+
+        public List<string> PluginNames { get; set; }
     }
 }

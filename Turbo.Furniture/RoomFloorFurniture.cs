@@ -10,7 +10,6 @@ using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
-using Turbo.Core.Game.Rooms.Object.Logic.Wired;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Core.Game.Players;
 
@@ -39,7 +38,6 @@ namespace Turbo.Furniture
         {
             if (RoomObject != null)
             {
-                System.Console.WriteLine("orig: " + FurnitureEntity.X + "," + FurnitureEntity.Y + " new:" + RoomObject.Location.X + "," + RoomObject.Location.Y);
                 FurnitureEntity.X = RoomObject.Location.X;
                 FurnitureEntity.Y = RoomObject.Location.Y;
                 FurnitureEntity.Z = RoomObject.Location.Z;
@@ -48,14 +46,6 @@ namespace Turbo.Furniture
                 if (RoomObject.Logic.StuffData != null)
                 {
                     FurnitureEntity.StuffData = JsonSerializer.Serialize(RoomObject.Logic.StuffData, RoomObject.Logic.StuffData.GetType());
-                }
-
-                if (RoomObject.Logic is IFurnitureWiredLogic wiredLogic)
-                {
-                    if (wiredLogic.WiredData != null)
-                    {
-                        FurnitureEntity.WiredData = JsonSerializer.Serialize(wiredLogic.WiredData, wiredLogic.WiredData.GetType());
-                    }
                 }
             }
         }
@@ -76,11 +66,6 @@ namespace Turbo.Furniture
             if (RoomObject == null) return false;
 
             if (!await RoomObject.Logic.Setup(FurnitureDefinition, FurnitureEntity.StuffData)) return false;
-
-            if (RoomObject.Logic is IFurnitureWiredLogic wiredLogic)
-            {
-                wiredLogic.SetupWiredData(FurnitureEntity.WiredData);
-            }
 
             return true;
         }
