@@ -127,7 +127,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomRepository, RoomRepository>();
             services.AddSingleton<IRoomRightRepository, RoomRightRepository>();
             services.AddSingleton<ISecurityTicketRepository, SecurityTicketRepository>();
-            services.AddSingleton<INavigatorEventCategoryRepository, NavigatorEventCategoryRepository>();
+            services.AddSingleton<INavigatorRepository, NavigatorRepository>();
         }
     }
 }

@@ -38,7 +38,5 @@ namespace Turbo.Main.Configuration
         public int NetworkWorkerThreads { get; set; }
 
         public List<string> PluginOrder { get; set; }
-
-        public List<string> PluginNames { get; set; }
     }
 }

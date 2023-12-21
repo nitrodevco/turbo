@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Turbo.Core.Configuration;
 using Turbo.Database.Attributes;
 using Turbo.Database.Entities;
 using Turbo.Database.Entities.Catalog;
@@ -34,7 +35,9 @@ namespace Turbo.Database.Context
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
         public DbSet<RoomRightEntity> RoomRights { get; set; }
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
+        public DbSet<NavigatorCategoryEntity> NavigatorCategories { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
+        public DbSet<NavigatorTabEntity> NavigatorTabs { get; set; }
 
         public TurboDbContext(DbContextOptions<TurboDbContext> options) : base(options) { }
 
@@ -44,16 +47,16 @@ namespace Turbo.Database.Context
 
             var entityMethod = typeof(ModelBuilder).GetMethod("Entity", Type.EmptyTypes);
 
-            if (!Directory.Exists("plugins"))
-            {
-                Directory.CreateDirectory("plugins");
-            }
+            if (!Directory.Exists("plugins")) Directory.CreateDirectory("plugins");
 
             var plugins = Directory.GetFiles("plugins", "*.dll");
 
+            List<string> pluginOrder = ["TurboWiredPlugin", "TurboDefaultRevisionPlugin"];
+
+            if (pluginOrder != null) plugins = [.. plugins.OrderBy(value => Array.IndexOf([.. pluginOrder], value))];
+
             foreach (var plugin in plugins)
             {
-                // Load assembly
                 var assembly = Assembly.LoadFrom(Path.Combine(Directory.GetCurrentDirectory(), plugin));
 
                 var entityTypes = assembly.GetTypes()

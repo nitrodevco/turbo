@@ -25,6 +25,5 @@ namespace Turbo.Core.Configuration
         public int NetworkWorkerThreads { get; }
 
         public List<string> PluginOrder { get; }
-        public List<string> PluginNames { get; }
     }
 }

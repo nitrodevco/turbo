@@ -14,17 +14,8 @@ using Turbo.Packets.Outgoing.RoomSettings;
 
 namespace Turbo.Rooms
 {
-    public class RoomDetails : IRoomDetails
+    public class RoomDetails(IRoom _room, RoomEntity _roomEntity) : IRoomDetails
     {
-        private readonly IRoom _room;
-        private readonly RoomEntity _roomEntity;
-
-        public RoomDetails(IRoom room, RoomEntity roomEntity)
-        {
-            _room = room;
-            _roomEntity = roomEntity;
-        }
-
         public bool UpdateSettingsForPlayer(IPlayer player, IRoomSettings message)
         {
             // fix this when updating multiple things at once and 1 fails

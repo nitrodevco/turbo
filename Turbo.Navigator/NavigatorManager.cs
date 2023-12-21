@@ -19,7 +19,7 @@ namespace Turbo.Navigator
 {
     public class NavigatorManager(
         IRoomManager _roomManager,
-        INavigatorEventCategoryRepository _navigatorEventCategoryRepository,
+        INavigatorRepository _navigatorEventCategoryRepository,
         ILogger<INavigatorManager> _logger) : Component, INavigatorManager
     {
         private readonly IDictionary<int, IPendingRoomInfo> _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
@@ -244,6 +244,21 @@ namespace Turbo.Navigator
             // remove user from pending doorbells
         }
 
+        public async Task SendNavigatorCategories(IPlayer player) => await player.Session.Send(new UserFlatCatsMessage
+        {
+
+        });
+
+        public async Task SendNavigatorSettings(IPlayer player) => await player.Session.Send(new NewNavigatorPreferencesMessage
+        {
+            WindowX = 0,
+            WindowY = 0,
+            WindowWidth = 0,
+            WindowHeight = 0,
+            LeftPaneHidden = false,
+            ResultMode = 0
+        });
+
         public async Task SendNavigatorMetaData(IPlayer player) => await player.Session.Send(new NavigatorMetaDataMessage
         {
             TopLevelContexts = new List<TopLevelContext>
@@ -265,7 +280,7 @@ namespace Turbo.Navigator
 
         public async Task SendNavigatorEventCategories(IPlayer player)
         {
-            var categories = await _navigatorEventCategoryRepository.FindAllAsync();
+            var categories = await _navigatorEventCategoryRepository.FindAllNavigatorEventCategoriesAsync();
 
             await player.Session.Send(new NavigatorEventCategoriesMessage
             {

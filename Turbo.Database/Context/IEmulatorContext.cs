@@ -31,7 +31,9 @@ namespace Turbo.Database.Context
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
         public DbSet<RoomRightEntity> RoomRights { get; set; }
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
+        public DbSet<NavigatorCategoryEntity> NavigatorCategories { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
+        public DbSet<NavigatorTabEntity> NavigatorTabs { get; set; }
 
         public int SaveChanges(bool acceptAllChangesOnSuccess);
         public int SaveChanges();
