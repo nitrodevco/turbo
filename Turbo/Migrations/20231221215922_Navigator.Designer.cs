@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Context;
 
@@ -10,9 +11,11 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboDbContext))]
-    partial class TurboContextModelSnapshot : ModelSnapshot
+    [Migration("20231221215922_Navigator")]
+    partial class Navigator
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1272,39 +1275,6 @@ namespace Turbo.Main.Migrations
                     b.ToTable("security_tickets");
                 });
 
-            modelBuilder.Entity("TurboWiredPlugin.Entities.FurnitureTeleportLinkEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_created");
-
-                    b.Property<DateTime>("DateUpdated")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_updated");
-
-                    b.Property<int>("FurnitureEntityId")
-                        .HasColumnType("int")
-                        .HasColumnName("furniture_id");
-
-                    b.Property<string>("WiredData")
-                        .HasColumnType("longtext")
-                        .HasColumnName("wired_data");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FurnitureEntityId")
-                        .IsUnique();
-
-                    b.ToTable("furniture_wired_data");
-                });
-
             modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
                 {
                     b.HasOne("Turbo.Database.Entities.Catalog.CatalogPageEntity", "Page")
@@ -1565,17 +1535,6 @@ namespace Turbo.Main.Migrations
                         .IsRequired();
 
                     b.Navigation("PlayerEntity");
-                });
-
-            modelBuilder.Entity("TurboWiredPlugin.Entities.FurnitureTeleportLinkEntity", b =>
-                {
-                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntity")
-                        .WithMany()
-                        .HasForeignKey("FurnitureEntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FurnitureEntity");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>

@@ -11,10 +11,10 @@ using System.Xml.Linq;
 
 namespace Turbo.Database.Entities.Navigator
 {
-    [Table("navigator_tabs"), Index(nameof(Name), IsUnique = true)]
+    [Table("navigator_tabs"), Index(nameof(SearchCode), IsUnique = true)]
     public class NavigatorTabEntity : Entity
     {
-        [Column("name"), Required]
-        public string Name { get; set; }
+        [Column("search_code"), Required]
+        public string SearchCode { get; set; }
     }
 }

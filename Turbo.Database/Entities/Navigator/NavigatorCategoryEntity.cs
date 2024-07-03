@@ -17,6 +17,9 @@ namespace Turbo.Database.Entities.Navigator
         [Column("name"), Required]
         public string Name { get; set; }
 
+        [Column("localization_name")]
+        public string? LocalizationName { get; set; }
+
         [Column("is_public"), Required, DefaultValueSql("0")]
         public bool IsPublic { get; set; }
     }

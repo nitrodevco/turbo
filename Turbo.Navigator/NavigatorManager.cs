@@ -19,13 +19,19 @@ namespace Turbo.Navigator
 {
     public class NavigatorManager(
         IRoomManager _roomManager,
-        INavigatorRepository _navigatorEventCategoryRepository,
+        INavigatorRepository _navigatorRepository,
         ILogger<INavigatorManager> _logger) : Component, INavigatorManager
     {
+        private readonly IList<INavigatorTab> _tabs = new List<INavigatorTab>();
+        private readonly IDictionary<int, INavigatorCategory> _categories = new Dictionary<int, INavigatorCategory>();
+        private readonly IDictionary<int,INavigatorEventCategory> _eventCategories = new Dictionary<int, INavigatorEventCategory>();
         private readonly IDictionary<int, IPendingRoomInfo> _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
 
         protected override async Task OnInit()
         {
+            await LoadNavigatorTabs();
+            await LoadNavigatorCategories();
+            await LoadNavigatorEventCategories();
         }
 
         protected override async Task OnDispose()
@@ -71,7 +77,7 @@ namespace Turbo.Navigator
         {
             if (player == null) return;
 
-            IRoom room = await _roomManager.GetRoom(roomId);
+            var room = await _roomManager.GetRoom(roomId);
 
             if (room == null) return;
 
@@ -146,6 +152,7 @@ namespace Turbo.Navigator
 
                 if (!skipState)
                 {
+                    #region RoomStateType.Locked
                     if (room.RoomDetails.State == RoomStateType.Locked)
                     {
                         ClearPendingRoomId(player.Id);
@@ -153,7 +160,9 @@ namespace Turbo.Navigator
                         // doorbell
                         // if rights do u need 2 wait
                     }
+                    #endregion
 
+                    #region RoomStateType.Password
                     else if (room.RoomDetails.State == RoomStateType.Password)
                     {
                         if (!password.Equals(room.RoomDetails.Password))
@@ -168,7 +177,9 @@ namespace Turbo.Navigator
                             return;
                         }
                     }
+                    #endregion
 
+                    #region RoomStateType.Invisible
                     else if (room.RoomDetails.State == RoomStateType.Invisible)
                     {
                         if (room.RoomSecurityManager.GetControllerLevel(player) == RoomControllerLevel.None)
@@ -184,6 +195,7 @@ namespace Turbo.Navigator
                             return;
                         }
                     }
+                    #endregion
                 }
             }
 
@@ -259,16 +271,21 @@ namespace Turbo.Navigator
             ResultMode = 0
         });
 
-        public async Task SendNavigatorMetaData(IPlayer player) => await player.Session.Send(new NavigatorMetaDataMessage
+        public async Task SendNavigatorMetaData(IPlayer player)
         {
-            TopLevelContexts = new List<TopLevelContext>
+            List<ITopLevelContext> tabs = [];
+
+
+            foreach (var tab in _tabs)
             {
-                new TopLevelContext { SearchCode = "official_view" },
-                new TopLevelContext { SearchCode = "hotel_view" },
-                new TopLevelContext { SearchCode = "roomads_view" },
-                new TopLevelContext { SearchCode = "myworld_view" }
+                tabs.Add(tab.TopLevelContext);
             }
-        });
+
+            await player.Session.Send(new NavigatorMetaDataMessage
+            {
+                TopLevelContexts = tabs
+            });
+        }
 
         public async Task SendNavigatorLiftedRooms(IPlayer player) => await player.Session.Send(new NavigatorLiftedRoomsMessage());
 
@@ -280,12 +297,60 @@ namespace Turbo.Navigator
 
         public async Task SendNavigatorEventCategories(IPlayer player)
         {
-            var categories = await _navigatorEventCategoryRepository.FindAllNavigatorEventCategoriesAsync();
+            var categories = await _navigatorRepository.FindAllNavigatorEventCategoriesAsync();
 
             await player.Session.Send(new NavigatorEventCategoriesMessage
             {
                 EventCategories = categories
             });
+        }
+
+        private async Task LoadNavigatorTabs()
+        {
+            _tabs.Clear();
+
+            var entities = await _navigatorRepository.FindAllNavigatorTabsAsync();
+
+            entities.ForEach(entity =>
+            {
+                var tab = new NavigatorTab(entity);
+
+                _tabs.Add(tab);
+            });
+
+            _logger.LogInformation("Loaded {0} navigator tabs", _tabs.Count);
+        }
+
+        private async Task LoadNavigatorCategories()
+        {
+            _categories.Clear();
+
+            var entities = await _navigatorRepository.FindAllNavigatorCategoriesAsync();
+
+            entities.ForEach(entity =>
+            {
+                var category = new NavigatorCategory(entity);
+
+                _categories.Add(category.Id, category);
+            });
+
+            _logger.LogInformation("Loaded {0} navigator categories", _categories.Count);
+        }
+
+        private async Task LoadNavigatorEventCategories()
+        {
+            _eventCategories.Clear();
+
+            var entities = await _navigatorRepository.FindAllNavigatorEventCategoriesAsync();
+
+            entities.ForEach(entity =>
+            {
+                var eventCategory = new NavigatorEventCategory(entity);
+
+                _eventCategories.Add(eventCategory.Id, eventCategory);
+            });
+
+            _logger.LogInformation("Loaded {0} navigator event categories", _eventCategories.Count);
         }
     }
 }

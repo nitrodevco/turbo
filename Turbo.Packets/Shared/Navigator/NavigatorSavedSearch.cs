@@ -1,6 +1,8 @@
-﻿namespace Turbo.Packets.Shared.Navigator
+﻿using Turbo.Core.Game.Navigator;
+
+namespace Turbo.Packets.Shared.Navigator
 {
-    public record NavigatorSavedSearch
+    public record NavigatorSavedSearch : INavigatorSavedSearch
     {
         public int Id { get; init; }
         public string SearchCode { get; init; }
