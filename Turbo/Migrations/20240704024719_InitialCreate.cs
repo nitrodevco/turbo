@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Turbo.Main.Migrations
 {
-    public partial class Initial : Migration
+    /// <inheritdoc />
+    public partial class InitialCreate : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
@@ -90,6 +92,28 @@ namespace Turbo.Main.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "navigator_categories",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    name = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    localization_name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    is_public = table.Column<bool>(type: "tinyint(1)", nullable: false, defaultValueSql: "0"),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_navigator_categories", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "navigator_event_categories",
                 columns: table => new
                 {
@@ -110,6 +134,25 @@ namespace Turbo.Main.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "navigator_tabs",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    search_code = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_navigator_tabs", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "players",
                 columns: table => new
                 {
@@ -122,6 +165,7 @@ namespace Turbo.Main.Migrations
                     figure = table.Column<string>(type: "longtext", nullable: false, defaultValueSql: "'hr-115-42.hd-195-19.ch-3030-82.lg-275-1408.fa-1201.ca-1804-64'")
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     gender = table.Column<int>(type: "int", nullable: false, defaultValueSql: "0"),
+                    status = table.Column<int>(type: "int", nullable: false, defaultValueSql: "0"),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -193,6 +237,63 @@ namespace Turbo.Main.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "messenger_categories",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    player_id = table.Column<int>(type: "int", nullable: false),
+                    name = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_messenger_categories", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_messenger_categories_players_player_id",
+                        column: x => x.player_id,
+                        principalTable: "players",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "messenger_requests",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    player_id = table.Column<int>(type: "int", nullable: false),
+                    requested_id = table.Column<int>(type: "int", nullable: false),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_messenger_requests", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_messenger_requests_players_player_id",
+                        column: x => x.player_id,
+                        principalTable: "players",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_messenger_requests_players_requested_id",
+                        column: x => x.requested_id,
+                        principalTable: "players",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "player_badges",
                 columns: table => new
                 {
@@ -212,6 +313,33 @@ namespace Turbo.Main.Migrations
                     table.PrimaryKey("PK_player_badges", x => x.id);
                     table.ForeignKey(
                         name: "FK_player_badges_players_player_id",
+                        column: x => x.player_id,
+                        principalTable: "players",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "player_currencies",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    player_id = table.Column<int>(type: "int", nullable: false),
+                    type = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    amount = table.Column<int>(type: "int", nullable: false, defaultValueSql: "0"),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_player_currencies", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_player_currencies_players_player_id",
                         column: x => x.player_id,
                         principalTable: "players",
                         principalColumn: "id",
@@ -287,6 +415,7 @@ namespace Turbo.Main.Migrations
                     password = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     model_id = table.Column<int>(type: "int", nullable: false),
+                    category_id = table.Column<int>(type: "int", nullable: true),
                     users_now = table.Column<int>(type: "int", nullable: false, defaultValueSql: "0"),
                     users_max = table.Column<int>(type: "int", nullable: false, defaultValueSql: "25"),
                     paint_wall = table.Column<double>(type: "double", nullable: false, defaultValueSql: "0"),
@@ -319,6 +448,11 @@ namespace Turbo.Main.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_rooms", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_rooms_navigator_categories_category_id",
+                        column: x => x.category_id,
+                        principalTable: "navigator_categories",
+                        principalColumn: "id");
                     table.ForeignKey(
                         name: "FK_rooms_players_player_id",
                         column: x => x.player_id,
@@ -372,6 +506,44 @@ namespace Turbo.Main.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "messenger_friends",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    player_id = table.Column<int>(type: "int", nullable: false),
+                    requested_id = table.Column<int>(type: "int", nullable: false),
+                    category_id = table.Column<int>(type: "int", nullable: true),
+                    relation = table.Column<int>(type: "int", nullable: false),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_messenger_friends", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_messenger_friends_messenger_categories_category_id",
+                        column: x => x.category_id,
+                        principalTable: "messenger_categories",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_messenger_friends_players_player_id",
+                        column: x => x.player_id,
+                        principalTable: "players",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_messenger_friends_players_requested_id",
+                        column: x => x.requested_id,
+                        principalTable: "players",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "furniture",
                 columns: table => new
                 {
@@ -387,8 +559,6 @@ namespace Turbo.Main.Migrations
                     wall_position = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     stuff_data = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    wired_data = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
@@ -544,6 +714,32 @@ namespace Turbo.Main.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
+            migrationBuilder.CreateTable(
+                name: "furniture_wired_data",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    furniture_id = table.Column<int>(type: "int", nullable: false),
+                    wired_data = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    date_created = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    date_updated = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.ComputedColumn)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_furniture_wired_data", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_furniture_wired_data_furniture_furniture_id",
+                        column: x => x.furniture_id,
+                        principalTable: "furniture",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
             migrationBuilder.CreateIndex(
                 name: "IX_catalog_offers_page_id",
                 table: "catalog_offers",
@@ -598,9 +794,66 @@ namespace Turbo.Main.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_furniture_wired_data_furniture_id",
+                table: "furniture_wired_data",
+                column: "furniture_id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messenger_categories_player_id_name",
+                table: "messenger_categories",
+                columns: new[] { "player_id", "name" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messenger_friends_category_id",
+                table: "messenger_friends",
+                column: "category_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messenger_friends_player_id_requested_id",
+                table: "messenger_friends",
+                columns: new[] { "player_id", "requested_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messenger_friends_requested_id",
+                table: "messenger_friends",
+                column: "requested_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messenger_requests_player_id_requested_id",
+                table: "messenger_requests",
+                columns: new[] { "player_id", "requested_id" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_messenger_requests_requested_id",
+                table: "messenger_requests",
+                column: "requested_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_navigator_categories_name",
+                table: "navigator_categories",
+                column: "name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_navigator_tabs_search_code",
+                table: "navigator_tabs",
+                column: "search_code",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_player_badges_player_id_badge_code",
                 table: "player_badges",
                 columns: new[] { "player_id", "badge_code" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_player_currencies_player_id_type",
+                table: "player_currencies",
+                columns: new[] { "player_id", "type" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
@@ -655,6 +908,11 @@ namespace Turbo.Main.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_rooms_category_id",
+                table: "rooms",
+                column: "category_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_rooms_model_id",
                 table: "rooms",
                 column: "model_id");
@@ -677,6 +935,7 @@ namespace Turbo.Main.Migrations
                 unique: true);
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
@@ -686,10 +945,25 @@ namespace Turbo.Main.Migrations
                 name: "furniture_teleport_links");
 
             migrationBuilder.DropTable(
+                name: "furniture_wired_data");
+
+            migrationBuilder.DropTable(
+                name: "messenger_friends");
+
+            migrationBuilder.DropTable(
+                name: "messenger_requests");
+
+            migrationBuilder.DropTable(
                 name: "navigator_event_categories");
 
             migrationBuilder.DropTable(
+                name: "navigator_tabs");
+
+            migrationBuilder.DropTable(
                 name: "player_badges");
+
+            migrationBuilder.DropTable(
+                name: "player_currencies");
 
             migrationBuilder.DropTable(
                 name: "player_settings");
@@ -713,6 +987,9 @@ namespace Turbo.Main.Migrations
                 name: "furniture");
 
             migrationBuilder.DropTable(
+                name: "messenger_categories");
+
+            migrationBuilder.DropTable(
                 name: "catalog_pages");
 
             migrationBuilder.DropTable(
@@ -720,6 +997,9 @@ namespace Turbo.Main.Migrations
 
             migrationBuilder.DropTable(
                 name: "rooms");
+
+            migrationBuilder.DropTable(
+                name: "navigator_categories");
 
             migrationBuilder.DropTable(
                 name: "players");

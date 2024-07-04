@@ -2,7 +2,6 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Context;
 
@@ -11,14 +10,13 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboDbContext))]
-    [Migration("20231205164802_Initial")]
-    partial class Initial
+    partial class TurboDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
@@ -409,10 +407,6 @@ namespace Turbo.Main.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("wall_position");
 
-                    b.Property<string>("WiredData")
-                        .HasColumnType("longtext")
-                        .HasColumnName("wired_data");
-
                     b.Property<int>("X")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -478,6 +472,160 @@ namespace Turbo.Main.Migrations
                     b.ToTable("furniture_teleport_links");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerCategoryEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerEntityId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("messenger_categories");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerFriendEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("FriendPlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("requested_id");
+
+                    b.Property<int?>("MessengerCategoryEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("category_id");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.Property<int>("RelationType")
+                        .HasColumnType("int")
+                        .HasColumnName("relation");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FriendPlayerEntityId");
+
+                    b.HasIndex("MessengerCategoryEntityId");
+
+                    b.HasIndex("PlayerEntityId", "FriendPlayerEntityId")
+                        .IsUnique();
+
+                    b.ToTable("messenger_friends");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerRequestEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.Property<int>("RequestedPlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("requested_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequestedPlayerEntityId");
+
+                    b.HasIndex("PlayerEntityId", "RequestedPlayerEntityId")
+                        .IsUnique();
+
+                    b.ToTable("messenger_requests");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorCategoryEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<bool>("IsPublic")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_public")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<string>("LocalizationName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("localization_name");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("navigator_categories");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorEventCategoryEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -507,6 +655,36 @@ namespace Turbo.Main.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("navigator_event_categories");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorTabEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<string>("SearchCode")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("search_code");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SearchCode")
+                        .IsUnique();
+
+                    b.ToTable("navigator_tabs");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerBadgeEntity", b =>
@@ -547,6 +725,46 @@ namespace Turbo.Main.Migrations
                     b.ToTable("player_badges");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerCurrencyEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("Amount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("amount")
+                        .HasDefaultValueSql("0");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerEntityId", "Type")
+                        .IsUnique();
+
+                    b.ToTable("player_currencies");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -585,6 +803,12 @@ namespace Turbo.Main.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)")
                         .HasColumnName("name");
+
+                    b.Property<int>("PlayerStatus")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("status")
+                        .HasDefaultValueSql("0");
 
                     b.HasKey("Id");
 
@@ -776,6 +1000,10 @@ namespace Turbo.Main.Migrations
                         .HasColumnType("longtext")
                         .HasColumnName("name");
 
+                    b.Property<int?>("NavigatorCategoryEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("category_id");
+
                     b.Property<double>("PaintFloor")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("double")
@@ -849,6 +1077,8 @@ namespace Turbo.Main.Migrations
                         .HasDefaultValueSql("-1");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("NavigatorCategoryEntityId");
 
                     b.HasIndex("PlayerEntityId");
 
@@ -1046,6 +1276,39 @@ namespace Turbo.Main.Migrations
                     b.ToTable("security_tickets");
                 });
 
+            modelBuilder.Entity("TurboWiredPlugin.Entities.FurnitureTeleportLinkEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("FurnitureEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("furniture_id");
+
+                    b.Property<string>("WiredData")
+                        .HasColumnType("longtext")
+                        .HasColumnName("wired_data");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FurnitureEntityId")
+                        .IsUnique();
+
+                    b.ToTable("furniture_wired_data");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
                 {
                     b.HasOne("Turbo.Database.Entities.Catalog.CatalogPageEntity", "Page")
@@ -1127,10 +1390,76 @@ namespace Turbo.Main.Migrations
                     b.Navigation("FurnitureEntityTwo");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerCategoryEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany("MessengerCategories")
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlayerEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerFriendEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "FriendPlayerEntity")
+                        .WithMany()
+                        .HasForeignKey("FriendPlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Messenger.MessengerCategoryEntity", "MessengerCategoryEntity")
+                        .WithMany()
+                        .HasForeignKey("MessengerCategoryEntityId");
+
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany("MessengerFriends")
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FriendPlayerEntity");
+
+                    b.Navigation("MessengerCategoryEntity");
+
+                    b.Navigation("PlayerEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerRequestEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany("MessengerRequestsSent")
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "RequestedPlayerEntity")
+                        .WithMany("MessengerRequests")
+                        .HasForeignKey("RequestedPlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlayerEntity");
+
+                    b.Navigation("RequestedPlayerEntity");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerBadgeEntity", b =>
                 {
                     b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("PlayerBadges")
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PlayerEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerCurrencyEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany("PlayerCurrencies")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1170,6 +1499,10 @@ namespace Turbo.Main.Migrations
 
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntity", b =>
                 {
+                    b.HasOne("Turbo.Database.Entities.Navigator.NavigatorCategoryEntity", "NavigatorCategoryEntity")
+                        .WithMany()
+                        .HasForeignKey("NavigatorCategoryEntityId");
+
                     b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("Rooms")
                         .HasForeignKey("PlayerEntityId")
@@ -1181,6 +1514,8 @@ namespace Turbo.Main.Migrations
                         .HasForeignKey("RoomModelEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("NavigatorCategoryEntity");
 
                     b.Navigation("PlayerEntity");
 
@@ -1236,6 +1571,17 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
+            modelBuilder.Entity("TurboWiredPlugin.Entities.FurnitureTeleportLinkEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntity")
+                        .WithMany()
+                        .HasForeignKey("FurnitureEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FurnitureEntity");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
                 {
                     b.Navigation("Products");
@@ -1257,7 +1603,17 @@ namespace Turbo.Main.Migrations
                 {
                     b.Navigation("Furniture");
 
+                    b.Navigation("MessengerCategories");
+
+                    b.Navigation("MessengerFriends");
+
+                    b.Navigation("MessengerRequests");
+
+                    b.Navigation("MessengerRequestsSent");
+
                     b.Navigation("PlayerBadges");
+
+                    b.Navigation("PlayerCurrencies");
 
                     b.Navigation("PlayerSettings");
 

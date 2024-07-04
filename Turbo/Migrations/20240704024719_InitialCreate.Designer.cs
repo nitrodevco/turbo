@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Context;
 
@@ -10,9 +11,11 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboDbContext))]
-    partial class TurboContextModelSnapshot : ModelSnapshot
+    [Migration("20240704024719_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -609,6 +612,10 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("is_public")
                         .HasDefaultValueSql("0");
 
+                    b.Property<string>("LocalizationName")
+                        .HasColumnType("longtext")
+                        .HasColumnName("localization_name");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("varchar(255)")
@@ -670,14 +677,14 @@ namespace Turbo.Main.Migrations
                         .HasColumnType("datetime(6)")
                         .HasColumnName("date_updated");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("SearchCode")
                         .IsRequired()
                         .HasColumnType("varchar(255)")
-                        .HasColumnName("name");
+                        .HasColumnName("search_code");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("SearchCode")
                         .IsUnique();
 
                     b.ToTable("navigator_tabs");
