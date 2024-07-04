@@ -1,6 +1,8 @@
-﻿using Turbo.Core.Game.Rooms.Object.Logic.Wired.Data;
+﻿using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Core.Game.Wired.Data;
 
-namespace Turbo.Core.Game.Rooms.Object.Logic.Wired
+namespace Turbo.Core.Game.Wired
 {
     public interface IFurnitureWiredLogic : IFurnitureFloorLogic
     {

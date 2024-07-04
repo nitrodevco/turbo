@@ -1,4 +1,4 @@
-﻿namespace Turbo.Core.Game.Rooms.Object.Logic.Wired.Constants
+﻿namespace Turbo.Core.Game.Wired.Constants
 {
     public enum FurnitureWiredConditionType
     {
