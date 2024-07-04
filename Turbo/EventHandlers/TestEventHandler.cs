@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Turbo.Core.EventHandlers;
 using Turbo.Core.Events;
 using Turbo.Events.Game.Rooms.Furniture;
+using Turbo.Events.Game.Security;
+using Turbo.Packets.Outgoing.Navigator;
 
 namespace Turbo.EventHandlers
 {
@@ -23,5 +25,6 @@ namespace Turbo.EventHandlers
         {
             //message.Cancel();
         }
+        
     }
 }
