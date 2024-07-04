@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Core.Game.Rooms.Object.Logic.Wired.Data
+namespace Turbo.Core.Game.Wired.Data
 {
     public interface IWiredData
     {
