@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -19,19 +21,17 @@ namespace Turbo.Navigator
 {
     public class NavigatorManager(
         IRoomManager _roomManager,
-        INavigatorRepository _navigatorRepository,
-        ILogger<INavigatorManager> _logger) : Component, INavigatorManager
+        ILogger<INavigatorManager> _logger,
+        IServiceScopeFactory _serviceScopeFactory) : Component, INavigatorManager
     {
         private readonly IList<INavigatorTab> _tabs = new List<INavigatorTab>();
         private readonly IDictionary<int, INavigatorCategory> _categories = new Dictionary<int, INavigatorCategory>();
-        private readonly IDictionary<int,INavigatorEventCategory> _eventCategories = new Dictionary<int, INavigatorEventCategory>();
-        private readonly IDictionary<int, IPendingRoomInfo> _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
+        private readonly IDictionary<int, INavigatorEventCategory> _eventCategories = new Dictionary<int, INavigatorEventCategory>();
+        private readonly ConcurrentDictionary<int, IPendingRoomInfo> _pendingRoomIds = new();
 
         protected override async Task OnInit()
         {
-            await LoadNavigatorTabs();
-            await LoadNavigatorCategories();
-            await LoadNavigatorEventCategories();
+            await LoadNavigatorData();
         }
 
         protected override async Task OnDispose()
@@ -40,17 +40,20 @@ namespace Turbo.Navigator
 
         public int GetPendingRoomId(int userId)
         {
-            if (!_pendingRoomIds.ContainsKey(userId)) return -1;
+            if (_pendingRoomIds.TryGetValue(userId, out var pendingRoomInfo))
+            {
+                return pendingRoomInfo.RoomId;
+            }
 
-            return _pendingRoomIds[userId].RoomId;
+            return -1;
         }
 
         public void SetPendingRoomId(int userId, int roomId, bool approved = false)
         {
             if ((userId <= 0) || (roomId <= 0)) return;
 
-            _pendingRoomIds.Remove(userId);
-            _pendingRoomIds.Add(userId, new PendingRoomInfo
+            _pendingRoomIds.Remove(userId, out var pendingRoomInfo);
+            _pendingRoomIds.TryAdd(userId, new PendingRoomInfo
             {
                 RoomId = roomId,
                 Approved = approved
@@ -59,7 +62,7 @@ namespace Turbo.Navigator
 
         public void ClearPendingRoomId(int userId)
         {
-            _pendingRoomIds.Remove(userId);
+            _pendingRoomIds.Remove(userId, out var pendingRoomInfo);
         }
 
         public void ClearRoomStatus(IPlayer player)
@@ -275,7 +278,6 @@ namespace Turbo.Navigator
         {
             List<ITopLevelContext> tabs = [];
 
-
             foreach (var tab in _tabs)
             {
                 tabs.Add(tab.TopLevelContext);
@@ -292,64 +294,49 @@ namespace Turbo.Navigator
         public async Task SendNavigatorSavedSearches(IPlayer player) => await player.Session.Send(new NavigatorSavedSearchesMessage
         {
             // Todo: Implement saved searches
-            SavedSearches = new List<NavigatorSavedSearch>(0)
+            SavedSearches = []
         });
 
-        public async Task SendNavigatorEventCategories(IPlayer player)
+        public async Task SendNavigatorEventCategories(IPlayer player) => await player.Session.Send(new NavigatorEventCategoriesMessage
         {
-            var categories = await _navigatorRepository.FindAllNavigatorEventCategoriesAsync();
+            EventCategories = [.. _eventCategories.Values]
+        });
 
-            await player.Session.Send(new NavigatorEventCategoriesMessage
-            {
-                EventCategories = categories
-            });
-        }
-
-        private async Task LoadNavigatorTabs()
+        private async Task LoadNavigatorData()
         {
             _tabs.Clear();
+            _categories.Clear();
+            _eventCategories.Clear();
 
-            var entities = await _navigatorRepository.FindAllNavigatorTabsAsync();
+            using var scope = _serviceScopeFactory.CreateScope();
+            var navigatorRepository = scope.ServiceProvider.GetService<INavigatorRepository>();
+            var tabEntities = await navigatorRepository.FindAllNavigatorTabsAsync();
+            var categoryEntities = await navigatorRepository.FindAllNavigatorCategoriesAsync();
+            var eventCategoriesEntities = await navigatorRepository.FindAllNavigatorEventCategoriesAsync();
 
-            entities.ForEach(entity =>
+            tabEntities.ForEach(entity =>
             {
                 var tab = new NavigatorTab(entity);
 
                 _tabs.Add(tab);
             });
 
-            _logger.LogInformation("Loaded {0} navigator tabs", _tabs.Count);
-        }
-
-        private async Task LoadNavigatorCategories()
-        {
-            _categories.Clear();
-
-            var entities = await _navigatorRepository.FindAllNavigatorCategoriesAsync();
-
-            entities.ForEach(entity =>
+            categoryEntities.ForEach(entity =>
             {
                 var category = new NavigatorCategory(entity);
 
                 _categories.Add(category.Id, category);
             });
 
-            _logger.LogInformation("Loaded {0} navigator categories", _categories.Count);
-        }
-
-        private async Task LoadNavigatorEventCategories()
-        {
-            _eventCategories.Clear();
-
-            var entities = await _navigatorRepository.FindAllNavigatorEventCategoriesAsync();
-
-            entities.ForEach(entity =>
+            eventCategoriesEntities.ForEach(entity =>
             {
                 var eventCategory = new NavigatorEventCategory(entity);
 
                 _eventCategories.Add(eventCategory.Id, eventCategory);
             });
 
+            _logger.LogInformation("Loaded {0} navigator tabs", _tabs.Count);
+            _logger.LogInformation("Loaded {0} navigator categories", _categories.Count);
             _logger.LogInformation("Loaded {0} navigator event categories", _eventCategories.Count);
         }
     }
