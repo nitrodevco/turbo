@@ -14,6 +14,8 @@ using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
+using Turbo.Core.Storage;
+using Turbo.Database.Queue;
 using Turbo.Database.Repositories.Catalog;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Navigator;
@@ -113,6 +115,7 @@ namespace Turbo.Main.Extensions
 
         public static void AddRepositories(this IServiceCollection services)
         {
+            services.AddSingleton<IStorageQueue, StorageQueue>();
             services.AddSingleton<ICatalogOfferRepository, CatalogOfferRepository>();
             services.AddSingleton<ICatalogPageRepository, CatalogPageRepository>();
             services.AddSingleton<ICatalogProductRepository, CatalogProductRepository>();

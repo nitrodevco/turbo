@@ -37,7 +37,7 @@ namespace Turbo.Main
                         .ReadFrom.Configuration(hostContext.Configuration)
                         .Enrich.FromLogContext()
                         .WriteTo.Console()
-                        .CreateLogger(); 
+                        .CreateLogger();
 
                     // Configuration
                     var turboConfig = new TurboConfig();
@@ -46,7 +46,7 @@ namespace Turbo.Main
 
                     var connectionString = $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
 
-                    services.AddDbContext<IEmulatorContext, TurboDbContext>(
+                    services.AddDbContext<IEmulatorContext, TurboContext>(
                         options =>
                         {
                             options
@@ -58,9 +58,9 @@ namespace Turbo.Main
                                 .Ignore(CoreEventId.RedundantIndexRemoved))
                             .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
                             .EnableDetailedErrors()
-                            .UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
+                            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                         },
-                        ServiceLifetime.Singleton
+                        ServiceLifetime.Scoped
                     );
 
                     services.AddRepositories();

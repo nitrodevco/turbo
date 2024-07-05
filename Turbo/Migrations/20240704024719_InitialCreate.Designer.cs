@@ -10,7 +10,7 @@ using Turbo.Database.Context;
 
 namespace Turbo.Main.Migrations
 {
-    [DbContext(typeof(TurboDbContext))]
+    [DbContext(typeof(TurboContext))]
     [Migration("20240704024719_InitialCreate")]
     partial class InitialCreate
     {
