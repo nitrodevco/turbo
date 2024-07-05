@@ -14,17 +14,10 @@ using Turbo.Packets.Outgoing.Inventory.Furni;
 
 namespace Turbo.Players
 {
-    public class PlayerWallet : Component, IPlayerWallet
+    public class PlayerWallet(
+        IPlayer _player,
+        IServiceScopeFactory _serviceScopeFactory) : Component, IPlayerWallet
     {
-        private readonly IPlayer _player;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        public PlayerWallet(IPlayer player, IServiceScopeFactory serviceScopeFactory)
-        {
-            _player = player;
-            _serviceScopeFactory = serviceScopeFactory;
-        }
-
         protected override async Task OnInit()
         {
             await LoadCurrencies();
@@ -36,17 +29,10 @@ namespace Turbo.Players
 
         private async Task LoadCurrencies()
         {
-            List<PlayerCurrencyEntity> entities = new();
+            using var scope = _serviceScopeFactory.CreateScope();
+            var currencyRepository = scope.ServiceProvider.GetService<IPlayerCurrencyRepository>();
 
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var currencyRepository = scope.ServiceProvider.GetService<IPlayerCurrencyRepository>();
-
-                if (currencyRepository != null)
-                {
-                    entities = await currencyRepository.FindAllByPlayerIdAsync(_player.Id);
-                }
-            }
+            List<PlayerCurrencyEntity> entities = await currencyRepository.FindAllByPlayerIdAsync(_player.Id);
 
             if (entities != null)
             {

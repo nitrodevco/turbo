@@ -14,37 +14,26 @@ using Turbo.Inventory.Factories;
 
 namespace Turbo.Players
 {
-    public class Player : Component, IPlayer
+    public class Player(
+        ILogger<IPlayer> _logger,
+        IPlayerManager _playerManager,
+        IPlayerDetails _playerDetails,
+        IServiceScopeFactory _serviceScopeFactory) : Component, IPlayer
     {
-        public ILogger<IPlayer> Logger { get; private set; }
-        public IPlayerManager PlayerManager { get; private set; }
-        public IPlayerDetails PlayerDetails { get; private set; }
+        public IPlayerManager PlayerManager { get; private set; } = _playerManager;
+        public IPlayerDetails PlayerDetails { get; private set; } = _playerDetails;
         public IPlayerInventory PlayerInventory { get; private set; }
         public IPlayerWallet PlayerWallet { get; private set; }
 
         public ISession Session { get; private set; }
         public IRoomObjectAvatar RoomObject { get; private set; }
 
-        public Player(
-            ILogger<IPlayer> logger,
-            IPlayerManager playerManager,
-            IPlayerDetails playerDetails,
-            IPlayerInventoryFactory playerInventoryFactory,
-            IServiceScopeFactory serviceScopeFactory)
-        {
-            Logger = logger;
-            PlayerManager = playerManager;
-            PlayerDetails = playerDetails;
-            PlayerInventory = playerInventoryFactory.Create(this);
-            PlayerWallet = new PlayerWallet(this, serviceScopeFactory);
-        }
-
         protected override async Task OnInit()
         {
             PlayerDetails.PlayerStatus = PlayerStatusEnum.Online;
 
-            await PlayerWallet.InitAsync();
-            await PlayerInventory.InitAsync();
+            if (PlayerWallet != null) await PlayerWallet.InitAsync();
+            if (PlayerInventory != null) await PlayerInventory.InitAsync();
         }
 
         protected override async Task OnDispose()
@@ -74,6 +63,24 @@ namespace Turbo.Players
             return true;
         }
 
+        public bool SetInventory(IPlayerInventory playerInventory)
+        {
+            if ((PlayerInventory != null) && (PlayerInventory != playerInventory)) return false;
+
+            PlayerInventory = playerInventory;
+
+            return true;
+        }
+
+        public bool SetWallet(IPlayerWallet playerWallet)
+        {
+            if ((PlayerWallet != null) && (PlayerWallet != playerWallet)) return false;
+
+            PlayerWallet = playerWallet;
+
+            return true;
+        }
+
         public async Task<bool> SetupRoomObject()
         {
             if (RoomObject == null) return false;
@@ -89,7 +96,7 @@ namespace Turbo.Players
 
             RoomObject = avatarObject;
 
-            // update all messenger friends
+            // TODO notify messenger friends that you've entered a room
 
             return true;
         }
@@ -106,7 +113,7 @@ namespace Turbo.Players
 
                 RoomObject = null;
 
-                // update all messenger friends
+                // TODO notify messenger friends that you've left a room
             }
 
             PlayerManager.ClearPlayerRoomStatus(this);
