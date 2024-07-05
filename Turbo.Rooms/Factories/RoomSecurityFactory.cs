@@ -8,10 +8,8 @@ using Turbo.Rooms.Managers;
 
 namespace Turbo.Rooms.Factories
 {
-    public class RoomSecurityFactory(IServiceProvider provider) : IRoomSecurityFactory
+    public class RoomSecurityFactory(IServiceProvider _provider) : IRoomSecurityFactory
     {
-        private readonly IServiceProvider _provider = provider;
-
         public IRoomSecurityManager Create(IRoom room)
         {
             return ActivatorUtilities.CreateInstance<RoomSecurityManager>(_provider, room);

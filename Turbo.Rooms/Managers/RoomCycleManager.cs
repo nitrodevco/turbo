@@ -9,7 +9,7 @@ namespace Turbo.Rooms.Managers
 {
     public class RoomCycleManager(IRoom _room) : IRoomCycleManager
     {
-        public List<ICyclable> _cycles = new();
+        public List<ICyclable> _cycles = [];
 
         private bool _running;
 
@@ -34,7 +34,7 @@ namespace Turbo.Rooms.Managers
 
         public void RemoveCycle(ICyclable cycle)
         {
-            if(cycle == null || !_cycles.Contains(cycle)) return;
+            if (cycle == null || !_cycles.Contains(cycle)) return;
 
             _cycles.Remove(cycle);
         }

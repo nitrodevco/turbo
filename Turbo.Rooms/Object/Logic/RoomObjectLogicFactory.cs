@@ -65,9 +65,9 @@ namespace Turbo.Rooms.Object.Logic
 
         public Type GetLogicType(string type)
         {
-            if (!Logics.ContainsKey(type)) return null;
+            if (!Logics.TryGetValue(type, out Type value)) return null;
 
-            return Logics[type];
+            return value;
         }
 
         public StuffDataKey GetStuffDataKeyForFurnitureType(string type)

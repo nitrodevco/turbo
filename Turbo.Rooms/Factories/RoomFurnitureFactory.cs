@@ -13,10 +13,8 @@ using Turbo.Rooms.Managers;
 
 namespace Turbo.Rooms.Factories
 {
-    public class RoomFurnitureFactory(IServiceProvider provider) : IRoomFurnitureFactory
+    public class RoomFurnitureFactory(IServiceProvider _provider) : IRoomFurnitureFactory
     {
-        private readonly IServiceProvider _provider = provider;
-
         public IRoomFurnitureManager Create(IRoom room)
         {
             return ActivatorUtilities.CreateInstance<RoomFurnitureManager>(_provider, room);

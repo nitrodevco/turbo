@@ -11,10 +11,8 @@ using Turbo.Rooms.Managers;
 
 namespace Turbo.Rooms.Factories
 {
-    public class RoomFactory(IServiceProvider provider) : IRoomFactory
+    public class RoomFactory(IServiceProvider _provider) : IRoomFactory
     {
-        private readonly IServiceProvider _provider = provider;
-
         public IRoom Create(RoomEntity roomEntity)
         {
             return ActivatorUtilities.CreateInstance<Room>(_provider, roomEntity);

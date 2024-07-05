@@ -4,15 +4,8 @@ using Turbo.Core.Game.Rooms;
 
 namespace Turbo.Rooms.Cycles
 {
-    public abstract class RoomCycle : ICyclable
+    public abstract class RoomCycle(IRoom _room) : ICyclable
     {
-        protected readonly IRoom _room;
-
-        public RoomCycle(IRoom room)
-        {
-            _room = room;
-        }
-
         public abstract Task Cycle();
     }
 }
