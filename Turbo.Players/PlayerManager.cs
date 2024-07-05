@@ -66,7 +66,9 @@ namespace Turbo.Players
             try
             {
                 using var scope = _serviceScopeFactory.CreateScope();
+
                 var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+
                 var playerEntity = await playerRepository.FindAsync(id);
 
                 if (playerEntity == null) return null;
@@ -157,6 +159,7 @@ namespace Turbo.Players
             if (player != null) return player.Name;
 
             using var scope = _serviceScopeFactory.CreateScope();
+
             var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
 
             return (await playerRepository.FindUsernameAsync(playerId))?.Name ?? "";
@@ -171,7 +174,9 @@ namespace Turbo.Players
             if (player == null)
             {
                 using var scope = _serviceScopeFactory.CreateScope();
+
                 var playerBadgeRepository = scope.ServiceProvider.GetService<IPlayerBadgeRepository>();
+
                 var entities = await playerBadgeRepository.FindActiveByPlayerIdAsync(playerId);
 
                 return (IList<IPlayerBadge>)entities;

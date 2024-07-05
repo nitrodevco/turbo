@@ -12,18 +12,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Queue
 {
-    public class StorageQueue : IStorageQueue
+    public class StorageQueue(IServiceScopeFactory _serviceScopeFactory) : IStorageQueue
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IList<object> _entities;
-        private readonly object _entityLock;
-
-        public StorageQueue(IServiceScopeFactory scopeFactory)
-        {
-            _serviceScopeFactory = scopeFactory;
-            _entities = new List<object>();
-            _entityLock = new object();
-        }
+        private readonly IList<object> _entities = [];
+        private readonly object _entityLock = new();
 
         public async ValueTask DisposeAsync()
         {
@@ -32,7 +24,7 @@ namespace Turbo.Database.Queue
 
         public void Add(object entity)
         {
-            lock(_entityLock)
+            lock (_entityLock)
             {
                 if (_entities.Contains(entity)) return;
 
@@ -55,9 +47,9 @@ namespace Turbo.Database.Queue
 
         public async Task SaveNow()
         {
-            List<object> entities = new();
+            List<object> entities = [];
 
-            lock(_entityLock)
+            lock (_entityLock)
             {
                 if (_entities.Count == 0) return;
 
@@ -69,7 +61,8 @@ namespace Turbo.Database.Queue
             if (entities.Count == 0) return;
 
             using var scope = _serviceScopeFactory.CreateScope();
-            using var context = scope.ServiceProvider.GetService<TurboContext>();
+
+            var context = scope.ServiceProvider.GetService<TurboContext>();
 
             foreach (var entity in entities) SaveEntity(entity, context);
 
@@ -78,27 +71,9 @@ namespace Turbo.Database.Queue
             context.ChangeTracker.Clear();
         }
 
-        public async Task SaveNow(object entity)
-        {
-            return; 
-            lock (_entityLock)
-            {
-                if(_entities.Contains(entity)) _entities.Remove(entity);
-            }
-
-            using var scope = _serviceScopeFactory.CreateScope();
-            using var context = scope.ServiceProvider.GetService<TurboContext>();
-
-            SaveEntity(entity, context);
-
-            await context.SaveChangesAsync();
-
-            context.Entry(entity).State = EntityState.Detached;
-        }
-
         private void SaveEntity(object entity, TurboContext context)
         {
-            if(entity == null || context == null) return;
+            if (entity == null || context == null) return;
 
             context.Attach(entity);
 
@@ -106,25 +81,13 @@ namespace Turbo.Database.Queue
 
             entry.State = EntityState.Modified;
 
-            foreach(var property in entry.OriginalValues.Properties)
+            foreach (var property in entry.OriginalValues.Properties)
             {
                 var originalValue = entry.OriginalValues[property];
                 var currentValue = entry.CurrentValues[property];
 
-                System.Console.WriteLine(property.Name + " " + originalValue + " " + currentValue);
-
-                if(!object.Equals(originalValue, currentValue)) entry.Property(property.Name).IsModified = true;
+                if (!object.Equals(originalValue, currentValue)) entry.Property(property.Name).IsModified = true;
             }
-        }
-
-        public async Task Cycle()
-        {
-            //await SaveNow();
-
-            using var scope = _serviceScopeFactory.CreateScope();
-            using var context = scope.ServiceProvider.GetService<TurboContext>();
-
-            await context.SaveChangesAsync();
         }
     }
 }

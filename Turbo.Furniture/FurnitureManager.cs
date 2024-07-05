@@ -40,6 +40,7 @@ namespace Turbo.Furniture
         public async Task<TeleportPairingDto> GetTeleportPairing(int furnitureId)
         {
             using var scope = _serviceScopeFactory.CreateScope();
+
             var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
 
             return await furnitureRepository.GetTeleportPairingAsync(furnitureId);
@@ -52,7 +53,9 @@ namespace Turbo.Furniture
             _furnitureDefinitions.Clear();
 
             using var scope = _serviceScopeFactory.CreateScope();
+
             var furnitureDefinitionRepository = scope.ServiceProvider.GetService<IFurnitureDefinitionRepository>();
+
             var entities = await furnitureDefinitionRepository.FindAllAsync();
 
             entities.ForEach(entity =>

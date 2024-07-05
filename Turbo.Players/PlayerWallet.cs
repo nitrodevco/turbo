@@ -30,6 +30,7 @@ namespace Turbo.Players
         private async Task LoadCurrencies()
         {
             using var scope = _serviceScopeFactory.CreateScope();
+
             var currencyRepository = scope.ServiceProvider.GetService<IPlayerCurrencyRepository>();
 
             List<PlayerCurrencyEntity> entities = await currencyRepository.FindAllByPlayerIdAsync(_player.Id);

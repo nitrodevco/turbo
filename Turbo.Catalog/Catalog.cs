@@ -116,9 +116,11 @@ namespace Turbo.Catalog
             Products.Clear();
 
             using var scope = _serviceScopeFactory.CreateScope();
+
             var catalogPageRepository = scope.ServiceProvider.GetService<ICatalogPageRepository>();
             var catalogOfferRepository = scope.ServiceProvider.GetService<ICatalogOfferRepository>();
             var catalogProductRepository = scope.ServiceProvider.GetService<ICatalogProductRepository>();
+
             var pageEntities = await catalogPageRepository.FindAllAsync();
             var offerEntities = await catalogOfferRepository.FindAllAsync();
             var productEntities = await catalogProductRepository.FindAllAsync();

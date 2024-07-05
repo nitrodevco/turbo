@@ -154,7 +154,9 @@ namespace Turbo.Inventory.Furniture
             Furniture.PlayerFurniture.Clear();
 
             using var scope = _serviceScopeFactory.CreateScope();
+
             var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+
             var entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
 
             if (entities != null)

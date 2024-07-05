@@ -49,6 +49,7 @@ namespace Turbo.Furniture.Factories
             };
 
             using var scope = _provider.CreateScope();
+
             var context = scope.ServiceProvider.GetService<IEmulatorContext>();
 
             context.Add(furnitureEntity);

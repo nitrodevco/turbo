@@ -123,7 +123,9 @@ namespace Turbo.Inventory.Badges
             }
 
             using var scope = _serviceScopeFactory.CreateScope();
+
             var playerBadgeRepository = scope.ServiceProvider.GetService<IPlayerBadgeRepository>();
+
             var entities = await playerBadgeRepository.FindAllByPlayerIdAsync(_player.Id);
 
             if (entities != null)
