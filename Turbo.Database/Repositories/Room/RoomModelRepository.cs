@@ -6,15 +6,8 @@ using Turbo.Database.Entities.Room;
 
 namespace Turbo.Database.Repositories.Room
 {
-    public class RoomModelRepository : IRoomModelRepository
+    public class RoomModelRepository(IEmulatorContext _context) : IRoomModelRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public RoomModelRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<RoomModelEntity> FindAsync(int id) => await _context.RoomModels
             .FirstOrDefaultAsync(roomModel => roomModel.Id == id);
 

@@ -8,15 +8,8 @@ using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Database.Repositories.Catalog
 {
-    public class CatalogProductRepository : ICatalogProductRepository
+    public class CatalogProductRepository(IEmulatorContext _context) : ICatalogProductRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public CatalogProductRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<CatalogProductEntity> FindAsync(int id) => await _context.CatalogProducts
             .FirstOrDefaultAsync(page => page.Id == id);
 

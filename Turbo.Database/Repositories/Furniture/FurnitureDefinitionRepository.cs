@@ -6,15 +6,8 @@ using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Database.Repositories.Furniture
 {
-    public class FurnitureDefinitionRepository : IFurnitureDefinitionRepository
+    public class FurnitureDefinitionRepository(IEmulatorContext _context) : IFurnitureDefinitionRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public FurnitureDefinitionRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<FurnitureDefinitionEntity> FindAsync(int id) => await _context.FurnitureDefinitions
             .FirstOrDefaultAsync(definition => definition.Id == id);
 
