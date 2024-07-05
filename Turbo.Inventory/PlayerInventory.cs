@@ -5,23 +5,15 @@ using Turbo.Inventory.Factories;
 
 namespace Turbo.Inventory
 {
-    public class PlayerInventory : Component, IPlayerInventory
+    public class PlayerInventory(
+        IPlayer _player,
+        IPlayerFurnitureInventory _playerFurnitureInventory,
+        IPlayerBadgeInventory _playerBadgeInventory) : Component, IPlayerInventory
     {
-        public IPlayer Player { get; private set; }
-        public IPlayerFurnitureInventory FurnitureInventory { get; private set; }
-        public IPlayerBadgeInventory BadgeInventory { get; private set; }
-        public IUnseenItemsManager UnseenItemsManager { get; private set; }
-
-        public PlayerInventory(
-            IPlayer player,
-            IPlayerFurnitureInventory playerFurnitureInventory,
-            IPlayerBadgeInventory playerBadgeInventory)
-        {
-            Player = player;
-            FurnitureInventory = playerFurnitureInventory;
-            BadgeInventory = playerBadgeInventory;
-            UnseenItemsManager = new UnseenItemsManager(player);
-        }
+        public IPlayer Player { get; } = _player;
+        public IPlayerFurnitureInventory FurnitureInventory { get; } = _playerFurnitureInventory;
+        public IPlayerBadgeInventory BadgeInventory { get; } = _playerBadgeInventory;
+        public IUnseenItemsManager UnseenItemsManager { get; } = new UnseenItemsManager(_player);
 
         protected override async Task OnInit()
         {

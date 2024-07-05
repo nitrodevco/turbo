@@ -18,7 +18,7 @@ namespace Turbo.Inventory.Furniture
     {
         private readonly IPlayer _player;
         private readonly IPlayerFurnitureFactory _playerFurnitureFactory;
-        private readonly IFurnitureRepository _furnitureRepository;
+        private readonly IServiceScopeFactory _serviceScopeFactory;
 
         public IPlayerFurnitureContainer Furniture { get; private set; }
 
@@ -27,11 +27,11 @@ namespace Turbo.Inventory.Furniture
         public PlayerFurnitureInventory(
             IPlayer player,
             IPlayerFurnitureFactory playerFurnitureFactory,
-            IFurnitureRepository furnitureRepository)
+            IServiceScopeFactory serviceScopeFactory)
         {
             _player = player;
             _playerFurnitureFactory = playerFurnitureFactory;
-            _furnitureRepository = furnitureRepository;
+            _serviceScopeFactory = serviceScopeFactory;
 
             Furniture = new PlayerFurnitureContainer(RemoveFurniture);
         }
@@ -46,7 +46,7 @@ namespace Turbo.Inventory.Furniture
             Furniture.PlayerFurniture.Clear();
         }
 
-        public IPlayerFurniture GetFurniture(int id)
+        public IPlayerFurniture? GetFurniture(int id)
         {
             return Furniture.GetPlayerFurniture(id);
         }
@@ -109,7 +109,7 @@ namespace Turbo.Inventory.Furniture
 
         public void SendFurnitureToSession(ISession session)
         {
-            List<IPlayerFurniture> playerFurnitures = new();
+            List<IPlayerFurniture> playerFurnitures = [];
 
             var totalFragments = (int)Math.Ceiling((double)Furniture.PlayerFurniture.Count / DefaultSettings.FurniPerFragment);
 
@@ -153,7 +153,9 @@ namespace Turbo.Inventory.Furniture
         {
             Furniture.PlayerFurniture.Clear();
 
-            var entities = await _furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
+            using var scope = _serviceScopeFactory.CreateScope();
+            var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+            var entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
 
             if (entities != null)
             {

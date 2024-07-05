@@ -12,10 +12,8 @@ using Turbo.Database.Repositories.Furniture;
 
 namespace Turbo.Inventory.Factories
 {
-    public class PlayerInventoryFactory(IServiceProvider provider) : IPlayerInventoryFactory
+    public class PlayerInventoryFactory(IServiceProvider _provider) : IPlayerInventoryFactory
     {
-        private readonly IServiceProvider _provider = provider;
-
         public IPlayerInventory Create(IPlayer player)
         {
             return ActivatorUtilities.CreateInstance<PlayerInventory>(_provider, player, ActivatorUtilities.CreateInstance<PlayerFurnitureInventory>(_provider, player), ActivatorUtilities.CreateInstance<PlayerBadgeInventory>(_provider, player));
