@@ -10,7 +10,7 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    partial class TurboDbContextModelSnapshot : ModelSnapshot
+    partial class TurboContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

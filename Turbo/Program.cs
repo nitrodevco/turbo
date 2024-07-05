@@ -59,8 +59,7 @@ namespace Turbo.Main
                             .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
                             .EnableDetailedErrors()
                             .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                        },
-                        ServiceLifetime.Scoped
+                        }
                     );
 
                     services.AddRepositories();
