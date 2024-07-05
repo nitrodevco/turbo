@@ -18,25 +18,11 @@ using Turbo.Packets.Outgoing.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class CatalogManager : Component, ICatalogManager
+    public class CatalogManager(
+        ILogger<ICatalogManager> _logger,
+        ICatalogFactory _catalogFactory) : Component, ICatalogManager
     {
-        private readonly ILogger<ICatalogManager> _logger;
-        private readonly ICatalogFactory _catalogFactory;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        public IDictionary<string, ICatalog> Catalogs { get; private set; }
-
-        public CatalogManager(
-            ILogger<ICatalogManager> logger,
-            ICatalogFactory catalogFactory,
-            IServiceScopeFactory scopeFactory)
-        {
-            _logger = logger;
-            _catalogFactory = catalogFactory;
-            _serviceScopeFactory = scopeFactory;
-
-            Catalogs = new Dictionary<string, ICatalog>();
-        }
+        public IDictionary<string, ICatalog> Catalogs { get; } = new Dictionary<string, ICatalog>();
 
         protected override async Task OnInit()
         {
@@ -56,7 +42,7 @@ namespace Turbo.Catalog
         {
             if (catalogType == null || catalogType == null) return null;
 
-            if(Catalogs.TryGetValue(catalogType, out var catalog))
+            if (Catalogs.TryGetValue(catalogType, out var catalog))
             {
                 return catalog?.GetRootForPlayer(player) ?? null;
             }
@@ -68,11 +54,11 @@ namespace Turbo.Catalog
         {
             if (player == null || catalogType == null) return false;
 
-            if(Catalogs.TryGetValue(catalogType, out var catalog))
+            if (Catalogs.TryGetValue(catalogType, out var catalog))
             {
                 var purchasedOffer = await catalog.PurchaseOffer(player, pageId, offerId, extraParam, quantity);
 
-                if(purchasedOffer == null)
+                if (purchasedOffer == null)
                 {
                     player.Session?.Send(new PurchaseNotAllowedMessage
                     {
@@ -81,7 +67,7 @@ namespace Turbo.Catalog
 
                     return false;
                 }
-                
+
                 player.Session?.Send(new PurchaseOkMessage
                 {
                     Offer = purchasedOffer

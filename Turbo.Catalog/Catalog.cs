@@ -16,38 +16,18 @@ using Turbo.Database.Repositories.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class Catalog : Component, ICatalog
+    public class Catalog(
+        ILogger<ICatalog> _logger,
+        IFurnitureManager _furnitureManager,
+        ICatalogFactory _catalogFactory,
+        IServiceScopeFactory _serviceScopeFactory,
+        string _catalogType) : Component, ICatalog
     {
-        private readonly ILogger<ICatalog> _logger;
-        private readonly IFurnitureManager _furnitureManager;
-        private readonly ICatalogFactory _catalogFactory;
-        private readonly ICatalogPageRepository _pageRepository;
-        private readonly ICatalogOfferRepository _offerRepository;
-        private readonly ICatalogProductRepository _productRepository;
-        private readonly string _catalogType;
 
         public ICatalogPage Root { get; private set; }
         public IDictionary<int, ICatalogPage> Pages { get; private set; } = new Dictionary<int, ICatalogPage>();
         public IDictionary<int, ICatalogOffer> Offers { get; private set; } = new Dictionary<int, ICatalogOffer>();
         public IDictionary<int, ICatalogProduct> Products { get; private set; } = new Dictionary<int, ICatalogProduct>();
-
-        public Catalog(
-            ILogger<ICatalog> logger,
-            IFurnitureManager furnitureManager,
-            ICatalogFactory catalogFactory,
-            ICatalogPageRepository catalogPageRepository,
-            ICatalogOfferRepository catalogOfferRepository,
-            ICatalogProductRepository catalogProductRepository,
-            string catalogType)
-        {
-            _logger = logger;
-            _furnitureManager = furnitureManager;
-            _catalogFactory = catalogFactory;
-            _pageRepository = catalogPageRepository;
-            _offerRepository = catalogOfferRepository;
-            _productRepository = catalogProductRepository;
-            _catalogType = catalogType;
-        }
 
         protected override async Task OnInit()
         {
@@ -68,18 +48,18 @@ namespace Turbo.Catalog
 
         public ICatalogPage GetPageForPlayer(IPlayer player, int pageId)
         {
-            if(player == null) return null;
+            if (player == null) return null;
 
-            if(Pages.TryGetValue(pageId, out var page)) return page;
+            if (Pages.TryGetValue(pageId, out var page)) return page;
 
             return null;
         }
 
         public ICatalogOffer GetOfferForPlayer(IPlayer player, int offerId)
         {
-            if(player == null) return null;
+            if (player == null) return null;
 
-            if(Offers.TryGetValue(offerId, out var offer)) return offer;
+            if (Offers.TryGetValue(offerId, out var offer)) return offer;
 
             return null;
         }
@@ -135,9 +115,13 @@ namespace Turbo.Catalog
             Offers.Clear();
             Products.Clear();
 
-            var pageEntities = await _pageRepository.FindAllAsync();
-            var offerEntities = await _offerRepository.FindAllAsync();
-            var productEntities = await _productRepository.FindAllAsync();
+            using var scope = _serviceScopeFactory.CreateScope();
+            var catalogPageRepository = scope.ServiceProvider.GetService<ICatalogPageRepository>();
+            var catalogOfferRepository = scope.ServiceProvider.GetService<ICatalogOfferRepository>();
+            var catalogProductRepository = scope.ServiceProvider.GetService<ICatalogProductRepository>();
+            var pageEntities = await catalogPageRepository.FindAllAsync();
+            var offerEntities = await catalogOfferRepository.FindAllAsync();
+            var productEntities = await catalogProductRepository.FindAllAsync();
 
             if (pageEntities != null)
             {

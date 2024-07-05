@@ -12,23 +12,12 @@ using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class CatalogOffer : ICatalogOffer
+    public class CatalogOffer(
+        ILogger<ICatalogOffer> _logger,
+        CatalogOfferEntity _entity) : ICatalogOffer
     {
-        private readonly ILogger<ICatalogOffer> _logger;
-        private readonly CatalogOfferEntity _entity;
-
         public ICatalogPage Page { get; private set; }
-        public IList<ICatalogProduct> Products { get; private set; }
-
-        public CatalogOffer(
-            ILogger<ICatalogOffer> logger,
-            CatalogOfferEntity entity)
-        {
-            _logger = logger;
-            _entity = entity;
-
-            Products = new List<ICatalogProduct>();
-        }
+        public IList<ICatalogProduct> Products { get; private set; } = [];
 
         public void SetPage(ICatalogPage catalogPage)
         {
