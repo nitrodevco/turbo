@@ -14,12 +14,7 @@ namespace Turbo.Rooms.Factories
 
         public IRoomSecurityManager Create(IRoom room)
         {
-            var playerManager = _provider.GetService<IPlayerManager>();
-            var roomBanRepository = _provider.GetService<IRoomBanRepository>();
-            var roomMuteRepository = _provider.GetService<IRoomMuteRepository>();
-            var roomRightRepository = _provider.GetService<IRoomRightRepository>();
-
-            return new RoomSecurityManager(room, playerManager, roomBanRepository, roomMuteRepository, roomRightRepository);
+            return ActivatorUtilities.CreateInstance<RoomSecurityManager>(_provider, room);
         }
     }
 }

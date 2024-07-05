@@ -93,7 +93,7 @@ namespace Turbo.Players
 
             return true;
         }
-        
+
         public void ClearRoomObject()
         {
             if (RoomObject != null)

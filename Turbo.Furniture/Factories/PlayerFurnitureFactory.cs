@@ -11,15 +11,10 @@ using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Factories
 {
-    public class PlayerFurnitureFactory : IPlayerFurnitureFactory
+    public class PlayerFurnitureFactory(
+        IServiceProvider provider) : IPlayerFurnitureFactory
     {
-        private readonly IServiceProvider _provider;
-
-        public PlayerFurnitureFactory(
-            IServiceProvider provider)
-        {
-            _provider = provider;
-        }
+        private readonly IServiceProvider _provider = provider;
 
         public IPlayerFurniture Create(IPlayerFurnitureContainer playerFurnitureContainer, FurnitureEntity furnitureEntity)
         {
@@ -52,10 +47,11 @@ namespace Turbo.Furniture.Factories
 
         public async Task<IPlayerFurniture> CreateFromDefinitionId(IPlayerFurnitureContainer playerFurnitureContainer, int furnitureDefinitonId, int playerId)
         {
-            var furnitureEntity = new FurnitureEntity();
-
-            furnitureEntity.PlayerEntityId = playerId;
-            furnitureEntity.FurnitureDefinitionEntityId = furnitureDefinitonId;
+            var furnitureEntity = new FurnitureEntity
+            {
+                PlayerEntityId = playerId,
+                FurnitureDefinitionEntityId = furnitureDefinitonId
+            };
 
             var emulatorContext = _provider.GetService<IEmulatorContext>();
 

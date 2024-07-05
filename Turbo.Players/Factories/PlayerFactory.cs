@@ -7,23 +7,13 @@ using Turbo.Inventory.Factories;
 
 namespace Turbo.Players.Factories
 {
-    public class PlayerFactory : IPlayerFactory
+    public class PlayerFactory(IServiceProvider provider) : IPlayerFactory
     {
-        private readonly IServiceProvider _provider;
-
-        public PlayerFactory(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
+        private readonly IServiceProvider _provider = provider;
 
         public IPlayer Create(PlayerEntity playerEntity)
         {
-            ILogger<IPlayer> logger = _provider.GetService<ILogger<Player>>();
-            IPlayerManager playerManager = _provider.GetService<IPlayerManager>();
-            IPlayerInventoryFactory playerInventoryFactory = _provider.GetService<IPlayerInventoryFactory>();
-            IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
-
-            return new Player(logger, playerManager, CreatePlayerDetails(playerEntity), playerInventoryFactory, scopeFactory);
+            return ActivatorUtilities.CreateInstance<Player>(_provider, CreatePlayerDetails(playerEntity));
         }
 
         public IPlayerDetails CreatePlayerDetails(PlayerEntity playerEntity)

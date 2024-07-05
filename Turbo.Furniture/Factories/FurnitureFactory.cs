@@ -10,14 +10,9 @@ using Turbo.Core.Game.Inventory;
 
 namespace Turbo.Furniture.Factories
 {
-    public class FurnitureFactory : IFurnitureFactory
+    public class FurnitureFactory(IServiceProvider provider) : IFurnitureFactory
     {
-        private readonly IServiceProvider _provider;
-
-        public FurnitureFactory(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
+        private readonly IServiceProvider _provider = provider;
 
         public IFurnitureDefinition GetFurnitureDefinition(int id)
         {
