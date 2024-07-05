@@ -15,34 +15,19 @@ using Turbo.Core.Game.Players;
 
 namespace Turbo.Furniture
 {
-    public abstract class RoomFurniture : IRoomFurniture
+    public abstract class RoomFurniture(
+        ILogger<IRoomFurniture> _logger,
+        IRoomFurnitureManager _roomFurnitureManager,
+        IFurnitureManager _furnitureManager,
+        FurnitureEntity _furnitureEntity,
+        IFurnitureDefinition _furnitureDefinition) : IRoomFurniture
     {
-        public ILogger<IRoomFurniture> Logger { get; private set; }
-
-        protected readonly IRoomFurnitureManager _roomFurnitureManager;
-        protected readonly IFurnitureManager _furnitureManager;
-
-        public FurnitureEntity FurnitureEntity { get; private set; }
-        public IFurnitureDefinition FurnitureDefinition { get; private set; }
+        public FurnitureEntity FurnitureEntity { get; } = _furnitureEntity;
+        public IFurnitureDefinition FurnitureDefinition { get; } = _furnitureDefinition;
         public string PlayerName { get; private set; }
 
         private IRoom _room;
         private bool _isDisposing { get; set; }
-
-        public RoomFurniture(
-            ILogger<IRoomFurniture> logger,
-            IRoomFurnitureManager roomFurnitureManager,
-            IFurnitureManager furnitureManager,
-            FurnitureEntity furnitureEntity,
-            IFurnitureDefinition furnitureDefinition)
-        {
-            Logger = logger;
-            _roomFurnitureManager = roomFurnitureManager;
-            _furnitureManager = furnitureManager;
-            FurnitureEntity = furnitureEntity;
-
-            FurnitureDefinition = furnitureDefinition;
-        }
 
         public void Dispose()
         {
@@ -77,11 +62,11 @@ namespace Turbo.Furniture
 
                 return;
             }
-            
+
             _room = room;
 
             if (FurnitureEntity.RoomEntityId == room.Id) return;
-            
+
             FurnitureEntity.RoomEntityId = room.Id;
 
             Save();
@@ -98,24 +83,21 @@ namespace Turbo.Furniture
         {
             if (playerId <= 0) return false;
 
-            if(FurnitureEntity.PlayerEntityId != playerId)
+            if (FurnitureEntity.PlayerEntityId != playerId)
             {
                 FurnitureEntity.PlayerEntityId = playerId;
 
                 Save();
             }
-            
+
             if (playerName.Length > 0) PlayerName = playerName;
 
             return true;
         }
 
         public int Id => FurnitureEntity.Id;
-
         public RoomObjectHolderType Type => RoomObjectHolderType.Furniture;
-
         public string LogicType => FurnitureDefinition.Logic;
-
         public int PlayerId => FurnitureEntity.PlayerEntityId;
     }
 }

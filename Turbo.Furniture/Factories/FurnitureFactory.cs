@@ -10,29 +10,22 @@ using Turbo.Core.Game.Inventory;
 
 namespace Turbo.Furniture.Factories
 {
-    public class FurnitureFactory(IServiceProvider provider) : IFurnitureFactory
+    public class FurnitureFactory(
+        IFurnitureManager _furnitureManager,
+        IServiceProvider _provider) : IFurnitureFactory
     {
-        private readonly IServiceProvider _provider = provider;
-
         public IFurnitureDefinition GetFurnitureDefinition(int id)
         {
-            var furnitureManager = _provider.GetService<IFurnitureManager>();
-
-            return furnitureManager.GetFurnitureDefinition(id);
+            return _furnitureManager.GetFurnitureDefinition(id);
         }
 
         public IRoomFloorFurniture CreateFloorFurniture(IRoomFurnitureManager roomFurnitureManager, FurnitureEntity furnitureEntity)
         {
-            var furnitureManager = _provider.GetService<IFurnitureManager>();
-
-            var furnitureDefinition = furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
+            var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
             if (furnitureDefinition == null) return null;
 
-            var logger = _provider.GetService<ILogger<RoomFloorFurniture>>();
-            IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
-
-            return new RoomFloorFurniture(logger, roomFurnitureManager, furnitureManager, furnitureEntity, furnitureDefinition);
+            return ActivatorUtilities.CreateInstance<RoomFloorFurniture>(_provider, roomFurnitureManager, furnitureEntity, furnitureDefinition);
         }
 
         public IRoomFloorFurniture CreateFloorFurnitureFromPlayerFurniture(IRoomFurnitureManager roomFurnitureManager, IPlayerFurniture playerFurniture)
@@ -44,16 +37,11 @@ namespace Turbo.Furniture.Factories
 
         public IRoomWallFurniture CreateWallFurniture(IRoomFurnitureManager roomFurnitureManager, FurnitureEntity furnitureEntity)
         {
-            var furnitureManager = _provider.GetService<IFurnitureManager>();
-
-            var furnitureDefinition = furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
+            var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
             if (furnitureDefinition == null) return null;
 
-            var logger = _provider.GetService<ILogger<RoomWallFurniture>>();
-            IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
-
-            return new RoomWallFurniture(logger, roomFurnitureManager, furnitureManager, furnitureEntity, furnitureDefinition);
+            return ActivatorUtilities.CreateInstance<RoomWallFurniture>(_provider, roomFurnitureManager, furnitureEntity, furnitureDefinition);
         }
 
         public IRoomWallFurniture CreateWallFurnitureFromPlayerFurniture(IRoomFurnitureManager roomFurnitureManager, IPlayerFurniture playerFurniture)

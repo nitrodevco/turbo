@@ -13,10 +13,6 @@ namespace Turbo.Furniture.Data
         [JsonPropertyName("U_S")]
         public int UniqueSeries { get; set; }
 
-        public StuffDataBase()
-        {
-        }
-
         public virtual string GetLegacyString()
         {
             return "";

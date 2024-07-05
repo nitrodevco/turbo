@@ -12,23 +12,11 @@ using Turbo.Furniture.Definition;
 
 namespace Turbo.Furniture
 {
-    public class FurnitureManager : Component, IFurnitureManager
+    public class FurnitureManager(
+        ILogger<FurnitureManager> _logger,
+        IServiceScopeFactory _serviceScopeFactory) : Component, IFurnitureManager
     {
-        private readonly ILogger<FurnitureManager> _logger;
-        private readonly IFurnitureDefinitionRepository _furnitureDefinitionRepository;
-        private readonly IFurnitureRepository _furnitureRepository;
-
         private IDictionary<int, IFurnitureDefinition> _furnitureDefinitions = new Dictionary<int, IFurnitureDefinition>();
-
-        public FurnitureManager(
-            ILogger<FurnitureManager> logger,
-            IFurnitureDefinitionRepository furnitureDefinitionRepository,
-            IFurnitureRepository furnitureRepository)
-        {
-            _logger = logger;
-            _furnitureRepository = furnitureRepository;
-            _furnitureDefinitionRepository = furnitureDefinitionRepository;
-        }
 
         protected override async Task OnInit()
         {
@@ -51,21 +39,25 @@ namespace Turbo.Furniture
 
         public async Task<TeleportPairingDto> GetTeleportPairing(int furnitureId)
         {
-            return await _furnitureRepository.GetTeleportPairingAsync(furnitureId);
+            using var scope = _serviceScopeFactory.CreateScope();
+            var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+
+            return await furnitureRepository.GetTeleportPairingAsync(furnitureId);
         }
 
         private async Task LoadDefinitions()
         {
-            // when definitions are reloaded
-            // we need all furniture to reload their definitions
+            // TODO when definitions are reloaded we need all furniture to reload their definitions
 
             _furnitureDefinitions.Clear();
 
-            var entities = await _furnitureDefinitionRepository.FindAllAsync();
+            using var scope = _serviceScopeFactory.CreateScope();
+            var furnitureDefinitionRepository = scope.ServiceProvider.GetService<IFurnitureDefinitionRepository>();
+            var entities = await furnitureDefinitionRepository.FindAllAsync();
 
             entities.ForEach(entity =>
             {
-                IFurnitureDefinition definition = new FurnitureDefinition(entity);
+                var definition = new FurnitureDefinition(entity);
 
                 _furnitureDefinitions.Add(definition.Id, definition);
             });
