@@ -201,7 +201,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             if ((RoomObject == null) || (LocationNext == null)) return false;
 
-            if(RoomObject.Location != null)
+            if (RoomObject.Location != null)
             {
                 LocationPrevious ??= new Point();
 
@@ -225,7 +225,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             UpdateHeight(roomTile);
 
-            roomTile.OnStep(RoomObject);
+            roomTile.HighestObject?.Logic?.OnStep(RoomObject);
 
             RoomObject.NeedsUpdate = true;
 

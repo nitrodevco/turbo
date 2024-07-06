@@ -173,8 +173,6 @@ namespace Turbo.Rooms.Cycles
             avatarObject.Location.SetRotation(avatarObject.Location.CalculateWalkRotation(locationNext));
             avatarObject.Logic.LocationNext = locationNext;
 
-            nextTile.BeforeStep(avatarObject);
-
             if (nextTile.HighestObject != null)
             {
                 if (nextTile.HighestObject != currentTile.HighestObject) nextTile.HighestObject.Logic.OnEnter(avatarObject);

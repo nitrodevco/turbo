@@ -230,16 +230,6 @@ namespace Turbo.Rooms.Mapping
             return true;
         }
 
-        public void BeforeStep(IRoomObjectAvatar avatar)
-        {
-            HighestObject?.Logic?.BeforeStep(avatar);
-        }
-
-        public void OnStep(IRoomObjectAvatar avatar)
-        {
-            HighestObject?.Logic?.OnStep(avatar);
-        }
-
         public double Height
         {
             get

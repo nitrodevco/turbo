@@ -101,14 +101,13 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             });
         }
 
-        public virtual void BeforeStep(IRoomObjectAvatar roomObject)
-        {
-            return;
-        }
-
         public virtual void OnStep(IRoomObjectAvatar roomObject)
         {
-            return;
+            EventHub?.Dispatch(new AvatarStepFloorFurnitureEvent
+            {
+                AvatarObject = roomObject,
+                FloorObject = RoomObject
+            });
         }
 
         public virtual void OnStop(IRoomObjectAvatar avatar)
@@ -141,7 +140,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (message != null)
             {
-                if(message.IsCancelled) return;
+                if (message.IsCancelled) return;
             }
 
             base.OnInteract(avatar, param);
