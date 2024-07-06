@@ -80,14 +80,6 @@ namespace Turbo.Database.Queue
             var entry = context.Entry(entity);
 
             entry.State = EntityState.Modified;
-
-            foreach (var property in entry.OriginalValues.Properties)
-            {
-                var originalValue = entry.OriginalValues[property];
-                var currentValue = entry.CurrentValues[property];
-
-                if (!object.Equals(originalValue, currentValue)) entry.Property(property.Name).IsModified = true;
-            }
         }
     }
 }

@@ -115,7 +115,7 @@ namespace Turbo.Rooms.Managers
                 return null;
             }
 
-            floorObject.SetLocation(location);
+            floorObject.SetLocation(location, false, false);
 
             if (!floorObject.Logic.OnReady())
             {

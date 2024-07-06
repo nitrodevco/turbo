@@ -11,7 +11,7 @@ namespace Turbo.Core.Game.Rooms.Object
 
         public bool SetHolder(IRoomObjectFloorHolder roomObjectHolder);
         public void SetLogic(IFurnitureFloorLogic logic);
-        public void SetLocation(IPoint point);
+        public void SetLocation(IPoint point, bool save = true, bool update = true);
 
         public int X { get; set; }
         public int Y { get; set; }
