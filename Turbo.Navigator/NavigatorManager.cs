@@ -261,7 +261,7 @@ namespace Turbo.Navigator
 
         public async Task SendNavigatorCategories(IPlayer player) => await player.Session.Send(new UserFlatCatsMessage
         {
-
+            Categories = [.. _categories.Values]
         });
 
         public async Task SendNavigatorSettings(IPlayer player) => await player.Session.Send(new NewNavigatorPreferencesMessage
@@ -309,7 +309,9 @@ namespace Turbo.Navigator
             _eventCategories.Clear();
 
             using var scope = _serviceScopeFactory.CreateScope();
+
             var navigatorRepository = scope.ServiceProvider.GetService<INavigatorRepository>();
+
             var tabEntities = await navigatorRepository.FindAllNavigatorTabsAsync();
             var categoryEntities = await navigatorRepository.FindAllNavigatorCategoriesAsync();
             var eventCategoriesEntities = await navigatorRepository.FindAllNavigatorEventCategoriesAsync();
