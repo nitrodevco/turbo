@@ -4,17 +4,20 @@ using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
+using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
+using Turbo.Database.Entities.Room;
 using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Managers
 {
-    public class RoomChatManager(IRoom room, IPlayerManager playerManager, ILogger<RoomChatManager> logger)
+    public class RoomChatManager(IRoom room, IPlayerManager playerManager, ILogger<RoomChatManager> logger, IStorageQueue storageQueue)
         : Component, IRoomChatManager
     {
     private readonly IRoom _room = room ?? throw new ArgumentNullException(nameof(room));
     private readonly IPlayerManager _playerManager = playerManager ?? throw new ArgumentNullException(nameof(playerManager));
     private readonly ILogger<RoomChatManager> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly IStorageQueue _storageQueue = storageQueue ?? throw new ArgumentNullException(nameof(storageQueue));
     
     public Task TryChat(uint userId, string text)
     {
@@ -44,6 +47,15 @@ namespace Turbo.Rooms.Managers
         {
             _logger.LogInformation($"Player with userId: {userId} sending chat message.");
             playerLogic.Say(text);
+            
+            var chatLog = new RoomChatLogEntity
+            {
+                RoomEntityId = _room.Id,
+                PlayerEntityId = player.Id,
+                Message = text,
+                DateCreated = DateTime.UtcNow
+            };
+            _storageQueue.Add(chatLog);
         }
         else
         {

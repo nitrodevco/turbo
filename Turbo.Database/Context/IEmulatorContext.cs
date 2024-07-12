@@ -26,6 +26,7 @@ namespace Turbo.Database.Context
         public DbSet<PlayerEntity> Players { get; set; }
         public DbSet<PlayerSettingsEntity> PlayerSettings { get; set; }
         public DbSet<RoomBanEntity> RoomBans { get; set; }
+        public DbSet<RoomChatLogEntity> RoomChatLogs { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }
         public DbSet<RoomModelEntity> RoomModels { get; set; }
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
