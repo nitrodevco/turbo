@@ -3,7 +3,7 @@ using Turbo.Core.Game.Rooms.Managers;
 
 namespace Turbo.Rooms.Factories;
 
-public interface IRoomChatFactory
+public interface IChatFactory
 { 
     public IRoomChatManager Create(IRoom room);
 }

@@ -8,6 +8,7 @@ using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.PacketHandlers;
@@ -44,6 +45,7 @@ using Turbo.Players.Factories;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Rooms.Factories;
+using Turbo.Rooms.Managers;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic;
 using Turbo.Security;
@@ -96,6 +98,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<ICatalogManager, CatalogManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
+            services.AddScoped<IRoomChatManager, ChatManager>();
         }
 
         public static void AddFactories(this IServiceCollection services)
@@ -111,7 +114,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
             services.AddSingleton<ICatalogFactory, CatalogFactory>();
-            services.AddSingleton<IRoomChatFactory, RoomChatFactory>();
+            services.AddSingleton<IChatFactory, ChatFactory>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
@@ -132,6 +135,7 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IRoomRightRepository, RoomRightRepository>();
             services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
             services.AddScoped<INavigatorRepository, NavigatorRepository>();
+            services.AddScoped<IChatlogRepository, ChatlogRepository>();
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Turbo.Database.Context
         public DbSet<RoomModelEntity> RoomModels { get; set; }
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
         public DbSet<RoomRightEntity> RoomRights { get; set; }
-        public DbSet<RoomChatLogEntity> RoomChatLogs { get; set; }
+        public DbSet<ChatlogEntity> Chatlogs { get; set; }
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
         public DbSet<NavigatorCategoryEntity> NavigatorCategories { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }

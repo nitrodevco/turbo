@@ -168,7 +168,7 @@ namespace Turbo.Main.PacketHandlers
         
         protected virtual void OnChatMessage(ChatMessage message, ISession session)
         {
-            session.Player?.RoomObject?.Room?.RoomChatManager?.TryChat((uint)session.Player.Id, message.Text);
+            session.Player?.RoomObject?.Room?.RoomChatManager?.TryRoomChat((uint)session.Player.Id, message.Text, "normal");
         }
     }
 }

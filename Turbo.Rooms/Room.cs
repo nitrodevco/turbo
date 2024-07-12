@@ -31,10 +31,10 @@ namespace Turbo.Rooms
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
-        public IRoomChatManager RoomChatManager { get; private set; }
 
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
+        public IRoomChatManager RoomChatManager { get; private set;}
 
         private readonly ITurboEventHub _eventHub;
         private readonly IList<ISession> _roomObservers = new List<ISession>();
@@ -48,7 +48,7 @@ namespace Turbo.Rooms
             IRoomSecurityFactory roomSecurityFactory,
             IRoomFurnitureFactory roomFurnitureFactory,
             IRoomUserFactory roomUserFactory,
-            IRoomChatFactory roomChatFactory,
+            IChatFactory chatFactory,
             ITurboEventHub eventHub)
         {
             RoomManager = roomManager;
@@ -59,7 +59,7 @@ namespace Turbo.Rooms
             RoomSecurityManager = roomSecurityFactory.Create(this);
             RoomFurnitureManager = roomFurnitureFactory.Create(this);
             RoomUserManager = roomUserFactory.Create(this);
-            RoomChatManager = roomChatFactory.Create(this);
+            RoomChatManager = chatFactory.Create(this);
 
             _eventHub = eventHub;
 

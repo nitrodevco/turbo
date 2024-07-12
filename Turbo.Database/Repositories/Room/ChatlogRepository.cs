@@ -8,46 +8,48 @@ using Turbo.Database.Entities.Room;
 
 namespace Turbo.Database.Repositories.Room
 {
-    public class RoomChatLogRepository(IEmulatorContext context) : IRoomChatLogRepository
+    public class ChatlogRepository(IEmulatorContext context) : IChatlogRepository
     {
         private readonly IEmulatorContext _context = context ?? throw new ArgumentNullException(nameof(context));
-
-        public async Task<RoomChatLogEntity> FindAsync(int id)
+        
+        public async Task<ChatlogEntity> FindAsync(int id)
         {
-            return await _context.RoomChatLogs
+            return await _context.Chatlogs
                 .FirstOrDefaultAsync(entity => entity.Id == id);
         }
 
-        public async Task<List<RoomChatLogEntity>> FindAllByRoomIdAsync(int roomId)
+        public async Task<List<ChatlogEntity>> FindAllByRoomIdAsync(int roomId)
         {
-            return await _context.RoomChatLogs
+            return await _context.Chatlogs
                 .Where(entity => entity.RoomEntityId == roomId)
                 .ToListAsync();
         }
 
-        public async Task<bool> AddChatLogAsync(int roomId, int playerId, string message, DateTime createdAt, DateTime updatedAt)
+        public async Task<bool> AddChatlogAsync(int? roomId, int playerId, string message, string type, DateTime createdAt, DateTime updatedAt, int? recipientUserId = null)
         {
-            var entity = new RoomChatLogEntity
+            var entity = new ChatlogEntity
             {
                 RoomEntityId = roomId,
                 PlayerEntityId = playerId,
+                RecipientUserId = recipientUserId,
                 Message = message,
+                Type = type,
                 DateCreated = createdAt,
-                DateUpdated = updatedAt
+                DateUpdated = updatedAt,
             };
 
-            _context.RoomChatLogs.Add(entity);
+            _context.Chatlogs.Add(entity);
 
             await _context.SaveChangesAsync();
 
             return true;
         }
 
-        public async Task<bool> RemoveChatLogAsync(RoomChatLogEntity entity)
+        public async Task<bool> RemoveChatlogAsync(ChatlogEntity entity)
         {
             if (entity == null) return false;
 
-            _context.RoomChatLogs.Remove(entity);
+            _context.Chatlogs.Remove(entity);
 
             await _context.SaveChangesAsync();
 

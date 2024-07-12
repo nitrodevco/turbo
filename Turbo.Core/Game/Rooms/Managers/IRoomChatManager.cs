@@ -1,10 +1,8 @@
 using System.Threading.Tasks;
-using Turbo.Core.Utilities;
 
-namespace Turbo.Core.Game.Rooms.Managers
+namespace Turbo.Core.Game.Rooms.Managers;
+
+public interface IRoomChatManager
 {
-    public interface IRoomChatManager : IComponent
-    {
-        Task TryChat(uint userId, string text);
-    }
+    Task TryRoomChat(uint userId, string text, string type);
 }

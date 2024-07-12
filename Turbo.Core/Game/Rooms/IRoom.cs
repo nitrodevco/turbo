@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
@@ -19,7 +18,7 @@ namespace Turbo.Core.Game.Rooms
         public IRoomSecurityManager RoomSecurityManager { get; }
         public IRoomFurnitureManager RoomFurnitureManager { get; }
         public IRoomUserManager RoomUserManager { get; }
-        public IRoomChatManager RoomChatManager { get; }
+        IRoomChatManager RoomChatManager { get; }
 
         public IRoomModel RoomModel { get; }
         public IRoomMap RoomMap { get; }
