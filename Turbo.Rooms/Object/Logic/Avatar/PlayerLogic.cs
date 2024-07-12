@@ -6,6 +6,7 @@ using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Action;
+using Turbo.Packets.Outgoing.Room.Chat;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
@@ -178,6 +179,21 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         private void ResetIdleCycle()
         {
             _remainingIdleCycles = DefaultSettings.AvatarIdleCycles;
+        }
+        
+        public virtual void Say(string text)
+        {
+            Idle(false);
+            
+            RoomObject.Room.SendComposer(new ChatMessage
+            {
+                ObjectId = RoomObject.Id,
+                Text = text,
+                Gesture = 0,
+                StyleId = 0,
+                Links = new List<string>(),
+                AnimationLength = 0
+            });
         }
     }
 }

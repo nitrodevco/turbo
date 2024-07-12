@@ -2,14 +2,13 @@
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
+using Turbo.Packets.Incoming.Room.Chat;
 using Turbo.Packets.Incoming.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Engine;
-using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Main.PacketHandlers
@@ -42,6 +41,7 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<SetObjectDataMessage>(this, OnSetObjectDataMessage);
             _messageHub.Subscribe<UseFurnitureMessage>(this, OnUseFurnitureMessage);
             _messageHub.Subscribe<UseWallItemMessage>(this, OnUseWallItemMessage);
+            _messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
         }
 
         protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
@@ -164,6 +164,11 @@ namespace Turbo.Main.PacketHandlers
             if (session.Player == null) return;
 
             session.Player.RoomObject?.Room?.RoomFurnitureManager?.WallObjects?.GetRoomObject(message.ObjectId)?.Logic?.OnInteract(session.Player.RoomObject, message.Param);
+        }
+        
+        protected virtual void OnChatMessage(ChatMessage message, ISession session)
+        {
+            session.Player?.RoomObject?.Room?.RoomChatManager?.TryChat((uint)session.Player.Id, message.Text);
         }
     }
 }

@@ -111,6 +111,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
             services.AddSingleton<ICatalogFactory, CatalogFactory>();
+            services.AddSingleton<IRoomChatFactory, RoomChatFactory>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
