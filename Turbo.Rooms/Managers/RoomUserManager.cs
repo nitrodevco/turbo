@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
@@ -48,6 +50,20 @@ namespace Turbo.Rooms.Managers
 
         public IRoomObjectAvatar GetRoomObjectByUsername(string username)
         {
+            foreach (var obj in AvatarObjects.RoomObjects.Values)
+            {
+                if (obj.RoomObjectHolder is IPlayer player)
+                {
+                    Console.WriteLine($"Checking player: {player.Name}");
+                    if (player.Name.Equals(username, StringComparison.OrdinalIgnoreCase))
+                    {
+                        Console.WriteLine($"Found player: {player.Name}");
+                        return obj;
+                    }
+                }
+            }
+    
+            Console.WriteLine($"Player with username '{username}' not found.");
             return null;
         }
 

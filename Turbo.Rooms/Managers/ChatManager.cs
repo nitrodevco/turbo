@@ -28,6 +28,16 @@ namespace Turbo.Rooms.Managers
 
         public async Task TryRoomChat(uint userId, string text, string type)
         {
+            await ProcessChat(userId, text, type, false, null);
+        }
+
+        public async Task TryWhisperChat(uint userId, int recipientId, string text, string type)
+        {
+            await ProcessChat(userId, text, type, true, recipientId);
+        }
+
+        private async Task ProcessChat(uint userId, string text, string type, bool isWhisper, int? recipientId)
+        {
             if (_room == null)
             {
                 _logger.LogWarning("Room is not set in ChatManager.");
@@ -59,9 +69,29 @@ namespace Turbo.Rooms.Managers
             if (roomObject.Logic is PlayerLogic playerLogic)
             {
                 _logger.LogInformation($"Player with userId: {userId} sending chat message.");
-                playerLogic.Say(text);
+                
+                if (isWhisper && recipientId.HasValue)
+                {
+                    var recipientPlayer = _playerManager.GetPlayerById(recipientId.Value);
+                    if (recipientPlayer?.RoomObject != null)
+                    {
+                        playerLogic.Whisper(text, recipientPlayer.RoomObject);
+                    }
+                }
+                else
+                {
+                    playerLogic.Say(text);
+                }
 
-                await _chatlogRepository.AddChatlogAsync(_room.Id, player.Id, text, type, DateTime.Now, DateTime.Now, null);
+                await _chatlogRepository.AddChatlogAsync(
+                    _room.Id,
+                    player.Id,
+                    text,
+                    type,
+                    DateTime.Now,
+                    DateTime.Now,
+                    recipientId
+                );
             }
             else
             {

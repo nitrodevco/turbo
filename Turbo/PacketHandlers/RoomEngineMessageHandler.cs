@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
@@ -42,6 +43,7 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<UseFurnitureMessage>(this, OnUseFurnitureMessage);
             _messageHub.Subscribe<UseWallItemMessage>(this, OnUseWallItemMessage);
             _messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
+            _messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
         }
 
         protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
@@ -170,5 +172,23 @@ namespace Turbo.Main.PacketHandlers
         {
             session.Player?.RoomObject?.Room?.RoomChatManager?.TryRoomChat((uint)session.Player.Id, message.Text, "normal");
         }
+        
+        protected virtual void OnWhisperMessage(WhisperMessage message, ISession session)
+        {
+            var room = session.Player?.RoomObject?.Room;
+            if (room == null) return;
+
+            var recipient = room.RoomUserManager.GetRoomObjectByUsername(message.RecipientName);
+            if (recipient == null)
+            {
+                Console.WriteLine($"Recipient '{message.RecipientName}' not found.");
+                return;
+            }
+            
+            Console.WriteLine($"Sending whisper from '{session.Player.Name}' to '{recipient.RoomObjectHolder.Name}'.");
+            
+            session.Player?.RoomObject?.Room?.RoomChatManager?.TryWhisperChat((uint)session.Player.Id, recipient.RoomObjectHolder.Id, message.Text, "private");
+        }
+
     }
 }

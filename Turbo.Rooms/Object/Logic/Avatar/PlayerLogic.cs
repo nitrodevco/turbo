@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Game;
+using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Action;
@@ -186,6 +187,21 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             Idle(false);
             
             RoomObject.Room.SendComposer(new ChatMessage
+            {
+                ObjectId = RoomObject.Id,
+                Text = text,
+                Gesture = 0,
+                StyleId = 0,
+                Links = new List<string>(),
+                AnimationLength = 0
+            });
+        }
+        
+        public virtual void Whisper(string text, IRoomObject recipient)
+        {
+            Idle(false);
+            
+            recipient.Room.SendComposer(new WhisperMessage
             {
                 ObjectId = RoomObject.Id,
                 Text = text,
