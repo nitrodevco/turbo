@@ -187,7 +187,7 @@ namespace Turbo.Main.PacketHandlers
             
             Console.WriteLine($"Sending whisper from '{session.Player.Name}' to '{recipient.RoomObjectHolder.Name}'.");
             
-            session.Player?.RoomObject?.Room?.RoomChatManager?.TryWhisperChat((uint)session.Player.Id, recipient.RoomObjectHolder.Id, message.Text, "private");
+            session.Player?.RoomObject?.Room?.RoomChatManager?.TryWhisperChat((uint)session.Player.Id, recipient.RoomObjectHolder.Id, message.Text, "whisper");
         }
 
     }
