@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Game;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
@@ -197,11 +198,11 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             });
         }
         
-        public virtual void Whisper(string text, IRoomObject recipient)
+        public virtual void Whisper(string text, IPlayer recipient)
         {
             Idle(false);
-            
-            recipient.Room.SendComposer(new WhisperMessage
+
+            var whisperMessage = new WhisperMessage
             {
                 ObjectId = RoomObject.Id,
                 Text = text,
@@ -209,7 +210,14 @@ namespace Turbo.Rooms.Object.Logic.Avatar
                 StyleId = 0,
                 Links = new List<string>(),
                 AnimationLength = 0
-            });
+            };
+            
+            recipient?.Session.Send(whisperMessage);
+            
+            if (RoomObject.RoomObjectHolder is IPlayer sender)
+            {
+                sender.Session.Send(whisperMessage);
+            }
         }
     }
 }

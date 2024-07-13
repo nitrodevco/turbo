@@ -75,7 +75,7 @@ namespace Turbo.Rooms.Managers
                     var recipientPlayer = _playerManager.GetPlayerById(recipientId.Value);
                     if (recipientPlayer?.RoomObject != null)
                     {
-                        playerLogic.Whisper(text, recipientPlayer.RoomObject);
+                        playerLogic.Whisper(text, recipientPlayer);
                     }
                 }
                 else
