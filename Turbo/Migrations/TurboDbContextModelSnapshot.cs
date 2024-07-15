@@ -9,8 +9,8 @@ using Turbo.Database.Context;
 
 namespace Turbo.Main.Migrations
 {
-    [DbContext(typeof(TurboDbContext))]
-    partial class TurboDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(TurboContext))]
+    partial class TurboContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {

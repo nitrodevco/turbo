@@ -6,15 +6,8 @@ using Turbo.Database.Entities.Navigator;
 
 namespace Turbo.Database.Repositories.Navigator
 {
-    public class NavigatorRepository : INavigatorRepository
+    public class NavigatorRepository(IEmulatorContext _context) : INavigatorRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public NavigatorRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<NavigatorCategoryEntity> FindNavigatorCategoryAsync(int id) => await _context.NavigatorCategories.FindAsync(id);
 
         public async Task<List<NavigatorCategoryEntity>> FindAllNavigatorCategoriesAsync() => await _context.NavigatorCategories.ToListAsync();

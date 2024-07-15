@@ -8,18 +8,11 @@ using Turbo.Rooms.Managers;
 
 namespace Turbo.Rooms.Factories
 {
-    public class RoomSecurityFactory(IServiceProvider provider) : IRoomSecurityFactory
+    public class RoomSecurityFactory(IServiceProvider _provider) : IRoomSecurityFactory
     {
-        private readonly IServiceProvider _provider = provider;
-
         public IRoomSecurityManager Create(IRoom room)
         {
-            var playerManager = _provider.GetService<IPlayerManager>();
-            var roomBanRepository = _provider.GetService<IRoomBanRepository>();
-            var roomMuteRepository = _provider.GetService<IRoomMuteRepository>();
-            var roomRightRepository = _provider.GetService<IRoomRightRepository>();
-
-            return new RoomSecurityManager(room, playerManager, roomBanRepository, roomMuteRepository, roomRightRepository);
+            return ActivatorUtilities.CreateInstance<RoomSecurityManager>(_provider, room);
         }
     }
 }

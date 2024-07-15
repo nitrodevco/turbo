@@ -16,6 +16,7 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
+using Turbo.Core.Storage;
 using Turbo.Database.Context;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
@@ -25,7 +26,7 @@ namespace Turbo.Main
     public class TurboEmulator(
         IHostApplicationLifetime _appLifetime,
         ILogger<TurboEmulator> _logger,
-        IEmulatorContext _emulatorContext,
+        IStorageQueue _storageQueue,
         IPluginManager _pluginManager,
         IServerManager _serverManager,
         ISecurityManager _securityManager,
@@ -127,7 +128,6 @@ namespace Turbo.Main
             await _furnitureManager.DisposeAsync();
             await _roomManager.DisposeAsync();
             await _playerManager.DisposeAsync();
-            await _emulatorContext.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Turbo.Main
 
                     try
                     {
-                        await _emulatorContext.SaveChangesAsync();
+                        await _storageQueue.SaveNow();
                     }
                     catch (Exception ex)
                     {

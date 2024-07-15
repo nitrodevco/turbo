@@ -3,19 +3,11 @@ using Turbo.Core.Game.Inventory;
 
 namespace Turbo.Inventory.Furniture
 {
-    public class PlayerFurnitureContainer : IPlayerFurnitureContainer
+    public class PlayerFurnitureContainer(Action<IPlayerFurniture> _onRemove) : IPlayerFurnitureContainer
     {
-        public ConcurrentDictionary<int, IPlayerFurniture> PlayerFurniture { get; private set; }
+        public ConcurrentDictionary<int, IPlayerFurniture> PlayerFurniture { get; private set; } = new ConcurrentDictionary<int, IPlayerFurniture>();
 
-        private readonly Action<IPlayerFurniture> _onRemove;
-
-        public PlayerFurnitureContainer(Action<IPlayerFurniture> onRemove)
-        {
-            PlayerFurniture = new ConcurrentDictionary<int, IPlayerFurniture>();
-            _onRemove = onRemove;
-        }
-
-        public IPlayerFurniture GetPlayerFurniture(int id)
+        public IPlayerFurniture? GetPlayerFurniture(int id)
         {
             if ((id > 0) && PlayerFurniture.TryGetValue(id, out var playerFurniture))
             {
@@ -40,7 +32,7 @@ namespace Turbo.Inventory.Furniture
 
                 if (!PlayerFurniture.TryRemove(new KeyValuePair<int, IPlayerFurniture>(playerFurniture.Id, playerFurniture))) continue;
 
-                if (_onRemove != null) _onRemove(playerFurniture);
+                _onRemove?.Invoke(playerFurniture);
             }
         }
 
@@ -48,7 +40,11 @@ namespace Turbo.Inventory.Furniture
         {
             foreach (int id in ids)
             {
-                RemoveFurniture(GetPlayerFurniture(id));
+                var furniture = GetPlayerFurniture(id);
+
+                if (furniture == null) continue;
+
+                RemoveFurniture(furniture);
             }
         }
     }

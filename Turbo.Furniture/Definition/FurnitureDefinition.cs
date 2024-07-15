@@ -5,15 +5,8 @@ using Turbo.Core.Game;
 
 namespace Turbo.Furniture.Definition
 {
-    public class FurnitureDefinition : IFurnitureDefinition
+    public class FurnitureDefinition(FurnitureDefinitionEntity _entity) : IFurnitureDefinition
     {
-        private readonly FurnitureDefinitionEntity _entity;
-
-        public FurnitureDefinition(FurnitureDefinitionEntity entity)
-        {
-            _entity = entity;
-        }
-
         public int Id => _entity.Id;
         public int SpriteId => _entity.SpriteId;
         public string PublicName => _entity.PublicName;

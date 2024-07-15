@@ -11,11 +11,13 @@ namespace Turbo.Core.Game.Players
 {
     public interface IPlayer : IRoomObjectAvatarHolder, IRoomManipulator, IPermissionHolder, ISessionHolder, IComponent
     {
-        public ILogger<IPlayer> Logger { get; }
         public IPlayerManager PlayerManager { get; }
         public IPlayerDetails PlayerDetails { get; }
         public IPlayerInventory PlayerInventory { get; }
         public IPlayerWallet PlayerWallet { get; }
+
+        public bool SetInventory(IPlayerInventory playerInventory);
+        public bool SetWallet(IPlayerWallet playerWallet);
 
         public new int Id { get; }
         public new string Name { get; }

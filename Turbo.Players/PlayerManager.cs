@@ -22,10 +22,9 @@ namespace Turbo.Players
         ILogger<IPlayerManager> _logger,
         IPlayerFactory _playerFactory,
         INavigatorManager _navigatorManager,
-        IPlayerRepository _playerRepository,
-        IPlayerBadgeRepository _playerBadgeRepository) : Component, IPlayerManager
+        IServiceScopeFactory _serviceScopeFactory) : Component, IPlayerManager
     {
-        private readonly IDictionary<int, IPlayer> _players = new ConcurrentDictionary<int, IPlayer>();
+        private readonly ConcurrentDictionary<int, IPlayer> _players = new();
 
         protected override async Task OnInit()
         {
@@ -39,9 +38,9 @@ namespace Turbo.Players
 
         public IPlayer GetPlayerById(int id)
         {
-            if ((id <= 0) || !_players.ContainsKey(id)) return null;
+            if ((id <= 0) || !_players.TryGetValue(id, out IPlayer value)) return null;
 
-            return _players[id];
+            return value;
         }
 
         public IPlayer GetPlayerByUsername(string username)
@@ -66,7 +65,11 @@ namespace Turbo.Players
 
             try
             {
-                var playerEntity = await _playerRepository.FindAsync(id);
+                using var scope = _serviceScopeFactory.CreateScope();
+
+                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+
+                var playerEntity = await playerRepository.FindAsync(id);
 
                 if (playerEntity == null) return null;
 
@@ -83,7 +86,7 @@ namespace Turbo.Players
 
         public async Task<IPlayer> GetOfflinePlayerByUsername(string username)
         {
-            IPlayer player = GetPlayerByUsername(username);
+            var player = GetPlayerByUsername(username);
 
             if (player != null) return player;
 
@@ -109,7 +112,7 @@ namespace Turbo.Players
                 return null;
             }
 
-            _players.Add(id, player);
+            if (!_players.TryAdd(id, player)) return null;
 
             await player.InitAsync();
 
@@ -120,11 +123,11 @@ namespace Turbo.Players
         {
             if (id <= 0) return;
 
-            IPlayer player = GetPlayerById(id);
+            var player = GetPlayerById(id);
 
             if (player == null) return;
 
-            _players.Remove(id);
+            _players.Remove(id, out var removedPlayer);
 
             await player.DisposeAsync();
         }
@@ -155,7 +158,11 @@ namespace Turbo.Players
 
             if (player != null) return player.Name;
 
-            return (await _playerRepository.FindUsernameAsync(playerId))?.Name ?? "";
+            using var scope = _serviceScopeFactory.CreateScope();
+
+            var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+
+            return (await playerRepository.FindUsernameAsync(playerId))?.Name ?? "";
         }
 
         public async Task<IList<IPlayerBadge>> GetPlayerActiveBadges(int playerId)
@@ -166,8 +173,12 @@ namespace Turbo.Players
 
             if (player == null)
             {
-                var entities = await _playerBadgeRepository.FindActiveByPlayerIdAsync(playerId);
-                
+                using var scope = _serviceScopeFactory.CreateScope();
+
+                var playerBadgeRepository = scope.ServiceProvider.GetService<IPlayerBadgeRepository>();
+
+                var entities = await playerBadgeRepository.FindActiveByPlayerIdAsync(playerId);
+
                 return (IList<IPlayerBadge>)entities;
             }
 

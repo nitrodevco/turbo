@@ -8,10 +8,8 @@ using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class CatalogRoot : CatalogPage
+    public class CatalogRoot(ILogger<ICatalogPage> _logger) : CatalogPage(_logger, null)
     {
-        public CatalogRoot(ILogger<ICatalogPage> logger) : base(logger, null) { }
-
         public override void SetParent(ICatalogPage catalogPage)
         {
             return;

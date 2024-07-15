@@ -8,15 +8,8 @@ using Turbo.Database.Entities.Room;
 
 namespace Turbo.Database.Repositories.Room
 {
-    public class RoomBanRepository : IRoomBanRepository
+    public class RoomBanRepository(IEmulatorContext _context) : IRoomBanRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public RoomBanRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<RoomBanEntity> FindAsync(int id) => await _context.RoomBans
             .FirstOrDefaultAsync(entity => entity.Id == id);
 

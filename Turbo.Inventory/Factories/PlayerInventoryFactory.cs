@@ -12,28 +12,11 @@ using Turbo.Database.Repositories.Furniture;
 
 namespace Turbo.Inventory.Factories
 {
-    public class PlayerInventoryFactory : IPlayerInventoryFactory
+    public class PlayerInventoryFactory(IServiceProvider _provider) : IPlayerInventoryFactory
     {
-        private readonly IServiceProvider _provider;
-
-        public PlayerInventoryFactory(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
-
         public IPlayerInventory Create(IPlayer player)
         {
-            var scopeFactory = _provider.GetService<IServiceScopeFactory>();
-            var playerFurnitureFactory = _provider.GetService<IPlayerFurnitureFactory>();
-            var playerBadgeRepository = _provider.GetService<IPlayerBadgeRepository>();
-            var furnitureRepository = _provider.GetService<IFurnitureRepository>();
-
-            if (scopeFactory == null || playerFurnitureFactory == null || playerBadgeRepository == null || furnitureRepository == null) return null;
-
-            var playerFurnitureInventory = new PlayerFurnitureInventory(player, playerFurnitureFactory, furnitureRepository);
-            var playerBadgeInventory = new PlayerBadgeInventory(player, playerBadgeRepository);
-
-            return new PlayerInventory(player, playerFurnitureInventory, playerBadgeInventory);
+            return ActivatorUtilities.CreateInstance<PlayerInventory>(_provider, player, ActivatorUtilities.CreateInstance<PlayerFurnitureInventory>(_provider, player), ActivatorUtilities.CreateInstance<PlayerBadgeInventory>(_provider, player));
         }
     }
 }

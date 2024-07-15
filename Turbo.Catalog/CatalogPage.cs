@@ -11,31 +11,16 @@ using Turbo.Packets.Outgoing.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class CatalogPage : ICatalogPage
+    public class CatalogPage(
+        ILogger<ICatalogPage> _logger,
+        CatalogPageEntity _entity) : ICatalogPage
     {
-        private readonly ILogger<ICatalogPage> _logger;
-        private readonly CatalogPageEntity _entity;
-
         public ICatalogPage Parent { get; private set; }
-        public IDictionary<int, ICatalogPage> Children { get; private set; }
-        public IDictionary<int, ICatalogOffer> Offers { get; private set; }
-        public IList<int> OfferIds { get; private set; }
-        public IList<string> ImageDatas { get; private set; }
-        public IList<string> TextDatas { get; private set; }
-
-        public CatalogPage(
-            ILogger<ICatalogPage> logger,
-            CatalogPageEntity entity)
-        {
-            _logger = logger;
-            _entity = entity;
-
-            Children = new Dictionary<int, ICatalogPage>();
-            Offers = new Dictionary<int, ICatalogOffer>();
-            OfferIds = new List<int>();
-            ImageDatas = new List<string>();
-            TextDatas = new List<string>();
-        }
+        public IDictionary<int, ICatalogPage> Children { get; private set; } = new Dictionary<int, ICatalogPage>();
+        public IDictionary<int, ICatalogOffer> Offers { get; private set; } = new Dictionary<int, ICatalogOffer>();
+        public IList<int> OfferIds { get; private set; } = [];
+        public IList<string> ImageDatas { get; } = [];
+        public IList<string> TextDatas { get; } = [];
 
         public virtual void SetParent(ICatalogPage catalogPage)
         {
@@ -66,14 +51,14 @@ namespace Turbo.Catalog
 
         public virtual void CacheOfferIds()
         {
-            OfferIds = Offers.Keys.ToList();
+            OfferIds = [.. Offers.Keys];
         }
 
         public async Task<ICatalogOffer> PurchaseOffer(IPlayer player, int offerId, string extraParam, int quantity)
         {
-            if(player == null) return null;
+            if (player == null) return null;
 
-            if(Offers.TryGetValue(offerId, out var offer))
+            if (Offers.TryGetValue(offerId, out var offer))
             {
                 return await offer.Purchase(player, extraParam, quantity);
             }
@@ -82,7 +67,6 @@ namespace Turbo.Catalog
         }
 
         public virtual int Id => _entity.Id;
-
         public virtual int ParentId => _entity.ParentEntityId ?? -1;
         public virtual int Icon => _entity.Icon;
         public virtual string Name => _entity.Name;

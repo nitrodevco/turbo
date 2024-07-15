@@ -8,22 +8,13 @@ using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class CatalogProduct : ICatalogProduct
+    public class CatalogProduct(
+        ILogger<ICatalogProduct> _logger,
+        CatalogProductEntity _entity
+        ) : ICatalogProduct
     {
-        private readonly ILogger<ICatalogProduct> _logger;
-        private readonly CatalogProductEntity _entity;
-
         public ICatalogOffer Offer { get; private set; }
         public IFurnitureDefinition FurnitureDefinition { get; private set; }
-
-        public CatalogProduct(
-            ILogger<ICatalogProduct> logger,
-            CatalogProductEntity entity
-        )
-        {
-            _logger = logger;
-            _entity = entity;
-        }
 
         public void SetOffer(ICatalogOffer catalogOffer)
         {

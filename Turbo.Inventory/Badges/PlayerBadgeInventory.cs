@@ -1,9 +1,11 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
@@ -11,23 +13,16 @@ using Turbo.Packets.Outgoing.Inventory.Badges;
 
 namespace Turbo.Inventory.Badges
 {
-    public class PlayerBadgeInventory : Component, IPlayerBadgeInventory
+    public class PlayerBadgeInventory(
+        IPlayer _player,
+        IStorageQueue _storageQueue,
+        IServiceScopeFactory _serviceScopeFactory) : Component, IPlayerBadgeInventory
     {
-        private readonly IPlayer _player;
-        private readonly IPlayerBadgeRepository _playerBadgeRepository;
-
-        public IDictionary<string, IPlayerBadge> Badges { get; private set; } = new Dictionary<string, IPlayerBadge>();
-        public IList<IPlayerBadge> ActiveBadges { get; private set; } = new List<IPlayerBadge>();
+        public ConcurrentDictionary<string, IPlayerBadge> Badges { get; private set; } = new();
+        public IList<IPlayerBadge> ActiveBadges { get; private set; } = [];
+        private object _activeBadgeLock = new();
 
         private bool _requested;
-
-        public PlayerBadgeInventory(
-            IPlayer player,
-            IPlayerBadgeRepository playerBadgeRepository)
-        {
-            _player = player;
-            _playerBadgeRepository = playerBadgeRepository;
-        }
 
         protected override async Task OnInit()
         {
@@ -37,7 +32,11 @@ namespace Turbo.Inventory.Badges
         protected override async Task OnDispose()
         {
             Badges.Clear();
-            ActiveBadges.Clear();
+
+            lock (_activeBadgeLock)
+            {
+                ActiveBadges.Clear();
+            }
         }
 
         public void ResetActiveBadges()
@@ -47,34 +46,40 @@ namespace Turbo.Inventory.Badges
                 if (playerBadge is PlayerBadge badge) badge.SetSlotId(null);
             }
 
-            ActiveBadges.Clear();
+            lock (_activeBadgeLock)
+            {
+                ActiveBadges.Clear();
+            }
         }
 
         public void SetActivedBadges(IDictionary<int, string> badges)
         {
             ResetActiveBadges();
 
-            foreach (var slotId in badges.Keys)
+            lock (_activeBadgeLock)
             {
-                var badgeCode = badges[slotId];
+                foreach (var slotId in badges.Keys)
+                {
+                    var badgeCode = badges[slotId];
 
-                if (badgeCode == null || badgeCode.Length == 0) continue;
+                    if (badgeCode == null || badgeCode.Length == 0) continue;
 
-                var playerBadge = Badges[badgeCode];
+                    var playerBadge = Badges[badgeCode];
 
-                if (playerBadge == null) continue;
+                    if (playerBadge == null) continue;
 
-                if (playerBadge is PlayerBadge badge) badge.SetSlotId(slotId);
+                    if (playerBadge is PlayerBadge badge) badge.SetSlotId(slotId);
 
-                ActiveBadges.Add(playerBadge);
+                    ActiveBadges.Add(playerBadge);
 
-                if (ActiveBadges.Count == DefaultSettings.MaxActiveBadges) return;
+                    if (ActiveBadges.Count == DefaultSettings.MaxActiveBadges) return;
+                }
             }
         }
 
         public void SendBadgesToSession(ISession session)
         {
-            List<IPlayerBadge> playerBadges = new();
+            List<IPlayerBadge> playerBadges = [];
 
             int count = 0;
 
@@ -111,23 +116,38 @@ namespace Turbo.Inventory.Badges
         private async Task LoadBadges()
         {
             Badges.Clear();
-            ActiveBadges.Clear();
 
-            var entities = await _playerBadgeRepository.FindAllByPlayerIdAsync(_player.Id);
+            lock (_activeBadgeLock)
+            {
+                ActiveBadges.Clear();
+            }
+
+            using var scope = _serviceScopeFactory.CreateScope();
+
+            var playerBadgeRepository = scope.ServiceProvider.GetService<IPlayerBadgeRepository>();
+
+            var entities = await playerBadgeRepository.FindAllByPlayerIdAsync(_player.Id);
 
             if (entities != null)
             {
+                var activeBadges = new List<IPlayerBadge>();
+
                 foreach (var playerBadgeEntity in entities)
                 {
-                    IPlayerBadge playerBadge = new PlayerBadge(playerBadgeEntity);
+                    IPlayerBadge playerBadge = new PlayerBadge(_storageQueue, playerBadgeEntity);
 
-                    Badges.Add(playerBadge.BadgeCode, playerBadge);
+                    Badges.TryAdd(playerBadge.BadgeCode, playerBadge);
 
-                    if (playerBadge.SlotId != null && playerBadge.SlotId > 0) ActiveBadges.Add(playerBadge);
+                    if (playerBadge.SlotId != null && playerBadge.SlotId > 0) activeBadges.Add(playerBadge);
+                }
 
-                    if (ActiveBadges is List<IPlayerBadge> activeBadgeList)
+                if (activeBadges.Count > 0)
+                {
+                    lock (_activeBadgeLock)
                     {
-                        activeBadgeList.Sort((a, b) =>
+                        ActiveBadges = activeBadges;
+
+                        ((List<IPlayerBadge>)ActiveBadges).Sort((a, b) =>
                         {
                             var aSlotId = a.SlotId ?? 0;
                             var bSlotId = b.SlotId ?? 0;

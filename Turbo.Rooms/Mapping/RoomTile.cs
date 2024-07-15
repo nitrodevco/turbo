@@ -35,8 +35,8 @@ namespace Turbo.Rooms.Mapping
             RelativeHeight = DefaultSettings.TileHeightDefault;
             State = state;
 
-            Avatars = new List<IRoomObjectAvatar>();
-            Furniture = new List<IRoomObjectFloor>();
+            Avatars = [];
+            Furniture = [];
 
             _height = DefaultHeight;
 

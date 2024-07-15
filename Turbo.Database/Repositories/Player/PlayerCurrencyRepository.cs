@@ -10,15 +10,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Repositories.Player
 {
-    public class PlayerCurrencyRepository : IPlayerCurrencyRepository
+    public class PlayerCurrencyRepository(IEmulatorContext _context) : IPlayerCurrencyRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public PlayerCurrencyRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<PlayerCurrencyEntity> FindAsync(int id) => await _context.PlayerCurrencies.FindAsync(id);
 
         public async Task<List<PlayerCurrencyEntity>> FindAllByPlayerIdAsync(int playerId) => await _context.PlayerCurrencies

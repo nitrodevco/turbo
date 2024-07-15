@@ -12,17 +12,12 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Cycles
 {
-    public class RoomRollerCycle : RoomCycle
+    public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
     {
         private int _remainingRollerCycles = DefaultSettings.RollerCycles;
 
         private List<IRollerData> _lastRollingDatas;
         private List<IPoint> _lastRollingPoints;
-
-        public RoomRollerCycle(IRoom room) : base(room)
-        {
-
-        }
 
         public override async Task Cycle()
         {
