@@ -1,6 +1,8 @@
-﻿namespace Turbo.Core.EventHandlers;
-
-public class ILoginEventHandler
+﻿
+namespace Turbo.Core.EventHandlers
 {
-    
+    public interface ILoginEventHandler
+    {
+
+    }
 }
