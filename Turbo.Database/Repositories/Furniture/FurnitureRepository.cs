@@ -8,15 +8,8 @@ using Turbo.Core.Database.Dtos;
 
 namespace Turbo.Database.Repositories.Furniture
 {
-    public class FurnitureRepository : IFurnitureRepository
+    public class FurnitureRepository(IEmulatorContext _context) : IFurnitureRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public FurnitureRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<FurnitureEntity> FindAsync(int id) => await _context.Furnitures
             .FirstOrDefaultAsync(furniture => furniture.Id == id);
 

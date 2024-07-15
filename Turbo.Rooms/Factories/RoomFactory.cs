@@ -11,25 +11,11 @@ using Turbo.Rooms.Managers;
 
 namespace Turbo.Rooms.Factories
 {
-    public class RoomFactory : IRoomFactory
+    public class RoomFactory(IServiceProvider _provider) : IRoomFactory
     {
-        private readonly IServiceProvider _provider;
-
-        public RoomFactory(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
-
         public IRoom Create(RoomEntity roomEntity)
         {
-            ILogger<IRoom> logger = _provider.GetService<ILogger<Room>>();
-            IRoomManager roomManager = _provider.GetService<IRoomManager>();
-            IRoomSecurityFactory roomSecurityFactory = _provider.GetService<IRoomSecurityFactory>();
-            IRoomFurnitureFactory roomFurnitureFactory = _provider.GetService<IRoomFurnitureFactory>();
-            IRoomUserFactory roomUserFactory = _provider.GetService<IRoomUserFactory>();
-            ITurboEventHub eventHub = _provider.GetService<ITurboEventHub>();
-
-            return new Room(logger, roomManager, roomEntity, roomSecurityFactory, roomFurnitureFactory, roomUserFactory, eventHub);
+            return ActivatorUtilities.CreateInstance<Room>(_provider, roomEntity);
         }
     }
 }

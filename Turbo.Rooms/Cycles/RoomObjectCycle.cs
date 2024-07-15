@@ -3,13 +3,8 @@ using Turbo.Core.Game.Rooms;
 
 namespace Turbo.Rooms.Cycles
 {
-    public class RoomObjectCycle : RoomCycle
+    public class RoomObjectCycle(IRoom _room) : RoomCycle(_room)
     {
-        public RoomObjectCycle(IRoom room) : base(room)
-        {
-
-        }
-
         public override async Task Cycle()
         {
             if (_room.RoomFurnitureManager != null)

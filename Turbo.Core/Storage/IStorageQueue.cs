@@ -5,11 +5,10 @@ using Turbo.Core.Game;
 
 namespace Turbo.Core.Storage
 {
-    public interface IStorageQueue : IAsyncDisposable, ICyclable
+    public interface IStorageQueue : IAsyncDisposable
     {
         public void Add(object entity);
         public void AddAll(ICollection<object> entities);
         public Task SaveNow();
-        public Task SaveNow(object entity);
     }
 }

@@ -11,21 +11,19 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Storage;
 
 namespace Turbo.Furniture
 {
-    public class RoomWallFurniture : RoomFurniture, IRoomWallFurniture
+    public class RoomWallFurniture(
+        ILogger<IRoomWallFurniture> _logger,
+        IRoomFurnitureManager _roomFurnitureManager,
+        IFurnitureManager _furnitureManager,
+        FurnitureEntity _furnitureEntity,
+        IFurnitureDefinition _furnitureDefinition,
+        IStorageQueue _storageQueue) : RoomFurniture(_logger, _roomFurnitureManager, _furnitureManager, _furnitureEntity, _furnitureDefinition), IRoomWallFurniture
     {
         public IRoomObjectWall RoomObject { get; private set; }
-
-        public RoomWallFurniture(
-            ILogger<IRoomWallFurniture> logger,
-            IRoomFurnitureManager roomFurnitureManager,
-            IFurnitureManager furnitureManager,
-            FurnitureEntity furnitureEntity,
-            IFurnitureDefinition furnitureDefinition) : base(logger, roomFurnitureManager, furnitureManager, furnitureEntity, furnitureDefinition)
-        {
-        }
 
         protected override void OnDispose()
         {
@@ -37,12 +35,14 @@ namespace Turbo.Furniture
             if (RoomObject != null)
             {
                 FurnitureEntity.WallPosition = RoomObject.WallLocation;
-                
+
                 if (RoomObject.Logic.StuffData != null)
                 {
                     FurnitureEntity.StuffData = JsonSerializer.Serialize(RoomObject.Logic.StuffData, RoomObject.Logic.StuffData.GetType());
                 }
             }
+
+            _storageQueue.Add(FurnitureEntity);
         }
 
         public bool SetRoomObject(IRoomObjectWall roomObject)
@@ -67,8 +67,8 @@ namespace Turbo.Furniture
 
         public void ClearRoomObject()
         {
-            if(RoomObject == null) return;
-            
+            if (RoomObject == null) return;
+
             Save();
 
             RoomObject.Dispose();

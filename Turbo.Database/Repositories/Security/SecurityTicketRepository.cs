@@ -5,15 +5,8 @@ using Turbo.Database.Entities.Security;
 
 namespace Turbo.Database.Repositories.Security
 {
-    public class SecurityTicketRepository : ISecurityTicketRepository
+    public class SecurityTicketRepository(IEmulatorContext _context) : ISecurityTicketRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public SecurityTicketRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<SecurityTicketEntity> FindAsync(int id) => await _context.SecurityTickets
             .FirstOrDefaultAsync(securityTicket => securityTicket.Id == id);
 

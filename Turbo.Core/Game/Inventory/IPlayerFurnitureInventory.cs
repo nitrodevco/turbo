@@ -9,7 +9,7 @@ namespace Turbo.Core.Game.Inventory
     public interface IPlayerFurnitureInventory : IComponent
     {
         public IPlayerFurnitureContainer Furniture { get; }
-        public IPlayerFurniture GetFurniture(int id);
+        public IPlayerFurniture? GetFurniture(int id);
         public void AddFurnitureFromRoom(IRoomFurniture roomFurniture);
         public void RemoveFurniture(IPlayerFurniture playerFurniture);
         public Task GiveFurniture(int definitionId);

@@ -17,7 +17,9 @@ namespace Turbo.Core.Game.Rooms.Managers
         public IDictionary<int, DateTime> Mutes { get; }
         public IList<int> Rights { get; }
         public bool IsStrictOwner(IRoomManipulator manipulator);
+        public bool IsStrictOwner(int? playerId);
         public bool IsOwner(IRoomManipulator manipulator);
+        public bool IsOwner(int? playerId);
         public bool IsPlayerBanned(IPlayer player);
         public bool IsPlayerMuted(IPlayer player);
         public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator);
@@ -28,10 +30,9 @@ namespace Turbo.Core.Game.Rooms.Managers
         public Task RemoveAllRights(IRoomManipulator manipulator);
         public void SendOwnersComposer(IComposer composer);
         public void SendRightsComposer(IComposer composer);
-        public bool CanKickPlayer(IRoomManipulator manipulator, IPlayer player);
-        public bool CanAdjustPlayerBan(IRoomManipulator manipulator, IPlayer player, bool flag);
-        public bool CanAdjustPlayerMute(IRoomManipulator manipulator, IPlayer player, bool flag);
-        public bool CanAdjustPlayerRights(IRoomManipulator manipulator, IPlayer player, bool flag);
+        public bool CanKickPlayer(IRoomManipulator manipulator);
+        public bool CanAdjustPlayerBan(IRoomManipulator manipulator, bool flag);
+        public bool CanAdjustPlayerMute(IRoomManipulator manipulator, bool flag);
         public bool CanManipulateFurniture(IRoomManipulator manipulator, IRoomFurniture furniture);
         public bool CanPlaceFurniture(IRoomManipulator manipulator);
         public FurniturePickupType GetFurniturePickupType(IRoomManipulator manipulator, IRoomFurniture furniture);

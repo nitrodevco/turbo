@@ -5,16 +5,10 @@ using Turbo.Packets.Outgoing.Notifications;
 
 namespace Turbo.Inventory
 {
-    public class UnseenItemsManager : IUnseenItemsManager
+    public class UnseenItemsManager(IPlayer player) : IUnseenItemsManager
     {
-        private readonly IPlayer _player;
-        private IDictionary<UnseenItemCategory, IList<int>> _unseenCategories;
-
-        public UnseenItemsManager(IPlayer player)
-        {
-            _player = player;
-            _unseenCategories = new Dictionary<UnseenItemCategory, IList<int>>();
-        }
+        private readonly IPlayer _player = player;
+        private IDictionary<UnseenItemCategory, IList<int>> _unseenCategories = new Dictionary<UnseenItemCategory, IList<int>>();
 
         public void Commit()
         {

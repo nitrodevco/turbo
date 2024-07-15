@@ -15,13 +15,8 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Cycles
 {
-    public class RoomUserStatusCycle : RoomCycle
+    public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
     {
-        public RoomUserStatusCycle(IRoom room) : base(room)
-        {
-
-        }
-
         public override async Task Cycle()
         {
             List<IRoomObjectAvatar> updatedAvatarObjects = new();

@@ -62,6 +62,8 @@ namespace Turbo.Networking.Game.Clients
 
         protected async Task Send(IComposer composer, bool queue)
         {
+            if (!IsConnected()) return;
+
             if (Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
             {
                 IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(), composer);
@@ -86,5 +88,7 @@ namespace Turbo.Networking.Game.Clients
         }
 
         public void Flush() => _channel.Flush();
+
+        public bool IsConnected() => _channel.Channel.Open;
     }
 }

@@ -8,15 +8,8 @@ using Turbo.Core.Database.Dtos;
 
 namespace Turbo.Database.Repositories.Player
 {
-    public class PlayerBadgeRepository : IPlayerBadgeRepository
+    public class PlayerBadgeRepository(IEmulatorContext _context) : IPlayerBadgeRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public PlayerBadgeRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<PlayerBadgeEntity> FindAsync(int id) => await _context.PlayerBadges.FindAsync(id);
 
         public async Task<List<PlayerBadgeEntity>> FindAllByPlayerIdAsync(int playerId) => await _context.PlayerBadges

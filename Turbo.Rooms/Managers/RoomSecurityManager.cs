@@ -28,9 +28,7 @@ namespace Turbo.Rooms.Managers
     public class RoomSecurityManager(
         IRoom _room,
         IPlayerManager _playerManager,
-        IRoomBanRepository _roomBanRepository,
-        IRoomMuteRepository _roomMuteRepository,
-        IRoomRightRepository _roomRightRepository) : Component, IRoomSecurityManager
+        IServiceScopeFactory _serviceScopeFactory) : Component, IRoomSecurityManager
     {
         public IDictionary<int, DateTime> Bans { get; private set; } = new ConcurrentDictionary<int, DateTime>();
         public IDictionary<int, DateTime> Mutes { get; private set; } = new ConcurrentDictionary<int, DateTime>();
@@ -38,27 +36,36 @@ namespace Turbo.Rooms.Managers
 
         protected override async Task OnInit()
         {
-            var banEntities = await _roomBanRepository.FindAllByRoomIdAsync(_room.Id);
-            var muteEntities = await _roomMuteRepository.FindAllByRoomIdAsync(_room.Id);
-            var rightEntities = await _roomRightRepository.FindAllByRoomIdAsync(_room.Id);
+            using var scope = _serviceScopeFactory.CreateScope();
 
-            foreach (var entity in banEntities)
+            var roomBanRepository = scope.ServiceProvider.GetService<IRoomBanRepository>();
+            var roomMuteRepository = scope.ServiceProvider.GetService<IRoomMuteRepository>();
+            var roomRightRepository = scope.ServiceProvider.GetService<IRoomRightRepository>();
+
+            var banEntities = await roomBanRepository.FindAllByRoomIdAsync(_room.Id);
+            var muteEntities = await roomMuteRepository.FindAllByRoomIdAsync(_room.Id);
+            var rightEntities = await roomRightRepository.FindAllByRoomIdAsync(_room.Id);
+
+            if (banEntities != null)
             {
-                if (DateTime.Compare(DateTime.Now, entity.DateExpires) >= 0)
+                foreach (var entity in banEntities)
                 {
-                    await _roomBanRepository.RemoveBanEntityAsync(entity);
+                    if (DateTime.Compare(DateTime.Now, entity.DateExpires) >= 0)
+                    {
+                        await roomBanRepository.RemoveBanEntityAsync(entity);
 
-                    continue;
+                        continue;
+                    }
+
+                    Bans.Add(entity.PlayerEntityId, entity.DateExpires);
                 }
-
-                Bans.Add(entity.PlayerEntityId, entity.DateExpires);
             }
 
             foreach (var entity in muteEntities)
             {
                 if (DateTime.Compare(DateTime.Now, entity.DateExpires) >= 0)
                 {
-                    await _roomMuteRepository.RemoveMuteEntityAsync(entity);
+                    await roomMuteRepository.RemoveMuteEntityAsync(entity);
 
                     continue;
                 }
@@ -78,7 +85,12 @@ namespace Turbo.Rooms.Managers
 
         public bool IsStrictOwner(IRoomManipulator manipulator)
         {
-            if (manipulator != null && _room.RoomDetails.PlayerId == manipulator.Id) return true;
+            return IsStrictOwner(manipulator?.Id);
+        }
+
+        public bool IsStrictOwner(int? playerId)
+        {
+            if (playerId > 0 && _room.RoomDetails.PlayerId == playerId) return true;
 
             return false;
         }
@@ -89,7 +101,21 @@ namespace Turbo.Rooms.Managers
 
             if (IsStrictOwner(manipulator)) return true;
 
-            if (manipulator.HasPermission("any_room_owner")) return true;
+            return manipulator?.HasPermission("any_room_owner") ?? false;
+        }
+
+        public bool IsOwner(int? playerId)
+        {
+            if (playerId <= 0) return false;
+
+            if (IsStrictOwner(playerId)) return true;
+
+            var player = _playerManager.GetPlayerById((int)playerId);
+
+            if (player != null)
+            {
+                return player.HasPermission("any_room_owner");
+            }
 
             return false;
         }
@@ -98,9 +124,11 @@ namespace Turbo.Rooms.Managers
         {
             if (player == null || !Bans.ContainsKey(player.Id)) return false;
 
+            var isOwner = IsOwner(player);
+
             if (Bans.TryGetValue(player.Id, out var expiration))
             {
-                if (DateTime.Compare(DateTime.Now, expiration) < 0) return true;
+                if (!isOwner && DateTime.Compare(DateTime.Now, expiration) < 0) return true;
 
                 Bans.Remove(player.Id);
             }
@@ -112,9 +140,11 @@ namespace Turbo.Rooms.Managers
         {
             if (player == null || !Mutes.ContainsKey(player.Id)) return false;
 
+            var isOwner = IsOwner(player);
+
             if (Mutes.TryGetValue(player.Id, out var expiration))
             {
-                if (DateTime.Compare(DateTime.Now, expiration) < 0) return true;
+                if (!isOwner && DateTime.Compare(DateTime.Now, expiration) < 0) return true;
 
                 Mutes.Remove(player.Id);
             }
@@ -134,7 +164,7 @@ namespace Turbo.Rooms.Managers
 
                     if (manipulator.HasPermission("any_group_member")) return RoomControllerLevel.GroupRights;
 
-                    // check if the manipulator belongs to the group
+                    // TODO check if the manipulator belongs to the group
                 }
                 else
                 {
@@ -151,12 +181,11 @@ namespace Turbo.Rooms.Managers
         {
             if (avatarObject == null) return;
 
-            bool isOwner = false;
-            RoomControllerLevel controllerLevel = RoomControllerLevel.None;
+            var controllerLevel = RoomControllerLevel.None;
 
             if (avatarObject.RoomObjectHolder is IPlayer player)
             {
-                isOwner = IsOwner(player);
+                var isOwner = IsOwner(player);
                 controllerLevel = GetControllerLevel(player);
 
                 player.Session.Send(new YouAreControllerMessage
@@ -183,7 +212,7 @@ namespace Turbo.Rooms.Managers
 
             var player = _playerManager.GetPlayerById(playerId);
 
-            if (player == null || !CanKickPlayer(manipulator, player)) return;
+            if (player == null || !CanKickPlayer(manipulator)) return;
 
             if (player.RoomObject == null || player.RoomObject.Room != _room) return;
 
@@ -195,39 +224,55 @@ namespace Turbo.Rooms.Managers
 
         public async Task BanPlayerIdWithDuration(IRoomManipulator manipulator, int playerId, double durationMs)
         {
-            if (playerId <= 0 || durationMs == 0.0 || Bans.ContainsKey(playerId)) return;
+            if (playerId <= 0 || durationMs == 0.0 || Bans.ContainsKey(playerId) || !CanAdjustPlayerBan(manipulator, true) || IsOwner(playerId)) return;
 
-            var player = await _playerManager.GetOfflinePlayerById(playerId);
+            using var scope = _serviceScopeFactory.CreateScope();
 
-            if (player == null || !CanAdjustPlayerBan(manipulator, player, true)) return;
+            var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+            var roomBanRepository = scope.ServiceProvider.GetService<IRoomBanRepository>();
+
+            var player = _playerManager.GetPlayerById(playerId);
+
+            if (player == null)
+            {
+                var playerEntity = await playerRepository.FindAsync(playerId);
+
+                if (playerEntity == null) return;
+            }
 
             var expiration = DateTime.Now.AddMilliseconds(durationMs);
 
-            if (!await _roomBanRepository.BanPlayerIdAsync(_room.Id, player.Id, expiration)) return;
+            if (!await roomBanRepository.BanPlayerIdAsync(_room.Id, playerId, expiration)) return;
 
-            Bans.Add(player.Id, expiration);
+            Bans.Add(playerId, expiration);
 
-            if (player.RoomObject == null || player.RoomObject.Room != _room) return;
+            if (player == null || player.RoomObject == null || player.RoomObject.Room != _room) return;
 
             if (player.RoomObject.Logic is PlayerLogic playerLogic)
             {
+                // TODO we probably need to send a banned packet/alert
                 playerLogic.Kick();
             }
         }
 
         public async Task AdjustRightsForPlayerId(IRoomManipulator manipulator, int playerId, bool flag)
         {
-            if (manipulator == null || ((manipulator.Id != playerId) && !IsOwner(manipulator))) return;
+            if (manipulator != null && (((manipulator.Id != playerId) && !IsOwner(manipulator)) || IsOwner(playerId))) return;
 
             if (Rights.Contains(playerId) == flag) return;
 
-            var player = await _playerManager.GetOfflinePlayerById(playerId);
+            using var scope = _serviceScopeFactory.CreateScope();
 
-            if (player == null) return;
+            var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+            var roomRightRepository = scope.ServiceProvider.GetService<IRoomRightRepository>();
+
+            var playerEntity = await playerRepository.FindAsync(playerId);
+
+            if (playerEntity == null) return;
 
             if (flag)
             {
-                if (!await _roomRightRepository.GiveRightsToPlayerIdAsync(_room.Id, playerId)) return;
+                if (!await roomRightRepository.GiveRightsToPlayerIdAsync(_room.Id, playerId)) return;
 
                 Rights.Add(playerId);
 
@@ -235,12 +280,12 @@ namespace Turbo.Rooms.Managers
                 {
                     RoomId = _room.Id,
                     PlayerId = playerId,
-                    PlayerName = player.Name
+                    PlayerName = playerEntity.Name
                 });
             }
             else
             {
-                if (!await _roomRightRepository.RemoveRightsForPlayerIdAsync(_room.Id, playerId)) return;
+                if (!await roomRightRepository.RemoveRightsForPlayerIdAsync(_room.Id, playerId)) return;
 
                 Rights.Remove(playerId);
 
@@ -251,7 +296,9 @@ namespace Turbo.Rooms.Managers
                 });
             }
 
-            if (player.RoomObject != null) RefreshControllerLevel(player.RoomObject);
+            var player = _playerManager.GetPlayerById(playerId);
+
+            if (player != null && player.RoomObject != null) RefreshControllerLevel(player.RoomObject);
         }
 
         public async Task RemoveAllRights(IRoomManipulator manipulator)
@@ -289,10 +336,8 @@ namespace Turbo.Rooms.Managers
             }
         }
 
-        public bool CanKickPlayer(IRoomManipulator manipulator, IPlayer player)
+        public bool CanKickPlayer(IRoomManipulator manipulator)
         {
-            if (IsOwner(player)) return false;
-
             if (manipulator == null) return true;
 
             var kickType = _room.RoomDetails.KickType;
@@ -312,10 +357,8 @@ namespace Turbo.Rooms.Managers
             return true;
         }
 
-        public bool CanAdjustPlayerBan(IRoomManipulator manipulator, IPlayer player, bool flag)
+        public bool CanAdjustPlayerBan(IRoomManipulator manipulator, bool flag)
         {
-            if (IsOwner(player)) return false;
-
             if (manipulator == null) return true;
 
             var banType = _room.RoomDetails.BanType;
@@ -335,10 +378,8 @@ namespace Turbo.Rooms.Managers
             return true;
         }
 
-        public bool CanAdjustPlayerMute(IRoomManipulator manipulator, IPlayer player, bool flag)
+        public bool CanAdjustPlayerMute(IRoomManipulator manipulator, bool flag)
         {
-            if (IsOwner(player)) return false;
-
             if (manipulator == null) return true;
 
             var muteType = _room.RoomDetails.MuteType;
@@ -351,22 +392,6 @@ namespace Turbo.Rooms.Managers
                 default:
                     if (!IsOwner(manipulator)) return false;
                     break;
-            }
-
-            return true;
-        }
-
-        public bool CanAdjustPlayerRights(IRoomManipulator manipulator, IPlayer player, bool flag)
-        {
-            if (_room.IsGroupRoom || !IsOwner(manipulator) || IsOwner(player)) return false;
-
-            if (flag)
-            {
-                if (GetControllerLevel(player) >= RoomControllerLevel.Rights) return false;
-            }
-            else
-            {
-                if (GetControllerLevel(player) != RoomControllerLevel.Rights) return false;
             }
 
             return true;
@@ -406,6 +431,7 @@ namespace Turbo.Rooms.Managers
 
             if (_room.IsGroupRoom)
             {
+                // TODO We need to check if the group has the rights to decorate
                 bool canGroupDecorate = false;
 
                 if (controllerLevel >= RoomControllerLevel.GroupRights && canGroupDecorate) return true;
@@ -423,19 +449,6 @@ namespace Turbo.Rooms.Managers
             if (furniture == null) return FurniturePickupType.None;
 
             if (manipulator == null) return FurniturePickupType.SendToOwner;
-
-            if (manipulator is IPlayer player)
-            {
-                if (furniture is IRoomFloorFurniture floorFurniture)
-                {
-                    if (floorFurniture.PlayerId == manipulator.Id) return FurniturePickupType.SendToManipulator;
-                }
-
-                else if (furniture is IRoomWallFurniture wallFurniture)
-                {
-                    if (wallFurniture.PlayerId == manipulator.Id) return FurniturePickupType.SendToManipulator;
-                }
-            }
 
             if (manipulator.HasPermission("can_steal_furniture")) return FurniturePickupType.SendToManipulator;
 

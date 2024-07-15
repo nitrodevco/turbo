@@ -69,7 +69,7 @@ namespace Turbo.Rooms.Object
             }
         }
 
-        public virtual void SetLocation(IPoint point)
+        public virtual void SetLocation(IPoint point, bool save = true, bool update = true)
         {
             if (point == null) return;
 
@@ -81,9 +81,9 @@ namespace Turbo.Rooms.Object
             Location.Rotation = point.Rotation;
             Location.HeadRotation = point.HeadRotation;
 
-            Save();
+            if (save) Save();
 
-            NeedsUpdate = true;
+            if (update) NeedsUpdate = true;
         }
 
         private void Save()

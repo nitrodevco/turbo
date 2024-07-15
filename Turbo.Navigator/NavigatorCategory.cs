@@ -14,6 +14,8 @@ namespace Turbo.Navigator
         public string Name => _categoryEntity.Name;
         public bool Visible => true;
         public bool Automatic => true;
-        public string? LocalizationName => _categoryEntity.LocalizationName;
+        public string AutomaticCategoryKey => ""; // The client doesn't do anything with this value
+        public string GlobalCategoryKey => _categoryEntity.LocalizationName; // If this value is null / empty then the client will display the Name value, otherwise `navigator.flatcategory.global.${ GlobalCategoryKey }`
+        public bool StaffOnly => false;
     }
 }
