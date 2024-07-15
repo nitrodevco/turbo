@@ -221,6 +221,76 @@ namespace Turbo.Main.Migrations
                     b.ToTable("catalog_products");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.ChatStyles.ChatStyleEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<int>("RankRequirement")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("0");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("chat_styles");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.ChatStyles.PlayerOwnedStyleEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ChatStyleId")
+                        .HasColumnType("int")
+                        .HasColumnName("chatstyle_id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatStyleId");
+
+                    b.HasIndex("PlayerEntityId", "ChatStyleId")
+                        .IsUnique();
+
+                    b.ToTable("player_owned_styles");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -1366,6 +1436,25 @@ namespace Turbo.Main.Migrations
                     b.Navigation("Offer");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.ChatStyles.PlayerOwnedStyleEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.ChatStyles.ChatStyleEntity", "ChatStyle")
+                        .WithMany()
+                        .HasForeignKey("ChatStyleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany("OwnedChatStyles")
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChatStyle");
+
+                    b.Navigation("PlayerEntity");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureEntity", b =>
                 {
                     b.HasOne("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", "FurnitureDefinitionEntity")
@@ -1642,6 +1731,8 @@ namespace Turbo.Main.Migrations
                     b.Navigation("MessengerRequests");
 
                     b.Navigation("MessengerRequestsSent");
+
+                    b.Navigation("OwnedChatStyles");
 
                     b.Navigation("PlayerBadges");
 

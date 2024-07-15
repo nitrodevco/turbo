@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Attributes;
 using Turbo.Database.Entities;
 using Turbo.Database.Entities.Catalog;
+using Turbo.Database.Entities.ChatStyles;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
@@ -37,6 +38,8 @@ namespace Turbo.Database.Context
         public DbSet<NavigatorCategoryEntity> NavigatorCategories { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
         public DbSet<NavigatorTabEntity> NavigatorTabs { get; set; }
+        public DbSet<ChatStyleEntity> ChatStyles { get; set; }
+        public DbSet<PlayerOwnedStyleEntity> OwnedChatStyles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

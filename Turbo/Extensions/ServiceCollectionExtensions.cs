@@ -18,6 +18,7 @@ using Turbo.Core.Security;
 using Turbo.Core.Storage;
 using Turbo.Database.Queue;
 using Turbo.Database.Repositories.Catalog;
+using Turbo.Database.Repositories.ChatStyles;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
@@ -137,6 +138,8 @@ namespace Turbo.Main.Extensions
             services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
             services.AddScoped<INavigatorRepository, NavigatorRepository>();
             services.AddScoped<IChatlogRepository, ChatlogRepository>();
+            services.AddScoped<IChatStyleRepository, ChatStyleRepository>();
+            services.AddScoped<IPlayerOwnedStyleRepository, PlayerOwnedStyleRepository>();
         }
     }
 }

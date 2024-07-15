@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Database.Repositories.Room;
+using Turbo.Packets.Outgoing.Room.Chat;
 using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Managers
@@ -98,16 +100,37 @@ namespace Turbo.Rooms.Managers
                 _logger.LogWarning($"PlayerLogic not found for player with userId: {userId}.");
             }
         }
-        
+
         public async Task SetChatStylePreference(uint userId, int styleId)
         {
             var player = _playerManager.GetPlayerById((int)userId);
 
             if (player != null)
             {
-                player.PlayerSettings.ChatStyle = styleId;
+                if (player.PlayerSettings.OwnedChatStyles.Contains(styleId))
+                {
+                    player.PlayerSettings.ChatStyle = styleId;
+                    _logger.LogInformation($"Player with userId: {userId} changed chat style to: {styleId}.");
+                }
+                else
+                {
+                    _logger.LogWarning($"Player with userId: {userId} does not own chat style: {styleId}. Keeping the current chat style: {player.PlayerSettings.ChatStyle}.");
+
+                    // Send a whisper to the user
+                    var message = "You don't own this chat style. Keeping your current chat style.";
+                    var whisperMessage = new WhisperMessage
+                    {
+                        ObjectId = player.Id,
+                        Text = message,
+                        Gesture = 0,
+                        StyleId = player.PlayerSettings.ChatStyle, // Keep the current style
+                        Links = new List<string>(),
+                        AnimationLength = 0
+                    };
+                    player.Session.Send(whisperMessage);
+                }
+
                 await _playerManager.SaveSettings(player.PlayerSettings);
-                _logger.LogInformation($"Player with userId: {userId} changed chat style to: {styleId}.");
             }
             else
             {

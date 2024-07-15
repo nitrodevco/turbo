@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel;
 using Turbo.Database.Entities.Security;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Room;
@@ -9,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Attributes;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Players.Constants;
+using Turbo.Database.Entities.ChatStyles;
 using Turbo.Database.Entities.Messenger;
 
 namespace Turbo.Database.Entities.Players
@@ -69,5 +69,8 @@ namespace Turbo.Database.Entities.Players
 
         [InverseProperty("PlayerEntity")]
         public List<RoomRightEntity> RoomRights { get; set; }
+        
+        [InverseProperty("PlayerEntity")]
+        public List<PlayerOwnedStyleEntity> OwnedChatStyles { get; set; }
     }
 }
