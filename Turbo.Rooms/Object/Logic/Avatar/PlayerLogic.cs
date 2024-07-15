@@ -186,13 +186,16 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public virtual void Say(string text)
         {
             Idle(false);
-            
+
+            if (RoomObject.RoomObjectHolder is not IPlayer player) return;
+            var styleId = player?.PlayerSettings.ChatStyle ?? 0;
+        
             RoomObject.Room.SendComposer(new ChatMessage
             {
                 ObjectId = RoomObject.Id,
                 Text = text,
                 Gesture = 0,
-                StyleId = 0,
+                StyleId = styleId,
                 Links = new List<string>(),
                 AnimationLength = 0
             });
@@ -202,22 +205,21 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             Idle(false);
 
+            if (RoomObject.RoomObjectHolder is not IPlayer player) return;
+            var styleId = player?.PlayerSettings.ChatStyle ?? 0;
+
             var whisperMessage = new WhisperMessage
             {
                 ObjectId = RoomObject.Id,
                 Text = text,
                 Gesture = 0,
-                StyleId = 0,
+                StyleId = styleId,
                 Links = new List<string>(),
                 AnimationLength = 0
             };
-            
+
             recipient?.Session.Send(whisperMessage);
-            
-            if (RoomObject.RoomObjectHolder is IPlayer sender)
-            {
-                sender.Session.Send(whisperMessage);
-            }
+            player.Session.Send(whisperMessage);
         }
     }
 }

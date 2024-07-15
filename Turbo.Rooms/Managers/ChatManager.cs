@@ -98,5 +98,21 @@ namespace Turbo.Rooms.Managers
                 _logger.LogWarning($"PlayerLogic not found for player with userId: {userId}.");
             }
         }
+        
+        public async Task SetChatStylePreference(uint userId, int styleId)
+        {
+            var player = _playerManager.GetPlayerById((int)userId);
+
+            if (player != null)
+            {
+                player.PlayerSettings.ChatStyle = styleId;
+                await _playerManager.SaveSettings(player.PlayerSettings);
+                _logger.LogInformation($"Player with userId: {userId} changed chat style to: {styleId}.");
+            }
+            else
+            {
+                _logger.LogWarning($"Player with userId: {userId} not found.");
+            }
+        }
     }
 }

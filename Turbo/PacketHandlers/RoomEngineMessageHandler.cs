@@ -7,6 +7,7 @@ using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
+using Turbo.Packets.Incoming.Preferences;
 using Turbo.Packets.Incoming.Room.Chat;
 using Turbo.Packets.Incoming.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Engine;
@@ -44,6 +45,7 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<UseWallItemMessage>(this, OnUseWallItemMessage);
             _messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
             _messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
+            _messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
         }
 
         protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
@@ -188,6 +190,11 @@ namespace Turbo.Main.PacketHandlers
             Console.WriteLine($"Sending whisper from '{session.Player.Name}' to '{recipient.RoomObjectHolder.Name}'.");
             
             session.Player?.RoomObject?.Room?.RoomChatManager?.TryWhisperChat((uint)session.Player.Id, recipient.RoomObjectHolder.Id, message.Text, "whisper");
+        }
+        
+        protected virtual void OnChatStylePreferenceMessage(ChatStylePreferenceMessage message, ISession session)
+        {
+            session.Player?.RoomObject?.Room?.RoomChatManager?.SetChatStylePreference((uint)session.Player.Id, message.StyleId);
         }
 
     }

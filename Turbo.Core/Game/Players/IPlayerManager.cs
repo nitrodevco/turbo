@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Rooms.Utils;
@@ -21,5 +20,6 @@ namespace Turbo.Core.Game.Players
         public Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null);
         public Task<string> GetPlayerName(int playerId);
         public Task<IList<IPlayerBadge>> GetPlayerActiveBadges(int playerId);
+        public Task SaveSettings(IPlayerSettings playerSettings);
     }
 }

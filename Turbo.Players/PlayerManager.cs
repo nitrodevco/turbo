@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Utilities;
-using Turbo.Database.Entities.Players;
 using Turbo.Database.Repositories.Player;
 using Turbo.Players.Factories;
 
@@ -183,6 +180,14 @@ namespace Turbo.Players
             }
 
             return player.PlayerInventory?.BadgeInventory?.ActiveBadges;
+        }
+        
+        public async Task SaveSettings(IPlayerSettings playerSettings)
+        {
+            if (playerSettings != null)
+            {
+                await playerSettings.SaveSettings();
+            }
         }
     }
 }

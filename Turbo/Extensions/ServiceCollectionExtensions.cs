@@ -128,6 +128,7 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IPlayerBadgeRepository, PlayerBadgeRepository>();
             services.AddScoped<IPlayerCurrencyRepository, PlayerCurrencyRepository>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
+            services.AddScoped<IPlayerSettingsRepository, PlayerSettingsRepository>();
             services.AddScoped<IRoomBanRepository, RoomBanRepository>();
             services.AddScoped<IRoomModelRepository, RoomModelRepository>();
             services.AddScoped<IRoomMuteRepository, RoomMuteRepository>();

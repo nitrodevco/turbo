@@ -4,13 +4,10 @@ using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
-using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Utilities;
-using Turbo.Database.Entities.Players;
-using Turbo.Inventory.Factories;
 
 namespace Turbo.Players
 {
@@ -24,6 +21,7 @@ namespace Turbo.Players
         public IPlayerDetails PlayerDetails { get; private set; } = _playerDetails;
         public IPlayerInventory PlayerInventory { get; private set; }
         public IPlayerWallet PlayerWallet { get; private set; }
+        public IPlayerSettings PlayerSettings { get; private set; }
 
         public ISession Session { get; private set; }
         public IRoomObjectAvatar RoomObject { get; private set; }
@@ -34,6 +32,7 @@ namespace Turbo.Players
 
             if (PlayerWallet != null) await PlayerWallet.InitAsync();
             if (PlayerInventory != null) await PlayerInventory.InitAsync();
+            if (PlayerSettings != null) await PlayerSettings.InitAsync();
         }
 
         protected override async Task OnDispose()
@@ -49,6 +48,7 @@ namespace Turbo.Players
 
             await PlayerWallet.DisposeAsync();
             await PlayerInventory.DisposeAsync();
+            await PlayerSettings.DisposeAsync();
             await Session.DisposeAsync();
         }
 
@@ -81,6 +81,15 @@ namespace Turbo.Players
             return true;
         }
 
+        public bool SetSettings(IPlayerSettings playerSettings)
+        {
+            if ((PlayerSettings != null) && (PlayerSettings != playerSettings)) return false;
+
+            PlayerSettings = playerSettings;
+
+            return true;
+        }
+        
         public async Task<bool> SetupRoomObject()
         {
             if (RoomObject == null) return false;
