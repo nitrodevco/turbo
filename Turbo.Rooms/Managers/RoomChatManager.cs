@@ -8,31 +8,29 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Managers;
+using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Room.Chat;
 using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Managers
 {
-    public class ChatManager(
-        IPlayerManager playerManager,
-        ILogger<ChatManager> logger,
-        IChatlogRepository chatlogRepository,
-        IEmulatorConfig config)
-        : IRoomChatManager
+    public class RoomChatManager(
+        ILogger<RoomChatManager> _logger,
+        IPlayerManager _playerManager,
+        IChatlogRepository _chatlogRepository,
+        IEmulatorConfig _config,
+        IRoom _room)
+        : Component, IRoomChatManager
     {
-        private readonly IPlayerManager _playerManager = playerManager ?? throw new ArgumentNullException(nameof(playerManager));
-        private readonly ILogger<ChatManager> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        private readonly IChatlogRepository _chatlogRepository = chatlogRepository ?? throw new ArgumentNullException(nameof(chatlogRepository));
-        private readonly IEmulatorConfig _config = config ?? throw new ArgumentNullException(nameof(config));
+        private readonly ConcurrentDictionary<int, FloodControlData> _playerFloodData = new();
 
-        private IRoom _room;
-
-        private ConcurrentDictionary<int, FloodControlData> _playerFloodData = new();
-
-        public void SetRoom(IRoom room)
+        protected override async Task OnInit()
         {
-            _room = room ?? throw new ArgumentNullException(nameof(room));
+        }
+
+        protected override async Task OnDispose()
+        {
         }
 
         public async Task TryChat(uint userId, string text, RoomChatType chatType, int? recipientId = null)
@@ -43,7 +41,7 @@ namespace Turbo.Rooms.Managers
         private async Task ProcessChat(uint userId, string text, RoomChatType chatType, int? recipientId = null)
         {
             var player = _playerManager.GetPlayerById((int)userId);
-    
+
             if (_room == null || userId <= 0 || player == null)
             {
                 _logger.LogWarning("Issue processing chat message. Room or player not found.");
@@ -101,7 +99,7 @@ namespace Turbo.Rooms.Managers
                 recipientId
             );
         }
-        
+
         private bool IsPlayerFlooding(IPlayer player)
         {
             var now = DateTime.UtcNow;
@@ -138,9 +136,11 @@ namespace Turbo.Rooms.Managers
         public async Task SetChatStylePreference(uint userId, int styleId)
         {
             var player = _playerManager.GetPlayerById((int)userId);
+
             if (player == null)
             {
                 _logger.LogWarning($"Player with userId: {userId} not found.");
+
                 return;
             }
 
@@ -151,6 +151,7 @@ namespace Turbo.Rooms.Managers
                 if (playerSettings.ChatStyle == styleId) return;
 
                 playerSettings.ChatStyle = styleId;
+
                 await _playerManager.SaveSettings(playerSettings);
             }
             else

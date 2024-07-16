@@ -99,7 +99,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<ICatalogManager, CatalogManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
-            services.AddScoped<IRoomChatManager, ChatManager>();
+            services.AddSingleton<IRoomChatManager, RoomChatManager>();
         }
 
         public static void AddFactories(this IServiceCollection services)
@@ -115,7 +115,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
             services.AddSingleton<ICatalogFactory, CatalogFactory>();
-            services.AddSingleton<IChatFactory, ChatFactory>();
+            services.AddSingleton<IRoomChatFactory, RoomChatFactory>();
         }
 
         public static void AddRepositories(this IServiceCollection services)

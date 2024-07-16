@@ -6,20 +6,13 @@ using Turbo.Rooms.Managers;
 
 namespace Turbo.Rooms.Factories
 {
-    public class ChatFactory(IServiceProvider provider) : IChatFactory
+    public class RoomChatFactory(IServiceProvider provider) : IRoomChatFactory
     {
         private readonly IServiceProvider _provider = provider ?? throw new ArgumentNullException(nameof(provider));
 
         public IRoomChatManager Create(IRoom room)
         {
-            var scope = _provider.CreateScope();
-            var chatManager = scope.ServiceProvider.GetRequiredService<IRoomChatManager>();
-            if (chatManager is ChatManager manager)
-            {
-                manager.SetRoom(room);
-            }
-
-            return chatManager;
+            return ActivatorUtilities.CreateInstance<RoomChatManager>(_provider, room);
         }
     }
 }
