@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Configuration;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
@@ -14,14 +16,19 @@ namespace Turbo.Rooms.Managers
     public class ChatManager(
         IPlayerManager playerManager,
         ILogger<ChatManager> logger,
-        IChatlogRepository chatlogRepository)
+        IChatlogRepository chatlogRepository,
+        IEmulatorConfig config)
         : IRoomChatManager
     {
         private readonly IPlayerManager _playerManager = playerManager ?? throw new ArgumentNullException(nameof(playerManager));
         private readonly ILogger<ChatManager> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly IChatlogRepository _chatlogRepository = chatlogRepository ?? throw new ArgumentNullException(nameof(chatlogRepository));
-
+        private readonly IEmulatorConfig _config = config ?? throw new ArgumentNullException(nameof(config));
+        
         private IRoom _room;
+        
+        private ConcurrentDictionary<int, FloodControlData> _playerFloodData = new();
+
 
         public void SetRoom(IRoom room)
         {
@@ -60,6 +67,20 @@ namespace Turbo.Rooms.Managers
                 return;
             }
 
+            if (_room.RoomSecurityManager.TryGetPlayerMuteRemainingTime(player, out var remainingMuteTime))
+            {
+                player.Session.Send(new RemaningMutePeriodMessage() { MuteSecondsRemaining = (int)remainingMuteTime.TotalSeconds });
+                _logger.LogWarning($"Player with userId: {userId} is muted for another {remainingMuteTime.TotalSeconds} seconds and cannot send messages.");
+                return;
+            }
+
+            if (IsPlayerFlooding(player))
+            {
+                _logger.LogWarning($"Player with userId: {userId} is flooding the room.");
+                player.Session.Send(new FloodControlMessage { Seconds = _config.FloodMuteDurationSeconds });
+                return;
+            }
+            
             var roomObject = player.RoomObject;
 
             if (roomObject == null || roomObject.Room != _room)
@@ -100,6 +121,40 @@ namespace Turbo.Rooms.Managers
                 _logger.LogWarning($"PlayerLogic not found for player with userId: {userId}.");
             }
         }
+        
+        private bool IsPlayerFlooding(IPlayer player)
+        {
+            var now = DateTime.UtcNow;
+
+            if (!_playerFloodData.TryGetValue(player.Id, out FloodControlData value))
+            {
+                value = new FloodControlData { MessageCount = 1, FirstMessageTime = now };
+                _playerFloodData[player.Id] = value;
+                return false;
+            }
+
+            var floodData = value;
+
+            if ((now - floodData.FirstMessageTime).TotalSeconds > _config.FloodTimeFrameSeconds)
+            {
+                // Reset the data if the time frame has passed
+                floodData.MessageCount = 1;
+                floodData.FirstMessageTime = now;
+                _playerFloodData[player.Id] = floodData;
+                return false;
+            }
+
+            floodData.MessageCount++;
+
+            if (floodData.MessageCount > _config.FloodMessageLimit)
+            {
+                _playerFloodData[player.Id] = new FloodControlData(); // Reset the flood data after flooding detected
+                return true;
+            }
+
+            _playerFloodData[player.Id] = floodData; // Update the flood data
+            return false;
+        }
 
         public async Task SetChatStylePreference(uint userId, int styleId)
         {
@@ -117,7 +172,7 @@ namespace Turbo.Rooms.Managers
                     _logger.LogWarning($"Player with userId: {userId} does not own chat style: {styleId}. Keeping the current chat style: {player.PlayerSettings.ChatStyle}.");
 
                     // Send a whisper to the user
-                    var message = "You don't own this chat style. Keeping your current chat style.";
+                    const string message = "You don't own this chat style. Keeping your current chat style.";
                     var whisperMessage = new WhisperMessage
                     {
                         ObjectId = player.Id,
@@ -127,7 +182,7 @@ namespace Turbo.Rooms.Managers
                         Links = new List<string>(),
                         AnimationLength = 0
                     };
-                    player.Session.Send(whisperMessage);
+                    await player.Session.Send(whisperMessage);
                 }
 
                 await _playerManager.SaveSettings(player.PlayerSettings);

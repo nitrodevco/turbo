@@ -38,5 +38,9 @@ namespace Turbo.Main.Configuration
         public int NetworkWorkerThreads { get; set; }
 
         public List<string> PluginOrder { get; set; }
+        
+        public int FloodMessageLimit { get; set; }
+        public int FloodTimeFrameSeconds { get; set; }
+        public int FloodMuteDurationSeconds { get; set; }
     }
 }

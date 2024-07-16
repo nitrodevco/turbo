@@ -12,6 +12,9 @@
 		"DatabaseUser": "root",
 		"DatabasePassword": "",
 		"DatabaseName": "turbo",
-		"DatabaseLoggingEnabled": true
+		"DatabaseLoggingEnabled": true,
+		"FloodMessageLimit": 3,
+        "FloodTimeFrameSeconds": 10,
+        "FloodMuteDurationSeconds": 30
 	}
 }

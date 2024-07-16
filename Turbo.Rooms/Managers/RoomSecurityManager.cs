@@ -135,19 +135,40 @@ namespace Turbo.Rooms.Managers
 
             return false;
         }
-
+        
         public bool IsPlayerMuted(IPlayer player)
         {
             if (player == null || !Mutes.ContainsKey(player.Id)) return false;
 
             var isOwner = IsOwner(player);
 
-            if (Mutes.TryGetValue(player.Id, out var expiration))
-            {
-                if (!isOwner && DateTime.Compare(DateTime.Now, expiration) < 0) return true;
+            if (!Mutes.TryGetValue(player.Id, out var expiration)) return false;
+            if (!isOwner && DateTime.Compare(DateTime.Now, expiration) < 0) return true;
 
-                Mutes.Remove(player.Id);
+            Mutes.Remove(player.Id);
+
+            return false;
+        }
+        
+        public bool TryGetPlayerMuteRemainingTime(IPlayer player, out TimeSpan remainingTime)
+        {
+            remainingTime = TimeSpan.Zero;
+
+            if (player == null || !Mutes.ContainsKey(player.Id))
+                return false;
+
+            var isOwner = IsOwner(player);
+
+            if (!Mutes.TryGetValue(player.Id, out var expiration))
+                return false;
+
+            if (!isOwner && DateTime.Compare(DateTime.Now, expiration) < 0)
+            {
+                remainingTime = expiration - DateTime.Now;
+                return true;
             }
+
+            Mutes.Remove(player.Id);
 
             return false;
         }

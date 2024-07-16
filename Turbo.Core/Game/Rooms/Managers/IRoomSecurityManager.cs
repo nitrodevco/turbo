@@ -22,6 +22,7 @@ namespace Turbo.Core.Game.Rooms.Managers
         public bool IsOwner(int? playerId);
         public bool IsPlayerBanned(IPlayer player);
         public bool IsPlayerMuted(IPlayer player);
+        public bool TryGetPlayerMuteRemainingTime(IPlayer player, out TimeSpan remainingTime);
         public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator);
         public void RefreshControllerLevel(IRoomObjectAvatar avatarObject);
         public void KickPlayer(IRoomManipulator manipulator, int playerId);
