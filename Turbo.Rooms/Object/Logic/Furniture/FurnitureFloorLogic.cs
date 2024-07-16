@@ -10,11 +10,13 @@ using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Events.Game.Rooms.Avatar;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Object.Attributes;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
+    [RoomObjectLogic("default_floor")]
     public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFurnitureFloorLogic
     {
         public IRoomObjectFloor RoomObject { get; private set; }
