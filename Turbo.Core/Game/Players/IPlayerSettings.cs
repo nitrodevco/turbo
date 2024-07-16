@@ -11,6 +11,5 @@ namespace Turbo.Core.Game.Players
         Task SaveSettings();
         Task LoadSettings();
         Task LoadOwnedChatStyles();
-        void EnsureDefaultChatStyle();
     }
 }

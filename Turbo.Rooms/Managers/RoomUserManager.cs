@@ -52,18 +52,13 @@ namespace Turbo.Rooms.Managers
         {
             foreach (var obj in AvatarObjects.RoomObjects.Values)
             {
-                if (obj.RoomObjectHolder is IPlayer player)
+                if (obj.RoomObjectHolder is IPlayer player && 
+                    player.Name.Equals(username, StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.WriteLine($"Checking player: {player.Name}");
-                    if (player.Name.Equals(username, StringComparison.OrdinalIgnoreCase))
-                    {
-                        Console.WriteLine($"Found player: {player.Name}");
-                        return obj;
-                    }
+                    return obj;
                 }
             }
-    
-            Console.WriteLine($"Player with username '{username}' not found.");
+
             return null;
         }
 

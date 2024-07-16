@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Turbo.Core.Configuration;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Room.Chat;
@@ -24,9 +25,9 @@ namespace Turbo.Rooms.Managers
         private readonly ILogger<ChatManager> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         private readonly IChatlogRepository _chatlogRepository = chatlogRepository ?? throw new ArgumentNullException(nameof(chatlogRepository));
         private readonly IEmulatorConfig _config = config ?? throw new ArgumentNullException(nameof(config));
-        
+
         private IRoom _room;
-        
+
         private ConcurrentDictionary<int, FloodControlData> _playerFloodData = new();
 
         public void SetRoom(IRoom room)
@@ -34,97 +35,73 @@ namespace Turbo.Rooms.Managers
             _room = room ?? throw new ArgumentNullException(nameof(room));
         }
 
-        public async Task TryRoomChat(uint userId, string text, string type, bool isShout = false)
+        public async Task TryChat(uint userId, string text, RoomChatType chatType, int? recipientId = null)
         {
-            await ProcessChat(userId, text, type, isWhisper: false, recipientId: null, isShout: isShout);
+            await ProcessChat(userId, text, chatType, recipientId);
         }
 
-        public async Task TryWhisperChat(uint userId, int recipientId, string text, string type)
+        private async Task ProcessChat(uint userId, string text, RoomChatType chatType, int? recipientId = null)
         {
-            await ProcessChat(userId, text, type, isWhisper: true, recipientId: recipientId);
-        }
-
-        private async Task ProcessChat(uint userId, string text, string type, bool isWhisper, int? recipientId, bool isShout = false)
-        {
-            if (_room == null)
-            {
-                _logger.LogWarning("Room is not set in ChatManager.");
-                return;
-            }
-
-            if (userId <= 0)
-            {
-                _logger.LogWarning("Invalid userId provided to TryChat.");
-                return;
-            }
-
             var player = _playerManager.GetPlayerById((int)userId);
-
-            if (player == null)
+    
+            if (_room == null || userId <= 0 || player == null)
             {
-                _logger.LogWarning($"Player with userId: {userId} not found.");
+                _logger.LogWarning("Issue processing chat message. Room or player not found.");
                 return;
             }
 
             if (_room.RoomSecurityManager.TryGetPlayerMuteRemainingTime(player, out var remainingMuteTime))
             {
                 await player.Session.Send(new RemaningMutePeriodMessage { MuteSecondsRemaining = (int)remainingMuteTime.TotalSeconds });
-                _logger.LogWarning($"Player with userId: {userId} is muted for another {remainingMuteTime.TotalSeconds} seconds and cannot send messages.");
                 return;
             }
 
             if (IsPlayerFlooding(player))
             {
-                _logger.LogWarning($"Player with userId: {userId} is flooding the room.");
                 await player.Session.Send(new FloodControlMessage { Seconds = _config.FloodMuteDurationSeconds });
                 return;
             }
 
             var roomObject = player.RoomObject;
-
-            if (roomObject == null || roomObject.Room != _room)
+            if (roomObject?.Room != _room || roomObject.Logic is not PlayerLogic playerLogic)
             {
-                _logger.LogWarning($"Player with userId: {userId} is not in the room.");
+                _logger.LogWarning($"Player with userId: {userId} is not in the room or PlayerLogic not found.");
                 return;
             }
 
-            if (roomObject.Logic is PlayerLogic playerLogic)
+            switch (chatType)
             {
-                _logger.LogInformation($"Player with userId: {userId} sending chat message.");
-
-                if (isWhisper && recipientId.HasValue)
-                {
-                    var recipientPlayer = _playerManager.GetPlayerById(recipientId.Value);
-                    if (recipientPlayer?.RoomObject != null)
-                    {
-                        playerLogic.Whisper(text, recipientPlayer);
-                    }
-                }
-                else if (isShout)
-                {
-                    playerLogic.Shout(text);
-                }
-                else
-                {
+                case RoomChatType.Normal:
                     playerLogic.Say(text);
-                }
+                    break;
+                case RoomChatType.Whisper:
+                    if (recipientId.HasValue)
+                    {
+                        var recipientPlayer = _playerManager.GetPlayerById(recipientId.Value);
+                        if (recipientPlayer?.RoomObject != null)
+                        {
+                            playerLogic.Whisper(text, recipientPlayer);
+                        }
+                    }
+                    break;
+                case RoomChatType.Shout:
+                    playerLogic.Shout(text);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(chatType), chatType, null);
+            }
 
-                await _chatlogRepository.AddChatlogAsync(
-                    _room.Id,
-                    player.Id,
-                    text,
-                    type,
-                    DateTime.Now,
-                    DateTime.Now,
-                    recipientId
-                );
-            }
-            else
-            {
-                _logger.LogWarning($"PlayerLogic not found for player with userId: {userId}.");
-            }
+            await _chatlogRepository.AddChatlogAsync(
+                _room.Id,
+                player.Id,
+                text,
+                chatType.ToString().ToLower(),
+                DateTime.Now,
+                DateTime.Now,
+                recipientId
+            );
         }
-
+        
         private bool IsPlayerFlooding(IPlayer player)
         {
             var now = DateTime.UtcNow;
@@ -136,61 +113,57 @@ namespace Turbo.Rooms.Managers
                 return false;
             }
 
-            if ((now - floodData.FirstMessageTime).TotalSeconds > _config.FloodTimeFrameSeconds)
+            var timeSinceFirstMessage = (now - floodData.FirstMessageTime).TotalSeconds;
+
+            if (timeSinceFirstMessage > _config.FloodTimeFrameSeconds)
             {
-                // Reset the data if the time frame has passed
                 floodData.MessageCount = 1;
                 floodData.FirstMessageTime = now;
-                _playerFloodData[player.Id] = floodData;
-                return false;
             }
-
-            floodData.MessageCount++;
-
-            if (floodData.MessageCount > _config.FloodMessageLimit)
+            else
             {
-                _playerFloodData[player.Id] = new FloodControlData(); // Reset the flood data after flooding detected
-                return true;
+                floodData.MessageCount++;
+
+                if (floodData.MessageCount > _config.FloodMessageLimit)
+                {
+                    _playerFloodData[player.Id] = new FloodControlData();
+                    return true;
+                }
             }
 
-            _playerFloodData[player.Id] = floodData; // Update the flood data
+            _playerFloodData[player.Id] = floodData;
             return false;
         }
 
         public async Task SetChatStylePreference(uint userId, int styleId)
         {
             var player = _playerManager.GetPlayerById((int)userId);
-
-            if (player != null)
+            if (player == null)
             {
-                if (player.PlayerSettings.OwnedChatStyles.Contains(styleId))
-                {
-                    player.PlayerSettings.ChatStyle = styleId;
-                    _logger.LogInformation($"Player with userId: {userId} changed chat style to: {styleId}.");
-                }
-                else
-                {
-                    _logger.LogWarning($"Player with userId: {userId} does not own chat style: {styleId}. Keeping the current chat style: {player.PlayerSettings.ChatStyle}.");
+                _logger.LogWarning($"Player with userId: {userId} not found.");
+                return;
+            }
 
-                    // Send a whisper to the user
-                    const string message = "You don't own this chat style. Keeping your current chat style.";
-                    var whisperMessage = new WhisperMessage
-                    {
-                        ObjectId = player.Id,
-                        Text = message,
-                        Gesture = 0,
-                        StyleId = player.PlayerSettings.ChatStyle, // Keep the current style
-                        Links = new List<string>(),
-                        AnimationLength = 0
-                    };
-                    await player.Session.Send(whisperMessage);
-                }
+            var playerSettings = player.PlayerSettings;
 
-                await _playerManager.SaveSettings(player.PlayerSettings);
+            if (styleId == 0 || playerSettings.OwnedChatStyles.Contains(styleId))
+            {
+                if (playerSettings.ChatStyle == styleId) return;
+
+                playerSettings.ChatStyle = styleId;
+                await _playerManager.SaveSettings(playerSettings);
             }
             else
             {
-                _logger.LogWarning($"Player with userId: {userId} not found.");
+                await player.Session.Send(new WhisperMessage
+                {
+                    ObjectId = player.Id,
+                    Text = "You don't own this chat style. Keeping your current chat style.",
+                    Gesture = 0,
+                    StyleId = playerSettings.ChatStyle,
+                    Links = new List<string>(),
+                    AnimationLength = 0
+                });
             }
         }
     }

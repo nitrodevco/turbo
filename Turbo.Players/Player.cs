@@ -33,8 +33,6 @@ namespace Turbo.Players
             if (PlayerWallet != null) await PlayerWallet.InitAsync();
             if (PlayerInventory != null) await PlayerInventory.InitAsync();
             if (PlayerSettings != null) await PlayerSettings.InitAsync();
-            await PlayerSettings.LoadOwnedChatStyles();
-            PlayerSettings.EnsureDefaultChatStyle();
         }
 
         protected override async Task OnDispose()

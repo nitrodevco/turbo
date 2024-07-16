@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
@@ -185,59 +186,69 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         
         public virtual void Say(string text)
         {
-            Idle(false);
-
-            if (RoomObject.RoomObjectHolder is not IPlayer player) return;
-            var styleId = player?.PlayerSettings.ChatStyle ?? 0;
-        
-            RoomObject.Room.SendComposer(new ChatMessage
-            {
-                ObjectId = RoomObject.Id,
-                Text = text,
-                Gesture = 0,
-                StyleId = styleId,
-                Links = new List<string>(),
-                AnimationLength = 0
-            });
+            SendMessage(text, RoomChatType.Normal);
         }
-        
+
         public virtual void Whisper(string text, IPlayer recipient)
         {
-            Idle(false);
-
-            if (RoomObject.RoomObjectHolder is not IPlayer player) return;
-            var styleId = player?.PlayerSettings.ChatStyle ?? 0;
-
-            var whisperMessage = new WhisperMessage
-            {
-                ObjectId = RoomObject.Id,
-                Text = text,
-                Gesture = 0,
-                StyleId = styleId,
-                Links = new List<string>(),
-                AnimationLength = 0
-            };
-
-            recipient?.Session.Send(whisperMessage);
-            player.Session.Send(whisperMessage);
+            if (recipient == null) return;
+            SendMessage(text, RoomChatType.Whisper, recipient);
         }
-        
+
         public virtual void Shout(string text)
+        {
+            SendMessage(text, RoomChatType.Shout);
+        }
+
+        private void SendMessage(string text, RoomChatType chatType, IPlayer recipient = null)
         {
             Idle(false);
 
             if (RoomObject.RoomObjectHolder is not IPlayer player) return;
-            var styleId = player?.PlayerSettings.ChatStyle ?? 0;
-        
-            RoomObject.Room.SendComposer(new ShoutMessage
+            var styleId = player.PlayerSettings?.ChatStyle ?? 0;
+
+            switch (chatType)
             {
-                ObjectId = RoomObject.Id,
-                Text = text,
-                Gesture = 0,
-                StyleId = styleId,
-                Links = new List<string>(),
-                AnimationLength = 0
-            });
+                case RoomChatType.Normal:
+                    RoomObject.Room.SendComposer(new ChatMessage
+                    {
+                        ObjectId = RoomObject.Id,
+                        Text = text,
+                        Gesture = 0,
+                        StyleId = styleId,
+                        Links = new List<string>(),
+                        AnimationLength = 0
+                    });
+                    break;
+
+                case RoomChatType.Whisper:
+                    var whisperMessage = new WhisperMessage
+                    {
+                        ObjectId = RoomObject.Id,
+                        Text = text,
+                        Gesture = 0,
+                        StyleId = styleId,
+                        Links = new List<string>(),
+                        AnimationLength = 0
+                    };
+                    recipient?.Session?.Send(whisperMessage);
+                    player.Session?.Send(whisperMessage);
+                    break;
+
+                case RoomChatType.Shout:
+                    RoomObject.Room.SendComposer(new ShoutMessage
+                    {
+                        ObjectId = RoomObject.Id,
+                        Text = text,
+                        Gesture = 0,
+                        StyleId = styleId,
+                        Links = new List<string>(),
+                        AnimationLength = 0
+                    });
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(chatType), chatType, null);
+            }
         }
     }
 }

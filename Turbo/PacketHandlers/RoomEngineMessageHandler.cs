@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
@@ -173,14 +174,9 @@ namespace Turbo.Main.PacketHandlers
         
         protected virtual void OnChatMessage(ChatMessage message, ISession session)
         {
-            session.Player?.RoomObject?.Room?.RoomChatManager?.TryRoomChat((uint)session.Player.Id, message.Text, "normal");
+            session.Player?.RoomObject?.Room?.RoomChatManager?.TryChat((uint)session.Player.Id, message.Text, RoomChatType.Normal);
         }
-        
-        protected virtual void OnShoutMessage(ShoutMessage message, ISession session)
-        {
-            session.Player?.RoomObject?.Room?.RoomChatManager?.TryRoomChat((uint)session.Player.Id, message.Text, "normal", true);
-        }
-        
+
         protected virtual void OnWhisperMessage(WhisperMessage message, ISession session)
         {
             var room = session.Player?.RoomObject?.Room;
@@ -192,10 +188,13 @@ namespace Turbo.Main.PacketHandlers
                 Console.WriteLine($"Recipient '{message.RecipientName}' not found.");
                 return;
             }
-            
-            Console.WriteLine($"Sending whisper from '{session.Player.Name}' to '{recipient.RoomObjectHolder.Name}'.");
-            
-            session.Player?.RoomObject?.Room?.RoomChatManager?.TryWhisperChat((uint)session.Player.Id, recipient.RoomObjectHolder.Id, message.Text, "whisper");
+
+            session.Player?.RoomObject?.Room?.RoomChatManager?.TryChat((uint)session.Player.Id, message.Text, RoomChatType.Whisper, recipient.RoomObjectHolder.Id);
+        }
+
+        protected virtual void OnShoutMessage(ShoutMessage message, ISession session)
+        {
+            session.Player?.RoomObject?.Room?.RoomChatManager?.TryChat((uint)session.Player.Id, message.Text, RoomChatType.Shout);
         }
         
         protected virtual void OnChatStylePreferenceMessage(ChatStylePreferenceMessage message, ISession session)

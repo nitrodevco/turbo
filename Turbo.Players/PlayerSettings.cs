@@ -13,13 +13,12 @@ public class PlayerSettings(
     IServiceScopeFactory _serviceScopeFactory) : Component, IPlayerSettings
 {
     public int ChatStyle { get; set; }
-    public List<int> OwnedChatStyles { get; set; } = new List<int>();
+    public List<int> OwnedChatStyles { get; set; } = [];
 
     protected override async Task OnInit()
     {
         await LoadSettings();
         await LoadOwnedChatStyles();
-        EnsureDefaultChatStyle();
     }
 
     protected override Task OnDispose()
@@ -76,23 +75,7 @@ public class PlayerSettings(
         if (playerOwnedStyleRepository != null)
         {
             var ownedStyles = await playerOwnedStyleRepository.FindByPlayerIdAsync(_player.Id);
-
             OwnedChatStyles = ownedStyles.Select(os => os.ChatStyleId).ToList();
-        }
-
-        EnsureDefaultChatStyle();
-    }
-
-    public void EnsureDefaultChatStyle()
-    {
-        if (!OwnedChatStyles.Contains(0))
-        {
-            OwnedChatStyles.Add(0);
-        }
-
-        if (ChatStyle != 0 && !OwnedChatStyles.Contains(ChatStyle))
-        {
-            ChatStyle = 0;
         }
     }
 }
