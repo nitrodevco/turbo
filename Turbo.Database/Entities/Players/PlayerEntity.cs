@@ -8,6 +8,8 @@ using Turbo.Database.Entities.Room;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Attributes;
 using Turbo.Core.Game.Rooms.Object.Constants;
+using Turbo.Core.Game.Players.Constants;
+using Turbo.Database.Entities.Messenger;
 
 namespace Turbo.Database.Entities.Players
 {
@@ -26,20 +28,46 @@ namespace Turbo.Database.Entities.Players
         [Column("gender"), Required, DefaultValueSql("0")] // AvatarGender.Male
         public AvatarGender Gender { get; set; }
 
+        [Column("status"), Required, DefaultValueSql("0")] // PlayerStatus.Offline
+        public PlayerStatusEnum PlayerStatus { get; set; }
+
+        [InverseProperty("PlayerEntity")]
         public List<PlayerBadgeEntity> PlayerBadges { get; set; }
 
+        [InverseProperty("PlayerEntity")]
+        public List<PlayerCurrencyEntity> PlayerCurrencies { get; set; }
+
+        [InverseProperty("PlayerEntity")]
         public PlayerSettingsEntity PlayerSettings { get; set; }
 
+        [InverseProperty("PlayerEntity")]
         public List<FurnitureEntity> Furniture { get; set; }
 
+        [InverseProperty("PlayerEntity")]
+        public List<MessengerCategoryEntity> MessengerCategories { get; set; }
+
+        [InverseProperty("PlayerEntity")]
+        public List<MessengerFriendEntity> MessengerFriends { get; set; }
+
+        [InverseProperty("RequestedPlayerEntity")]
+        public List<MessengerRequestEntity> MessengerRequests { get; set; }
+
+        [InverseProperty("PlayerEntity")]
+        public List<MessengerRequestEntity> MessengerRequestsSent { get; set; }
+
+        [InverseProperty("PlayerEntity")]
         public List<SecurityTicketEntity> SecurityTickets { get; set; }
 
+        [InverseProperty("PlayerEntity")]
         public List<RoomEntity> Rooms { get; set; }
 
+        [InverseProperty("PlayerEntity")]
         public List<RoomBanEntity> RoomBans { get; set; }
 
+        [InverseProperty("PlayerEntity")]
         public List<RoomMuteEntity> RoomMutes { get; set; }
 
+        [InverseProperty("PlayerEntity")]
         public List<RoomRightEntity> RoomRights { get; set; }
     }
 }

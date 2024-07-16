@@ -7,17 +7,11 @@ using Turbo.Database.Repositories.Security;
 
 namespace Turbo.Security
 {
-    public class SecurityManager : Component, ISecurityManager
+    public class SecurityManager(IServiceScopeFactory _serviceScopeFactory) : Component, ISecurityManager
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        public SecurityManager(IServiceScopeFactory scopeFactory)
-        {
-            _serviceScopeFactory = scopeFactory;
-        }
-
         protected override async Task OnInit()
         {
+
         }
 
         protected override async Task OnDispose()
@@ -29,22 +23,17 @@ namespace Turbo.Security
         {
             if ((ticket == null) || (ticket.Length == 0)) return 0;
 
-            SecurityTicketEntity securityTicketEntity;
+            using var scope = _serviceScopeFactory.CreateScope();
+            var securityTicketRepository = scope.ServiceProvider.GetService<ISecurityTicketRepository>();
+            var securityTicketEntity = await securityTicketRepository.FindByTicketAsync(ticket);
 
-            using (var scope = _serviceScopeFactory.CreateScope())
+            if (securityTicketEntity == null) return 0;
+
+            if ((bool)!securityTicketEntity.IsLocked)
             {
-                var securityTicketRepository = scope.ServiceProvider.GetService<ISecurityTicketRepository>();
+                securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);
 
-                securityTicketEntity = await securityTicketRepository.FindByTicketAsync(ticket);
-
-                if (securityTicketEntity == null) return 0;
-
-                if ((bool)!securityTicketEntity.IsLocked)
-                {
-                    securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);
-
-                    // check timestamp for expiration, if time now is greater than expiration, return 0;
-                }
+                // check timestamp for expiration, if time now is greater than expiration, return 0;
             }
 
             return securityTicketEntity.PlayerEntityId;

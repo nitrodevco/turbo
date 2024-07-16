@@ -39,14 +39,14 @@ namespace Turbo.Rooms.Managers
         private readonly IPlayerManager _playerManager;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
-        public IDictionary<int, IRoomFloorFurniture> FloorFurniture { get; private set; }
-        public IDictionary<int, IRoomWallFurniture> WallFurniture { get; private set; }
-        public IDictionary<int, string> FurnitureOwners { get; private set; }
+        public IDictionary<int, IRoomFloorFurniture> FloorFurniture { get; private set; } = new Dictionary<int, IRoomFloorFurniture>();
+        public IDictionary<int, IRoomWallFurniture> WallFurniture { get; private set; } = new Dictionary<int, IRoomWallFurniture>();
+        public IDictionary<int, string> FurnitureOwners { get; private set; } = new Dictionary<int, string>();
 
         public IRoomObjectContainer<IRoomObjectFloor> FloorObjects { get; private set; }
         public IRoomObjectContainer<IRoomObjectWall> WallObjects { get; private set; }
 
-        private IDictionary<int, int> _pendingPickerIds;
+        private IDictionary<int, int> _pendingPickerIds = new Dictionary<int, int>();
 
         public RoomFurnitureManager(
             IRoom room,
@@ -65,14 +65,8 @@ namespace Turbo.Rooms.Managers
             _playerManager = playerManager;
             _serviceScopeFactory = serviceScopeFactory;
 
-            FloorFurniture = new Dictionary<int, IRoomFloorFurniture>();
-            WallFurniture = new Dictionary<int, IRoomWallFurniture>();
-            FurnitureOwners = new Dictionary<int, string>();
-
             FloorObjects = new RoomObjectContainer<IRoomObjectFloor>(RemoveFloorRoomObject);
             WallObjects = new RoomObjectContainer<IRoomObjectWall>(RemoveWallRoomObject);
-
-            _pendingPickerIds = new Dictionary<int, int>();
         }
 
         protected override async Task OnInit()
@@ -121,7 +115,7 @@ namespace Turbo.Rooms.Managers
                 return null;
             }
 
-            floorObject.SetLocation(location);
+            floorObject.SetLocation(location, false, false);
 
             if (!floorObject.Logic.OnReady())
             {
@@ -502,13 +496,13 @@ namespace Turbo.Rooms.Managers
 
             var previous = roomObject.Location.Clone();
 
-            roomObject.Location.X = location.X;
-            roomObject.Location.Y = location.Y;
-            roomObject.Location.Rotation = location.Rotation;
+            roomObject.X = location.X;
+            roomObject.Y = location.Y;
+            roomObject.Rotation = location.Rotation;
 
             var tile = _room.RoomMap.GetTile(roomObject.Location);
 
-            if ((tile != null) && (tile.HighestObject != roomObject) || tile.HasStackHelper) roomObject.Location.Z = tile.Height;
+            if ((tile != null) && (tile.HighestObject != roomObject) || tile.HasStackHelper) roomObject.Z = tile.Height;
 
             _room.RoomMap.MoveFloorRoomObject(roomObject, previous);
 
@@ -554,7 +548,9 @@ namespace Turbo.Rooms.Managers
 
             if (furniture == null) return false;
 
-            if (!furniture.SetRoom(_room) || !furniture.SetPlayer(player)) return false;
+            furniture.SetRoom(_room);
+
+            if (!furniture.SetPlayer(player)) return false;
 
             playerFurniture.Dispose();
 
@@ -580,7 +576,7 @@ namespace Turbo.Rooms.Managers
 
         public bool MoveWallFurniture(IRoomManipulator manipulator, IRoomObjectWall wallObject, string location)
         {
-            var message = _eventHub.Dispatch<MoveWallFurnitureEvent>(new MoveWallFurnitureEvent
+            var message = _eventHub.Dispatch(new MoveWallFurnitureEvent
             {
                 Manipulator = manipulator,
                 WallObject = wallObject,
@@ -646,7 +642,9 @@ namespace Turbo.Rooms.Managers
 
             if (furniture == null) return false;
 
-            if (!furniture.SetRoom(_room) || !furniture.SetPlayer(player)) return false;
+            furniture.SetRoom(_room);
+
+            if (!furniture.SetPlayer(player)) return false;
 
             playerFurniture.Dispose();
 
@@ -775,39 +773,35 @@ namespace Turbo.Rooms.Managers
             WallFurniture.Clear();
             FurnitureOwners.Clear();
 
-            List<FurnitureEntity> entities;
+            using var scope = _serviceScopeFactory.CreateScope();
 
-            using (var scope = _serviceScopeFactory.CreateScope())
+            var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+            var furnitureEntities = await furnitureRepository.FindAllByRoomIdAsync(_room.Id);
+
+            if (furnitureEntities == null || furnitureEntities.Count == 0) return;
+
+            List<int> playerIds = [];
+
+            foreach (FurnitureEntity furnitureEntity in furnitureEntities)
             {
-                var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
-                entities = await furnitureRepository.FindAllByRoomIdAsync(_room.Id);
+                if (!playerIds.Contains(furnitureEntity.PlayerEntityId)) playerIds.Add(furnitureEntity.PlayerEntityId);
+            }
 
-                List<int> playerIds = new();
+            if (playerIds.Count > 0)
+            {
+                var _playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
+                var usernames = await _playerRepository.FindUsernamesAsync(playerIds);
 
-                foreach (FurnitureEntity furnitureEntity in entities)
+                if (usernames.Count > 0)
                 {
-                    if (!playerIds.Contains(furnitureEntity.PlayerEntityId)) playerIds.Add(furnitureEntity.PlayerEntityId);
-                }
-
-                if (playerIds.Count > 0)
-                {
-                    var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-
-                    IList<PlayerUsernameDto> usernames = await playerRepository.FindUsernamesAsync(playerIds);
-
-                    if (usernames.Count > 0)
+                    foreach (PlayerUsernameDto dto in usernames)
                     {
-                        foreach (PlayerUsernameDto dto in usernames)
-                        {
-                            if (!FurnitureOwners.ContainsKey(dto.Id)) FurnitureOwners.Add(dto.Id, dto.Name);
-                        }
+                        if (!FurnitureOwners.ContainsKey(dto.Id)) FurnitureOwners.Add(dto.Id, dto.Name);
                     }
                 }
             }
 
-            if (entities == null || entities.Count == 0) return;
-
-            foreach (FurnitureEntity furnitureEntity in entities)
+            foreach (FurnitureEntity furnitureEntity in furnitureEntities)
             {
                 var definition = _furnitureFactory.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
@@ -821,7 +815,7 @@ namespace Turbo.Rooms.Managers
 
                     if (furniture == null) continue;
 
-                    if (!furniture.SetRoom(_room)) continue;
+                    furniture.SetRoom(_room);
 
                     if (FurnitureOwners.TryGetValue(furnitureEntity.PlayerEntityId, out string name))
                     {
@@ -843,7 +837,7 @@ namespace Turbo.Rooms.Managers
 
                     if (furniture == null) continue;
 
-                    if (!furniture.SetRoom(_room)) continue;
+                    furniture.SetRoom(_room);
 
                     if (FurnitureOwners.TryGetValue(furnitureEntity.PlayerEntityId, out string name))
                     {

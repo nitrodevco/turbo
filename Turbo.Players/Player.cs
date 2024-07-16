@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
@@ -12,31 +14,26 @@ using Turbo.Inventory.Factories;
 
 namespace Turbo.Players
 {
-    public class Player : Component, IPlayer
+    public class Player(
+        ILogger<IPlayer> _logger,
+        IPlayerManager _playerManager,
+        IPlayerDetails _playerDetails,
+        IServiceScopeFactory _serviceScopeFactory) : Component, IPlayer
     {
-        public ILogger<IPlayer> Logger { get; private set; }
-        public IPlayerManager PlayerManager { get; private set; }
-        public IPlayerDetails PlayerDetails { get; private set; }
+        public IPlayerManager PlayerManager { get; private set; } = _playerManager;
+        public IPlayerDetails PlayerDetails { get; private set; } = _playerDetails;
         public IPlayerInventory PlayerInventory { get; private set; }
+        public IPlayerWallet PlayerWallet { get; private set; }
 
         public ISession Session { get; private set; }
         public IRoomObjectAvatar RoomObject { get; private set; }
 
-        public Player(
-            ILogger<IPlayer> logger,
-            IPlayerManager playerManager,
-            PlayerEntity playerEntity,
-            IPlayerInventoryFactory playerInventoryFactory)
-        {
-            Logger = logger;
-            PlayerManager = playerManager;
-            PlayerDetails = new PlayerDetails(this, playerEntity);
-            PlayerInventory = playerInventoryFactory.Create(this);
-        }
-
         protected override async Task OnInit()
         {
-            await PlayerInventory.InitAsync();
+            PlayerDetails.PlayerStatus = PlayerStatusEnum.Online;
+
+            if (PlayerWallet != null) await PlayerWallet.InitAsync();
+            if (PlayerInventory != null) await PlayerInventory.InitAsync();
         }
 
         protected override async Task OnDispose()
@@ -45,13 +42,13 @@ namespace Turbo.Players
 
             if (PlayerManager != null) await PlayerManager.RemovePlayer(Id);
 
-            // set offline in PlayerDetails
+            PlayerDetails.PlayerStatus = PlayerStatusEnum.Offline;
 
             // dispose messenger
             // dispose roles
 
+            await PlayerWallet.DisposeAsync();
             await PlayerInventory.DisposeAsync();
-
             await Session.DisposeAsync();
         }
 
@@ -62,6 +59,24 @@ namespace Turbo.Players
             if (!session.SetPlayer(this)) return false;
 
             Session = session;
+
+            return true;
+        }
+
+        public bool SetInventory(IPlayerInventory playerInventory)
+        {
+            if ((PlayerInventory != null) && (PlayerInventory != playerInventory)) return false;
+
+            PlayerInventory = playerInventory;
+
+            return true;
+        }
+
+        public bool SetWallet(IPlayerWallet playerWallet)
+        {
+            if ((PlayerWallet != null) && (PlayerWallet != playerWallet)) return false;
+
+            PlayerWallet = playerWallet;
 
             return true;
         }
@@ -81,7 +96,7 @@ namespace Turbo.Players
 
             RoomObject = avatarObject;
 
-            // update all messenger friends
+            // TODO notify messenger friends that you've entered a room
 
             return true;
         }
@@ -98,7 +113,7 @@ namespace Turbo.Players
 
                 RoomObject = null;
 
-                // update all messenger friends
+                // TODO notify messenger friends that you've left a room
             }
 
             PlayerManager.ClearPlayerRoomStatus(this);

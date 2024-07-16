@@ -17,32 +17,31 @@ using Turbo.Core.PacketHandlers;
 using Turbo.Core.Plugins;
 using Turbo.Core.Security;
 using Turbo.Core.Storage;
+using Turbo.Database.Context;
 using Turbo.Networking;
 using Turbo.Networking.Clients;
 
 namespace Turbo.Main
 {
-    public class TurboEmulator : IEmulator
+    public class TurboEmulator(
+        IHostApplicationLifetime _appLifetime,
+        ILogger<TurboEmulator> _logger,
+        IStorageQueue _storageQueue,
+        IPluginManager _pluginManager,
+        IServerManager _serverManager,
+        ISecurityManager _securityManager,
+        IFurnitureManager _furnitureManager,
+        ICatalogManager _catalogManager,
+        IRoomManager _roomManager,
+        INavigatorManager _navigatorManager,
+        IPlayerManager _playerManager,
+        ISessionManager _sessionManager,
+        IPacketHandlerManager _packetHandlers,
+        IEventHandlerManager _eventHandlers) : IEmulator
     {
         public const int MAJOR = 0;
         public const int MINOR = 0;
         public const int PATCH = 0;
-
-        private readonly IHostApplicationLifetime _appLifetime;
-        private readonly ILogger<TurboEmulator> _logger;
-        private readonly IPluginManager _pluginManager;
-        private readonly IStorageQueue _storageQueue;
-        private readonly IServerManager _serverManager;
-
-        private readonly ISecurityManager _securityManager;
-        private readonly IFurnitureManager _furnitureManager;
-        private readonly ICatalogManager _catalogManager;
-        private readonly INavigatorManager _navigatorManager;
-        private readonly IRoomManager _roomManager;
-        private readonly IPlayerManager _playerManager;
-        private readonly ISessionManager _sessionManager;
-        private readonly IPacketHandlerManager _packetHandlers;
-        private readonly IEventHandlerManager _eventHandlers;
 
         private Task _storageCycle;
         private bool _storageCycleStarted;
@@ -51,38 +50,6 @@ namespace Turbo.Main
         private Task _gameCycle;
         private bool _gameCycleStarted;
         private bool _gameCycleRunning;
-
-        public TurboEmulator(
-            IHostApplicationLifetime appLifetime,
-            ILogger<TurboEmulator> logger,
-            IPluginManager pluginManager,
-            IStorageQueue storageQueue,
-            IServerManager serverManager,
-            ISecurityManager securityManager,
-            IFurnitureManager furnitureManager,
-            ICatalogManager catalogManager,
-            IRoomManager roomManager,
-            INavigatorManager navigatorManager,
-            IPlayerManager playerManager,
-            ISessionManager sessionManager,
-            IPacketHandlerManager packetHandlers,
-            IEventHandlerManager eventHandlers)
-        {
-            _appLifetime = appLifetime;
-            _logger = logger;
-            _storageQueue = storageQueue;
-            _pluginManager = pluginManager;
-            _serverManager = serverManager;
-            _securityManager = securityManager;
-            _furnitureManager = furnitureManager;
-            _catalogManager = catalogManager;
-            _roomManager = roomManager;
-            _navigatorManager = navigatorManager;
-            _playerManager = playerManager;
-            _sessionManager = sessionManager;
-            _packetHandlers = packetHandlers;
-            _eventHandlers = eventHandlers;
-        }
 
         /// <summary>
         /// This method is called by the .NET Generic Host.
@@ -161,7 +128,6 @@ namespace Turbo.Main
             await _furnitureManager.DisposeAsync();
             await _roomManager.DisposeAsync();
             await _playerManager.DisposeAsync();
-            await _storageQueue.DisposeAsync();
         }
 
         /// <summary>
@@ -191,7 +157,7 @@ namespace Turbo.Main
 
                     try
                     {
-                        await _storageQueue.Cycle();
+                        await _storageQueue.SaveNow();
                     }
                     catch (Exception ex)
                     {

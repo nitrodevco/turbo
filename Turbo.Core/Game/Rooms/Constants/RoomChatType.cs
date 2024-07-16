@@ -2,8 +2,8 @@
 {
     public enum RoomChatType
     {
-        Normal,
-        Whisper,
-        Shout
+        Normal = 0,
+        Whisper = 1,
+        Shout = 2
     }
 }

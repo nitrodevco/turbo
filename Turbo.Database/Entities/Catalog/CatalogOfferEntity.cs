@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Database.Attributes;
+using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Entities.Catalog
 {
@@ -27,18 +28,20 @@ namespace Turbo.Database.Entities.Catalog
         public int? CurrencyType { get; set; }
 
         [Column("can_gift"), Required, DefaultValueSql("1")]
-        public bool CanGift { get; set; }
+        public bool? CanGift { get; set; }
 
         [Column("can_bundle"), Required, DefaultValueSql("1")]
-        public bool CanBundle { get; set; }
+        public bool? CanBundle { get; set; }
 
         [Column("club_level"), Required, DefaultValueSql("0")]
         public int ClubLevel { get; set; }
 
         [Column("visible"), Required, DefaultValueSql("1")]
-        public bool Visible { get; set; }
+        public bool? Visible { get; set; }
 
+        [ForeignKey(nameof(CatalogPageEntityId))]
         public CatalogPageEntity Page { get; set; }
+
         public IList<CatalogProductEntity> Products { get; set; }
     }
 }

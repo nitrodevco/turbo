@@ -25,6 +25,7 @@ namespace Turbo.Database.Context
         public DbSet<FurnitureEntity> Furnitures { get; set; }
         public DbSet<FurnitureTeleportLinkEntity> FurnitureTeleportLinks { get; set; }
         public DbSet<PlayerBadgeEntity> PlayerBadges { get; set; }
+        public DbSet<PlayerCurrencyEntity> PlayerCurrencies { get; set; }
         public DbSet<PlayerEntity> Players { get; set; }
         public DbSet<PlayerSettingsEntity> PlayerSettings { get; set; }
         public DbSet<RoomBanEntity> RoomBans { get; set; }
@@ -33,7 +34,9 @@ namespace Turbo.Database.Context
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
         public DbSet<RoomRightEntity> RoomRights { get; set; }
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
+        public DbSet<NavigatorCategoryEntity> NavigatorCategories { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
+        public DbSet<NavigatorTabEntity> NavigatorTabs { get; set; }
 
         public TurboContext(DbContextOptions<TurboContext> options) : base(options) { }
 

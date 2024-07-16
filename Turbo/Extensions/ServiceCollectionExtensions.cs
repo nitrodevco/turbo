@@ -82,13 +82,11 @@ namespace Turbo.Main.Extensions
             services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
             services.AddTransient<IRoomSettingsMessageHandler, RoomSettingsMessageHandler>();
             services.AddTransient<IUserMessageHandler, UserMessageHandler>();
-            services.AddTransient<IWiredMessageHandler, WiredMessageHandler>();
         }
 
         public static void AddManagers(this IServiceCollection services)
         {
             services.AddSingleton<IPluginManager, TurboPluginManager>();
-            services.AddSingleton<IStorageQueue, StorageQueue>();
             services.AddSingleton<IServerManager, ServerManager>();
             services.AddSingleton<IRevisionManager, RevisionManager>();
             services.AddSingleton<ISessionManager, SessionManager>();
@@ -112,18 +110,19 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomFurnitureFactory, RoomFurnitureFactory>();
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
-            services.AddSingleton<IRoomWiredFactory, RoomWiredFactory>();
             services.AddSingleton<ICatalogFactory, CatalogFactory>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
         {
+            services.AddSingleton<IStorageQueue, StorageQueue>();
             services.AddScoped<ICatalogOfferRepository, CatalogOfferRepository>();
             services.AddScoped<ICatalogPageRepository, CatalogPageRepository>();
             services.AddScoped<ICatalogProductRepository, CatalogProductRepository>();
             services.AddScoped<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
             services.AddScoped<IFurnitureRepository, FurnitureRepository>();
             services.AddScoped<IPlayerBadgeRepository, PlayerBadgeRepository>();
+            services.AddScoped<IPlayerCurrencyRepository, PlayerCurrencyRepository>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             services.AddScoped<IRoomBanRepository, RoomBanRepository>();
             services.AddScoped<IRoomModelRepository, RoomModelRepository>();
@@ -131,7 +130,7 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IRoomRightRepository, RoomRightRepository>();
             services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
-            services.AddScoped<INavigatorEventCategoryRepository, NavigatorEventCategoryRepository>();
+            services.AddScoped<INavigatorRepository, NavigatorRepository>();
         }
     }
 }

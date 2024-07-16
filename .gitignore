@@ -39,3 +39,5 @@ msbuild.wrn
 
 # Appsettings
 **/appsettings.*.json
+
+Turbo/plugins/*

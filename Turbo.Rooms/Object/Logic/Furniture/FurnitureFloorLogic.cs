@@ -8,11 +8,10 @@ using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Events.Game.Rooms.Avatar;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object.Attributes;
 using Turbo.Rooms.Object.Logic.Avatar;
-using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
-using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
@@ -88,34 +87,29 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual void OnEnter(IRoomObjectAvatar avatar)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers<FurnitureWiredTriggerWalksOnFurniLogic>(new WiredArguments
+            EventHub?.Dispatch(new AvatarEnterFloorFurnitureEvent
             {
-                UserObject = avatar,
-                FurnitureObject = RoomObject
+                AvatarObject = avatar,
+                FloorObject = RoomObject
             });
-
-            return;
         }
 
         public virtual void OnLeave(IRoomObjectAvatar avatar)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers<FurnitureWiredTriggerWalksOffFurniLogic>(new WiredArguments
+            EventHub?.Dispatch(new AvatarLeaveFloorFurnitureEvent
             {
-                UserObject = avatar,
-                FurnitureObject = RoomObject
+                AvatarObject = avatar,
+                FloorObject = RoomObject
             });
-
-            return;
-        }
-
-        public virtual void BeforeStep(IRoomObjectAvatar roomObject)
-        {
-            return;
         }
 
         public virtual void OnStep(IRoomObjectAvatar roomObject)
         {
-            return;
+            EventHub?.Dispatch(new AvatarStepFloorFurnitureEvent
+            {
+                AvatarObject = roomObject,
+                FloorObject = RoomObject
+            });
         }
 
         public virtual void OnStop(IRoomObjectAvatar avatar)
@@ -124,14 +118,14 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (CanSit())
             {
-                avatarLogic.Sit(true, StackHeight, RoomObject.Location.Rotation);
+                avatarLogic.Sit(true, StackHeight, RoomObject.Rotation);
 
                 return;
             }
 
             if (CanLay())
             {
-                avatarLogic.Lay(true, StackHeight, RoomObject.Location.Rotation);
+                avatarLogic.Lay(true, StackHeight, RoomObject.Rotation);
 
                 return;
             }
@@ -139,11 +133,17 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public override void OnInteract(IRoomObjectAvatar avatar, int param)
         {
-            RoomObject.Room.RoomWiredManager.ProcessTriggers<FurnitureWiredTriggerStateChangeLogic>(new WiredArguments
+            var message = EventHub?.Dispatch(new AvatarInteractFloorFurnitureEvent
             {
-                UserObject = avatar,
-                FurnitureObject = RoomObject
+                AvatarObject = avatar,
+                FloorObject = RoomObject,
+                Param = param
             });
+
+            if (message != null)
+            {
+                if (message.IsCancelled) return;
+            }
 
             base.OnInteract(avatar, param);
         }
@@ -202,7 +202,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
         public virtual double StackHeight => FurnitureDefinition.Z;
 
-        public double Height => RoomObject.Location.Z + StackHeight;
+        public double Height => RoomObject.Z + StackHeight;
 
         public bool IsRolling => _rollerData != null;
 

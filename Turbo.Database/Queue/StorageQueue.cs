@@ -1,24 +1,21 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Turbo.Core.Storage;
 using Turbo.Database.Context;
+using Turbo.Database.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Turbo.Database.Queue
 {
-    public class StorageQueue : IStorageQueue
+    public class StorageQueue(IServiceScopeFactory _serviceScopeFactory) : IStorageQueue
     {
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        private readonly ConcurrentQueue<object> _queue;
-
-        public StorageQueue(IServiceScopeFactory scopeFactory)
-        {
-            _serviceScopeFactory = scopeFactory;
-
-            _queue = new();
-        }
+        private readonly IList<object> _entities = [];
+        private readonly object _entityLock = new();
 
         public async ValueTask DisposeAsync()
         {
@@ -27,49 +24,62 @@ namespace Turbo.Database.Queue
 
         public void Add(object entity)
         {
-            _queue.Enqueue(entity);
+            lock (_entityLock)
+            {
+                if (_entities.Contains(entity)) return;
+
+                _entities.Add(entity);
+            }
         }
 
         public void AddAll(ICollection<object> entities)
         {
-            foreach (var entity in entities)
-                _queue.Enqueue(entity);
+            lock (_entityLock)
+            {
+                foreach (var entity in entities)
+                {
+                    if (_entities.Contains(entity)) return;
+
+                    _entities.Add(entity);
+                }
+            }
         }
 
         public async Task SaveNow()
         {
-            if (_queue.Count == 0) return;
+            List<object> entities = [];
 
-            using (var scope = _serviceScopeFactory.CreateScope())
+            lock (_entityLock)
             {
-                using (var context = scope.ServiceProvider.GetService<IEmulatorContext>())
-                {
-                    while (_queue.TryDequeue(out object entity))
-                    {
-                        context.Update(entity);
-                    }
+                if (_entities.Count == 0) return;
 
-                    await context.SaveChangesAsync();
-                }
+                foreach (var entity in _entities) entities.Add(entity);
+
+                _entities.Clear();
             }
+
+            if (entities.Count == 0) return;
+
+            using var scope = _serviceScopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<TurboContext>();
+
+            foreach (var entity in entities) SaveEntity(entity, context);
+
+            await context.SaveChangesAsync();
+
+            context.ChangeTracker.Clear();
         }
 
-        public async Task SaveNow(object entity)
+        private void SaveEntity(object entity, TurboContext context)
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                using (var context = scope.ServiceProvider.GetService<IEmulatorContext>())
-                {
-                    context.Update(entity);
+            if (entity == null || context == null) return;
 
-                    await context.SaveChangesAsync();
-                }
-            }
-        }
+            context.Attach(entity);
 
-        public async Task Cycle()
-        {
-            await SaveNow();
+            var entry = context.Entry(entity);
+
+            entry.State = EntityState.Modified;
         }
     }
 }

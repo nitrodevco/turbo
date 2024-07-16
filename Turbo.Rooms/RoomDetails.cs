@@ -5,6 +5,7 @@ using Turbo.Core.Game;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Room;
 using Turbo.Packets.Incoming.RoomSettings;
 using Turbo.Packets.Outgoing.Navigator;
@@ -14,38 +15,25 @@ using Turbo.Packets.Outgoing.RoomSettings;
 
 namespace Turbo.Rooms
 {
-    public class RoomDetails : IRoomDetails
+    public class RoomDetails(
+        IRoom _room,
+        RoomEntity _roomEntity,
+        IStorageQueue _storageQueue) : IRoomDetails
     {
-        private readonly IRoom _room;
-        private readonly RoomEntity _roomEntity;
-
-        public RoomDetails(IRoom room, RoomEntity roomEntity)
+        public bool UpdateSettingsForPlayer(IPlayer player, IRoomSettings message)
         {
-            _room = room;
-            _roomEntity = roomEntity;
-        }
+            // fix this when updating multiple things at once and 1 fails
 
-        public void Save()
-        {
-            _room.RoomManager.StorageQueue.Add(_roomEntity);
-        }
-
-        public async Task SaveNow()
-        {
-            await _room.RoomManager.StorageQueue.SaveNow(_roomEntity);
-        }
-
-        public async Task<bool> UpdateSettingsForPlayer(IPlayer player, IRoomSettings message)
-        {
             if (!message.Name.Equals(Name))
             {
                 if (DefaultSettings.RoomNameRegex.IsMatch(message.Name))
                 {
-                    // check word filter too
+                    // TODO pass this through the word filter
                     _roomEntity.Name = message.Name;
                 }
                 else
                 {
+                    // TODO if the wordfilter doesnt like the name, send BadName
                     SendSettingsSaveErrorToPlayer(player, RoomSettingsErrorType.InvalidName);
 
                     return false;
@@ -56,11 +44,12 @@ namespace Turbo.Rooms
             {
                 if (DefaultSettings.RoomDescriptionRegex.IsMatch(message.Name))
                 {
-                    // check word filter too
+                    // TODO pass this through the word filter
                     _roomEntity.Description = message.Description;
                 }
                 else
                 {
+                    // TODO if the wordfilter doesnt like the description, send BadDescription
                     SendSettingsSaveErrorToPlayer(player, RoomSettingsErrorType.InvalidDescription);
 
                     return false;
@@ -113,7 +102,7 @@ namespace Turbo.Rooms
             UpdateRoomModeration(message.MuteType, message.KickType, message.BanType);
             UpdateRoomChat(message.ChatModeType, message.ChatWeightType, message.ChatSpeed, message.ChatDistance, message.ChatProtectionType);
 
-            await SaveNow();
+            _storageQueue.Add(_roomEntity);
 
             _room.SendComposer(new RoomInfoUpdatedMessage
             {
@@ -166,8 +155,6 @@ namespace Turbo.Rooms
                 WallThickness = (int)wallThickness,
                 FloorThickness = (int)floorThickness
             });
-
-            Save();
         }
 
         public void UpdateRoomModeration(RoomMuteType muteType, RoomKickType kickType, RoomBanType banType)
@@ -196,8 +183,6 @@ namespace Turbo.Rooms
             }
 
             if (!updated) return;
-
-            Save();
         }
 
         public void UpdateRoomChat(RoomChatModeType modeType, RoomChatWeightType weightType, RoomChatSpeedType speedType, int distance, RoomChatProtectionType protectionType)
@@ -251,8 +236,6 @@ namespace Turbo.Rooms
                 ChatDistance = _roomEntity.ChatDistance,
                 ChatProtection = _roomEntity.ChatProtectionType
             });
-
-            Save();
         }
 
         public int Id => _roomEntity.Id;
@@ -260,11 +243,21 @@ namespace Turbo.Rooms
         public string Name
         {
             get => _roomEntity.Name;
+            set
+            {
+                _roomEntity.Name = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public string Description
         {
             get => _roomEntity.Description == null ? "" : _roomEntity.Description;
+            set
+            {
+                _roomEntity.Description = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public int PlayerId
@@ -277,11 +270,21 @@ namespace Turbo.Rooms
         public RoomStateType State
         {
             get => _roomEntity.RoomState;
+            set
+            {
+                _roomEntity.RoomState = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public string Password
         {
             get => _roomEntity.Password;
+            set
+            {
+                _roomEntity.Password = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public int ModelId => _roomEntity.RoomModelEntityId;
@@ -294,119 +297,228 @@ namespace Turbo.Rooms
                 if (_roomEntity.UsersNow == value) return;
 
                 _roomEntity.UsersNow = value;
-
-                Save();
+                _storageQueue.Add(_roomEntity);
             }
         }
 
         public int UsersMax
         {
             get => _roomEntity.UsersMax;
+            set
+            {
+                _roomEntity.UsersMax = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public double PaintWall
         {
             get => _roomEntity.PaintWall;
+            set
+            {
+                _roomEntity.PaintWall = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public double PaintFloor
         {
             get => _roomEntity.PaintFloor;
+            set
+            {
+                _roomEntity.PaintFloor = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public double PaintLandscape
         {
             get => _roomEntity.PaintLandscape;
+            set
+            {
+                _roomEntity.PaintLandscape = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public int WallHeight
         {
             get => _roomEntity.WallHeight;
+            set
+            {
+                _roomEntity.WallHeight = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public bool HideWalls
         {
             get => (bool)_roomEntity.HideWalls;
+            set
+            {
+                _roomEntity.HideWalls = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomThicknessType ThicknessWall
         {
             get => _roomEntity.ThicknessWall;
+            set
+            {
+                _roomEntity.ThicknessWall = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomThicknessType ThicknessFloor
         {
             get => _roomEntity.ThicknessFloor;
+            set
+            {
+                _roomEntity.ThicknessFloor = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public bool BlockingDisabled
         {
             get => (bool)_roomEntity.AllowWalkThrough;
+            set
+            {
+                _roomEntity.AllowWalkThrough = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public bool AllowEditing
         {
             get => (bool)_roomEntity.AllowEditing;
+            set
+            {
+                _roomEntity.AllowEditing = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public bool AllowPets
         {
             get => (bool)_roomEntity.AllowPets;
+            set
+            {
+                _roomEntity.AllowPets = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public bool AllowPetsEat
         {
             get => (bool)_roomEntity.AllowPetsEat;
+            set
+            {
+                _roomEntity.AllowPetsEat = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomTradeType TradeType
         {
             get => _roomEntity.TradeType;
+            set
+            {
+                _roomEntity.TradeType = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomMuteType MuteType
         {
             get => _roomEntity.MuteType;
+            set
+            {
+                _roomEntity.MuteType = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomKickType KickType
         {
             get => _roomEntity.KickType;
+            set
+            {
+                _roomEntity.KickType = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomBanType BanType
         {
             get => _roomEntity.BanType;
+            set
+            {
+                _roomEntity.BanType = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomChatModeType ChatModeType
         {
             get => _roomEntity.ChatModeType;
+            set
+            {
+                _roomEntity.ChatModeType = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomChatWeightType ChatWeightType
         {
             get => _roomEntity.ChatWeightType;
+            set
+            {
+                _roomEntity.ChatWeightType = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomChatSpeedType ChatSpeedType
         {
             get => _roomEntity.ChatSpeedType;
+            set
+            {
+                _roomEntity.ChatSpeedType = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public RoomChatProtectionType ChatProtectionType
         {
             get => _roomEntity.ChatProtectionType;
+            set
+            {
+                _roomEntity.ChatProtectionType = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public int ChatDistance
         {
             get => _roomEntity.ChatDistance;
+            set
+            {
+                _roomEntity.ChatDistance = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
 
         public DateTime LastActive
         {
             get => _roomEntity.LastActive;
+            set
+            {
+                _roomEntity.LastActive = value;
+                _storageQueue.Add(_roomEntity);
+            }
         }
     }
 }

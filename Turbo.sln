@@ -1,4 +1,5 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32407.343
 MinimumVisualStudioVersion = 10.0.40219.1
@@ -26,11 +27,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Security", "Turbo.Sec
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Navigator", "Turbo.Navigator\Turbo.Navigator.csproj", "{0E90AE4D-4EE2-4729-8CF8-446CED0B615B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turbo.Catalog", "Turbo.Catalog\Turbo.Catalog.csproj", "{A63E1591-8AC4-4FC3-AC53-0C28F5D10D1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Catalog", "Turbo.Catalog\Turbo.Catalog.csproj", "{A63E1591-8AC4-4FC3-AC53-0C28F5D10D1B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turbo.Inventory", "Turbo.Inventory\Turbo.Inventory.csproj", "{2A082FFD-CB6D-415E-9FE3-9EFAD1BF4F6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Inventory", "Turbo.Inventory\Turbo.Inventory.csproj", "{2A082FFD-CB6D-415E-9FE3-9EFAD1BF4F6F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Turbo.Events", "Turbo.Events\Turbo.Events.csproj", "{F0651F3B-2C4F-4AD0-B5E4-D568F76C606B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Turbo.Events", "Turbo.Events\Turbo.Events.csproj", "{F0651F3B-2C4F-4AD0-B5E4-D568F76C606B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -3,13 +3,8 @@ using Turbo.Core.Game.Rooms;
 
 namespace Turbo.Rooms.Cycles
 {
-    public class RoomObjectCycle : RoomCycle
+    public class RoomObjectCycle(IRoom _room) : RoomCycle(_room)
     {
-        public RoomObjectCycle(IRoom room) : base(room)
-        {
-
-        }
-
         public override async Task Cycle()
         {
             if (_room.RoomFurnitureManager != null)
@@ -21,7 +16,7 @@ namespace Turbo.Rooms.Cycles
                     foreach (var floorObject in floorObjects.Values) await floorObject.Logic.Cycle();
                 }
 
-                var wallObjects = _room.RoomFurnitureManager.FloorObjects.RoomObjects;
+                var wallObjects = _room.RoomFurnitureManager.WallObjects.RoomObjects;
 
                 if (wallObjects.Count > 0)
                 {

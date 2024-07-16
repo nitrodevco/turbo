@@ -6,35 +6,25 @@ using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Rooms.Object.Logic;
-using Turbo.Core.Storage;
+using Turbo.Database.Context;
 using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Factories
 {
-    public class PlayerFurnitureFactory : IPlayerFurnitureFactory
+    public class PlayerFurnitureFactory(
+        IFurnitureManager _furnitureManager,
+        IRoomObjectLogicFactory _roomObjectLogicFactory,
+        IServiceProvider _provider) : IPlayerFurnitureFactory
     {
-        private readonly IServiceProvider _provider;
-
-        public PlayerFurnitureFactory(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
-
         public IPlayerFurniture Create(IPlayerFurnitureContainer playerFurnitureContainer, FurnitureEntity furnitureEntity)
         {
-            IFurnitureManager furnitureManager = _provider.GetService<IFurnitureManager>();
-
-            IFurnitureDefinition furnitureDefinition = furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
+            var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
             if (furnitureDefinition == null) return null;
 
-            ILogger<IPlayerFurniture> logger = _provider.GetService<ILogger<PlayerFurniture>>();
-            IServiceScopeFactory scopeFactory = _provider.GetService<IServiceScopeFactory>();
-            IRoomObjectLogicFactory logicFactory = _provider.GetService<IRoomObjectLogicFactory>();
+            var stuffDataKey = _roomObjectLogicFactory.GetStuffDataKeyForFurnitureType(furnitureDefinition.Logic);
 
-            var stuffDataKey = logicFactory.GetStuffDataKeyForFurnitureType(furnitureDefinition.Logic);
-
-            return new PlayerFurniture(logger, playerFurnitureContainer, furnitureEntity, furnitureDefinition, stuffDataKey);
+            return ActivatorUtilities.CreateInstance<PlayerFurniture>(_provider, playerFurnitureContainer, furnitureEntity, furnitureDefinition, stuffDataKey);
         }
 
         public IPlayerFurniture CreateFromRoomFurniture(IPlayerFurnitureContainer playerFurnitureContainer, IRoomFurniture roomFurniture, int playerId)
@@ -44,19 +34,27 @@ namespace Turbo.Furniture.Factories
             furniture.FurnitureEntity.PlayerEntityId = playerId;
             furniture.FurnitureEntity.RoomEntityId = null;
 
-            _provider.GetService<IStorageQueue>()?.SaveNow(furniture.FurnitureEntity);
+            furniture.Save();
 
             return Create(playerFurnitureContainer, furniture.FurnitureEntity);
         }
 
         public async Task<IPlayerFurniture> CreateFromDefinitionId(IPlayerFurnitureContainer playerFurnitureContainer, int furnitureDefinitonId, int playerId)
         {
-            var furnitureEntity = new FurnitureEntity();
+            // TODO here we need to pass extra data, like paint color etc
+            var furnitureEntity = new FurnitureEntity
+            {
+                PlayerEntityId = playerId,
+                FurnitureDefinitionEntityId = furnitureDefinitonId
+            };
 
-            furnitureEntity.PlayerEntityId = playerId;
-            furnitureEntity.FurnitureDefinitionEntityId = furnitureDefinitonId;
+            using var scope = _provider.CreateScope();
 
-            await _provider.GetService<IStorageQueue>()?.SaveNow(furnitureEntity);
+            var context = scope.ServiceProvider.GetService<IEmulatorContext>();
+
+            context.Add(furnitureEntity);
+
+            await context.SaveChangesAsync();
 
             return Create(playerFurnitureContainer, furnitureEntity);
         }

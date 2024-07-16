@@ -10,9 +10,9 @@ using Turbo.Packets.Incoming.Users;
 using Turbo.Packets.Outgoing.Users;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Game.Players;
-using Turbo.Core.Game.Rooms.Object.Logic.Wired;
 using Turbo.Core.Packets.Messages;
 using Turbo.Packets.Outgoing.Wired;
+using Turbo.Core.Game.Wired;
 
 namespace Turbo.Main.PacketHandlers
 {

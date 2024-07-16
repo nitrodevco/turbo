@@ -3,6 +3,8 @@ using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Rooms.Utils;
+using System;
+using Turbo.Core.Game.Furniture;
 
 namespace Turbo.Rooms.Object
 {
@@ -67,7 +69,7 @@ namespace Turbo.Rooms.Object
             }
         }
 
-        public virtual void SetLocation(IPoint point)
+        public virtual void SetLocation(IPoint point, bool save = true, bool update = true)
         {
             if (point == null) return;
 
@@ -79,7 +81,69 @@ namespace Turbo.Rooms.Object
             Location.Rotation = point.Rotation;
             Location.HeadRotation = point.HeadRotation;
 
-            NeedsUpdate = true;
+            if (save) Save();
+
+            if (update) NeedsUpdate = true;
+        }
+
+        private void Save()
+        {
+            if (RoomObjectHolder is IRoomFloorFurniture floorFurniture) floorFurniture.Save();
+        }
+
+        public int X
+        {
+            get => Location.X;
+            set
+            {
+                Location.X = value;
+
+                Save();
+            }
+        }
+
+        public int Y
+        {
+            get => Location.Y;
+            set
+            {
+                Location.Y = value;
+
+                Save();
+            }
+        }
+
+        public double Z
+        {
+            get => Location.Z;
+            set
+            {
+                Location.Z = value;
+
+                Save();
+            }
+        }
+
+        public Rotation Rotation
+        {
+            get => Location.Rotation;
+            set
+            {
+                Location.Rotation = value;
+
+                Save();
+            }
+        }
+
+        public Rotation HeadRotation
+        {
+            get => Location.HeadRotation;
+            set
+            {
+                Location.HeadRotation = value;
+
+                Save();
+            }
         }
     }
 }

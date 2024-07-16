@@ -15,13 +15,8 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Cycles
 {
-    public class RoomUserStatusCycle : RoomCycle
+    public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
     {
-        public RoomUserStatusCycle(IRoom room) : base(room)
-        {
-
-        }
-
         public override async Task Cycle()
         {
             List<IRoomObjectAvatar> updatedAvatarObjects = new();
@@ -177,8 +172,6 @@ namespace Turbo.Rooms.Cycles
             avatarObject.Logic.AddStatus(RoomObjectAvatarStatus.Move, nextTile.Location.X + "," + nextTile.Location.Y + "," + nextHeight);
             avatarObject.Location.SetRotation(avatarObject.Location.CalculateWalkRotation(locationNext));
             avatarObject.Logic.LocationNext = locationNext;
-
-            nextTile.BeforeStep(avatarObject);
 
             if (nextTile.HighestObject != null)
             {

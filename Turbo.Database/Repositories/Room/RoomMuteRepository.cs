@@ -7,15 +7,8 @@ using Turbo.Database.Entities.Room;
 
 namespace Turbo.Database.Repositories.Room
 {
-    public class RoomMuteRepository : IRoomMuteRepository
+    public class RoomMuteRepository(IEmulatorContext _context) : IRoomMuteRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public RoomMuteRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
         public async Task<RoomMuteEntity> FindAsync(int id) => await _context.RoomMutes
             .FirstOrDefaultAsync(entity => entity.Id == id);
 

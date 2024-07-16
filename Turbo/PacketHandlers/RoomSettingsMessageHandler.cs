@@ -172,9 +172,18 @@ namespace Turbo.PacketHandlers
 
             await room.RoomSecurityManager.InitAsync();
 
-            if (!room.RoomSecurityManager.IsOwner(session.Player)) return;
+            if (!room.RoomSecurityManager.IsOwner(session.Player))
+            {
+                await session.Send(new RoomSettingsErrorMessage
+                {
+                    RoomId = message.RoomId,
+                    ErrorCode = RoomSettingsErrorType.NotOwner
+                });
 
-            if (!await room.RoomDetails.UpdateSettingsForPlayer(session.Player, message)) return;
+                return;
+            }
+
+            if (!room.RoomDetails.UpdateSettingsForPlayer(session.Player, message)) return;
 
             await session.Send(new RoomSettingsSavedMessage
             {

@@ -12,23 +12,12 @@ using Turbo.Database.Entities.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class CatalogOffer : ICatalogOffer
+    public class CatalogOffer(
+        ILogger<ICatalogOffer> _logger,
+        CatalogOfferEntity _entity) : ICatalogOffer
     {
-        private readonly ILogger<ICatalogOffer> _logger;
-        private readonly CatalogOfferEntity _entity;
-
         public ICatalogPage Page { get; private set; }
-        public IList<ICatalogProduct> Products { get; private set; }
-
-        public CatalogOffer(
-            ILogger<ICatalogOffer> logger,
-            CatalogOfferEntity entity)
-        {
-            _logger = logger;
-            _entity = entity;
-
-            Products = new List<ICatalogProduct>();
-        }
+        public IList<ICatalogProduct> Products { get; private set; } = [];
 
         public void SetPage(ICatalogPage catalogPage)
         {
@@ -82,11 +71,11 @@ namespace Turbo.Catalog
         public int CostCredits => _entity.CostCredits;
         public int CostCurrency => _entity.CostCurrency;
         public int? CurrencyType => _entity.CurrencyType;
-        public bool CanGift => _entity.CanGift;
-        public bool CanBundle => _entity.CanBundle;
+        public bool CanGift => _entity.CanGift ?? false;
+        public bool CanBundle => _entity.CanBundle ?? false;
         public int ClubLevel => _entity.ClubLevel;
         public bool IsPet => (Products.Count >= 1) ? Products[0].ProductType.Equals(ProductTypeEnum.Pet) : false;
         public string PreviewImage => "";
-        public bool Visible => _entity.Visible;
+        public bool Visible => _entity.Visible ?? false;
     }
 }

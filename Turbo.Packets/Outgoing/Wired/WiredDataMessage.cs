@@ -1,5 +1,5 @@
+using Turbo.Core.Game.Wired.Data;
 using Turbo.Core.Packets.Messages;
-using Turbo.Core.Game.Rooms.Object.Logic.Wired.Data;
 
 namespace Turbo.Packets.Outgoing.Wired
 {

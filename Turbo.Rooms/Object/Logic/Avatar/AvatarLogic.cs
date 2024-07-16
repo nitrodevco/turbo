@@ -29,7 +29,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             {
                 if (_remainingHeadCycles == 0)
                 {
-                    RoomObject.Location.HeadRotation = RoomObject.Location.Rotation;
+                    RoomObject.HeadRotation = RoomObject.Location.Rotation;
 
                     RoomObject.NeedsUpdate = true;
 
@@ -68,7 +68,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
                 rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
 
-                RoomObject.Location.SetRotation(rotation);
+                RoomObject.Rotation = (Rotation)rotation;
+                RoomObject.HeadRotation = (Rotation)rotation;
 
                 AddStatus(RoomObjectAvatarStatus.Sit, string.Format("{0:N3}", height));
             }
@@ -93,7 +94,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
                 rotation = (rotation == null) ? RoomObject.Location.CalculateSitRotation() : rotation;
 
-                RoomObject.Location.SetRotation(rotation);
+                RoomObject.Rotation = (Rotation)rotation;
+                RoomObject.HeadRotation = (Rotation) rotation;
 
                 AddStatus(RoomObjectAvatarStatus.Lay, string.Format("{0:N3}", height));
             }
@@ -113,13 +115,14 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (headOnly || HasStatus(RoomObjectAvatarStatus.Sit))
             {
-                RoomObject.Location.HeadRotation = RoomObject.Location.CalculateHeadRotation(point);
+                RoomObject.HeadRotation = RoomObject.Location.CalculateHeadRotation(point);
 
                 _remainingHeadCycles = DefaultSettings.HeadTurnCycles;
             }
             else
             {
-                RoomObject.Location.SetRotation(RoomObject.Location.CalculateHumanRotation(point));
+                RoomObject.Rotation = RoomObject.Location.CalculateHumanRotation(point);
+                RoomObject.HeadRotation = RoomObject.Rotation;
             }
 
             RoomObject.NeedsUpdate = true;

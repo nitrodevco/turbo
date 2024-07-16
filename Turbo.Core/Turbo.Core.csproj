@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,10 +14,11 @@
 
   <ItemGroup>
     <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Exceptions\Catalog\" />
     <Folder Include="Game\Inventory\" />
     <Folder Include="Game\Furniture\Data\" />
   </ItemGroup>

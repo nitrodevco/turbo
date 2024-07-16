@@ -12,6 +12,8 @@ namespace Turbo.Core.Game.Catalog
     {
         public IDictionary<string, ICatalog> Catalogs { get; }
         public ICatalogPage GetRootForPlayer(IPlayer player, string catalogType);
-        public Task PurchaseOffer(IPlayer player, int pageId, int offerId, string extraParam, int quantity);
+        public Task<bool> PurchaseOfferForPlayer(IPlayer player, string catalogType, int pageId, int offerId, string extraParam, int quantity);
+        public ICatalogOffer GetOfferForPlayer(IPlayer player, string catalogType, int offerId);
+        public ICatalogPage GetPageForPlayer(IPlayer player, string catalogType, int pageId);
     }
 }

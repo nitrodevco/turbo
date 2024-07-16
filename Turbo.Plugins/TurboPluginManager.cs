@@ -4,58 +4,65 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
+using Turbo.Core.Configuration;
 using Turbo.Core.Plugins;
 
 namespace Turbo.Plugins
 {
-    public class TurboPluginManager : IPluginManager
+    public class TurboPluginManager(
+        ILogger<TurboPluginManager> _logger,
+        IServiceProvider _serviceProvider,
+        IEmulatorConfig _emulatorConfig) : IPluginManager
     {
         private readonly HashSet<ITurboPlugin> _plugins = new HashSet<ITurboPlugin>();
         private readonly HashSet<MethodInfo> _methods = new HashSet<MethodInfo>();
-
-        private readonly ILogger<TurboPluginManager> _logger;
-        private readonly IServiceProvider _serviceProvider;
-
-        public TurboPluginManager(ILogger<TurboPluginManager> logger, IServiceProvider serviceProvider) : base()
-        {
-            _logger = logger;
-            _serviceProvider = serviceProvider;
-        }
 
         public void LoadPlugins()
         {
             _logger.LogInformation("{Context} -> Loading plugins...", nameof(TurboPluginManager));
 
-            if (!Directory.Exists("plugins"))
-            {
-                Directory.CreateDirectory("plugins");
-            }
+            if (!Directory.Exists("plugins")) Directory.CreateDirectory("plugins");
 
             var plugins = Directory.GetFiles("plugins", "*.dll");
 
+            var pluginOrder = _emulatorConfig.PluginOrder.ToArray();
+
+            if(pluginOrder != null) plugins = [.. plugins.OrderBy(value => Array.IndexOf(pluginOrder, value))];
+
             foreach (var plugin in plugins)
             {
-                // Load assembly
-                var assembly = Assembly.LoadFile(Path.Combine(Directory.GetCurrentDirectory(), plugin));
-
-                // Get a list of all types in assembly that implement ITurboPlugin. 
-                // Exclude interfaces, abstract and generic types.
-                var pluginTypes = assembly.GetTypes()
-                    .Where(t => typeof(ITurboPlugin).IsAssignableFrom(t))
-                    .Where(t => t.IsClass && !t.IsAbstract && t.IsPublic && !t.IsGenericType)
-                    .ToList();
-
-                if (pluginTypes.Any())
+                try
                 {
-                    // Create instances
-                    foreach (var pluginType in pluginTypes)
+                    var assembly = Assembly.LoadFrom(Path.Combine(Directory.GetCurrentDirectory(), plugin));
+
+                    if (assembly == null) return;
+
+                    // Get a list of all types in assembly that implement ITurboPlugin. 
+                    // Exclude interfaces, abstract and generic types.
+                    var pluginTypes = assembly.GetTypes()
+                        .Where(t => typeof(ITurboPlugin).IsAssignableFrom(t))
+                        .Where(t => t.IsClass && !t.IsAbstract && t.IsPublic && !t.IsGenericType)
+                        .ToList();
+
+                    if (pluginTypes.Any())
                     {
-                        CreatePluginInstance(pluginType);
+                        // Create instances
+                        foreach (var pluginType in pluginTypes)
+                        {
+                            CreatePluginInstance(pluginType);
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogError("{Context} -> {Plugin} can't be loaded because it doesn't implement {PluginInterface}!", nameof(TurboPluginManager), plugin, nameof(ITurboPlugin));
                     }
                 }
-                else
+
+                catch (Exception ex)
                 {
-                    _logger.LogError("{Context} -> {Plugin} can't be loaded because it doesn't implement {PluginInterface}!", nameof(TurboPluginManager), plugin, nameof(ITurboPlugin));
+                    _logger.LogError("{Context} -> {Plugin} not loaded", nameof(TurboPluginManager), plugin, ex.StackTrace);
+                    Console.WriteLine($"{ex.StackTrace}");
                 }
             }
 
@@ -76,24 +83,21 @@ namespace Turbo.Plugins
                 parameters.Add(service);
             }
 
-            ITurboPlugin pluginInstance = null;
+            try
+            {
+                ITurboPlugin pluginInstance = Activator.CreateInstance(pluginType, [.. parameters]) as ITurboPlugin;
 
-            // Create instance using DI container
-            if (parameters.Count > 0)
-            {
-                pluginInstance = Activator.CreateInstance(pluginType, parameters.ToArray()) as ITurboPlugin;
                 _plugins.Add(pluginInstance);
-            }
-            // Create instance without DI container
-            else
-            {
-                pluginInstance = Activator.CreateInstance(pluginType) as ITurboPlugin;
-                _plugins.Add(pluginInstance);
+
+                if (pluginInstance != null)
+                {
+                    _logger.LogInformation("{Context} -> Loaded {PluginName} by {PluginAuthor}", nameof(TurboPluginManager), pluginInstance.PluginName, pluginInstance.PluginAuthor);
+                }
             }
 
-            if (pluginInstance != null)
+            catch (Exception ex)
             {
-                _logger.LogInformation("{Context} -> Loaded {PluginName} by {PluginAuthor}", nameof(TurboPluginManager), pluginInstance.PluginName, pluginInstance.PluginAuthor);
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
             }
         }
     }

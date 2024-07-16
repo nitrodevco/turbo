@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
-using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 
 namespace Turbo.Core.Game.Players
@@ -22,7 +21,5 @@ namespace Turbo.Core.Game.Players
         public Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null);
         public Task<string> GetPlayerName(int playerId);
         public Task<IList<IPlayerBadge>> GetPlayerActiveBadges(int playerId);
-
-        public IStorageQueue StorageQueue { get; }
     }
 }

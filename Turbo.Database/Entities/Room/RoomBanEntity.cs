@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Database.Entities.Room
@@ -18,8 +19,10 @@ namespace Turbo.Database.Entities.Room
         [Column("date_expires"), Required]
         public DateTime DateExpires { get; set; }
 
+        [ForeignKey(nameof(RoomEntityId))]
         public RoomEntity RoomEntity { get; set; }
 
+        [ForeignKey(nameof(PlayerEntityId))]
         public PlayerEntity PlayerEntity { get; set; }
     }
 }

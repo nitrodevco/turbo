@@ -11,7 +11,7 @@ namespace Turbo.Core.Game.Rooms.Mapping
 
         public IPoint DoorLocation { get; }
 
-        public bool DidGenerate { get; }
+        public bool IsValid { get; }
 
         public void Generate();
         public RoomTileState GetTileState(int x, int y);

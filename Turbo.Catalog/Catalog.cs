@@ -16,36 +16,18 @@ using Turbo.Database.Repositories.Catalog;
 
 namespace Turbo.Catalog
 {
-    public class Catalog : Component, ICatalog
+    public class Catalog(
+        ILogger<ICatalog> _logger,
+        IFurnitureManager _furnitureManager,
+        ICatalogFactory _catalogFactory,
+        IServiceScopeFactory _serviceScopeFactory,
+        string _catalogType) : Component, ICatalog
     {
-        private readonly ILogger<ICatalog> _logger;
-        private readonly IFurnitureManager _furnitureManager;
-        private readonly ICatalogFactory _catalogFactory;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly string _catalogType;
 
         public ICatalogPage Root { get; private set; }
-        public IDictionary<int, ICatalogPage> Pages { get; private set; }
-        public IDictionary<int, ICatalogOffer> Offers { get; private set; }
-        public IDictionary<int, ICatalogProduct> Products { get; private set; }
-
-        public Catalog(
-            ILogger<ICatalog> logger,
-            IFurnitureManager furnitureManager,
-            ICatalogFactory catalogFactory,
-            IServiceScopeFactory scopeFactory,
-            string catalogType)
-        {
-            _logger = logger;
-            _furnitureManager = furnitureManager;
-            _catalogFactory = catalogFactory;
-            _serviceScopeFactory = scopeFactory;
-            _catalogType = catalogType;
-
-            Pages = new Dictionary<int, ICatalogPage>();
-            Offers = new Dictionary<int, ICatalogOffer>();
-            Products = new Dictionary<int, ICatalogProduct>();
-        }
+        public IDictionary<int, ICatalogPage> Pages { get; private set; } = new Dictionary<int, ICatalogPage>();
+        public IDictionary<int, ICatalogOffer> Offers { get; private set; } = new Dictionary<int, ICatalogOffer>();
+        public IDictionary<int, ICatalogProduct> Products { get; private set; } = new Dictionary<int, ICatalogProduct>();
 
         protected override async Task OnInit()
         {
@@ -64,23 +46,27 @@ namespace Turbo.Catalog
             return Root;
         }
 
-        public ICatalogPage GetPageForPlayer(IPlayer player, int pageId, int offerId)
+        public ICatalogPage GetPageForPlayer(IPlayer player, int pageId)
         {
-            if (player == null || !Pages.ContainsKey(pageId)) return null;
+            if (player == null) return null;
 
-            return Pages[pageId];
+            if (Pages.TryGetValue(pageId, out var page)) return page;
+
+            return null;
         }
 
         public ICatalogOffer GetOfferForPlayer(IPlayer player, int offerId)
         {
-            if (player == null || !Offers.ContainsKey(offerId)) return null;
+            if (player == null) return null;
 
-            return Offers[offerId];
+            if (Offers.TryGetValue(offerId, out var offer)) return offer;
+
+            return null;
         }
 
         public async Task<ICatalogOffer> PurchaseOffer(IPlayer player, int pageId, int offerId, string extraParam, int quantity)
         {
-            var page = GetPageForPlayer(player, pageId, offerId);
+            var page = GetPageForPlayer(player, pageId);
 
             if (page == null) return null;
 
@@ -129,16 +115,15 @@ namespace Turbo.Catalog
             Offers.Clear();
             Products.Clear();
 
-            List<CatalogPageEntity> pageEntities = null;
-            List<CatalogOfferEntity> offerEntities = null;
-            List<CatalogProductEntity> productEntities = null;
+            using var scope = _serviceScopeFactory.CreateScope();
 
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                pageEntities = await scope.ServiceProvider.GetService<ICatalogPageRepository>()?.FindAllAsync();
-                offerEntities = await scope.ServiceProvider.GetService<ICatalogOfferRepository>()?.FindAllAsync();
-                productEntities = await scope.ServiceProvider.GetService<ICatalogProductRepository>()?.FindAllAsync();
-            }
+            var catalogPageRepository = scope.ServiceProvider.GetService<ICatalogPageRepository>();
+            var catalogOfferRepository = scope.ServiceProvider.GetService<ICatalogOfferRepository>();
+            var catalogProductRepository = scope.ServiceProvider.GetService<ICatalogProductRepository>();
+
+            var pageEntities = await catalogPageRepository.FindAllAsync();
+            var offerEntities = await catalogOfferRepository.FindAllAsync();
+            var productEntities = await catalogProductRepository.FindAllAsync();
 
             if (pageEntities != null)
             {
@@ -146,7 +131,7 @@ namespace Turbo.Catalog
 
                 foreach (var pageEntity in pageEntities)
                 {
-                    if (!pageEntity.Visible) continue;
+                    if (!pageEntity.Visible ?? false) continue;
 
                     var catalogPage = _catalogFactory.CreatePage(pageEntity);
 

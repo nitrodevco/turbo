@@ -23,5 +23,7 @@ namespace Turbo.Core.Configuration
         public bool DatabaseLoggingEnabled { get; }
 
         public int NetworkWorkerThreads { get; }
+
+        public List<string> PluginOrder { get; }
     }
 }

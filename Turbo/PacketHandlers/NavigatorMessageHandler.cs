@@ -19,7 +19,15 @@ namespace Turbo.Main.PacketHandlers
             _navigatorManager = navigatorManager;
 
             _messageHub.Subscribe<GetGuestRoomMessage>(this, OnGetGuestRoomMessage);
+            _messageHub.Subscribe<GetUserFlatCatsMessage>(this, OnGetUserFlatCatsMessage);
             _messageHub.Subscribe<NewNavigatorInitMessage>(this, OnNewNavigatorInitMessage);
+        }
+
+        protected virtual async void OnGetUserFlatCatsMessage(GetUserFlatCatsMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            await _navigatorManager.SendNavigatorCategories(session.Player);
         }
 
         protected virtual async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
@@ -33,6 +41,7 @@ namespace Turbo.Main.PacketHandlers
         {
             if (session.Player == null) return;
 
+            await _navigatorManager.SendNavigatorSettings(session.Player);
             await _navigatorManager.SendNavigatorMetaData(session.Player);
             await _navigatorManager.SendNavigatorLiftedRooms(session.Player);
             await _navigatorManager.SendNavigatorSavedSearches(session.Player);

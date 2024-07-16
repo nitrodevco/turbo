@@ -1,4 +1,4 @@
-﻿using Turbo.Core.Game.Rooms.Object.Logic.Wired;
+﻿using Turbo.Core.Game.Wired;
 
 namespace Turbo.Core.Game.Rooms.Managers
 {

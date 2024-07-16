@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.Marshalling;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
@@ -17,6 +19,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         public IDictionary<string, string> Statuses { get; private set; }
 
         public IPoint LocationNext { get; set; }
+        public IPoint LocationPrevious { get; private set; }
         public IPoint LocationGoal { get; private set; }
         public IList<IPoint> CurrentPath { get; private set; }
         public Action<IRoomObjectAvatar> BeforeGoalAction { get; set; }
@@ -135,7 +138,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             ProcessNextLocation();
             InvokeCurrentLocation();
 
-            RoomObject.Location.SetRotation(location.Rotation);
+            RoomObject.Rotation = location.Rotation;
+            RoomObject.HeadRotation = location.Rotation;
         }
 
         private void WalkPath(IPoint goal, IList<IPoint> path)
@@ -197,8 +201,16 @@ namespace Turbo.Rooms.Object.Logic.Avatar
         {
             if ((RoomObject == null) || (LocationNext == null)) return false;
 
-            RoomObject.Location.X = LocationNext.X;
-            RoomObject.Location.Y = LocationNext.Y;
+            if (RoomObject.Location != null)
+            {
+                LocationPrevious ??= new Point();
+
+                LocationPrevious.X = RoomObject.X;
+                LocationPrevious.Y = RoomObject.Y;
+
+                RoomObject.X = LocationNext.X;
+                RoomObject.Y = LocationNext.Y;
+            }
 
             LocationNext = null;
 
@@ -213,7 +225,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             UpdateHeight(roomTile);
 
-            roomTile.OnStep(RoomObject);
+            roomTile.HighestObject?.Logic?.OnStep(RoomObject);
 
             RoomObject.NeedsUpdate = true;
 
@@ -231,7 +243,8 @@ namespace Turbo.Rooms.Object.Logic.Avatar
 
             if (height == oldHeight) return;
 
-            RoomObject.Location.Z = height;
+            RoomObject.Z = height;
+
             RoomObject.NeedsUpdate = true;
         }
 
@@ -309,5 +322,7 @@ namespace Turbo.Rooms.Object.Logic.Avatar
                 _rollerData = value;
             }
         }
+
+        public bool DidMove => LocationPrevious != null && LocationPrevious.Compare(RoomObject?.Location);
     }
 }

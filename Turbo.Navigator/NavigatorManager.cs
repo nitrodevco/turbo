@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,6 +11,7 @@ using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Navigator;
+using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Packets.Shared.Navigator;
@@ -16,28 +19,19 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Navigator
 {
-    public class NavigatorManager : Component, INavigatorManager
+    public class NavigatorManager(
+        IRoomManager _roomManager,
+        ILogger<INavigatorManager> _logger,
+        IServiceScopeFactory _serviceScopeFactory) : Component, INavigatorManager
     {
-        private readonly IRoomManager _roomManager;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly ILogger<INavigatorManager> _logger;
-
-        private readonly IDictionary<int, IPendingRoomInfo> _pendingRoomIds;
-
-        public NavigatorManager(
-            IRoomManager roomManager,
-            IServiceScopeFactory serviceScopeFactory,
-            ILogger<INavigatorManager> logger)
-        {
-            _roomManager = roomManager;
-            _serviceScopeFactory = serviceScopeFactory;
-            _logger = logger;
-
-            _pendingRoomIds = new Dictionary<int, IPendingRoomInfo>();
-        }
+        private readonly IList<INavigatorTab> _tabs = new List<INavigatorTab>();
+        private readonly IDictionary<int, INavigatorCategory> _categories = new Dictionary<int, INavigatorCategory>();
+        private readonly IDictionary<int, INavigatorEventCategory> _eventCategories = new Dictionary<int, INavigatorEventCategory>();
+        private readonly ConcurrentDictionary<int, IPendingRoomInfo> _pendingRoomIds = new();
 
         protected override async Task OnInit()
         {
+            await LoadNavigatorData();
         }
 
         protected override async Task OnDispose()
@@ -46,17 +40,20 @@ namespace Turbo.Navigator
 
         public int GetPendingRoomId(int userId)
         {
-            if (!_pendingRoomIds.ContainsKey(userId)) return -1;
+            if (_pendingRoomIds.TryGetValue(userId, out var pendingRoomInfo))
+            {
+                return pendingRoomInfo.RoomId;
+            }
 
-            return _pendingRoomIds[userId].RoomId;
+            return -1;
         }
 
         public void SetPendingRoomId(int userId, int roomId, bool approved = false)
         {
             if ((userId <= 0) || (roomId <= 0)) return;
 
-            _pendingRoomIds.Remove(userId);
-            _pendingRoomIds.Add(userId, new PendingRoomInfo
+            _pendingRoomIds.Remove(userId, out var pendingRoomInfo);
+            _pendingRoomIds.TryAdd(userId, new PendingRoomInfo
             {
                 RoomId = roomId,
                 Approved = approved
@@ -65,7 +62,7 @@ namespace Turbo.Navigator
 
         public void ClearPendingRoomId(int userId)
         {
-            _pendingRoomIds.Remove(userId);
+            _pendingRoomIds.Remove(userId, out var pendingRoomInfo);
         }
 
         public void ClearRoomStatus(IPlayer player)
@@ -76,17 +73,14 @@ namespace Turbo.Navigator
 
             int pendingRoomId = GetPendingRoomId(player.Id);
 
-            if (pendingRoomId == -1)
-            {
-                if (player.Session != null) player.Session.Send(new CloseConnectionMessage());
-            }
+            if (pendingRoomId == -1) player.Session?.Send(new CloseConnectionMessage());
         }
 
         public async Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool roomForward = false)
         {
             if (player == null) return;
 
-            IRoom room = await _roomManager.GetRoom(roomId);
+            var room = await _roomManager.GetRoom(roomId);
 
             if (room == null) return;
 
@@ -161,6 +155,7 @@ namespace Turbo.Navigator
 
                 if (!skipState)
                 {
+                    #region RoomStateType.Locked
                     if (room.RoomDetails.State == RoomStateType.Locked)
                     {
                         ClearPendingRoomId(player.Id);
@@ -168,25 +163,26 @@ namespace Turbo.Navigator
                         // doorbell
                         // if rights do u need 2 wait
                     }
+                    #endregion
 
+                    #region RoomStateType.Password
                     else if (room.RoomDetails.State == RoomStateType.Password)
                     {
                         if (!password.Equals(room.RoomDetails.Password))
                         {
                             ClearPendingRoomId(player.Id);
 
-                            // generic password error
-
-                            await player.Session.Send(new CantConnectMessage
+                            await player.Session.Send(new GenericErrorMessage
                             {
-                                Reason = CantConnectReason.Closed,
-                                Parameter = ""
+                                ErrorCode = RoomGenericErrorType.InvalidPassword
                             });
 
                             return;
                         }
                     }
+                    #endregion
 
+                    #region RoomStateType.Invisible
                     else if (room.RoomDetails.State == RoomStateType.Invisible)
                     {
                         if (room.RoomSecurityManager.GetControllerLevel(player) == RoomControllerLevel.None)
@@ -202,6 +198,7 @@ namespace Turbo.Navigator
                             return;
                         }
                     }
+                    #endregion
                 }
             }
 
@@ -262,37 +259,87 @@ namespace Turbo.Navigator
             // remove user from pending doorbells
         }
 
-        public async Task SendNavigatorMetaData(IPlayer player) => await player.Session.Send(new NavigatorMetaDataMessage
+        public async Task SendNavigatorCategories(IPlayer player) => await player.Session.Send(new UserFlatCatsMessage
         {
-            TopLevelContexts = new List<TopLevelContext>
-            {
-                new TopLevelContext { SearchCode = "official_view" },
-                new TopLevelContext { SearchCode = "hotel_view" },
-                new TopLevelContext { SearchCode = "roomads_view" },
-                new TopLevelContext { SearchCode = "myworld_view" }
-            }
+            Categories = [.. _categories.Values]
         });
+
+        public async Task SendNavigatorSettings(IPlayer player) => await player.Session.Send(new NewNavigatorPreferencesMessage
+        {
+            WindowX = 0,
+            WindowY = 0,
+            WindowWidth = 0,
+            WindowHeight = 0,
+            LeftPaneHidden = false,
+            ResultMode = 0
+        });
+
+        public async Task SendNavigatorMetaData(IPlayer player)
+        {
+            List<ITopLevelContext> tabs = [];
+
+            foreach (var tab in _tabs)
+            {
+                tabs.Add(tab.TopLevelContext);
+            }
+
+            await player.Session.Send(new NavigatorMetaDataMessage
+            {
+                TopLevelContexts = tabs
+            });
+        }
 
         public async Task SendNavigatorLiftedRooms(IPlayer player) => await player.Session.Send(new NavigatorLiftedRoomsMessage());
 
         public async Task SendNavigatorSavedSearches(IPlayer player) => await player.Session.Send(new NavigatorSavedSearchesMessage
         {
             // Todo: Implement saved searches
-            SavedSearches = new List<NavigatorSavedSearch>(0)
+            SavedSearches = []
         });
 
-        public async Task SendNavigatorEventCategories(IPlayer player)
+        public async Task SendNavigatorEventCategories(IPlayer player) => await player.Session.Send(new NavigatorEventCategoriesMessage
         {
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var categoriesRepo = scope.ServiceProvider.GetRequiredService<INavigatorEventCategoryRepository>();
-                var categories = await categoriesRepo.FindAllAsync();
+            EventCategories = [.. _eventCategories.Values]
+        });
 
-                await player.Session.Send(new NavigatorEventCategoriesMessage
-                {
-                    EventCategories = categories
-                });
-            }
+        private async Task LoadNavigatorData()
+        {
+            _tabs.Clear();
+            _categories.Clear();
+            _eventCategories.Clear();
+
+            using var scope = _serviceScopeFactory.CreateScope();
+
+            var navigatorRepository = scope.ServiceProvider.GetService<INavigatorRepository>();
+
+            var tabEntities = await navigatorRepository.FindAllNavigatorTabsAsync();
+            var categoryEntities = await navigatorRepository.FindAllNavigatorCategoriesAsync();
+            var eventCategoriesEntities = await navigatorRepository.FindAllNavigatorEventCategoriesAsync();
+
+            tabEntities.ForEach(entity =>
+            {
+                var tab = new NavigatorTab(entity);
+
+                _tabs.Add(tab);
+            });
+
+            categoryEntities.ForEach(entity =>
+            {
+                var category = new NavigatorCategory(entity);
+
+                _categories.Add(category.Id, category);
+            });
+
+            eventCategoriesEntities.ForEach(entity =>
+            {
+                var eventCategory = new NavigatorEventCategory(entity);
+
+                _eventCategories.Add(eventCategory.Id, eventCategory);
+            });
+
+            _logger.LogInformation("Loaded {0} navigator tabs", _tabs.Count);
+            _logger.LogInformation("Loaded {0} navigator categories", _categories.Count);
+            _logger.LogInformation("Loaded {0} navigator event categories", _eventCategories.Count);
         }
     }
 }

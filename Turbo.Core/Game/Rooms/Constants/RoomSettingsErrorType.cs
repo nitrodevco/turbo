@@ -2,6 +2,7 @@
 {
     public enum RoomSettingsErrorType
     {
+        None = 0,
         RoomNotFound = 1,
         NotOwner = 2,
         InvalidDoorMode = 3,

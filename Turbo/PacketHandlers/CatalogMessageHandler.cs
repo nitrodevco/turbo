@@ -38,12 +38,10 @@ namespace Turbo.PacketHandlers
         {
             if (session.Player == null) return;
 
-            if (!_catalogManager.Catalogs.ContainsKey(message.Type)) return;
+            var root = _catalogManager.GetRootForPlayer(session.Player, message.Type);
 
-            var root = _catalogManager.Catalogs[message.Type].GetRootForPlayer(session.Player);
-
-            if (root == null) return;
-
+            if(root == null) return;
+            
             session.Send(new CatalogIndexMessage
             {
                 Root = root,
@@ -56,12 +54,10 @@ namespace Turbo.PacketHandlers
         {
             if (session.Player == null) return;
 
-            if (!_catalogManager.Catalogs.ContainsKey(message.Type)) return;
+            var page = _catalogManager.GetPageForPlayer(session.Player, message.Type, message.PageId);
 
-            var page = _catalogManager.Catalogs[message.Type].GetPageForPlayer(session.Player, message.PageId, message.OfferId);
-
-            if (page == null) return;
-
+            if(page == null) return;
+            
             session.Send(new CatalogPageMessage
             {
                 PageId = page.Id,
@@ -80,17 +76,17 @@ namespace Turbo.PacketHandlers
         {
             if (session.Player == null) return;
 
-            _catalogManager.PurchaseOffer(session.Player, message.PageId, message.OfferId, message.ExtraParam, message.Quantity);
+            _catalogManager.PurchaseOfferForPlayer(session.Player, CatalogType.Normal, message.PageId, message.OfferId, message.ExtraParam, message.Quantity);
         }
 
         public void OnGetProductOfferMessage(GetProductOfferMessage message, ISession session)
         {
             if (session.Player == null) return;
 
-            var offer = _catalogManager.Catalogs[CatalogType.Normal]?.GetOfferForPlayer(session.Player, message.OfferId);
+            var offer = _catalogManager.GetOfferForPlayer(session.Player, CatalogType.Normal, message.OfferId);
 
             if (offer == null) return;
-
+            
             session.Send(new ProductOfferMessage
             {
                 Offer = offer

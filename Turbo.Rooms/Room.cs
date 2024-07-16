@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Events;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
@@ -12,16 +13,18 @@ using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
+using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Room;
+using Turbo.Events.Game.Rooms;
+using Turbo.Events.Game.Rooms.Avatar;
+using Turbo.Events.Game.Rooms.Furniture;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Cycles;
 using Turbo.Rooms.Factories;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
-using Turbo.Rooms.Object.Logic.Furniture.Wired;
-using Turbo.Rooms.Object.Logic.Furniture.Wired.Arguments;
-using Turbo.Rooms.Object.Logic.Furniture.Wired.Triggers;
 
 namespace Turbo.Rooms
 {
@@ -33,14 +36,13 @@ namespace Turbo.Rooms
         public IRoomCycleManager RoomCycleManager { get; private set; }
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
-        public IRoomWiredManager RoomWiredManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
 
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
 
-
-        private readonly IList<ISession> _roomObservers;
+        private readonly ITurboEventHub _eventHub;
+        private readonly IList<ISession> _roomObservers = new List<ISession>();
         private object _roomObserverLock = new();
         private int _remainingDisposeTicks = -1;
 
@@ -50,20 +52,20 @@ namespace Turbo.Rooms
             RoomEntity roomEntity,
             IRoomSecurityFactory roomSecurityFactory,
             IRoomFurnitureFactory roomFurnitureFactory,
-            IRoomWiredFactory roomWiredFactory,
-            IRoomUserFactory roomUserFactory)
+            IRoomUserFactory roomUserFactory,
+            ITurboEventHub eventHub,
+            IStorageQueue _storageQueue)
         {
             RoomManager = roomManager;
             Logger = logger;
-            RoomDetails = new RoomDetails(this, roomEntity);
+            RoomDetails = new RoomDetails(this, roomEntity, _storageQueue);
 
             RoomCycleManager = new RoomCycleManager(this);
             RoomSecurityManager = roomSecurityFactory.Create(this);
             RoomFurnitureManager = roomFurnitureFactory.Create(this);
-            RoomWiredManager = roomWiredFactory.Create(this);
             RoomUserManager = roomUserFactory.Create(this);
 
-            _roomObservers = new List<ISession>();
+            _eventHub = eventHub;
         }
 
         protected override async Task OnInit()
@@ -73,6 +75,10 @@ namespace Turbo.Rooms
             await RoomSecurityManager.InitAsync();
             await RoomFurnitureManager.InitAsync();
             await RoomUserManager.InitAsync();
+
+            RoomCycleManager.AddCycle(new RoomObjectCycle(this));
+            RoomCycleManager.AddCycle(new RoomRollerCycle(this));
+            RoomCycleManager.AddCycle(new RoomUserStatusCycle(this));
 
             RoomCycleManager.Start();
         }
@@ -125,9 +131,9 @@ namespace Turbo.Rooms
 
             RoomModel = null;
 
-            IRoomModel roomModel = RoomManager.GetModel(RoomDetails.ModelId);
+            IRoomModel roomModel = await RoomManager.GetModel(RoomDetails.ModelId);
 
-            if ((roomModel == null) || (!roomModel.DidGenerate)) return;
+            if ((roomModel == null) || (!roomModel.IsValid)) return;
 
             RoomModel = roomModel;
             RoomMap = new RoomMap(this);
@@ -159,7 +165,32 @@ namespace Turbo.Rooms
                 WallThickness = (int)RoomDetails.ThicknessWall
             });
 
-            // send the paint
+            if (RoomDetails.PaintWall != 0.0)
+            {
+                player.Session.SendQueue(new RoomPropertyMessage
+                {
+                    Property = RoomPropertyType.WALLPAPER,
+                    Value = RoomDetails.PaintWall.ToString()
+                });
+            }
+
+            if (RoomDetails.PaintFloor != 0.0)
+            {
+                player.Session.SendQueue(new RoomPropertyMessage
+                {
+                    Property = RoomPropertyType.FLOOR,
+                    Value = RoomDetails.PaintFloor.ToString()
+                });
+            }
+
+            if (RoomDetails.PaintLandscape != 0.0)
+            {
+                player.Session.SendQueue(new RoomPropertyMessage
+                {
+                    Property = RoomPropertyType.LANDSCAPE,
+                    Value = RoomDetails.PaintLandscape.ToString()
+                });
+            }
 
             // would be nice to send this from the navigator so we aren't duplicating code
             player.Session.SendQueue(new GetGuestRoomResultMessage
@@ -177,18 +208,28 @@ namespace Turbo.Rooms
 
             RoomFurnitureManager.SendFurnitureToSession(player.Session);
 
-            var roomObject = RoomUserManager.EnterRoom(player, location);
-
-            if (roomObject != null) RoomSecurityManager.RefreshControllerLevel(roomObject);
+            AddObserver(player.Session);
 
             // apply muted from security
 
-            AddObserver(player.Session);
+            var roomObject = RoomUserManager.EnterRoom(player, location);
 
-            RoomWiredManager.ProcessTriggers<FurnitureWiredTriggerEnterRoomLogic>(new WiredArguments
+            if (roomObject != null)
             {
-                UserObject = roomObject
-            });
+                RoomSecurityManager.RefreshControllerLevel(roomObject);
+
+                var message = _eventHub.Dispatch(new AvatarEnterRoomEvent
+                {
+                    Avatar = roomObject
+                });
+
+                if (message.IsCancelled)
+                {
+                    roomObject.Dispose();
+
+                    return;
+                }
+            }
         }
 
         public void AddObserver(ISession session)

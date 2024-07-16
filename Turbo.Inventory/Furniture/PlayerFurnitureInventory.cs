@@ -46,7 +46,7 @@ namespace Turbo.Inventory.Furniture
             Furniture.PlayerFurniture.Clear();
         }
 
-        public IPlayerFurniture GetFurniture(int id)
+        public IPlayerFurniture? GetFurniture(int id)
         {
             return Furniture.GetPlayerFurniture(id);
         }
@@ -109,7 +109,7 @@ namespace Turbo.Inventory.Furniture
 
         public void SendFurnitureToSession(ISession session)
         {
-            List<IPlayerFurniture> playerFurnitures = new();
+            List<IPlayerFurniture> playerFurnitures = [];
 
             var totalFragments = (int)Math.Ceiling((double)Furniture.PlayerFurniture.Count / DefaultSettings.FurniPerFragment);
 
@@ -153,17 +153,11 @@ namespace Turbo.Inventory.Furniture
         {
             Furniture.PlayerFurniture.Clear();
 
-            List<FurnitureEntity> entities = new();
+            using var scope = _serviceScopeFactory.CreateScope();
 
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+            var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
 
-                if (furnitureRepository != null)
-                {
-                    entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
-                }
-            }
+            var entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
 
             if (entities != null)
             {

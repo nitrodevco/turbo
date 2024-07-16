@@ -8,16 +8,10 @@ using Turbo.Core.Database.Dtos;
 
 namespace Turbo.Database.Repositories.Player
 {
-    public class PlayerRepository : IPlayerRepository
+    public class PlayerRepository(IEmulatorContext _context) : IPlayerRepository
     {
-        private readonly IEmulatorContext _context;
-
-        public PlayerRepository(IEmulatorContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<PlayerEntity> FindAsync(int id) => await _context.Players.FindAsync(id);
+        public async Task<PlayerEntity> FindAsync(int id) => await _context.Players
+            .FindAsync(id);
 
         public async Task<PlayerUsernameDto> FindUsernameAsync(int id) => await _context.Players
             .Where(player => id == player.Id)

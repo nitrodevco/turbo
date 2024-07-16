@@ -10,25 +10,21 @@ using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
-using Turbo.Core.Game.Rooms.Object.Logic.Wired;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Storage;
 
 namespace Turbo.Furniture
 {
-    public class RoomFloorFurniture : RoomFurniture, IRoomFloorFurniture
+    public class RoomFloorFurniture(
+        ILogger<IRoomFloorFurniture> _logger,
+        IRoomFurnitureManager _roomFurnitureManager,
+        IFurnitureManager _furnitureManager,
+        FurnitureEntity _furnitureEntity,
+        IFurnitureDefinition _furnitureDefinition,
+        IStorageQueue _storageQueue) : RoomFurniture(_logger, _roomFurnitureManager, _furnitureManager, _furnitureEntity, _furnitureDefinition), IRoomFloorFurniture
     {
         public IRoomObjectFloor RoomObject { get; private set; }
-
-        public RoomFloorFurniture(
-            ILogger<IRoomFloorFurniture> logger,
-            IRoomFurnitureManager roomFurnitureManager,
-            IFurnitureManager furnitureManager,
-            FurnitureEntity furnitureEntity,
-            IFurnitureDefinition furnitureDefinition) : base(logger, roomFurnitureManager, furnitureManager, furnitureEntity, furnitureDefinition)
-        {
-
-        }
 
         protected override void OnDispose()
         {
@@ -48,15 +44,9 @@ namespace Turbo.Furniture
                 {
                     FurnitureEntity.StuffData = JsonSerializer.Serialize(RoomObject.Logic.StuffData, RoomObject.Logic.StuffData.GetType());
                 }
-
-                if (RoomObject.Logic is IFurnitureWiredLogic wiredLogic)
-                {
-                    if (wiredLogic.WiredData != null)
-                    {
-                        FurnitureEntity.WiredData = JsonSerializer.Serialize(wiredLogic.WiredData, wiredLogic.WiredData.GetType());
-                    }
-                }
             }
+
+            _storageQueue.Add(FurnitureEntity);
         }
 
         public bool SetRoomObject(IRoomObjectFloor roomObject)
@@ -76,24 +66,18 @@ namespace Turbo.Furniture
 
             if (!await RoomObject.Logic.Setup(FurnitureDefinition, FurnitureEntity.StuffData)) return false;
 
-            if (RoomObject.Logic is IFurnitureWiredLogic wiredLogic)
-            {
-                wiredLogic.SetupWiredData(FurnitureEntity.WiredData);
-            }
-
             return true;
         }
 
         public void ClearRoomObject()
         {
-            if (RoomObject != null)
-            {
-                Save();
+            if (RoomObject == null) return;
 
-                RoomObject.Dispose();
+            Save();
 
-                RoomObject = null;
-            }
+            RoomObject.Dispose();
+
+            RoomObject = null;
         }
 
         public async Task<TeleportPairingDto> GetTeleportPairing()

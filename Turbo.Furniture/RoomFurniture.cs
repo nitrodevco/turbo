@@ -10,40 +10,24 @@ using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
-using Turbo.Core.Game.Rooms.Object.Logic.Wired;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Core.Game.Players;
 
 namespace Turbo.Furniture
 {
-    public abstract class RoomFurniture : IRoomFurniture
+    public abstract class RoomFurniture(
+        ILogger<IRoomFurniture> _logger,
+        IRoomFurnitureManager _roomFurnitureManager,
+        IFurnitureManager _furnitureManager,
+        FurnitureEntity _furnitureEntity,
+        IFurnitureDefinition _furnitureDefinition) : IRoomFurniture
     {
-        public ILogger<IRoomFurniture> Logger { get; private set; }
-
-        protected readonly IRoomFurnitureManager _roomFurnitureManager;
-        protected readonly IFurnitureManager _furnitureManager;
-
-        public FurnitureEntity FurnitureEntity { get; private set; }
-        public IFurnitureDefinition FurnitureDefinition { get; private set; }
+        public FurnitureEntity FurnitureEntity { get; } = _furnitureEntity;
+        public IFurnitureDefinition FurnitureDefinition { get; } = _furnitureDefinition;
         public string PlayerName { get; private set; }
 
         private IRoom _room;
         private bool _isDisposing { get; set; }
-
-        public RoomFurniture(
-            ILogger<IRoomFurniture> logger,
-            IRoomFurnitureManager roomFurnitureManager,
-            IFurnitureManager furnitureManager,
-            FurnitureEntity furnitureEntity,
-            IFurnitureDefinition furnitureDefinition)
-        {
-            Logger = logger;
-            _roomFurnitureManager = roomFurnitureManager;
-            _furnitureManager = furnitureManager;
-            FurnitureEntity = furnitureEntity;
-
-            FurnitureDefinition = furnitureDefinition;
-        }
 
         public void Dispose()
         {
@@ -52,8 +36,6 @@ namespace Turbo.Furniture
             _isDisposing = true;
 
             OnDispose();
-
-            if (FurnitureEntity != null) _furnitureManager.StorageQueue.SaveNow(FurnitureEntity);
         }
 
         protected abstract void OnDispose();
@@ -61,43 +43,31 @@ namespace Turbo.Furniture
         public void Save()
         {
             OnSave();
-
-            _furnitureManager.StorageQueue.Add(FurnitureEntity);
         }
 
         protected abstract void OnSave();
 
-        public bool SetRoom(IRoom room)
+        public void SetRoom(IRoom room)
         {
             if (room == null)
             {
+                _room = null;
+
                 if (FurnitureEntity.RoomEntityId != null)
                 {
                     FurnitureEntity.RoomEntityId = null;
 
                     Save();
                 }
-            }
-            else
-            {
-                _room = room;
 
-                if (FurnitureEntity.RoomEntityId != room.Id)
-                {
-                    FurnitureEntity.RoomEntityId = room.Id;
-
-                    Save();
-                }
+                return;
             }
 
-            return true;
-        }
+            _room = room;
 
-        public void ClearRoom()
-        {
-            if (FurnitureEntity.RoomEntityId == null) return;
+            if (FurnitureEntity.RoomEntityId == room.Id) return;
 
-            FurnitureEntity.RoomEntityId = null;
+            FurnitureEntity.RoomEntityId = room.Id;
 
             Save();
         }
@@ -126,11 +96,8 @@ namespace Turbo.Furniture
         }
 
         public int Id => FurnitureEntity.Id;
-
         public RoomObjectHolderType Type => RoomObjectHolderType.Furniture;
-
         public string LogicType => FurnitureDefinition.Logic;
-
         public int PlayerId => FurnitureEntity.PlayerEntityId;
     }
 }

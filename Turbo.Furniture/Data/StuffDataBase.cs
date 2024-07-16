@@ -8,12 +8,10 @@ namespace Turbo.Furniture.Data
     {
         [JsonIgnore]
         public int Flags { get; set; }
+        [JsonPropertyName("U_N")]
         public int UniqueNumber { get; set; }
+        [JsonPropertyName("U_S")]
         public int UniqueSeries { get; set; }
-
-        public StuffDataBase()
-        {
-        }
 
         public virtual string GetLegacyString()
         {

@@ -11,44 +11,27 @@ using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
 using Turbo.Rooms.Factories;
 using Turbo.Rooms.Mapping;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Turbo.Rooms
 {
-    public class RoomManager : Component, IRoomManager
+    public class RoomManager(
+        ILogger<IRoomManager> _logger,
+        IRoomFactory _roomFactory,
+        IServiceScopeFactory _serviceScopeFactory
+    ) : Component, IRoomManager
     {
         private static readonly SemaphoreSlim _roomLock = new(1, 1);
-
-        private readonly ILogger<IRoomManager> _logger;
-        private readonly IStorageQueue _storageQueue;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
-        private readonly IRoomFactory _roomFactory;
-
-        private readonly ConcurrentDictionary<int, IRoom> _rooms;
-        private readonly IDictionary<int, IRoomModel> _models;
+        private readonly ConcurrentDictionary<int, IRoom> _rooms = new();
+        private readonly IDictionary<int, IRoomModel> _models = new Dictionary<int, IRoomModel>();
 
         private int _remainingTryDisposeTicks = DefaultSettings.RoomTryDisposeTicks;
-
-        public RoomManager(
-            ILogger<IRoomManager> logger,
-            IStorageQueue storageQueue,
-            IServiceScopeFactory scopeFactory,
-            IRoomFactory roomFactory)
-        {
-            _logger = logger;
-            _storageQueue = storageQueue;
-            _serviceScopeFactory = scopeFactory;
-            _roomFactory = roomFactory;
-
-            _rooms = new ConcurrentDictionary<int, IRoom>();
-            _models = new Dictionary<int, IRoomModel>();
-        }
 
         protected override async Task OnInit()
         {
@@ -87,25 +70,18 @@ namespace Turbo.Rooms
 
                 if (room != null) return room;
 
-                RoomEntity roomEntity = null;
-                string playerName = null;
+                using var scope = _serviceScopeFactory.CreateScope();
 
-                using (var scope = _serviceScopeFactory.CreateScope())
-                {
-                    var roomRepository = scope.ServiceProvider.GetService<IRoomRepository>();
-                    roomEntity = await roomRepository.FindAsync(id);
+                var roomRepository = scope.ServiceProvider.GetService<IRoomRepository>();
+                var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
 
-                    if (roomEntity == null) return null;
+                var roomEntity = await roomRepository.FindAsync(id);
 
-                    var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-                    var dto = await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId);
-
-                    if (dto != null) playerName = dto.Name;
-                }
+                if (roomEntity == null) return null;
 
                 room = _roomFactory.Create(roomEntity);
 
-                room.RoomDetails.PlayerName = playerName;
+                room.RoomDetails.PlayerName = (await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId))?.Name ?? "";
 
                 return await AddRoom(room);
             }
@@ -166,7 +142,7 @@ namespace Turbo.Rooms
             }
         }
 
-        public IRoomModel GetModel(int id)
+        public async Task<IRoomModel> GetModel(int id)
         {
             if (_models.TryGetValue(id, out IRoomModel model))
             {
@@ -194,12 +170,9 @@ namespace Turbo.Rooms
         {
             _models.Clear();
 
-            List<RoomModelEntity> entities;
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                var roomModelRepository = scope.ServiceProvider.GetService<IRoomModelRepository>();
-                entities = await roomModelRepository.FindAllAsync();
-            }
+            using var scope = _serviceScopeFactory.CreateScope();
+            var roomModelRepository = scope.ServiceProvider.GetService<IRoomModelRepository>();
+            var entities = await roomModelRepository.FindAllAsync();
 
             entities.ForEach(x =>
             {
@@ -224,7 +197,5 @@ namespace Turbo.Rooms
 
             return Task.WhenAll(_rooms.Values.Select(room => Task.Run(async () => await room.Cycle())));
         }
-
-        public IStorageQueue StorageQueue => _storageQueue;
     }
 }
