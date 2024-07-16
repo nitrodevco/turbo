@@ -107,7 +107,7 @@ namespace Turbo.Rooms.PathFinder
 
                     int gCost;
 
-                    if (_heavyDiagonals && (walkingPoint.X != 0 && walkingPoint.Y != 0))
+                    if (_heavyDiagonals && walkingPoint.X != 0 && walkingPoint.Y != 0)
                     {
                         gCost = currentNode.G + (int)(_roomMap.Map[tempNode.Location.X, tempNode.Location.Y] * 2.41);
                     }
@@ -156,18 +156,21 @@ namespace Turbo.Rooms.PathFinder
                             tempNode.H = _heuristicEstimate * (Math.Abs(tempNode.Location.X - location.X) + Math.Abs(tempNode.Location.Y - location.Y));
                             break;
                         case HeuristicFormula.MaxDXDY:
-                            tempNode.H = _heuristicEstimate * (Math.Max(Math.Abs(tempNode.Location.X - location.X), Math.Abs(tempNode.Location.Y - location.Y)));
+                            tempNode.H = _heuristicEstimate * Math.Max(Math.Abs(tempNode.Location.X - location.X), Math.Abs(tempNode.Location.Y - location.Y));
                             break;
                         case HeuristicFormula.DiagonalShortCut:
                             int h_diagonal = Math.Min(Math.Abs(tempNode.Location.X - location.X), Math.Abs(tempNode.Location.Y - location.Y));
-                            int h_straight = (Math.Abs(tempNode.Location.X - location.X) + Math.Abs(tempNode.Location.Y - location.Y));
-                            tempNode.H = (_heuristicEstimate * 2) * h_diagonal + _heuristicEstimate * (h_straight - 2 * h_diagonal);
+                            int h_straight = Math.Abs(tempNode.Location.X - location.X) + Math.Abs(tempNode.Location.Y - location.Y);
+                            tempNode.H = _heuristicEstimate * 2 * h_diagonal + _heuristicEstimate * (h_straight - 2 * h_diagonal);
                             break;
                         case HeuristicFormula.Euclidean:
-                            tempNode.H = (int)(_heuristicEstimate * Math.Sqrt(Math.Pow((tempNode.Location.X - location.X), 2) + Math.Pow((tempNode.Location.Y - location.Y), 2)));
+                            tempNode.H = (int)(_heuristicEstimate * Math.Sqrt(Math.Pow(tempNode.Location.X - location.X, 2) + Math.Pow(tempNode.Location.Y - location.Y, 2)));
                             break;
                         case HeuristicFormula.EuclideanNoSQR:
-                            tempNode.H = (int)(_heuristicEstimate * (Math.Pow((tempNode.Location.X - location.X), 2) + Math.Pow((tempNode.Location.Y - location.Y), 2)));
+                            tempNode.H = (int)(_heuristicEstimate * (Math.Pow(tempNode.Location.X - location.X, 2) + Math.Pow(tempNode.Location.Y - location.Y, 2)));
+                            break;
+                        case HeuristicFormula.ReverseDijkstra:
+                            tempNode.H = 0;
                             break;
                     }
 
@@ -202,7 +205,7 @@ namespace Turbo.Rooms.PathFinder
             IRoomTile currentTile = _roomMap.GetValidTile(avatar, location, false, blockingDisabled);
             IRoomTile nextTile = _roomMap.GetValidTile(avatar, nextLocation, isGoal, blockingDisabled);
 
-            if (((currentTile == null) || (nextTile == null)) || (nextTile.IsDoor && !isGoal)) return false;
+            if ((currentTile == null) || (nextTile == null) || (nextTile.IsDoor && !isGoal)) return false;
 
             double currentHeight = currentTile.GetWalkingHeight();
             double nextHeight = nextTile.GetWalkingHeight();
@@ -211,8 +214,8 @@ namespace Turbo.Rooms.PathFinder
 
             if (DefaultSettings.PathingAllowsDiagonals && !location.Compare(nextLocation))
             {
-                bool isSideValid = (_roomMap.GetValidDiagonalTile(avatar, new Point(nextLocation.X, location.Y)) != null);
-                bool isOtherSideValid = (_roomMap.GetValidDiagonalTile(avatar, new Point(location.X, nextLocation.Y)) != null);
+                bool isSideValid = _roomMap.GetValidDiagonalTile(avatar, new Point(nextLocation.X, location.Y)) != null;
+                bool isOtherSideValid = _roomMap.GetValidDiagonalTile(avatar, new Point(location.X, nextLocation.Y)) != null;
 
                 if (!isSideValid && !isOtherSideValid) return false;
             }

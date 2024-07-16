@@ -21,6 +21,9 @@ namespace Turbo.Rooms.Mapping
         public List<IRoomObjectAvatar> Avatars { get; private set; }
         public List<IRoomObjectFloor> Furniture { get; private set; }
 
+        private object _avatarLock = new();
+        private object _furnitureLock = new();
+
         public bool IsDoor { get; set; }
         public bool HasStackHelper { get; private set; }
 
@@ -51,16 +54,22 @@ namespace Turbo.Rooms.Mapping
             {
                 if (IsDoor) return;
 
-                if (!Avatars.Contains(avatarObject)) Avatars.Add(avatarObject);
+                lock (_avatarLock)
+                {
+                    if (!Avatars.Contains(avatarObject)) Avatars.Add(avatarObject);
+                }
 
                 return;
             }
 
             if (roomObject is IRoomObjectFloor floorObject)
             {
-                if (!Furniture.Contains(floorObject)) Furniture.Add(floorObject);
+                lock (_furnitureLock)
+                {
+                    if (!Furniture.Contains(floorObject)) Furniture.Add(floorObject);
 
-                ResetHighestObject();
+                    ResetHighestObject();
+                }
 
                 return;
             }
@@ -72,16 +81,22 @@ namespace Turbo.Rooms.Mapping
 
             if (roomObject is IRoomObjectAvatar avatarObject)
             {
-                if (Avatars.Contains(avatarObject)) Avatars.Remove(avatarObject);
+                lock (_avatarLock)
+                {
+                    Avatars.Remove(avatarObject);
+                }
 
                 return;
             }
 
             if (roomObject is IRoomObjectFloor floorObject)
             {
-                if (Furniture.Contains(floorObject)) Furniture.Remove(floorObject);
+                lock (_furnitureLock)
+                {
+                    Furniture.Remove(floorObject);
 
-                ResetHighestObject();
+                    ResetHighestObject();
+                }
 
                 return;
             }
