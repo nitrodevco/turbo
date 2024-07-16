@@ -46,6 +46,7 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
             _messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
             _messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
+            _messageHub.Subscribe<ShoutMessage>(this, OnShoutMessage);
         }
 
         protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
@@ -173,6 +174,11 @@ namespace Turbo.Main.PacketHandlers
         protected virtual void OnChatMessage(ChatMessage message, ISession session)
         {
             session.Player?.RoomObject?.Room?.RoomChatManager?.TryRoomChat((uint)session.Player.Id, message.Text, "normal");
+        }
+        
+        protected virtual void OnShoutMessage(ShoutMessage message, ISession session)
+        {
+            session.Player?.RoomObject?.Room?.RoomChatManager?.TryRoomChat((uint)session.Player.Id, message.Text, "normal", true);
         }
         
         protected virtual void OnWhisperMessage(WhisperMessage message, ISession session)

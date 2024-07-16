@@ -221,5 +221,23 @@ namespace Turbo.Rooms.Object.Logic.Avatar
             recipient?.Session.Send(whisperMessage);
             player.Session.Send(whisperMessage);
         }
+        
+        public virtual void Shout(string text)
+        {
+            Idle(false);
+
+            if (RoomObject.RoomObjectHolder is not IPlayer player) return;
+            var styleId = player?.PlayerSettings.ChatStyle ?? 0;
+        
+            RoomObject.Room.SendComposer(new ShoutMessage
+            {
+                ObjectId = RoomObject.Id,
+                Text = text,
+                Gesture = 0,
+                StyleId = styleId,
+                Links = new List<string>(),
+                AnimationLength = 0
+            });
+        }
     }
 }

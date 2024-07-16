@@ -29,23 +29,22 @@ namespace Turbo.Rooms.Managers
         
         private ConcurrentDictionary<int, FloodControlData> _playerFloodData = new();
 
-
         public void SetRoom(IRoom room)
         {
             _room = room ?? throw new ArgumentNullException(nameof(room));
         }
 
-        public async Task TryRoomChat(uint userId, string text, string type)
+        public async Task TryRoomChat(uint userId, string text, string type, bool isShout = false)
         {
-            await ProcessChat(userId, text, type, false, null);
+            await ProcessChat(userId, text, type, isWhisper: false, recipientId: null, isShout: isShout);
         }
 
         public async Task TryWhisperChat(uint userId, int recipientId, string text, string type)
         {
-            await ProcessChat(userId, text, type, true, recipientId);
+            await ProcessChat(userId, text, type, isWhisper: true, recipientId: recipientId);
         }
 
-        private async Task ProcessChat(uint userId, string text, string type, bool isWhisper, int? recipientId)
+        private async Task ProcessChat(uint userId, string text, string type, bool isWhisper, int? recipientId, bool isShout = false)
         {
             if (_room == null)
             {
@@ -69,7 +68,7 @@ namespace Turbo.Rooms.Managers
 
             if (_room.RoomSecurityManager.TryGetPlayerMuteRemainingTime(player, out var remainingMuteTime))
             {
-                player.Session.Send(new RemaningMutePeriodMessage() { MuteSecondsRemaining = (int)remainingMuteTime.TotalSeconds });
+                await player.Session.Send(new RemaningMutePeriodMessage { MuteSecondsRemaining = (int)remainingMuteTime.TotalSeconds });
                 _logger.LogWarning($"Player with userId: {userId} is muted for another {remainingMuteTime.TotalSeconds} seconds and cannot send messages.");
                 return;
             }
@@ -77,10 +76,10 @@ namespace Turbo.Rooms.Managers
             if (IsPlayerFlooding(player))
             {
                 _logger.LogWarning($"Player with userId: {userId} is flooding the room.");
-                player.Session.Send(new FloodControlMessage { Seconds = _config.FloodMuteDurationSeconds });
+                await player.Session.Send(new FloodControlMessage { Seconds = _config.FloodMuteDurationSeconds });
                 return;
             }
-            
+
             var roomObject = player.RoomObject;
 
             if (roomObject == null || roomObject.Room != _room)
@@ -92,7 +91,7 @@ namespace Turbo.Rooms.Managers
             if (roomObject.Logic is PlayerLogic playerLogic)
             {
                 _logger.LogInformation($"Player with userId: {userId} sending chat message.");
-                
+
                 if (isWhisper && recipientId.HasValue)
                 {
                     var recipientPlayer = _playerManager.GetPlayerById(recipientId.Value);
@@ -100,6 +99,10 @@ namespace Turbo.Rooms.Managers
                     {
                         playerLogic.Whisper(text, recipientPlayer);
                     }
+                }
+                else if (isShout)
+                {
+                    playerLogic.Shout(text);
                 }
                 else
                 {
@@ -121,19 +124,17 @@ namespace Turbo.Rooms.Managers
                 _logger.LogWarning($"PlayerLogic not found for player with userId: {userId}.");
             }
         }
-        
+
         private bool IsPlayerFlooding(IPlayer player)
         {
             var now = DateTime.UtcNow;
 
-            if (!_playerFloodData.TryGetValue(player.Id, out FloodControlData value))
+            if (!_playerFloodData.TryGetValue(player.Id, out var floodData))
             {
-                value = new FloodControlData { MessageCount = 1, FirstMessageTime = now };
-                _playerFloodData[player.Id] = value;
+                floodData = new FloodControlData { MessageCount = 1, FirstMessageTime = now };
+                _playerFloodData[player.Id] = floodData;
                 return false;
             }
-
-            var floodData = value;
 
             if ((now - floodData.FirstMessageTime).TotalSeconds > _config.FloodTimeFrameSeconds)
             {
