@@ -10,9 +10,11 @@ using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Action;
 using Turbo.Packets.Outgoing.Room.Chat;
+using Turbo.Rooms.Object.Attributes;
 
 namespace Turbo.Rooms.Object.Logic.Avatar
 {
+    [RoomObjectLogic("user")]
     public class PlayerLogic : AvatarLogic
     {
         public bool IsIdle { get; private set; }

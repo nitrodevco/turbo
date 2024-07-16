@@ -36,8 +36,5 @@ namespace Turbo.Core.Game.Rooms.Mapping
         public bool CanSit(IRoomObjectAvatar roomObject = null);
         public bool CanLay(IRoomObjectAvatar roomObject = null);
         public bool CanStack();
-        public void BeforeStep(IRoomObjectAvatar avatar);
-        public void OnStep(IRoomObjectAvatar avatar);
-
     }
 }

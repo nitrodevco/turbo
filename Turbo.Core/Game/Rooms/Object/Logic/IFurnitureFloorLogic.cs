@@ -10,7 +10,6 @@ namespace Turbo.Core.Game.Rooms.Object.Logic
 
         public void OnEnter(IRoomObjectAvatar avatar);
         public void OnLeave(IRoomObjectAvatar avatar);
-        public void BeforeStep(IRoomObjectAvatar avatar);
         public void OnStep(IRoomObjectAvatar avatar);
         public void OnStop(IRoomObjectAvatar avatar);
         public bool CanStack();

@@ -10,11 +10,13 @@ using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Events.Game.Rooms.Avatar;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Rooms.Object.Attributes;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
+    [RoomObjectLogic("default_floor")]
     public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFurnitureFloorLogic
     {
         public IRoomObjectFloor RoomObject { get; private set; }
@@ -101,14 +103,13 @@ namespace Turbo.Rooms.Object.Logic.Furniture
             });
         }
 
-        public virtual void BeforeStep(IRoomObjectAvatar roomObject)
-        {
-            return;
-        }
-
         public virtual void OnStep(IRoomObjectAvatar roomObject)
         {
-            return;
+            EventHub?.Dispatch(new AvatarStepFloorFurnitureEvent
+            {
+                AvatarObject = roomObject,
+                FloorObject = RoomObject
+            });
         }
 
         public virtual void OnStop(IRoomObjectAvatar avatar)
@@ -141,7 +142,7 @@ namespace Turbo.Rooms.Object.Logic.Furniture
 
             if (message != null)
             {
-                if(message.IsCancelled) return;
+                if (message.IsCancelled) return;
             }
 
             base.OnInteract(avatar, param);

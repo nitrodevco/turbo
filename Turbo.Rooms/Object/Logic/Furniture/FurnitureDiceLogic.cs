@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game;
+using Turbo.Rooms.Object.Attributes;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
+    [RoomObjectLogic("dice")]
     public class FurnitureDiceLogic : FurnitureFloorLogic
     {
         private static readonly int[] _diceNumbers = new int[] { 1, 2, 3, 4, 5, 6 };

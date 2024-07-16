@@ -10,6 +10,7 @@ using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
+using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Room;
 using Turbo.Events.Game.Rooms.Avatar;
@@ -49,11 +50,12 @@ namespace Turbo.Rooms
             IRoomFurnitureFactory roomFurnitureFactory,
             IRoomUserFactory roomUserFactory,
             IChatFactory chatFactory,
-            ITurboEventHub eventHub)
+            ITurboEventHub eventHub,
+            IStorageQueue _storageQueue)
         {
             RoomManager = roomManager;
             Logger = logger;
-            RoomDetails = new RoomDetails(this, roomEntity);
+            RoomDetails = new RoomDetails(this, roomEntity, _storageQueue);
 
             RoomCycleManager = new RoomCycleManager(this);
             RoomSecurityManager = roomSecurityFactory.Create(this);
@@ -62,10 +64,6 @@ namespace Turbo.Rooms
             RoomChatManager = chatFactory.Create(this);
 
             _eventHub = eventHub;
-
-            RoomCycleManager.AddCycle(new RoomObjectCycle(this));
-            RoomCycleManager.AddCycle(new RoomRollerCycle(this));
-            RoomCycleManager.AddCycle(new RoomUserStatusCycle(this));
         }
 
         protected override async Task OnInit()
@@ -75,6 +73,10 @@ namespace Turbo.Rooms
             await RoomSecurityManager.InitAsync();
             await RoomFurnitureManager.InitAsync();
             await RoomUserManager.InitAsync();
+
+            RoomCycleManager.AddCycle(new RoomObjectCycle(this));
+            RoomCycleManager.AddCycle(new RoomRollerCycle(this));
+            RoomCycleManager.AddCycle(new RoomUserStatusCycle(this));
 
             RoomCycleManager.Start();
         }
@@ -161,7 +163,7 @@ namespace Turbo.Rooms
                 WallThickness = (int)RoomDetails.ThicknessWall
             });
 
-            if(RoomDetails.PaintWall != 0.0)
+            if (RoomDetails.PaintWall != 0.0)
             {
                 player.Session.SendQueue(new RoomPropertyMessage
                 {

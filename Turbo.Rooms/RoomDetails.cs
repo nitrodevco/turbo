@@ -5,6 +5,7 @@ using Turbo.Core.Game;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Room;
 using Turbo.Packets.Incoming.RoomSettings;
 using Turbo.Packets.Outgoing.Navigator;
@@ -14,7 +15,10 @@ using Turbo.Packets.Outgoing.RoomSettings;
 
 namespace Turbo.Rooms
 {
-    public class RoomDetails(IRoom _room, RoomEntity _roomEntity) : IRoomDetails
+    public class RoomDetails(
+        IRoom _room,
+        RoomEntity _roomEntity,
+        IStorageQueue _storageQueue) : IRoomDetails
     {
         public bool UpdateSettingsForPlayer(IPlayer player, IRoomSettings message)
         {
@@ -24,11 +28,12 @@ namespace Turbo.Rooms
             {
                 if (DefaultSettings.RoomNameRegex.IsMatch(message.Name))
                 {
-                    // check word filter too
+                    // TODO pass this through the word filter
                     _roomEntity.Name = message.Name;
                 }
                 else
                 {
+                    // TODO if the wordfilter doesnt like the name, send BadName
                     SendSettingsSaveErrorToPlayer(player, RoomSettingsErrorType.InvalidName);
 
                     return false;
@@ -39,11 +44,12 @@ namespace Turbo.Rooms
             {
                 if (DefaultSettings.RoomDescriptionRegex.IsMatch(message.Name))
                 {
-                    // check word filter too
+                    // TODO pass this through the word filter
                     _roomEntity.Description = message.Description;
                 }
                 else
                 {
+                    // TODO if the wordfilter doesnt like the description, send BadDescription
                     SendSettingsSaveErrorToPlayer(player, RoomSettingsErrorType.InvalidDescription);
 
                     return false;
@@ -95,6 +101,8 @@ namespace Turbo.Rooms
             UpdateRoomVisualization(message.HideWalls, message.WallThickness, message.FloorThickness);
             UpdateRoomModeration(message.MuteType, message.KickType, message.BanType);
             UpdateRoomChat(message.ChatModeType, message.ChatWeightType, message.ChatSpeed, message.ChatDistance, message.ChatProtectionType);
+
+            _storageQueue.Add(_roomEntity);
 
             _room.SendComposer(new RoomInfoUpdatedMessage
             {
@@ -238,6 +246,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.Name = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -247,6 +256,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.Description = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -263,6 +273,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.RoomState = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -272,6 +283,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.Password = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -285,6 +297,7 @@ namespace Turbo.Rooms
                 if (_roomEntity.UsersNow == value) return;
 
                 _roomEntity.UsersNow = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -294,6 +307,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.UsersMax = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -303,6 +317,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.PaintWall = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -312,6 +327,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.PaintFloor = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -321,6 +337,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.PaintLandscape = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -330,6 +347,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.WallHeight = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -339,6 +357,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.HideWalls = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -348,6 +367,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.ThicknessWall = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -357,6 +377,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.ThicknessFloor = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -366,6 +387,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.AllowWalkThrough = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -375,6 +397,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.AllowEditing = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -384,6 +407,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.AllowPets = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -393,6 +417,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.AllowPetsEat = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -402,6 +427,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.TradeType = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -411,6 +437,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.MuteType = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -420,6 +447,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.KickType = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -429,6 +457,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.BanType = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -438,6 +467,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.ChatModeType = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -447,6 +477,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.ChatWeightType = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -456,6 +487,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.ChatSpeedType = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -465,6 +497,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.ChatProtectionType = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -474,6 +507,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.ChatDistance = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
 
@@ -483,6 +517,7 @@ namespace Turbo.Rooms
             set
             {
                 _roomEntity.LastActive = value;
+                _storageQueue.Add(_roomEntity);
             }
         }
     }

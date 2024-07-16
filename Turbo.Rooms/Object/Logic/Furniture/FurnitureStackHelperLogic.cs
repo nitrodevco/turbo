@@ -7,9 +7,11 @@ using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Packets.Outgoing.Room.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Rooms.Object.Attributes;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
+    [RoomObjectLogic("stack_helper")]
     public class FurnitureStackHelperLogic : FurnitureFloorLogic
     {
         private void ResetHeight()

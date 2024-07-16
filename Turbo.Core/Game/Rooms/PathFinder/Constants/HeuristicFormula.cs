@@ -12,6 +12,7 @@ namespace Turbo.Core.Game.Rooms.PathFinder.Constants
         MaxDXDY,
         DiagonalShortCut,
         Euclidean,
-        EuclideanNoSQR
+        EuclideanNoSQR,
+        ReverseDijkstra
     }
 }

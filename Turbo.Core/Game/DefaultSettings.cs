@@ -11,7 +11,7 @@ namespace Turbo.Core.Game
     {
         public static int GameCycleMs = 500;
         public static int StoreCycleMs = 2000;
-        public static HeuristicFormula PathingFormula = HeuristicFormula.Manhattan;
+        public static HeuristicFormula PathingFormula = HeuristicFormula.ReverseDijkstra;
         public static bool PathingAllowsDiagonals = true;
         public static double MaximumStepHeight = 2.0;
         public static double MaximumFurnitureHeight = 40.0;

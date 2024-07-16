@@ -9,9 +9,11 @@ using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Rooms.Object.Attributes;
 
 namespace Turbo.Rooms.Object.Logic.Furniture
 {
+    [RoomObjectLogic("teleport")]
     public class FurnitureTeleportLogic : FurnitureFloorLogic
     {
         private static readonly int _closedState = 0;
