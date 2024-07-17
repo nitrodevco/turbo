@@ -10,7 +10,6 @@ using Turbo.Core.Security;
 using Turbo.Events.Game.Security;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
-using Turbo.Packets.Outgoing.Navigator;
 
 namespace Turbo.Main.PacketHandlers
 {

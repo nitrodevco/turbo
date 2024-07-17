@@ -8,12 +8,12 @@ namespace Turbo.EventHandlers
 {
     public class EventHandlerManager : IEventHandlerManager
     {
-        private readonly ITestEventHandler _testEventHandler;
+        private readonly IEventHandler _eventHandler;
 
         public EventHandlerManager(
-            ITestEventHandler testEventHandler)
+            IEventHandler eventHandler)
         {
-            _testEventHandler = testEventHandler;
+            _eventHandler = eventHandler;
         }
     }
 }
