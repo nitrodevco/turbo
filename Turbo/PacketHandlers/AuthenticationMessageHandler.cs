@@ -35,25 +35,38 @@ namespace Turbo.Main.PacketHandlers
 
         public async Task OnSSOTicket(SSOTicketMessage message, ISession session)
         {
-            int userId = await _securityManager.GetPlayerIdFromTicket(message.SSO);
+            int userId = await GetUserIdFromTicket(message);
 
             if (userId <= 0)
             {
                 await session.DisposeAsync();
-
                 return;
             }
 
-            IPlayer player = await _playerManager.CreatePlayer(userId, session);
+            IPlayer player = await CreatePlayer(userId, session);
 
             if (player == null)
             {
                 await session.DisposeAsync();
-
                 return;
             }
 
-            // send required composers for hotel view
+            await SendRequiredComposersForHotelView(session);
+            await DispatchUserLoginEvent(player);
+        }
+
+        private async Task<int> GetUserIdFromTicket(SSOTicketMessage message)
+        {
+            return await _securityManager.GetPlayerIdFromTicket(message.SSO);
+        }
+
+        private async Task<IPlayer> CreatePlayer(int userId, ISession session)
+        {
+            return await _playerManager.CreatePlayer(userId, session);
+        }
+
+        private async Task SendRequiredComposersForHotelView(ISession session)
+        {
             await session.Send(new AuthenticationOKMessage());
             await session.Send(new UserRightsMessage
             {
@@ -61,18 +74,18 @@ namespace Turbo.Main.PacketHandlers
                 SecurityLevel = SecurityLevelEnum.Moderator,
                 IsAmbassador = false
             });
+        }
 
-
-            var messager = _eventHub.Dispatch(new UserLoginEvent
+        private async Task DispatchUserLoginEvent(IPlayer player)
+        {
+            var userLoginEvent = _eventHub.Dispatch(new UserLoginEvent
             {
                 Player = player
             });
-            
-            if (messager.IsCancelled)
+
+            if (userLoginEvent.IsCancelled)
             {
                 await player.DisposeAsync();
-
-                return;
             }
         }
 
