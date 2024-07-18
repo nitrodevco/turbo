@@ -9,6 +9,7 @@ namespace Turbo.Core.Storage
     {
         public void Add(object entity);
         public void AddAll(ICollection<object> entities);
+        public Task SaveEntityNow(object entity);
         public Task SaveNow();
     }
 }

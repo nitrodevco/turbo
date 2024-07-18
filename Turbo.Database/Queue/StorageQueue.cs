@@ -71,6 +71,29 @@ namespace Turbo.Database.Queue
             context.ChangeTracker.Clear();
         }
 
+        public async Task SaveEntityNow(object entity)
+        {
+            if (entity == null) return;
+
+            lock (_entityLock)
+            {
+                if (_entities.Contains(entity))
+                {
+                    _entities.Remove(entity);
+                }
+            }
+
+            using var scope = _serviceScopeFactory.CreateScope();
+
+            var context = scope.ServiceProvider.GetService<TurboContext>();
+
+            SaveEntity(entity, context);
+
+            await context.SaveChangesAsync();
+
+            context.ChangeTracker.Clear();
+        }
+
         private void SaveEntity(object entity, TurboContext context)
         {
             if (entity == null || context == null) return;
@@ -78,7 +101,7 @@ namespace Turbo.Database.Queue
             context.Attach(entity);
 
             var entry = context.Entry(entity);
-            
+
             var isTemporary = entry.Property("Id").IsTemporary;
 
             entry.State = isTemporary ? EntityState.Added : EntityState.Modified;
