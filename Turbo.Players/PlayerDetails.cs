@@ -15,6 +15,11 @@ namespace Turbo.Players
     {
         private int _cachedChatStyleId = -1;
 
+        public async Task DisposeAsync()
+        {
+            await _storageQueue.SaveEntityNow(_playerEntity);
+        }
+
         public int GetValidChatStyleId(int styleId)
         {
             return styleId;

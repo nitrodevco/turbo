@@ -7,6 +7,7 @@ using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 
 namespace Turbo.Players
@@ -14,8 +15,7 @@ namespace Turbo.Players
     public class Player(
         ILogger<IPlayer> _logger,
         IPlayerManager _playerManager,
-        IPlayerDetails _playerDetails,
-        IServiceScopeFactory _serviceScopeFactory) : Component, IPlayer
+        IPlayerDetails _playerDetails) : Component, IPlayer
     {
         public IPlayerManager PlayerManager { get; private set; } = _playerManager;
         public IPlayerDetails PlayerDetails { get; private set; } = _playerDetails;
@@ -47,6 +47,7 @@ namespace Turbo.Players
             await PlayerWallet.DisposeAsync();
             await PlayerInventory.DisposeAsync();
             await Session.DisposeAsync();
+            await PlayerDetails.DisposeAsync();
         }
 
         public bool SetSession(ISession session)
