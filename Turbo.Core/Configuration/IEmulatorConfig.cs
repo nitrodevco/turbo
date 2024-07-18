@@ -25,5 +25,9 @@ namespace Turbo.Core.Configuration
         public int NetworkWorkerThreads { get; }
 
         public List<string> PluginOrder { get; }
+        
+        public int FloodMessageLimit { get; }
+        public int FloodTimeFrameSeconds { get; }
+        public int FloodMuteDurationSeconds { get; }
     }
 }

@@ -8,6 +8,7 @@ using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.PacketHandlers;
@@ -17,6 +18,7 @@ using Turbo.Core.Security;
 using Turbo.Core.Storage;
 using Turbo.Database.Queue;
 using Turbo.Database.Repositories.Catalog;
+using Turbo.Database.Repositories.ChatStyles;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
@@ -44,6 +46,7 @@ using Turbo.Players.Factories;
 using Turbo.Plugins;
 using Turbo.Rooms;
 using Turbo.Rooms.Factories;
+using Turbo.Rooms.Managers;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic;
 using Turbo.Security;
@@ -112,6 +115,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
             services.AddSingleton<ICatalogFactory, CatalogFactory>();
+            services.AddSingleton<IRoomChatFactory, RoomChatFactory>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
@@ -126,12 +130,15 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IPlayerCurrencyRepository, PlayerCurrencyRepository>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
             services.AddScoped<IRoomBanRepository, RoomBanRepository>();
+            services.AddScoped<IRoomChatlogRepository, RoomChatlogRepository>();
             services.AddScoped<IRoomModelRepository, RoomModelRepository>();
             services.AddScoped<IRoomMuteRepository, RoomMuteRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IRoomRightRepository, RoomRightRepository>();
             services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
             services.AddScoped<INavigatorRepository, NavigatorRepository>();
+            services.AddScoped<IPlayerChatStyleRepository, PlayerChatStyleRepository>();
+            services.AddScoped<IPlayerChatStyleOwnedRepository, PlayerChatStyleOwnedRepository>();
         }
     }
 }

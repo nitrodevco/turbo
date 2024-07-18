@@ -14,14 +14,12 @@ namespace Turbo.Core.Game.Rooms.Managers
     public interface IRoomSecurityManager : IComponent
     {
         public IDictionary<int, DateTime> Bans { get; }
-        public IDictionary<int, DateTime> Mutes { get; }
         public IList<int> Rights { get; }
         public bool IsStrictOwner(IRoomManipulator manipulator);
         public bool IsStrictOwner(int? playerId);
         public bool IsOwner(IRoomManipulator manipulator);
         public bool IsOwner(int? playerId);
         public bool IsPlayerBanned(IPlayer player);
-        public bool IsPlayerMuted(IPlayer player);
         public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator);
         public void RefreshControllerLevel(IRoomObjectAvatar avatarObject);
         public void KickPlayer(IRoomManipulator manipulator, int playerId);

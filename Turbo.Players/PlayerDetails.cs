@@ -3,15 +3,39 @@ using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms.Object.Constants;
+using Turbo.Core.Storage;
 using Turbo.Database.Entities.Players;
 
 namespace Turbo.Players
 {
-    public class PlayerDetails(PlayerEntity _playerEntity) : IPlayerDetails
+    public class PlayerDetails(
+        IPlayerManager _playerManager,
+        PlayerEntity _playerEntity,
+        IStorageQueue _storageQueue) : IPlayerDetails
     {
+        private int _cachedChatStyleId = -1;
+
+        public int GetValidChatStyleId(int styleId)
+        {
+            return styleId;
+        }
+
+        public void SetPreferredChatStyleByClientId(int styleId)
+        {
+            ChatStyleId = GetValidChatStyleId(styleId);
+        }
+
         public int Id => _playerEntity.Id;
 
-        public string Name => _playerEntity.Name;
+        public string Name
+        {
+            get => _playerEntity.Name;
+            set
+            {
+                _playerEntity.Name = value;
+                _storageQueue.Add(_playerEntity);
+            }
+        }
 
         public string Motto
         {
@@ -19,6 +43,7 @@ namespace Turbo.Players
             set
             {
                 _playerEntity.Motto = value;
+                _storageQueue.Add(_playerEntity);
             }
         }
 
@@ -28,6 +53,7 @@ namespace Turbo.Players
             set
             {
                 _playerEntity.Figure = value;
+                _storageQueue.Add(_playerEntity);
             }
         }
 
@@ -37,6 +63,7 @@ namespace Turbo.Players
             set
             {
                 _playerEntity.Gender = value;
+                _storageQueue.Add(_playerEntity);
             }
         }
 
@@ -46,6 +73,17 @@ namespace Turbo.Players
             set
             {
                 _playerEntity.PlayerStatus = value;
+                _storageQueue.Add(_playerEntity);
+            }
+        }
+
+        public int? ChatStyleId
+        {
+            get => _playerEntity.RoomChatStyleId == null ? -1 : _playerEntity.RoomChatStyleId;
+            set
+            {
+                _playerEntity.RoomChatStyleId = value;
+                _storageQueue.Add(_playerEntity);
             }
         }
 

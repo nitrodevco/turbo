@@ -78,8 +78,10 @@ namespace Turbo.Database.Queue
             context.Attach(entity);
 
             var entry = context.Entry(entity);
+            
+            var isTemporary = entry.Property("Id").IsTemporary;
 
-            entry.State = EntityState.Modified;
+            entry.State = isTemporary ? EntityState.Added : EntityState.Modified;
         }
     }
 }

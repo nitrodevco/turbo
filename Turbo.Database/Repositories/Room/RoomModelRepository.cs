@@ -15,7 +15,6 @@ namespace Turbo.Database.Repositories.Room
             .FirstOrDefaultAsync(roomModel => roomModel.Name == name);
 
         public async Task<List<RoomModelEntity>> FindAllAsync() => await _context.RoomModels
-            .AsNoTracking()
             .ToListAsync();
     }
 }

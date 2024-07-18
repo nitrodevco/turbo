@@ -112,10 +112,16 @@ namespace Turbo.Database.Entities.Room
         [ForeignKey(nameof(NavigatorCategoryEntityId))]
         public NavigatorCategoryEntity NavigatorCategoryEntity { get; set; }
 
+        [InverseProperty("RoomEntity")]
         public List<RoomBanEntity> RoomBans { get; set; }
 
+        [InverseProperty("RoomEntity")]
         public List<RoomMuteEntity> RoomMutes { get; set; }
 
+        [InverseProperty("RoomEntity")]
         public List<RoomRightEntity> RoomRights { get; set; }
+
+        [InverseProperty("RoomEntity")]
+        public List<RoomChatlogEntity> RoomChats { get; set; }
     }
 }
