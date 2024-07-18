@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Attributes;
 using Turbo.Database.Entities;
 using Turbo.Database.Entities.Catalog;
-using Turbo.Database.Entities.ChatStyles;
 using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
@@ -27,19 +26,18 @@ namespace Turbo.Database.Context
         public DbSet<PlayerBadgeEntity> PlayerBadges { get; set; }
         public DbSet<PlayerCurrencyEntity> PlayerCurrencies { get; set; }
         public DbSet<PlayerEntity> Players { get; set; }
-        public DbSet<PlayerSettingsEntity> PlayerSettings { get; set; }
         public DbSet<RoomBanEntity> RoomBans { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }
         public DbSet<RoomModelEntity> RoomModels { get; set; }
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
         public DbSet<RoomRightEntity> RoomRights { get; set; }
-        public DbSet<ChatlogEntity> Chatlogs { get; set; }
+        public DbSet<RoomChatlogEntity> Chatlogs { get; set; }
         public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
         public DbSet<NavigatorCategoryEntity> NavigatorCategories { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
         public DbSet<NavigatorTabEntity> NavigatorTabs { get; set; }
-        public DbSet<ChatStyleEntity> ChatStyles { get; set; }
-        public DbSet<PlayerOwnedStyleEntity> OwnedChatStyles { get; set; }
+        public DbSet<PlayerChatStyleEntity> PlayerChatStyles { get; set; }
+        public DbSet<PlayerChatStyleOwnedEntity> PlayerOwnedChatStyles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

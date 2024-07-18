@@ -23,10 +23,11 @@ namespace Turbo.Database.Repositories.Room
 
             if (entity != null) return false;
 
-            entity = new RoomRightEntity();
-
-            entity.RoomEntityId = roomId;
-            entity.PlayerEntityId = playerId;
+            entity = new RoomRightEntity
+            {
+                RoomEntityId = roomId,
+                PlayerEntityId = playerId
+            };
 
             _context.Add(entity);
 

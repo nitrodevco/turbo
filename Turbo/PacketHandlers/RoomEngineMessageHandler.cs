@@ -46,7 +46,6 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<UseWallItemMessage>(this, OnUseWallItemMessage);
             _messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
             _messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
-            _messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
             _messageHub.Subscribe<ShoutMessage>(this, OnShoutMessage);
         }
 
@@ -171,36 +170,38 @@ namespace Turbo.Main.PacketHandlers
 
             session.Player.RoomObject?.Room?.RoomFurnitureManager?.WallObjects?.GetRoomObject(message.ObjectId)?.Logic?.OnInteract(session.Player.RoomObject, message.Param);
         }
-        
+
         protected virtual void OnChatMessage(ChatMessage message, ISession session)
         {
-            session.Player?.RoomObject?.Room?.RoomChatManager?.TryChat((uint)session.Player.Id, message.Text, RoomChatType.Normal);
+            if (session.Player == null) return;
+
+            var roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            roomObject.Room?.RoomChatManager?.SendChatForPlayer(session.Player, message.Text, message.StyleId);
         }
 
         protected virtual void OnWhisperMessage(WhisperMessage message, ISession session)
         {
-            var room = session.Player?.RoomObject?.Room;
-            if (room == null) return;
+            if (session.Player == null) return;
 
-            var recipient = room.RoomUserManager.GetRoomObjectByUsername(message.RecipientName);
-            if (recipient == null)
-            {
-                Console.WriteLine($"Recipient '{message.RecipientName}' not found.");
-                return;
-            }
+            var roomObject = session.Player.RoomObject;
 
-            session.Player?.RoomObject?.Room?.RoomChatManager?.TryChat((uint)session.Player.Id, message.Text, RoomChatType.Whisper, recipient.RoomObjectHolder.Id);
+            if (roomObject == null) return;
+
+            roomObject.Room?.RoomChatManager?.SendWhisperForPlayer(session.Player, message.RecipientName, message.Text, message.StyleId);
         }
 
         protected virtual void OnShoutMessage(ShoutMessage message, ISession session)
         {
-            session.Player?.RoomObject?.Room?.RoomChatManager?.TryChat((uint)session.Player.Id, message.Text, RoomChatType.Shout);
-        }
-        
-        protected virtual void OnChatStylePreferenceMessage(ChatStylePreferenceMessage message, ISession session)
-        {
-            session.Player?.RoomObject?.Room?.RoomChatManager?.SetChatStylePreference((uint)session.Player.Id, message.StyleId);
-        }
+            if (session.Player == null) return;
 
+            var roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            roomObject.Room?.RoomChatManager?.SendShoutForPlayer(session.Player, message.Text, message.StyleId);
+        }
     }
 }

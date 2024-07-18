@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Attributes;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Players.Constants;
-using Turbo.Database.Entities.ChatStyles;
 using Turbo.Database.Entities.Messenger;
 
 namespace Turbo.Database.Entities.Players
@@ -31,6 +30,9 @@ namespace Turbo.Database.Entities.Players
         [Column("status"), Required, DefaultValueSql("0")] // PlayerStatus.Offline
         public PlayerStatusEnum PlayerStatus { get; set; }
 
+        [Column("room_chat_style_id")]
+        public int? RoomChatStyleId { get; set; }
+
         [InverseProperty("PlayerEntity")]
         public List<PlayerBadgeEntity> PlayerBadges { get; set; }
 
@@ -38,7 +40,7 @@ namespace Turbo.Database.Entities.Players
         public List<PlayerCurrencyEntity> PlayerCurrencies { get; set; }
 
         [InverseProperty("PlayerEntity")]
-        public PlayerSettingsEntity PlayerSettings { get; set; }
+        public List<PlayerChatStyleOwnedEntity> PlayerOwnedChatStyles { get; set; }
 
         [InverseProperty("PlayerEntity")]
         public List<FurnitureEntity> Furniture { get; set; }
@@ -69,8 +71,8 @@ namespace Turbo.Database.Entities.Players
 
         [InverseProperty("PlayerEntity")]
         public List<RoomRightEntity> RoomRights { get; set; }
-        
+
         [InverseProperty("PlayerEntity")]
-        public List<PlayerOwnedStyleEntity> OwnedChatStyles { get; set; }
+        public List<RoomChatlogEntity> RoomChatlogs { get; set; }
     }
 }

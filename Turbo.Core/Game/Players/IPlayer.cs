@@ -13,11 +13,9 @@ namespace Turbo.Core.Game.Players
         public IPlayerDetails PlayerDetails { get; }
         public IPlayerInventory PlayerInventory { get; }
         public IPlayerWallet PlayerWallet { get; }
-        public IPlayerSettings PlayerSettings { get; }
 
         public bool SetInventory(IPlayerInventory playerInventory);
         public bool SetWallet(IPlayerWallet playerWallet);
-        public bool SetSettings(IPlayerSettings playerSettings);
 
         public new int Id { get; }
         public new string Name { get; }
