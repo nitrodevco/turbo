@@ -13,21 +13,15 @@ namespace Turbo.Players.Factories
     {
         public IPlayer Create(PlayerEntity playerEntity)
         {
-            var player = ActivatorUtilities.CreateInstance<Player>(_provider, CreatePlayerDetails(playerEntity));
+            var playerDetails = ActivatorUtilities.CreateInstance<PlayerDetails>(_provider, playerEntity);
+            var player = ActivatorUtilities.CreateInstance<Player>(_provider, playerDetails);
             var inventory = _playerInventoryFactory.Create(player);
             var wallet = new PlayerWallet(player, _serviceScopeFactory);
-            var settings = new PlayerSettings(player, _serviceScopeFactory);
 
             player.SetInventory(inventory);
             player.SetWallet(wallet);
-            player.SetSettings(settings);
 
             return player;
-        }
-
-        public IPlayerDetails CreatePlayerDetails(PlayerEntity playerEntity)
-        {
-            return new PlayerDetails(playerEntity);
         }
     }
 }

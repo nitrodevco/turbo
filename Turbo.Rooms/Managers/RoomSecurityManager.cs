@@ -31,7 +31,6 @@ namespace Turbo.Rooms.Managers
         IServiceScopeFactory _serviceScopeFactory) : Component, IRoomSecurityManager
     {
         public IDictionary<int, DateTime> Bans { get; private set; } = new ConcurrentDictionary<int, DateTime>();
-        public IDictionary<int, DateTime> Mutes { get; private set; } = new ConcurrentDictionary<int, DateTime>();
         public IList<int> Rights { get; private set; } = new List<int>();
 
         protected override async Task OnInit()
@@ -39,11 +38,9 @@ namespace Turbo.Rooms.Managers
             using var scope = _serviceScopeFactory.CreateScope();
 
             var roomBanRepository = scope.ServiceProvider.GetService<IRoomBanRepository>();
-            var roomMuteRepository = scope.ServiceProvider.GetService<IRoomMuteRepository>();
             var roomRightRepository = scope.ServiceProvider.GetService<IRoomRightRepository>();
 
             var banEntities = await roomBanRepository.FindAllByRoomIdAsync(_room.Id);
-            var muteEntities = await roomMuteRepository.FindAllByRoomIdAsync(_room.Id);
             var rightEntities = await roomRightRepository.FindAllByRoomIdAsync(_room.Id);
 
             if (banEntities != null)
@@ -61,25 +58,12 @@ namespace Turbo.Rooms.Managers
                 }
             }
 
-            foreach (var entity in muteEntities)
-            {
-                if (DateTime.Compare(DateTime.Now, entity.DateExpires) >= 0)
-                {
-                    await roomMuteRepository.RemoveMuteEntityAsync(entity);
-
-                    continue;
-                }
-
-                Mutes.Add(entity.PlayerEntityId, entity.DateExpires);
-            }
-
             foreach (var entity in rightEntities) Rights.Add(entity.PlayerEntityId);
         }
 
         protected override async Task OnDispose()
         {
             Bans.Clear();
-            Mutes.Clear();
             Rights.Clear();
         }
 
@@ -132,43 +116,6 @@ namespace Turbo.Rooms.Managers
 
                 Bans.Remove(player.Id);
             }
-
-            return false;
-        }
-        
-        public bool IsPlayerMuted(IPlayer player)
-        {
-            if (player == null || !Mutes.ContainsKey(player.Id)) return false;
-
-            var isOwner = IsOwner(player);
-
-            if (!Mutes.TryGetValue(player.Id, out var expiration)) return false;
-            if (!isOwner && DateTime.Compare(DateTime.Now, expiration) < 0) return true;
-
-            Mutes.Remove(player.Id);
-
-            return false;
-        }
-        
-        public bool TryGetPlayerMuteRemainingTime(IPlayer player, out TimeSpan remainingTime)
-        {
-            remainingTime = TimeSpan.Zero;
-
-            if (player == null || !Mutes.ContainsKey(player.Id))
-                return false;
-
-            var isOwner = IsOwner(player);
-
-            if (!Mutes.TryGetValue(player.Id, out var expiration))
-                return false;
-
-            if (!isOwner && DateTime.Compare(DateTime.Now, expiration) < 0)
-            {
-                remainingTime = expiration - DateTime.Now;
-                return true;
-            }
-
-            Mutes.Remove(player.Id);
 
             return false;
         }

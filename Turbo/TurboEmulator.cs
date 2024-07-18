@@ -86,6 +86,7 @@ namespace Turbo.Main
             await _catalogManager.InitAsync();
             await _roomManager.InitAsync();
             await _navigatorManager.InitAsync();
+            await _playerManager.InitAsync();
 
             StartStorageCycle();
             StartGameCycle();

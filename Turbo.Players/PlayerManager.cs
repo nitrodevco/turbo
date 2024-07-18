@@ -10,6 +10,8 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Utilities;
+using Turbo.Database.Entities.Players;
+using Turbo.Database.Repositories.ChatStyles;
 using Turbo.Database.Repositories.Player;
 using Turbo.Players.Factories;
 
@@ -23,9 +25,11 @@ namespace Turbo.Players
     {
         private readonly ConcurrentDictionary<int, IPlayer> _players = new();
 
+        public List<PlayerChatStyleEntity> PlayerChatStyles { get; } = [];
+
         protected override async Task OnInit()
         {
-
+            await LoadChatStyles();
         }
 
         protected override async Task OnDispose()
@@ -181,13 +185,20 @@ namespace Turbo.Players
 
             return player.PlayerInventory?.BadgeInventory?.ActiveBadges;
         }
-        
-        public async Task SaveSettings(IPlayerSettings playerSettings)
+
+        public async Task LoadChatStyles()
         {
-            if (playerSettings != null)
+            using var scope = _serviceScopeFactory.CreateScope();
+
+            var chatStyleRepository = scope.ServiceProvider.GetService<IPlayerChatStyleRepository>();
+            var chatStyleEntities = await chatStyleRepository.FindAllAsync();
+
+            foreach (var entity in chatStyleEntities)
             {
-                await playerSettings.SaveSettings();
+                PlayerChatStyles.Add(entity);
             }
+
+            _logger.LogInformation("Loaded {0} chat styles", PlayerChatStyles.Count);
         }
     }
 }

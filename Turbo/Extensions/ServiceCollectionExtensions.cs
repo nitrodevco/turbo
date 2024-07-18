@@ -99,7 +99,6 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<ICatalogManager, CatalogManager>();
             services.AddSingleton<IPlayerManager, PlayerManager>();
             services.AddSingleton<IRoomManager, RoomManager>();
-            services.AddScoped<IRoomChatManager, ChatManager>();
         }
 
         public static void AddFactories(this IServiceCollection services)
@@ -115,7 +114,7 @@ namespace Turbo.Main.Extensions
             services.AddSingleton<IRoomUserFactory, RoomUserFactory>();
             services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
             services.AddSingleton<ICatalogFactory, CatalogFactory>();
-            services.AddSingleton<IChatFactory, ChatFactory>();
+            services.AddSingleton<IRoomChatFactory, RoomChatFactory>();
         }
 
         public static void AddRepositories(this IServiceCollection services)
@@ -129,17 +128,16 @@ namespace Turbo.Main.Extensions
             services.AddScoped<IPlayerBadgeRepository, PlayerBadgeRepository>();
             services.AddScoped<IPlayerCurrencyRepository, PlayerCurrencyRepository>();
             services.AddScoped<IPlayerRepository, PlayerRepository>();
-            services.AddScoped<IPlayerSettingsRepository, PlayerSettingsRepository>();
             services.AddScoped<IRoomBanRepository, RoomBanRepository>();
+            services.AddScoped<IRoomChatlogRepository, RoomChatlogRepository>();
             services.AddScoped<IRoomModelRepository, RoomModelRepository>();
             services.AddScoped<IRoomMuteRepository, RoomMuteRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
             services.AddScoped<IRoomRightRepository, RoomRightRepository>();
             services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
             services.AddScoped<INavigatorRepository, NavigatorRepository>();
-            services.AddScoped<IChatlogRepository, ChatlogRepository>();
-            services.AddScoped<IChatStyleRepository, ChatStyleRepository>();
-            services.AddScoped<IPlayerOwnedStyleRepository, PlayerOwnedStyleRepository>();
+            services.AddScoped<IPlayerChatStyleRepository, PlayerChatStyleRepository>();
+            services.AddScoped<IPlayerChatStyleOwnedRepository, PlayerChatStyleOwnedRepository>();
         }
     }
 }
