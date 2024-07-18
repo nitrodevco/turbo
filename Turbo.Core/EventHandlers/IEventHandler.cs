@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Turbo.Core.EventHandlers
 {
-    public interface ITestEventHandler
+    public interface IEventHandler
     {
 
     }

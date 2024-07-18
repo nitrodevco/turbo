@@ -70,8 +70,8 @@ namespace Turbo.Main.Extensions
 
             // Event Handlers
             services.AddTransient<IEventHandlerManager, EventHandlerManager>();
-            services.AddTransient<ITestEventHandler, TestEventHandler>();
-            services.AddTransient<ILoginEventHandler, UserLoginEventHandler>();
+            services.AddTransient<IEventHandler, EventHandler>();
+            services.AddTransient<IEventHandler, UserLoginEventHandler>();
 
             // Packet Handlers
             services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
