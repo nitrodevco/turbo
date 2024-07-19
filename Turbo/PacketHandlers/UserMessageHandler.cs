@@ -10,6 +10,7 @@ using Turbo.Packets.Incoming.Users;
 using Turbo.Packets.Outgoing.Users;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Game.Players;
+using Turbo.Packets.Incoming.Preferences;
 
 namespace Turbo.Main.PacketHandlers
 {
@@ -26,6 +27,7 @@ namespace Turbo.Main.PacketHandlers
             _playerManager = playerManager;
 
             _messageHub.Subscribe<GetSelectedBadgesMessage>(this, OnGetSelectedBadgesMessage);
+            _messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
         }
 
         protected virtual async void OnGetSelectedBadgesMessage(GetSelectedBadgesMessage message, ISession session)
@@ -39,6 +41,13 @@ namespace Turbo.Main.PacketHandlers
                 PlayerId = message.PlayerId,
                 ActiveBadges = activeBadges
             });
+        }
+
+        protected virtual void OnChatStylePreferenceMessage(ChatStylePreferenceMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            session.Player.PlayerDetails?.SetPreferredChatStyleByClientId(message.StyleId);
         }
     }
 }

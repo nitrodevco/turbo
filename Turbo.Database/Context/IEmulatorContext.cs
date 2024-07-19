@@ -24,8 +24,8 @@ namespace Turbo.Database.Context
         public DbSet<PlayerBadgeEntity> PlayerBadges { get; set; }
         public DbSet<PlayerCurrencyEntity> PlayerCurrencies { get; set; }
         public DbSet<PlayerEntity> Players { get; set; }
-        public DbSet<PlayerSettingsEntity> PlayerSettings { get; set; }
         public DbSet<RoomBanEntity> RoomBans { get; set; }
+        public DbSet<RoomChatlogEntity> Chatlogs { get; set; }
         public DbSet<RoomEntity> Rooms { get; set; }
         public DbSet<RoomModelEntity> RoomModels { get; set; }
         public DbSet<RoomMuteEntity> RoomMutes { get; set; }
@@ -34,6 +34,8 @@ namespace Turbo.Database.Context
         public DbSet<NavigatorCategoryEntity> NavigatorCategories { get; set; }
         public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
         public DbSet<NavigatorTabEntity> NavigatorTabs { get; set; }
+        public DbSet<PlayerChatStyleEntity> PlayerChatStyles { get; set; }
+        public DbSet<PlayerChatStyleOwnedEntity> PlayerOwnedChatStyles { get; set; }
 
         public int SaveChanges(bool acceptAllChangesOnSuccess);
         public int SaveChanges();

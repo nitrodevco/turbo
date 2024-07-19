@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
+using Turbo.Packets.Incoming.Preferences;
+using Turbo.Packets.Incoming.Room.Chat;
 using Turbo.Packets.Incoming.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Engine;
-using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Main.PacketHandlers
@@ -42,6 +44,9 @@ namespace Turbo.Main.PacketHandlers
             _messageHub.Subscribe<SetObjectDataMessage>(this, OnSetObjectDataMessage);
             _messageHub.Subscribe<UseFurnitureMessage>(this, OnUseFurnitureMessage);
             _messageHub.Subscribe<UseWallItemMessage>(this, OnUseWallItemMessage);
+            _messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
+            _messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
+            _messageHub.Subscribe<ShoutMessage>(this, OnShoutMessage);
         }
 
         protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
@@ -164,6 +169,39 @@ namespace Turbo.Main.PacketHandlers
             if (session.Player == null) return;
 
             session.Player.RoomObject?.Room?.RoomFurnitureManager?.WallObjects?.GetRoomObject(message.ObjectId)?.Logic?.OnInteract(session.Player.RoomObject, message.Param);
+        }
+
+        protected virtual void OnChatMessage(ChatMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            var roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            roomObject.Room?.RoomChatManager?.SendChatForPlayer(session.Player, message.Text, message.StyleId);
+        }
+
+        protected virtual void OnWhisperMessage(WhisperMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            var roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            roomObject.Room?.RoomChatManager?.SendWhisperForPlayer(session.Player, message.RecipientName, message.Text, message.StyleId);
+        }
+
+        protected virtual void OnShoutMessage(ShoutMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            var roomObject = session.Player.RoomObject;
+
+            if (roomObject == null) return;
+
+            roomObject.Room?.RoomChatManager?.SendShoutForPlayer(session.Player, message.Text, message.StyleId);
         }
     }
 }

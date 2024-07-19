@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Context;
 
@@ -10,9 +11,11 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    partial class TurboContextModelSnapshot : ModelSnapshot
+    [Migration("20240718191412_UpdateChatLogsAndChatStyles")]
+    partial class UpdateChatLogsAndChatStyles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -725,6 +728,70 @@ namespace Turbo.Main.Migrations
                     b.ToTable("player_badges");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerChatStyleEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ClientStyleId")
+                        .HasColumnType("int")
+                        .HasColumnName("client_style_id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientStyleId")
+                        .IsUnique();
+
+                    b.ToTable("player_chat_styles");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerChatStyleOwnedEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ChatStyleId")
+                        .HasColumnType("int")
+                        .HasColumnName("chat_style_id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChatStyleId");
+
+                    b.HasIndex("PlayerEntityId", "ChatStyleId")
+                        .IsUnique();
+
+                    b.ToTable("player_chat_styles_owned");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerCurrencyEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -810,41 +877,16 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("status")
                         .HasDefaultValueSql("0");
 
+                    b.Property<int?>("RoomChatStyleId")
+                        .HasColumnType("int")
+                        .HasColumnName("room_chat_style_id");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("players");
-                });
-
-            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerSettingsEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_created");
-
-                    b.Property<DateTime>("DateUpdated")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_updated");
-
-                    b.Property<int>("PlayerEntityId")
-                        .HasColumnType("int")
-                        .HasColumnName("player_id");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayerEntityId")
-                        .IsUnique();
-
-                    b.ToTable("player_settings");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomBanEntity", b =>
@@ -884,6 +926,51 @@ namespace Turbo.Main.Migrations
                         .IsUnique();
 
                     b.ToTable("room_bans");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomChatlogEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("DateCreated")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_created");
+
+                    b.Property<DateTime>("DateUpdated")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("date_updated");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("message");
+
+                    b.Property<int>("PlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("player_id");
+
+                    b.Property<int>("RoomEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("room_id");
+
+                    b.Property<int?>("TargetPlayerEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("target_player_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PlayerEntityId");
+
+                    b.HasIndex("RoomEntityId");
+
+                    b.HasIndex("TargetPlayerEntityId");
+
+                    b.ToTable("room_chatlogs");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntity", b =>
@@ -1276,39 +1363,6 @@ namespace Turbo.Main.Migrations
                     b.ToTable("security_tickets");
                 });
 
-            modelBuilder.Entity("TurboWiredPlugin.Entities.FurnitureTeleportLinkEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_created");
-
-                    b.Property<DateTime>("DateUpdated")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("date_updated");
-
-                    b.Property<int>("FurnitureEntityId")
-                        .HasColumnType("int")
-                        .HasColumnName("furniture_id");
-
-                    b.Property<string>("WiredData")
-                        .HasColumnType("longtext")
-                        .HasColumnName("wired_data");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FurnitureEntityId")
-                        .IsUnique();
-
-                    b.ToTable("furniture_wired_data");
-                });
-
             modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
                 {
                     b.HasOne("Turbo.Database.Entities.Catalog.CatalogPageEntity", "Page")
@@ -1456,22 +1510,30 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerChatStyleOwnedEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerChatStyleEntity", "ChatStyle")
+                        .WithMany("OwnedChatStyles")
+                        .HasForeignKey("ChatStyleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany("PlayerOwnedChatStyles")
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ChatStyle");
+
+                    b.Navigation("PlayerEntity");
+                });
+
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerCurrencyEntity", b =>
                 {
                     b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("PlayerCurrencies")
                         .HasForeignKey("PlayerEntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PlayerEntity");
-                });
-
-            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerSettingsEntity", b =>
-                {
-                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
-                        .WithOne("PlayerSettings")
-                        .HasForeignKey("Turbo.Database.Entities.Players.PlayerSettingsEntity", "PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1495,6 +1557,31 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
 
                     b.Navigation("RoomEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomChatlogEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                        .WithMany("RoomChatlogs")
+                        .HasForeignKey("PlayerEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "RoomEntity")
+                        .WithMany("RoomChats")
+                        .HasForeignKey("RoomEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "TargetPlayerEntity")
+                        .WithMany()
+                        .HasForeignKey("TargetPlayerEntityId");
+
+                    b.Navigation("PlayerEntity");
+
+                    b.Navigation("RoomEntity");
+
+                    b.Navigation("TargetPlayerEntity");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntity", b =>
@@ -1571,17 +1658,6 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
-            modelBuilder.Entity("TurboWiredPlugin.Entities.FurnitureTeleportLinkEntity", b =>
-                {
-                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntity")
-                        .WithMany()
-                        .HasForeignKey("FurnitureEntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FurnitureEntity");
-                });
-
             modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
                 {
                     b.Navigation("Products");
@@ -1597,6 +1673,11 @@ namespace Turbo.Main.Migrations
             modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", b =>
                 {
                     b.Navigation("Furnitures");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerChatStyleEntity", b =>
+                {
+                    b.Navigation("OwnedChatStyles");
                 });
 
             modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerEntity", b =>
@@ -1615,9 +1696,11 @@ namespace Turbo.Main.Migrations
 
                     b.Navigation("PlayerCurrencies");
 
-                    b.Navigation("PlayerSettings");
+                    b.Navigation("PlayerOwnedChatStyles");
 
                     b.Navigation("RoomBans");
+
+                    b.Navigation("RoomChatlogs");
 
                     b.Navigation("RoomMutes");
 
@@ -1631,6 +1714,8 @@ namespace Turbo.Main.Migrations
             modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntity", b =>
                 {
                     b.Navigation("RoomBans");
+
+                    b.Navigation("RoomChats");
 
                     b.Navigation("RoomMutes");
 

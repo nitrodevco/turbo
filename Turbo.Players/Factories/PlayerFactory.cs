@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using System;
 using Turbo.Core.Game.Players;
 using Turbo.Database.Entities.Players;
@@ -14,7 +13,8 @@ namespace Turbo.Players.Factories
     {
         public IPlayer Create(PlayerEntity playerEntity)
         {
-            var player = ActivatorUtilities.CreateInstance<Player>(_provider, CreatePlayerDetails(playerEntity));
+            var playerDetails = ActivatorUtilities.CreateInstance<PlayerDetails>(_provider, playerEntity);
+            var player = ActivatorUtilities.CreateInstance<Player>(_provider, playerDetails);
             var inventory = _playerInventoryFactory.Create(player);
             var wallet = new PlayerWallet(player, _serviceScopeFactory);
 
@@ -22,11 +22,6 @@ namespace Turbo.Players.Factories
             player.SetWallet(wallet);
 
             return player;
-        }
-
-        public IPlayerDetails CreatePlayerDetails(PlayerEntity playerEntity)
-        {
-            return new PlayerDetails(playerEntity);
         }
     }
 }

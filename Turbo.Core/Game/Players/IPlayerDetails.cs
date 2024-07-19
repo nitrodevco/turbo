@@ -7,6 +7,10 @@ namespace Turbo.Core.Game.Players
 {
     public interface IPlayerDetails
     {
+        public Task DisposeAsync();
+        public int GetValidChatStyleId(int styleId);
+        public void SetPreferredChatStyleByClientId(int styleId);
+
         public int Id { get; }
         public string Name { get; }
         public string Motto { get; set; }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Events;
@@ -8,17 +7,13 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
-using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Database.Entities.Room;
-using Turbo.Events.Game.Rooms;
 using Turbo.Events.Game.Rooms.Avatar;
-using Turbo.Events.Game.Rooms.Furniture;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Cycles;
@@ -37,13 +32,14 @@ namespace Turbo.Rooms
         public IRoomSecurityManager RoomSecurityManager { get; private set; }
         public IRoomFurnitureManager RoomFurnitureManager { get; private set; }
         public IRoomUserManager RoomUserManager { get; private set; }
+        public IRoomChatManager RoomChatManager { get; private set; }
 
         public IRoomModel RoomModel { get; private set; }
         public IRoomMap RoomMap { get; private set; }
 
         private readonly ITurboEventHub _eventHub;
-        private readonly IList<ISession> _roomObservers = new List<ISession>();
-        private object _roomObserverLock = new();
+        private readonly IList<ISession> _roomObservers = [];
+        private readonly object _roomObserverLock = new();
         private int _remainingDisposeTicks = -1;
 
         public Room(
@@ -53,6 +49,7 @@ namespace Turbo.Rooms
             IRoomSecurityFactory roomSecurityFactory,
             IRoomFurnitureFactory roomFurnitureFactory,
             IRoomUserFactory roomUserFactory,
+            IRoomChatFactory roomChatFactory,
             ITurboEventHub eventHub,
             IStorageQueue _storageQueue)
         {
@@ -64,6 +61,7 @@ namespace Turbo.Rooms
             RoomSecurityManager = roomSecurityFactory.Create(this);
             RoomFurnitureManager = roomFurnitureFactory.Create(this);
             RoomUserManager = roomUserFactory.Create(this);
+            RoomChatManager = roomChatFactory.Create(this);
 
             _eventHub = eventHub;
         }
@@ -75,6 +73,7 @@ namespace Turbo.Rooms
             await RoomSecurityManager.InitAsync();
             await RoomFurnitureManager.InitAsync();
             await RoomUserManager.InitAsync();
+            await RoomChatManager.InitAsync();
 
             RoomCycleManager.AddCycle(new RoomObjectCycle(this));
             RoomCycleManager.AddCycle(new RoomRollerCycle(this));
