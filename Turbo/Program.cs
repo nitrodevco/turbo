@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Serilog;
 using Turbo.Core.Configuration;
 using Turbo.Database.Context;
 using Turbo.Main.Configuration;
@@ -25,7 +24,7 @@ namespace Turbo.Main
 
             catch (Exception error)
             {
-                Log.Error(error.Message);
+                Console.WriteLine(error);
             }
         }
 
@@ -33,35 +32,33 @@ namespace Turbo.Main
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    Log.Logger = new LoggerConfiguration()
-                        .ReadFrom.Configuration(hostContext.Configuration)
-                        .Enrich.FromLogContext()
-                        .WriteTo.Console()
-                        .CreateLogger();
+                    services.AddLogging();
 
                     // Configuration
                     var turboConfig = new TurboConfig();
                     hostContext.Configuration.Bind(TurboConfig.Turbo, turboConfig);
                     services.AddSingleton<IEmulatorConfig>(turboConfig);
 
-                    var connectionString = $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
+                    var connectionString =
+                        $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
 
                     services.AddDbContext<IEmulatorContext, TurboContext>(
                         options =>
                         {
                             options
-                            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options =>
-                            {
-                                options.MigrationsAssembly("Turbo.Main");
-                            })
-                            .ConfigureWarnings(warnings => warnings
-                                .Ignore(CoreEventId.RedundantIndexRemoved))
-                            .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
-                            .EnableDetailedErrors()
-                            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                                .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options =>
+                                {
+                                    options.MigrationsAssembly("Turbo.Main");
+                                })
+                                .ConfigureWarnings(warnings => warnings
+                                    .Ignore(CoreEventId.RedundantIndexRemoved))
+                                .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
+                                .EnableDetailedErrors()
+                                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
                         }
                     );
 
+                    services.AddEncryption();
                     services.AddRepositories();
                     services.AddManagers();
                     services.AddFactories();
@@ -69,6 +66,6 @@ namespace Turbo.Main
 
                     // Emulator
                     services.AddHostedService<TurboEmulator>();
-                }).UseSerilog();
+                });
     }
 }

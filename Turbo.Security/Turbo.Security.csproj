@@ -3,12 +3,17 @@
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
     <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
     <ProjectReference Include="..\Turbo.Packets\Turbo.Packets.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
   </ItemGroup>
 
 </Project>
