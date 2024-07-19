@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
     <ProjectReference Include="..\Turbo.Packets\Turbo.Packets.csproj" />
+    <ProjectReference Include="..\Turbo.Security\Turbo.Security.csproj" />
   </ItemGroup>
 
 </Project>

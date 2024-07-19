@@ -11,32 +11,51 @@ namespace Turbo.Packets.Outgoing
 
         }
 
-        public void WriteByte(byte b) =>
+        public IServerPacket WriteByte(byte b)
+        {
             Content.WriteByte(b);
+            return this;
+        }
 
-        public void WriteByte(int b) =>
+        public IServerPacket WriteByte(int b)
+        {
             Content.WriteByte((byte)b);
+            return this;
+        }
 
-        public void WriteDouble(double d) =>
-            WriteString(d.ToString());
+        public IServerPacket WriteDouble(double d)
+        {
+            Content.WriteDouble(d);
+            return this;
+        }
 
-        public void WriteString(string s)
+        public IServerPacket WriteString(string s)
         {
             byte[] data = Encoding.UTF8.GetBytes(s ?? string.Empty);
             Content.WriteShort(data.Length);
             Content.WriteBytes(data);
+
+            return this;
         }
 
-        public void WriteShort(int s) =>
+        public IServerPacket WriteShort(int s) {
             Content.WriteShort(s);
+            return this;
+        }
 
-        public void WriteInteger(int i) =>
+        public IServerPacket WriteInteger(int i) {
             Content.WriteInt(i);
+            return this;
+        }
 
-        public void WriteBoolean(bool b) =>
+        public IServerPacket WriteBoolean(bool b) {
             Content.WriteByte(b ? 1 : 0);
+            return this;
+        }
 
-        public void WriteLong(long l) =>
+        public IServerPacket WriteLong(long l) {
             Content.WriteLong(l);
+            return this;
+        }
     }
 }

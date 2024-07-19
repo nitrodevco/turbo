@@ -6,6 +6,7 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Core.Packets.Revisions;
+using Turbo.Core.Security;
 
 namespace Turbo.Networking.Game.Clients
 {
@@ -13,8 +14,9 @@ namespace Turbo.Networking.Game.Clients
     {
         private readonly IChannelHandlerContext _channel;
         private readonly ILogger<Session> _logger;
-
+        public IChannel Channel => _channel.Channel;
         public IRevision Revision { get; set; }
+        public IRc4Service Rc4 { get; set; }
         public IPlayer Player { get; private set; }
 
         public string IPAddress { get; private set; }

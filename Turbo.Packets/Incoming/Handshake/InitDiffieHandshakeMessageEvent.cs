@@ -2,7 +2,7 @@
 
 namespace Turbo.Packets.Incoming.Handshake
 {
-    public record InitDiffieHandshakeMessage : IMessageEvent
+    public record InitDiffieHandshakeMessageEvent : IMessageEvent
     {
     }
 }
