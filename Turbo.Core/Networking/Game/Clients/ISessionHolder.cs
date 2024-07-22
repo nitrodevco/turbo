@@ -1,8 +1,7 @@
-namespace Turbo.Core.Networking.Game.Clients
+namespace Turbo.Core.Networking.Game.Clients;
+
+public interface ISessionHolder
 {
-    public interface ISessionHolder
-    {
-        public ISession Session { get; }
-        public bool SetSession(ISession session);
-    }
+    public ISession Session { get; }
+    public bool SetSession(ISession session);
 }

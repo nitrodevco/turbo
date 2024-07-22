@@ -1,70 +1,70 @@
-﻿using DotNetty.Buffers;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
+using DotNetty.Buffers;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Net;
-using System.Threading.Tasks;
 using Turbo.Core.Configuration;
 using Turbo.Networking.EventLoop;
 
-namespace Turbo.Networking.REST
+namespace Turbo.Networking.REST;
+
+public class RestServer : IRestServer
 {
-    public class RestServer : IRestServer
+    private readonly IEmulatorConfig _config;
+    private readonly INetworkEventLoopGroup _eventLoopGroup;
+    private readonly ILogger<RestServer> _logger;
+    private readonly IServiceProvider _provider;
+
+    protected readonly ServerBootstrap _serverBootstrap;
+
+    public RestServer(
+        ILogger<RestServer> logger,
+        IEmulatorConfig config,
+        INetworkEventLoopGroup eventLoopGroup,
+        IServiceProvider provider)
     {
-        private readonly ILogger<RestServer> _logger;
-        private readonly IEmulatorConfig _config;
-        private readonly INetworkEventLoopGroup _eventLoopGroup;
-        private readonly IServiceProvider _provider;
+        _logger = logger;
+        _config = config;
+        _eventLoopGroup = eventLoopGroup;
+        _provider = provider;
 
-        protected readonly ServerBootstrap _serverBootstrap;
-        protected IChannel ServerChannel { get; private set; }
+        Host = _config.RCONHost;
+        Port = _config.RCONPort;
 
-        public string Host { get; }
+        _serverBootstrap = new ServerBootstrap();
+        InitializeBoostrap();
+    }
 
-        public int Port { get; }
+    protected IChannel ServerChannel { get; private set; }
 
-        public RestServer(
-           ILogger<RestServer> logger,
-           IEmulatorConfig config,
-           INetworkEventLoopGroup eventLoopGroup,
-           IServiceProvider provider)
-        {
-            _logger = logger;
-            _config = config;
-            _eventLoopGroup = eventLoopGroup;
-            _provider = provider;
+    public string Host { get; }
 
-            Host = _config.RCONHost;
-            Port = _config.RCONPort;
+    public int Port { get; }
 
-            _serverBootstrap = new ServerBootstrap();
-            InitializeBoostrap();
-        }
+    public void InitializeBoostrap()
+    {
+        _serverBootstrap.Group(_eventLoopGroup.Group);
+        _serverBootstrap.Channel<TcpServerSocketChannel>();
+        _serverBootstrap.ChildOption(ChannelOption.TcpNodelay, true);
+        _serverBootstrap.ChildOption(ChannelOption.SoKeepalive, true);
+        _serverBootstrap.ChildOption(ChannelOption.SoReuseaddr, true);
+        _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
+        _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
+        _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
+        _serverBootstrap.ChildHandler(new RestChannelInitializer(_provider));
+    }
 
-        public void InitializeBoostrap()
-        {
-            _serverBootstrap.Group(_eventLoopGroup.Group);
-            _serverBootstrap.Channel<TcpServerSocketChannel>();
-            _serverBootstrap.ChildOption(ChannelOption.TcpNodelay, true);
-            _serverBootstrap.ChildOption(ChannelOption.SoKeepalive, true);
-            _serverBootstrap.ChildOption(ChannelOption.SoReuseaddr, true);
-            _serverBootstrap.ChildOption(ChannelOption.SoRcvbuf, 4096);
-            _serverBootstrap.ChildOption(ChannelOption.RcvbufAllocator, new FixedRecvByteBufAllocator(4096));
-            _serverBootstrap.ChildOption(ChannelOption.Allocator, new UnpooledByteBufferAllocator(false));
-            _serverBootstrap.ChildHandler(new RestChannelInitializer(_provider));
-        }
+    public async Task ShutdownAsync()
+    {
+        await ServerChannel.CloseAsync();
+    }
 
-        public async Task ShutdownAsync()
-        {
-            await ServerChannel.CloseAsync();
-        }
-
-        public async Task StartAsync()
-        {
-            ServerChannel = await _serverBootstrap.BindAsync(IPAddress.Parse(Host), Port);
-            _logger.LogInformation("{Context} -> Listening on http://{Host}:{Port}", nameof(RestServer), Host, Port);
-        }
+    public async Task StartAsync()
+    {
+        ServerChannel = await _serverBootstrap.BindAsync(IPAddress.Parse(Host), Port);
+        _logger.LogInformation("{Context} -> Listening on http://{Host}:{Port}", nameof(RestServer), Host, Port);
     }
 }

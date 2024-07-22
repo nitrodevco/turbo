@@ -1,6 +1,5 @@
-﻿namespace Turbo.Packets.Outgoing.Wired
+﻿namespace Turbo.Packets.Outgoing.Wired;
+
+public record WiredEffectDataMessage : WiredDataMessage
 {
-    public record WiredEffectDataMessage : WiredDataMessage
-    {
-    }
 }

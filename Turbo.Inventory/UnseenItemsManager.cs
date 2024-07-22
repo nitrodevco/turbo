@@ -3,42 +3,43 @@ using Turbo.Core.Game.Inventory.Constants;
 using Turbo.Core.Game.Players;
 using Turbo.Packets.Outgoing.Notifications;
 
-namespace Turbo.Inventory
+namespace Turbo.Inventory;
+
+public class UnseenItemsManager(IPlayer player) : IUnseenItemsManager
 {
-    public class UnseenItemsManager(IPlayer player) : IUnseenItemsManager
+    private readonly IPlayer _player = player;
+
+    private readonly IDictionary<UnseenItemCategory, IList<int>> _unseenCategories =
+        new Dictionary<UnseenItemCategory, IList<int>>();
+
+    public void Commit()
     {
-        private readonly IPlayer _player = player;
-        private IDictionary<UnseenItemCategory, IList<int>> _unseenCategories = new Dictionary<UnseenItemCategory, IList<int>>();
-
-        public void Commit()
+        _player.Session?.Send(new UnseenItemsMessage
         {
-            _player.Session?.Send(new UnseenItemsMessage
-            {
-                Categories = _unseenCategories
-            });
+            Categories = _unseenCategories
+        });
 
-            _unseenCategories.Clear();
-        }
+        _unseenCategories.Clear();
+    }
 
-        public void Add(UnseenItemCategory category, params int[] itemIds)
+    public void Add(UnseenItemCategory category, params int[] itemIds)
+    {
+        if (itemIds.Length == 0) return;
+
+        if (_unseenCategories.TryGetValue(category, out var unseenItems))
         {
-            if (itemIds.Length == 0) return;
-
-            if (_unseenCategories.TryGetValue(category, out var unseenItems))
+            foreach (var itemId in itemIds)
             {
-                foreach (var itemId in itemIds)
-                {
-                    if (unseenItems.Contains(itemId)) continue;
+                if (unseenItems.Contains(itemId)) continue;
 
-                    unseenItems.Add(itemId);
-                }
-
-                return;
+                unseenItems.Add(itemId);
             }
 
-            _unseenCategories.Add(category, itemIds.ToList());
-
-            Commit();
+            return;
         }
+
+        _unseenCategories.Add(category, itemIds.ToList());
+
+        Commit();
     }
 }

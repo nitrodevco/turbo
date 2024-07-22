@@ -1,6 +1,5 @@
-﻿namespace Turbo.Core.Packets.Messages
+﻿namespace Turbo.Core.Packets.Messages;
+
+public interface IMessageEvent
 {
-    public interface IMessageEvent
-    {
-    }
 }

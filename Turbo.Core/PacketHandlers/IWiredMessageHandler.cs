@@ -1,7 +1,5 @@
-namespace Turbo.Core.PacketHandlers
-{
-    public class IWiredMessageHandler
-    {
+namespace Turbo.Core.PacketHandlers;
 
-    }
+public class IWiredMessageHandler
+{
 }

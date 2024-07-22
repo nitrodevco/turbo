@@ -1,10 +1,9 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Session
+namespace Turbo.Packets.Incoming.Room.Session;
+
+public record OpenFlatConnectionMessage : IMessageEvent
 {
-    public record OpenFlatConnectionMessage : IMessageEvent
-    {
-        public int RoomId { get; init; }
-        public string Password { get; init; }
-    }
+    public int RoomId { get; init; }
+    public string Password { get; init; }
 }

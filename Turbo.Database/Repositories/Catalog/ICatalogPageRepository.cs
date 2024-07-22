@@ -2,10 +2,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Database.Entities.Catalog;
 
-namespace Turbo.Database.Repositories.Catalog
+namespace Turbo.Database.Repositories.Catalog;
+
+public interface ICatalogPageRepository : IBaseRepository<CatalogPageEntity>
 {
-    public interface ICatalogPageRepository : IBaseRepository<CatalogPageEntity>
-    {
-        public Task<List<CatalogPageEntity>> FindAllAsync();
-    }
+    public Task<List<CatalogPageEntity>> FindAllAsync();
 }

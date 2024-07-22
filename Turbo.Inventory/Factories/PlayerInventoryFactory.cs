@@ -1,23 +1,17 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Turbo.Core.Game.Players;
-using Turbo.Database.Entities.Players;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Game.Inventory;
-using Turbo.Furniture.Factories;
-using Turbo.Inventory.Furniture;
+using Turbo.Core.Game.Players;
 using Turbo.Inventory.Badges;
-using Turbo.Database.Repositories.Player;
-using Turbo.Database.Repositories.Furniture;
+using Turbo.Inventory.Furniture;
 
-namespace Turbo.Inventory.Factories
+namespace Turbo.Inventory.Factories;
+
+public class PlayerInventoryFactory(IServiceProvider _provider) : IPlayerInventoryFactory
 {
-    public class PlayerInventoryFactory(IServiceProvider _provider) : IPlayerInventoryFactory
+    public IPlayerInventory Create(IPlayer player)
     {
-        public IPlayerInventory Create(IPlayer player)
-        {
-            return ActivatorUtilities.CreateInstance<PlayerInventory>(_provider, player, ActivatorUtilities.CreateInstance<PlayerFurnitureInventory>(_provider, player), ActivatorUtilities.CreateInstance<PlayerBadgeInventory>(_provider, player));
-        }
+        return ActivatorUtilities.CreateInstance<PlayerInventory>(_provider, player,
+            ActivatorUtilities.CreateInstance<PlayerFurnitureInventory>(_provider, player),
+            ActivatorUtilities.CreateInstance<PlayerBadgeInventory>(_provider, player));
     }
 }
-

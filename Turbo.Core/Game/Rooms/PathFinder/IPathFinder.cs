@@ -2,11 +2,12 @@
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 
-namespace Turbo.Core.Game.Rooms.Mapping
+namespace Turbo.Core.Game.Rooms.Mapping;
+
+public interface IPathFinder
 {
-    public interface IPathFinder
-    {
-        public IList<IPoint> MakePath(IRoomObjectAvatar avatar, IPoint location);
-        public bool IsValidStep(IRoomObjectAvatar avatar, IPoint location, IPoint nextLocation, IPoint goalLocation, bool blockingDisabled = false);
-    }
+    public IList<IPoint> MakePath(IRoomObjectAvatar avatar, IPoint location);
+
+    public bool IsValidStep(IRoomObjectAvatar avatar, IPoint location, IPoint nextLocation, IPoint goalLocation,
+        bool blockingDisabled = false);
 }

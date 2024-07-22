@@ -1,52 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Room;
 
-namespace Turbo.Database.Repositories.Room
-{
-    public class RoomRightRepository(IEmulatorContext _context) : IRoomRightRepository
-    {
-        public async Task<RoomRightEntity> FindAsync(int id) => await _context.RoomRights
-            .FirstOrDefaultAsync(entity => entity.Id == id);
+namespace Turbo.Database.Repositories.Room;
 
-        public async Task<List<RoomRightEntity>> FindAllByRoomIdAsync(int roomId) => await _context.RoomRights
+public class RoomRightRepository(IEmulatorContext _context) : IRoomRightRepository
+{
+    public async Task<RoomRightEntity> FindAsync(int id)
+    {
+        return await _context.RoomRights
+            .FirstOrDefaultAsync(entity => entity.Id == id);
+    }
+
+    public async Task<List<RoomRightEntity>> FindAllByRoomIdAsync(int roomId)
+    {
+        return await _context.RoomRights
             .Where(entity => entity.RoomEntityId == roomId)
             .ToListAsync();
+    }
 
-        public async Task<bool> GiveRightsToPlayerIdAsync(int roomId, int playerId)
+    public async Task<bool> GiveRightsToPlayerIdAsync(int roomId, int playerId)
+    {
+        var entity = await _context.RoomRights.FirstOrDefaultAsync(entity =>
+            entity.RoomEntityId == roomId && entity.PlayerEntityId == playerId);
+
+        if (entity != null) return false;
+
+        entity = new RoomRightEntity
         {
-            var entity = await _context.RoomRights.FirstOrDefaultAsync(entity => (entity.RoomEntityId == roomId) && (entity.PlayerEntityId == playerId));
+            RoomEntityId = roomId,
+            PlayerEntityId = playerId
+        };
 
-            if (entity != null) return false;
+        _context.Add(entity);
 
-            entity = new RoomRightEntity
-            {
-                RoomEntityId = roomId,
-                PlayerEntityId = playerId
-            };
+        await _context.SaveChangesAsync();
 
-            _context.Add(entity);
+        return true;
+    }
 
-            await _context.SaveChangesAsync();
+    public async Task<bool> RemoveRightsForPlayerIdAsync(int roomId, int playerId)
+    {
+        var entity = await _context.RoomRights.FirstOrDefaultAsync(entity =>
+            entity.RoomEntityId == roomId && entity.PlayerEntityId == playerId);
 
-            return true;
-        }
+        if (entity == null) return false;
 
-        public async Task<bool> RemoveRightsForPlayerIdAsync(int roomId, int playerId)
-        {
-            var entity = await _context.RoomRights.FirstOrDefaultAsync(entity => (entity.RoomEntityId == roomId) && (entity.PlayerEntityId == playerId));
+        _context.Remove(entity);
 
-            if (entity == null) return false;
+        await _context.SaveChangesAsync();
 
-            _context.Remove(entity);
-
-            await _context.SaveChangesAsync();
-
-            return true;
-        }
+        return true;
     }
 }

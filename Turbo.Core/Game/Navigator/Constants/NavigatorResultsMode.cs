@@ -1,8 +1,7 @@
-﻿namespace Turbo.Core.Game.Navigator.Constants
+﻿namespace Turbo.Core.Game.Navigator.Constants;
+
+public enum NavigatorResultsMode
 {
-    public enum NavigatorResultsMode
-    {
-        Rows,
-        Tiles
-    }
+    Rows,
+    Tiles
 }

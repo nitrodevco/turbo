@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Room.Bots
+namespace Turbo.Packets.Outgoing.Room.Bots;
+
+public record BotErrorCode : IComposer
 {
-    public record BotErrorCode : IComposer
-    {
-        public int ErrorCode { get; init; }
-    }
+    public int ErrorCode { get; init; }
 }

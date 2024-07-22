@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Inventory.Furni
+namespace Turbo.Packets.Incoming.Inventory.Furni;
+
+public record RequestRoomPropertySetMessage : IMessageEvent
 {
-    public record RequestRoomPropertySetMessage : IMessageEvent
-    {
-        public int StripId { get; init; }
-    }
+    public int StripId { get; init; }
 }

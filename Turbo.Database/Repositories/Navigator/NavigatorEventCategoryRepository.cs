@@ -1,15 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Navigator;
 
-namespace Turbo.Database.Repositories.Navigator
-{
-    public class NavigatorEventCategoryRepository(IEmulatorContext _context) : INavigatorEventCategoryRepository
-    {
-        public async Task<NavigatorEventCategoryEntity> FindAsync(int id) => await _context.NavigatorEventCategories.FindAsync(id);
+namespace Turbo.Database.Repositories.Navigator;
 
-        public async Task<List<NavigatorEventCategoryEntity>> FindAllAsync() => await _context.NavigatorEventCategories.ToListAsync();
+public class NavigatorEventCategoryRepository(IEmulatorContext _context) : INavigatorEventCategoryRepository
+{
+    public async Task<NavigatorEventCategoryEntity> FindAsync(int id)
+    {
+        return await _context.NavigatorEventCategories.FindAsync(id);
+    }
+
+    public async Task<List<NavigatorEventCategoryEntity>> FindAllAsync()
+    {
+        return await _context.NavigatorEventCategories.ToListAsync();
     }
 }

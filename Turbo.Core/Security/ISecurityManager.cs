@@ -1,11 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Turbo.Core.Utilities;
 
-namespace Turbo.Core.Security
+namespace Turbo.Core.Security;
+
+public interface ISecurityManager : IComponent
 {
-    public interface ISecurityManager : IComponent
-    {
-        public Task<int> GetPlayerIdFromTicket(string ticket);
-    }
+    public Task<int> GetPlayerIdFromTicket(string ticket);
 }

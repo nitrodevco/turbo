@@ -10,62 +10,61 @@ using Turbo.Database.Context;
 using Turbo.Main.Configuration;
 using Turbo.Main.Extensions;
 
-namespace Turbo.Main
-{
-    [ExcludeFromCodeCoverage]
-    class Program
-    {
-        public static void Main(string[] args)
-        {
-            try
-            {
-                CreateHostBuilder(args).Build().Run();
-            }
+namespace Turbo.Main;
 
-            catch (Exception error)
-            {
-                Console.WriteLine(error);
-            }
+[ExcludeFromCodeCoverage]
+internal class Program
+{
+    public static void Main(string[] args)
+    {
+        try
+        {
+            CreateHostBuilder(args).Build().Run();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureServices((hostContext, services) =>
-                {
-                    services.AddLogging();
+        catch (Exception error)
+        {
+            Console.WriteLine(error);
+        }
+    }
 
-                    // Configuration
-                    var turboConfig = new TurboConfig();
-                    hostContext.Configuration.Bind(TurboConfig.Turbo, turboConfig);
-                    services.AddSingleton<IEmulatorConfig>(turboConfig);
+    private static IHostBuilder CreateHostBuilder(string[] args)
+    {
+        return Host.CreateDefaultBuilder(args)
+            .ConfigureServices((hostContext, services) =>
+            {
+                services.AddLogging();
 
-                    var connectionString =
-                        $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
+                // Configuration
+                var turboConfig = new TurboConfig();
+                hostContext.Configuration.Bind(TurboConfig.Turbo, turboConfig);
+                services.AddSingleton<IEmulatorConfig>(turboConfig);
 
-                    services.AddDbContext<IEmulatorContext, TurboContext>(
-                        options =>
-                        {
-                            options
-                                .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString), options =>
-                                {
-                                    options.MigrationsAssembly("Turbo.Main");
-                                })
-                                .ConfigureWarnings(warnings => warnings
-                                    .Ignore(CoreEventId.RedundantIndexRemoved))
-                                .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
-                                .EnableDetailedErrors()
-                                .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-                        }
-                    );
+                var connectionString =
+                    $"server={turboConfig.DatabaseHost};user={turboConfig.DatabaseUser};password={turboConfig.DatabasePassword};database={turboConfig.DatabaseName}";
 
-                    services.AddEncryption();
-                    services.AddRepositories();
-                    services.AddManagers();
-                    services.AddFactories();
-                    services.AddNetworking();
+                services.AddDbContext<IEmulatorContext, TurboContext>(
+                    options =>
+                    {
+                        options
+                            .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString),
+                                options => { options.MigrationsAssembly("Turbo.Main"); })
+                            .ConfigureWarnings(warnings => warnings
+                                .Ignore(CoreEventId.RedundantIndexRemoved))
+                            .EnableSensitiveDataLogging(turboConfig.DatabaseLoggingEnabled)
+                            .EnableDetailedErrors()
+                            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                    }
+                );
 
-                    // Emulator
-                    services.AddHostedService<TurboEmulator>();
-                });
+                services.AddEncryption();
+                services.AddRepositories();
+                services.AddManagers();
+                services.AddFactories();
+                services.AddNetworking();
+
+                // Emulator
+                services.AddHostedService<TurboEmulator>();
+            });
     }
 }

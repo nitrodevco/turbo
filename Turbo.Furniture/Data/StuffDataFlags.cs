@@ -1,7 +1,6 @@
-﻿namespace Turbo.Furniture.Data
+﻿namespace Turbo.Furniture.Data;
+
+public enum StuffDataFlags
 {
-    public enum StuffDataFlags
-    {
-        UniqueSet = 256
-    }
+    UniqueSet = 256
 }

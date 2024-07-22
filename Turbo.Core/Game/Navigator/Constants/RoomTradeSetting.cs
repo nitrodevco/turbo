@@ -1,9 +1,8 @@
-﻿namespace Turbo.Core.Game.Navigator.Constants
+﻿namespace Turbo.Core.Game.Navigator.Constants;
+
+public enum RoomTradeSetting
 {
-    public enum RoomTradeSetting
-    {
-        TradingNotAllowed,
-        TradingRoomOwnerAndRights,
-        TradingAllowed
-    }
+    TradingNotAllowed,
+    TradingRoomOwnerAndRights,
+    TradingAllowed
 }

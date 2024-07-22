@@ -2,11 +2,10 @@
 using System.Threading.Tasks;
 using Turbo.Database.Entities.Room;
 
-namespace Turbo.Database.Repositories.Room
+namespace Turbo.Database.Repositories.Room;
+
+public interface IRoomModelRepository : IBaseRepository<RoomModelEntity>
 {
-    public interface IRoomModelRepository : IBaseRepository<RoomModelEntity>
-    {
-        Task<RoomModelEntity> FindByNameAsync(string name);
-        Task<List<RoomModelEntity>> FindAllAsync();
-    }
+    Task<RoomModelEntity> FindByNameAsync(string name);
+    Task<List<RoomModelEntity>> FindAllAsync();
 }

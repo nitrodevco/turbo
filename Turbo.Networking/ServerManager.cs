@@ -7,30 +7,32 @@ using Turbo.Networking.Game;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
 
-namespace Turbo.Networking
+namespace Turbo.Networking;
+
+public class ServerManager : IServerManager
 {
-    public class ServerManager : IServerManager
+    public ServerManager(INetworkEventLoopGroup group, IWSGameServer wsServer, IGameServer gameServer,
+        IRestServer restServer)
     {
-        public List<IServer> Servers { get; }
+        Servers = new List<IServer>();
+        EventLoopGroup = group;
 
-        public INetworkEventLoopGroup EventLoopGroup { get; }
+        Servers.Add(gameServer);
+        Servers.Add(wsServer);
+        Servers.Add(restServer);
+    }
 
-        public ServerManager(INetworkEventLoopGroup group, IWSGameServer wsServer, IGameServer gameServer, IRestServer restServer)
-        {
-            Servers = new List<IServer>();
-            EventLoopGroup = group;
+    public INetworkEventLoopGroup EventLoopGroup { get; }
+    public List<IServer> Servers { get; }
 
-            Servers.Add(gameServer);
-            Servers.Add(wsServer);
-            Servers.Add(restServer);
-        }
+    public async Task StartServersAsync()
+    {
+        await Task.WhenAll(Servers.Select(x => x.StartAsync()));
+    }
 
-        public async Task StartServersAsync() => await Task.WhenAll(Servers.Select(x => x.StartAsync()));
-
-        public async Task ShutdownServersAsync()
-        {
-            await Task.WhenAll(Servers.Select(x => x.ShutdownAsync()));
-            await EventLoopGroup.Group.ShutdownGracefullyAsync();
-        }
+    public async Task ShutdownServersAsync()
+    {
+        await Task.WhenAll(Servers.Select(x => x.ShutdownAsync()));
+        await EventLoopGroup.Group.ShutdownGracefullyAsync();
     }
 }

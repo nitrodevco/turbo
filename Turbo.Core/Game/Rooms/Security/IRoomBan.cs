@@ -1,6 +1,5 @@
-﻿namespace Turbo.Core.Game.Rooms.Security
+﻿namespace Turbo.Core.Game.Rooms.Security;
+
+public interface IRoomBan
 {
-    public interface IRoomBan
-    {
-    }
 }

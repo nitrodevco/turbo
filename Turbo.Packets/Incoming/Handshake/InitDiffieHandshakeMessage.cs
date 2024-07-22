@@ -2,6 +2,6 @@
 
 namespace Turbo.Packets.Incoming.Handshake;
 
-public record PongMessage : IMessageEvent
+public record InitDiffieHandshakeMessage : IMessageEvent
 {
 }

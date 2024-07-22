@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Furniture
+namespace Turbo.Packets.Incoming.Room.Furniture;
+
+public record DiceOffMessage : IMessageEvent
 {
-    public record DiceOffMessage : IMessageEvent
-    {
-        public int ObjectId { get; init; }
-    }
+    public int ObjectId { get; init; }
 }

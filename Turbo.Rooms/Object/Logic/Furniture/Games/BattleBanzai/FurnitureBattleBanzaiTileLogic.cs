@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Rooms.Object.Attributes;
 
-namespace Turbo.Rooms.Object.Logic.Furniture.Games.BattleBanzai
+namespace Turbo.Rooms.Object.Logic.Furniture.Games.BattleBanzai;
+
+[RoomObjectLogic("bb_patch1")]
+public class FurnitureBattleBanzaiTileLogic : FurnitureFloorLogic
 {
-    [RoomObjectLogic("bb_patch1")]
-    public class FurnitureBattleBanzaiTileLogic : FurnitureFloorLogic
-    {
-        public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Nobody;
-    }
+    public override FurniUsagePolicy UsagePolicy => FurniUsagePolicy.Nobody;
 }

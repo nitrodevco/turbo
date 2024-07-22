@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
-    <AssemblyVersion></AssemblyVersion>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+        <AssemblyVersion></AssemblyVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Rcon\**" />
-    <EmbeddedResource Remove="Rcon\**" />
-    <None Remove="Rcon\**" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Rcon\**"/>
+        <EmbeddedResource Remove="Rcon\**"/>
+        <None Remove="Rcon\**"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="DotNetty.Buffers" Version="0.7.5"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
-    <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj"/>
+        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj"/>
+    </ItemGroup>
 
 </Project>

@@ -6,45 +6,51 @@ using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Room;
 
-namespace Turbo.Database.Repositories.Room
-{
-    public class RoomBanRepository(IEmulatorContext _context) : IRoomBanRepository
-    {
-        public async Task<RoomBanEntity> FindAsync(int id) => await _context.RoomBans
-            .FirstOrDefaultAsync(entity => entity.Id == id);
+namespace Turbo.Database.Repositories.Room;
 
-        public async Task<List<RoomBanEntity>> FindAllByRoomIdAsync(int roomId) => await _context.RoomBans
+public class RoomBanRepository(IEmulatorContext _context) : IRoomBanRepository
+{
+    public async Task<RoomBanEntity> FindAsync(int id)
+    {
+        return await _context.RoomBans
+            .FirstOrDefaultAsync(entity => entity.Id == id);
+    }
+
+    public async Task<List<RoomBanEntity>> FindAllByRoomIdAsync(int roomId)
+    {
+        return await _context.RoomBans
             .Where(entity => entity.RoomEntityId == roomId)
             .ToListAsync();
+    }
 
-        public async Task<bool> BanPlayerIdAsync(int roomId, int playerId, DateTime expiration)
-        {
-            var entity = await _context.RoomBans.FirstOrDefaultAsync(entity => (entity.RoomEntityId == roomId) && (entity.PlayerEntityId == playerId));
+    public async Task<bool> BanPlayerIdAsync(int roomId, int playerId, DateTime expiration)
+    {
+        var entity = await _context.RoomBans.FirstOrDefaultAsync(entity =>
+            entity.RoomEntityId == roomId && entity.PlayerEntityId == playerId);
 
-            if (entity != null) return false;
+        if (entity != null) return false;
 
-            entity = new RoomBanEntity();
+        entity = new RoomBanEntity();
 
-            entity.RoomEntityId = roomId;
-            entity.PlayerEntityId = playerId;
-            entity.DateExpires = expiration;
+        entity.RoomEntityId = roomId;
+        entity.PlayerEntityId = playerId;
+        entity.DateExpires = expiration;
 
-            _context.Add(entity);
+        _context.Add(entity);
 
-            await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
-            return true;
-        }
+        return true;
+    }
 
-        public async Task<bool> RemoveBanEntityAsync(RoomBanEntity entity)
-        {
-            if (entity == null) return false;
+    public async Task<bool> RemoveBanEntityAsync(RoomBanEntity entity)
+    {
+        if (entity == null) return false;
 
-            _context.Remove(entity);
+        _context.Remove(entity);
 
-            await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
-            return true;
-        }
+        return true;
     }
 }

@@ -1,6 +1,5 @@
-﻿namespace Turbo.Core.Game.Rooms.Security
+﻿namespace Turbo.Core.Game.Rooms.Security;
+
+public interface IRoomMute
 {
-    public interface IRoomMute
-    {
-    }
 }

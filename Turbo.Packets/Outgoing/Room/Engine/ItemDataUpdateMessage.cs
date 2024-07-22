@@ -1,10 +1,9 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Room.Engine
+namespace Turbo.Packets.Outgoing.Room.Engine;
+
+public record ItemDataUpdateMessage : IComposer
 {
-    public record ItemDataUpdateMessage : IComposer
-    {
-        public int ItemId { get; init; }
-        public string ItemData { get; init; }
-    }
+    public int ItemId { get; init; }
+    public string ItemData { get; init; }
 }

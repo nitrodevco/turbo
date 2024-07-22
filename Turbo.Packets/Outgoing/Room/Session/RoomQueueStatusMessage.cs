@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Room.Session
+namespace Turbo.Packets.Outgoing.Room.Session;
+
+public record RoomQueueStatusMessage : IComposer
 {
-    public record RoomQueueStatusMessage : IComposer
-    {
-        // todo: finish this
-    }
+    // todo: finish this
 }

@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Navigator
+namespace Turbo.Packets.Incoming.Navigator;
+
+public record NavigatorDeleteSavedSearchMessage : IMessageEvent
 {
-    public record NavigatorDeleteSavedSearchMessage : IMessageEvent
-    {
-        public int SearchID { get; init; }
-    }
+    public int SearchID { get; init; }
 }

@@ -1,9 +1,8 @@
-namespace Turbo.Core.Game.Catalog.Constants
+namespace Turbo.Core.Game.Catalog.Constants;
+
+public enum FrontPageItemType
 {
-    public enum FrontPageItemType
-    {
-        CatalogPage = 0,
-        ProductOffer = 1,
-        Iap = 2
-    }
+    CatalogPage = 0,
+    ProductOffer = 1,
+    Iap = 2
 }

@@ -1,14 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+namespace Turbo.Core.Events;
 
-namespace Turbo.Core.Events
+public interface ITurboEvent
 {
-    public interface ITurboEvent
-    {
-        public bool IsCancelled { get; }
+    public bool IsCancelled { get; }
 
-        public void Cancel();
-    }
+    public void Cancel();
 }

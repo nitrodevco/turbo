@@ -1,51 +1,48 @@
 using System.Collections.Concurrent;
 using Turbo.Core.Game.Inventory;
 
-namespace Turbo.Inventory.Furniture
+namespace Turbo.Inventory.Furniture;
+
+public class PlayerFurnitureContainer(Action<IPlayerFurniture> _onRemove) : IPlayerFurnitureContainer
 {
-    public class PlayerFurnitureContainer(Action<IPlayerFurniture> _onRemove) : IPlayerFurnitureContainer
+    public ConcurrentDictionary<int, IPlayerFurniture> PlayerFurniture { get; } = new();
+
+    public IPlayerFurniture? GetPlayerFurniture(int id)
     {
-        public ConcurrentDictionary<int, IPlayerFurniture> PlayerFurniture { get; private set; } = new ConcurrentDictionary<int, IPlayerFurniture>();
+        if (id > 0 && PlayerFurniture.TryGetValue(id, out var playerFurniture)) return playerFurniture;
 
-        public IPlayerFurniture? GetPlayerFurniture(int id)
+        return null;
+    }
+
+    public bool AddFurniture(IPlayerFurniture playerFurniture)
+    {
+        if (playerFurniture == null) return false;
+
+        return PlayerFurniture.TryAdd(playerFurniture.Id, playerFurniture);
+    }
+
+    public void RemoveFurniture(params IPlayerFurniture[] playerFurnitures)
+    {
+        foreach (var playerFurniture in playerFurnitures)
         {
-            if ((id > 0) && PlayerFurniture.TryGetValue(id, out var playerFurniture))
-            {
-                return playerFurniture;
-            }
+            if (playerFurniture == null) continue;
 
-            return null;
+            if (!PlayerFurniture.TryRemove(
+                    new KeyValuePair<int, IPlayerFurniture>(playerFurniture.Id, playerFurniture))) continue;
+
+            _onRemove?.Invoke(playerFurniture);
         }
+    }
 
-        public bool AddFurniture(IPlayerFurniture playerFurniture)
+    public void RemoveAllFurniture(params int[] ids)
+    {
+        foreach (var id in ids)
         {
-            if (playerFurniture == null) return false;
+            var furniture = GetPlayerFurniture(id);
 
-            return PlayerFurniture.TryAdd(playerFurniture.Id, playerFurniture);
-        }
+            if (furniture == null) continue;
 
-        public void RemoveFurniture(params IPlayerFurniture[] playerFurnitures)
-        {
-            foreach (var playerFurniture in playerFurnitures)
-            {
-                if (playerFurniture == null) continue;
-
-                if (!PlayerFurniture.TryRemove(new KeyValuePair<int, IPlayerFurniture>(playerFurniture.Id, playerFurniture))) continue;
-
-                _onRemove?.Invoke(playerFurniture);
-            }
-        }
-
-        public void RemoveAllFurniture(params int[] ids)
-        {
-            foreach (int id in ids)
-            {
-                var furniture = GetPlayerFurniture(id);
-
-                if (furniture == null) continue;
-
-                RemoveFurniture(furniture);
-            }
+            RemoveFurniture(furniture);
         }
     }
 }

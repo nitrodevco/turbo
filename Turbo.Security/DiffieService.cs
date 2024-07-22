@@ -9,8 +9,8 @@ namespace Turbo.Security;
 public class DiffieService : IDiffieService
 {
     private const int DhPrimesBitSize = 128;
-    private readonly BigInteger _dhPrime;
     private readonly BigInteger _dhGenerator;
+    private readonly BigInteger _dhPrime;
     private readonly BigInteger _dhPrivate;
     private readonly BigInteger _dhPublic;
     private readonly IRsaService _rsaService;
@@ -29,7 +29,7 @@ public class DiffieService : IDiffieService
             _dhPrime = BigInteger.ProbablePrime(DhPrimesBitSize, random);
             _dhGenerator = BigInteger.ProbablePrime(DhPrimesBitSize, random);
         }
-        
+
         (_dhPrime, _dhGenerator) = (_dhGenerator, _dhPrime);
 
         _dhPrivate = BigInteger.ProbablePrime(DhPrimesBitSize, random);
@@ -73,8 +73,9 @@ public class DiffieService : IDiffieService
 
         return Hex.ToHexString(encrypted).ToLower();
     }
-    
-    public byte[] GetSharedKey(string publicKeyStr) {
+
+    public byte[] GetSharedKey(string publicKeyStr)
+    {
         var publicKey = DecryptBigInteger(publicKeyStr);
         var sharedKey = publicKey.ModPow(_dhPrivate, _dhPrime);
 

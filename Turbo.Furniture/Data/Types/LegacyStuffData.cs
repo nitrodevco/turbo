@@ -1,24 +1,21 @@
-﻿using System;
+﻿namespace Turbo.Furniture.Data.Types;
 
-namespace Turbo.Furniture.Data.Types
+public class LegacyStuffData : StuffDataBase
 {
-    public class LegacyStuffData : StuffDataBase
+    public LegacyStuffData()
     {
-        public string Data { get; set; }
+        if (Data == null || Data.Equals("")) Data = "0";
+    }
 
-        public LegacyStuffData()
-        {
-            if((Data == null) || Data.Equals("")) Data = "0";
-        }
+    public string Data { get; set; }
 
-        public override string GetLegacyString()
-        {
-            return Data;
-        }
+    public override string GetLegacyString()
+    {
+        return Data;
+    }
 
-        public override void SetState(string state)
-        {
-            Data = state;
-        }
+    public override void SetState(string state)
+    {
+        Data = state;
     }
 }

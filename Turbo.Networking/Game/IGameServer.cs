@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Networking;
 
-namespace Turbo.Networking.Game
+namespace Turbo.Networking.Game;
+
+public interface IGameServer : IServer
 {
-    public interface IGameServer : IServer
-    {
-    }
 }

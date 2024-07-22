@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Room.Chat
+namespace Turbo.Packets.Outgoing.Room.Chat;
+
+public record RemaningMutePeriodMessage : IComposer
 {
-    public record RemaningMutePeriodMessage : IComposer
-    {
-        public int MuteSecondsRemaining { get; init; }
-    }
+    public int MuteSecondsRemaining { get; init; }
 }

@@ -1,12 +1,11 @@
-﻿namespace Turbo.Furniture.Data.Types
-{
-    public class EmptyStuffData : StuffDataBase
-    {
-        public string Data { get; set; }
+﻿namespace Turbo.Furniture.Data.Types;
 
-        public override string GetLegacyString()
-        {
-            return Data == null ? "" : Data;
-        }
+public class EmptyStuffData : StuffDataBase
+{
+    public string Data { get; set; }
+
+    public override string GetLegacyString()
+    {
+        return Data == null ? "" : Data;
     }
 }

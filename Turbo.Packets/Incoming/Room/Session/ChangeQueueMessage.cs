@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Session
+namespace Turbo.Packets.Incoming.Room.Session;
+
+public record ChangeQueueMessage : IMessageEvent
 {
-    public record ChangeQueueMessage : IMessageEvent
-    {
-        public int TargetQueue { get; init; }
-    }
+    public int TargetQueue { get; init; }
 }

@@ -1,14 +1,13 @@
-﻿namespace Turbo.Core.Packets.Messages
+﻿namespace Turbo.Core.Packets.Messages;
+
+public interface IClientPacket
 {
-    public interface IClientPacket
-    {
-        string PopString();
-        int PopInt();
-        bool PopBoolean();
-        short PopShort();
-        double PopDouble();
-        long PopLong();
-        int RemainingLength();
-        int Header { get; }
-    }
+    int Header { get; }
+    string PopString();
+    int PopInt();
+    bool PopBoolean();
+    short PopShort();
+    double PopDouble();
+    long PopLong();
+    int RemainingLength();
 }

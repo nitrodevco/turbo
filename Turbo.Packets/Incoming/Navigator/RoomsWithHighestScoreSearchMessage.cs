@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Navigator
+namespace Turbo.Packets.Incoming.Navigator;
+
+public record RoomsWithHighestScoreSearchMessage : IMessageEvent
 {
-    public record RoomsWithHighestScoreSearchMessage : IMessageEvent
-    {
-    }
 }

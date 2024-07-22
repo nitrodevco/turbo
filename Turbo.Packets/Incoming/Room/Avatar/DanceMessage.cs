@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Avatar
+namespace Turbo.Packets.Incoming.Room.Avatar;
+
+public record DanceMessage : IMessageEvent
 {
-    public record DanceMessage : IMessageEvent
-    {
-        public int Style { get; init; }
-    }
+    public int Style { get; init; }
 }

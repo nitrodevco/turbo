@@ -2,29 +2,23 @@
 using Turbo.Core.Packets.Messages;
 using Turbo.Packets.Outgoing;
 
-namespace Turbo.Packets.Serializers
+namespace Turbo.Packets.Serializers;
+
+public abstract class AbstractSerializer<T>(int header) : ISerializer
+    where T : IComposer
 {
-    public abstract class AbstractSerializer<T> : ISerializer
-        where T : IComposer
+    public int Header { get; } = header;
+
+    public IServerPacket Serialize(IByteBuffer output, IComposer message)
     {
-        public int Header { get; }
+        IServerPacket packet = new ServerPacket(Header, output);
 
-        public AbstractSerializer(int header)
-        {
-            this.Header = header;
-        }
+        packet.WriteShort(Header);
 
-        public IServerPacket Serialize(IByteBuffer output, IComposer message)
-        {
-            IServerPacket packet = new ServerPacket(Header, output);
+        Serialize(packet, (T)message);
 
-            packet.WriteShort(Header);
-
-            Serialize(packet, (T)message);
-
-            return packet;
-        }
-
-        protected abstract void Serialize(IServerPacket packet, T message);
+        return packet;
     }
+
+    protected abstract void Serialize(IServerPacket packet, T message);
 }

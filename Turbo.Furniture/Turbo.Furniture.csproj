@@ -1,19 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Library</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
-    <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj"/>
+        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Data\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\" />
-  </ItemGroup>
+    <ItemGroup>
+        <None Remove="Data\"/>
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Data\"/>
+    </ItemGroup>
 </Project>

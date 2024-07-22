@@ -1,10 +1,9 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Engine
+namespace Turbo.Packets.Incoming.Room.Engine;
+
+public record UseWallItemMessage : IMessageEvent
 {
-    public record UseWallItemMessage : IMessageEvent
-    {
-        public int ObjectId { get; init; }
-        public int Param { get; init; }
-    }
+    public int ObjectId { get; init; }
+    public int Param { get; init; }
 }

@@ -13,24 +13,24 @@ namespace Turbo.Security;
 
 public class RsaService : IRsaService
 {
-    private readonly RsaKeyParameters _publicKey;
-    private readonly RsaKeyParameters _privateKey;
+    private readonly int _blockSize;
     private readonly BigInteger _exponent;
     private readonly BigInteger _modulus;
     private readonly BigInteger _privateExponent;
-    private readonly int _blockSize;
-    
+    private readonly RsaKeyParameters _privateKey;
+    private readonly RsaKeyParameters _publicKey;
+
     public RsaService(string exponent, string modulus, string privateExponent)
     {
         _exponent = new BigInteger(exponent, 16);
         _modulus = new BigInteger(modulus, 16);
         _privateExponent = new BigInteger(privateExponent, 16);
-        
+
         _publicKey = new RsaKeyParameters(false, _modulus, _exponent);
         _privateKey = new RsaKeyParameters(true, _modulus, _privateExponent);
         _blockSize = (_modulus.BitLength + 7) / 8;
     }
-    
+
     public byte[] Encrypt(byte[] data)
     {
         IAsymmetricBlockCipher cipher = new Pkcs1Encoding(new RsaEngine());
@@ -59,7 +59,7 @@ public class RsaService : IRsaService
         verifier.BlockUpdate(data, 0, data.Length);
         return verifier.VerifySignature(signature);
     }
-    
+
     private static byte[] ProcessData(IAsymmetricBlockCipher cipher, byte[] data)
     {
         var outputStream = new MemoryStream();

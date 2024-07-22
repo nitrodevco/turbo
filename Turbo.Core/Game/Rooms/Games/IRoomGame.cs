@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+namespace Turbo.Core.Game.Rooms.Games;
 
-namespace Turbo.Core.Game.Rooms.Games
+public interface IRoomGame
 {
-    public interface IRoomGame
-    {
-        
-    }
 }

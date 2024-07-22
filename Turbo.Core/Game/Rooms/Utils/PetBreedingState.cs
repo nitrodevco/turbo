@@ -1,9 +1,8 @@
-﻿namespace Turbo.Core.Game.Rooms.Utils
+﻿namespace Turbo.Core.Game.Rooms.Utils;
+
+public enum PetBreedingState
 {
-    public enum PetBreedingState
-    {
-        Start,
-        Cancel,
-        Accept
-    }
+    Start,
+    Cancel,
+    Accept
 }

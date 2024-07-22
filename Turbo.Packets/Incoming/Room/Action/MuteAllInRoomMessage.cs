@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Action
+namespace Turbo.Packets.Incoming.Room.Action;
+
+public record MuteAllInRoomMessage : IMessageEvent
 {
-    public record MuteAllInRoomMessage : IMessageEvent
-    {
-    }
 }

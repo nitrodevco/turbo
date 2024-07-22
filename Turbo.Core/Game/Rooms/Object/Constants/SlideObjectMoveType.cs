@@ -1,8 +1,7 @@
-﻿namespace Turbo.Core.Game.Rooms.Utils
+﻿namespace Turbo.Core.Game.Rooms.Utils;
+
+public enum SlideObjectMoveType
 {
-    public enum SlideObjectMoveType
-    {
-        Move = 1,
-        Slide = 2
-    }
+    Move = 1,
+    Slide = 2
 }

@@ -1,9 +1,8 @@
-﻿namespace Turbo.Core.Game.Furniture.Constants
+﻿namespace Turbo.Core.Game.Furniture.Constants;
+
+public enum FurniUsagePolicy
 {
-    public enum FurniUsagePolicy
-    {
-        Nobody,
-        Controller,
-        Everybody
-    }
+    Nobody,
+    Controller,
+    Everybody
 }

@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Avatar
+namespace Turbo.Packets.Incoming.Room.Avatar;
+
+public record PassCarryItemToPetMessage : IMessageEvent
 {
-    public record PassCarryItemToPetMessage : IMessageEvent
-    {
-        public int PetId { get; init; }
-    }
+    public int PetId { get; init; }
 }

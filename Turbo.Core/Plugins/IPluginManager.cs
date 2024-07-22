@@ -1,7 +1,6 @@
-﻿namespace Turbo.Core.Plugins
+﻿namespace Turbo.Core.Plugins;
+
+public interface IPluginManager
 {
-    public interface IPluginManager
-    {
-        public abstract void LoadPlugins();
-    }
+    public void LoadPlugins();
 }

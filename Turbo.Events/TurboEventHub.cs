@@ -6,93 +6,94 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Events;
 
-namespace Turbo.Events
+namespace Turbo.Events;
+
+public class TurboEventHub : ITurboEventHub
 {
-    public class TurboEventHub : ITurboEventHub
+    private readonly ILogger<ITurboEventHub> _logger;
+    private readonly object _listenerLock;
+
+    private readonly List<ITurboEventListener> _listeners;
+
+    public TurboEventHub(ILogger<ITurboEventHub> logger)
     {
-        private readonly ILogger<ITurboEventHub> _logger;
+        _logger = logger;
 
-        private List<ITurboEventListener> _listeners;
-        private object _listenerLock;
+        _listenerLock = new object();
+        _listeners = new List<ITurboEventListener>();
+    }
 
-        public TurboEventHub(ILogger<ITurboEventHub> logger)
-        {
-            this._logger = logger;
+    public void Subscribe<T>(object subscriber, Action<T> handler) where T : ITurboEvent
+    {
+        SubscribeDelegate<T>(subscriber, handler);
+    }
 
-            this._listenerLock = new object();
-            this._listeners = new List<ITurboEventListener>();
-        }
+    public void Subscribe<T>(object subscriber, Func<T, Task> handler) where T : ITurboEvent
+    {
+        SubscribeDelegate<T>(subscriber, handler);
+    }
 
-        public void Subscribe<T>(object subscriber, Action<T> handler) where T : ITurboEvent
-        {
-            SubscribeDelegate<T>(subscriber, handler);
-        }
+    public T Dispatch<T>(T message) where T : ITurboEvent
+    {
+        var handlers = GetAliveHandlers<T>();
 
-        public void Subscribe<T>(object subscriber, Func<T, Task> handler) where T : ITurboEvent
-        {
-            SubscribeDelegate<T>(subscriber, handler);
-        }
-
-        public T Dispatch<T>(T message) where T : ITurboEvent
-        {
-            var handlers = GetAliveHandlers<T>();
-
-            foreach (ITurboEventListener listener in handlers)
+        foreach (var listener in handlers)
+            switch (listener.Action)
             {
-                switch (listener.Action)
-                {
-                    case Action<T> action:
-                        action(message);
-                        break;
-                    case Func<T, Task> func:
-                        func(message);
-                        break;
-                }
+                case Action<T> action:
+                    action(message);
+                    break;
+                case Func<T, Task> func:
+                    func(message);
+                    break;
             }
 
-            return message;
-        }
+        return message;
+    }
 
-        public async Task<T> DispatchAsync<T>(T message) where T : ITurboEvent
-        {
-            foreach (ITurboEventListener listener in GetAliveHandlers<T>())
+    public async Task<T> DispatchAsync<T>(T message) where T : ITurboEvent
+    {
+        foreach (var listener in GetAliveHandlers<T>())
+            switch (listener.Action)
             {
-                switch (listener.Action)
-                {
-                    case Action<T> action:
-                        action(message);
-                        break;
-                    case Func<T, Task> func:
-                        await func(message);
-                        break;
-                }
+                case Action<T> action:
+                    action(message);
+                    break;
+                case Func<T, Task> func:
+                    await func(message);
+                    break;
             }
 
-            return message;
-        }
+        return message;
+    }
 
-        private void SubscribeDelegate<T>(object subscriber, Delegate handler) where T : ITurboEvent
+    private void SubscribeDelegate<T>(object subscriber, Delegate handler) where T : ITurboEvent
+    {
+        ITurboEventListener item = new TurboEventListener
         {
-            ITurboEventListener item = new TurboEventListener
-            {
-                Action = handler,
-                Sender = new WeakReference(subscriber),
-                Type = typeof(T)
-            };
+            Action = handler,
+            Sender = new WeakReference(subscriber),
+            Type = typeof(T)
+        };
 
-            lock (_listenerLock) _listeners.Add(item);
-        }
-
-        private List<ITurboEventListener> GetAliveHandlers<T>() where T : ITurboEvent
+        lock (_listenerLock)
         {
-            PruneHandlers();
-
-            return _listeners.Where(h => h.Type.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo())).ToList();
+            _listeners.Add(item);
         }
+    }
 
-        private void PruneHandlers()
+    private List<ITurboEventListener> GetAliveHandlers<T>() where T : ITurboEvent
+    {
+        PruneHandlers();
+
+        return _listeners.Where(h => h.Type.GetTypeInfo().IsAssignableFrom(typeof(T).GetTypeInfo())).ToList();
+    }
+
+    private void PruneHandlers()
+    {
+        lock (_listenerLock)
         {
-            lock (_listenerLock) _listeners.RemoveAll(x => !x.Sender.IsAlive);
+            _listeners.RemoveAll(x => !x.Sender.IsAlive);
         }
     }
 }

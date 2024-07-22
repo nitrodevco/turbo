@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Pets
+namespace Turbo.Packets.Incoming.Room.Pets;
+
+public record ScratchPetMessage : IMessageEvent
 {
-    public record ScratchPetMessage : IMessageEvent
-    {
-        public int PetId { get; init; }
-    }
+    public int PetId { get; init; }
 }

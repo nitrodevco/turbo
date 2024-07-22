@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+namespace Turbo.Core.Game.Wired.Data;
 
-namespace Turbo.Core.Game.Wired.Data
+public interface IWiredConditionData : IWiredData
 {
-    public interface IWiredConditionData : IWiredData
-    {
-
-    }
 }

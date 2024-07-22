@@ -2,10 +2,9 @@
 using System.Threading.Tasks;
 using Turbo.Database.Entities.Furniture;
 
-namespace Turbo.Database.Repositories.Furniture
+namespace Turbo.Database.Repositories.Furniture;
+
+public interface IFurnitureDefinitionRepository : IBaseRepository<FurnitureDefinitionEntity>
 {
-    public interface IFurnitureDefinitionRepository : IBaseRepository<FurnitureDefinitionEntity>
-    {
-        public Task<List<FurnitureDefinitionEntity>> FindAllAsync();
-    }
+    public Task<List<FurnitureDefinitionEntity>> FindAllAsync();
 }

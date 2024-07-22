@@ -1,6 +1,5 @@
-﻿namespace Turbo.Furniture.Data.Types
+﻿namespace Turbo.Furniture.Data.Types;
+
+public class VoteStuffData : StuffDataBase
 {
-    public class VoteStuffData : StuffDataBase
-    {
-    }
 }

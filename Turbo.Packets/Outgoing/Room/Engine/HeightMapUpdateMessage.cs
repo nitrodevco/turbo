@@ -2,10 +2,9 @@
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Room.Engine
+namespace Turbo.Packets.Outgoing.Room.Engine;
+
+public record HeightMapUpdateMessage : IComposer
 {
-    public record HeightMapUpdateMessage : IComposer
-    {
-        public List<IRoomTile> TilesToUpdate { get; init; }
-    }
+    public List<IRoomTile> TilesToUpdate { get; init; }
 }

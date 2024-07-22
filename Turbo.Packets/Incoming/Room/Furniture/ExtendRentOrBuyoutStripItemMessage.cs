@@ -1,10 +1,9 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Furniture
+namespace Turbo.Packets.Incoming.Room.Furniture;
+
+public record ExtendRentOrBuyoutStripItemMessage : IMessageEvent
 {
-    public record ExtendRentOrBuyoutStripItemMessage : IMessageEvent
-    {
-        public int StripId { get; init; }
-        public bool IsBuyout { get; init; }
-    }
+    public int StripId { get; init; }
+    public bool IsBuyout { get; init; }
 }

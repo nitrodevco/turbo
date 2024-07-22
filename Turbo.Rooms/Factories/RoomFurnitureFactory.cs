@@ -1,23 +1,15 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using Turbo.Core.Events;
-using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
-using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Object.Logic;
-using Turbo.Database.Repositories.Furniture;
-using Turbo.Database.Repositories.Player;
-using Turbo.Furniture.Factories;
 using Turbo.Rooms.Managers;
 
-namespace Turbo.Rooms.Factories
+namespace Turbo.Rooms.Factories;
+
+public class RoomFurnitureFactory(IServiceProvider _provider) : IRoomFurnitureFactory
 {
-    public class RoomFurnitureFactory(IServiceProvider _provider) : IRoomFurnitureFactory
+    public IRoomFurnitureManager Create(IRoom room)
     {
-        public IRoomFurnitureManager Create(IRoom room)
-        {
-            return ActivatorUtilities.CreateInstance<RoomFurnitureManager>(_provider, room);
-        }
+        return ActivatorUtilities.CreateInstance<RoomFurnitureManager>(_provider, room);
     }
 }

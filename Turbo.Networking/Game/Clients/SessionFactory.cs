@@ -1,25 +1,24 @@
-﻿using DotNetty.Transport.Channels;
+﻿using System;
+using DotNetty.Transport.Channels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Revisions;
 
-namespace Turbo.Networking.Game.Clients
+namespace Turbo.Networking.Game.Clients;
+
+public class SessionFactory : ISessionFactory
 {
-    public class SessionFactory : ISessionFactory
+    private readonly IServiceProvider _provider;
+
+    public SessionFactory(IServiceProvider provider)
     {
-        private readonly IServiceProvider _provider;
+        _provider = provider;
+    }
 
-        public SessionFactory(IServiceProvider provider)
-        {
-            _provider = provider;
-        }
-
-        public ISession Create(IChannelHandlerContext context, IRevision initialRevision)
-        {
-            ILogger<Session> logger = _provider.GetService<ILogger<Session>>();
-            return new Session(context, initialRevision, logger);
-        }
+    public ISession Create(IChannelHandlerContext context, IRevision initialRevision)
+    {
+        var logger = _provider.GetService<ILogger<Session>>();
+        return new Session(context, initialRevision, logger);
     }
 }

@@ -1,9 +1,8 @@
 ﻿using DotNetty.Transport.Channels;
 
-namespace Turbo.Networking.EventLoop
+namespace Turbo.Networking.EventLoop;
+
+public interface INetworkEventLoopGroup
 {
-    public interface INetworkEventLoopGroup
-    {
-        public IEventLoopGroup Group { get; }
-    }
+    public IEventLoopGroup Group { get; }
 }

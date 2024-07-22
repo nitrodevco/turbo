@@ -1,75 +1,73 @@
-﻿using DotNetty.Transport.Channels;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.IO;
-using Turbo.Core.Networking.Game.Clients;
+using DotNetty.Transport.Channels;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Packets;
 using Turbo.Core.Packets.Messages;
 using Turbo.Networking.Clients;
 using Turbo.Networking.Game.Clients;
 using Turbo.Packets.Revisions;
 
-namespace Turbo.Networking.Game.Handler
+namespace Turbo.Networking.Game.Handler;
+
+public class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
 {
-    public class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
+    private readonly ILogger<GameMessageHandler> _logger;
+    private readonly IPacketMessageHub _messageHub;
+    private readonly IRevisionManager _revisionManager;
+    private readonly ISessionFactory _sessionFactory;
+    private readonly ISessionManager _sessionManager;
+
+    public GameMessageHandler(IPacketMessageHub messageHub,
+        ISessionManager sessionManager,
+        IRevisionManager revisionManager,
+        ISessionFactory sessionFactory,
+        ILogger<GameMessageHandler> logger)
     {
-        private readonly IPacketMessageHub _messageHub;
-        private readonly ISessionManager _sessionManager;
-        private readonly IRevisionManager _revisionManager;
-        private readonly ISessionFactory _sessionFactory;
-        private readonly ILogger<GameMessageHandler> _logger;
+        _messageHub = messageHub;
+        _sessionManager = sessionManager;
+        _revisionManager = revisionManager;
+        _sessionFactory = sessionFactory;
+        _logger = logger;
+    }
 
-        public GameMessageHandler(IPacketMessageHub messageHub,
-            ISessionManager sessionManager,
-            IRevisionManager revisionManager,
-            ISessionFactory sessionFactory,
-            ILogger<GameMessageHandler> logger)
-        {
-            _messageHub = messageHub;
-            _sessionManager = sessionManager;
-            _revisionManager = revisionManager;
-            _sessionFactory = sessionFactory;
-            _logger = logger;
-        }
+    public override void ChannelActive(IChannelHandlerContext context)
+    {
+        _sessionManager.TryRegisterSession(context.Channel.Id,
+            _sessionFactory.Create(context, _revisionManager.DefaultRevision));
+    }
 
-        public override void ChannelActive(IChannelHandlerContext context)
-        {
-            _sessionManager.TryRegisterSession(context.Channel.Id,
-                _sessionFactory.Create(context, _revisionManager.DefaultRevision));
-        }
+    public override void ChannelInactive(IChannelHandlerContext context)
+    {
+        _sessionManager.DisconnectSession(context.Channel.Id);
+    }
 
-        public override void ChannelInactive(IChannelHandlerContext context)
+    protected override async void ChannelRead0(IChannelHandlerContext ctx, IClientPacket msg)
+    {
+        if (_sessionManager.TryGetSession(ctx.Channel.Id, out var session))
         {
-            _sessionManager.DisconnectSession(context.Channel.Id);
-        }
-
-        protected override async void ChannelRead0(IChannelHandlerContext ctx, IClientPacket msg)
-        {
-            if (_sessionManager.TryGetSession(ctx.Channel.Id, out ISession session))
+            if (session.Revision == null)
             {
-                if(session.Revision == null)
-                {
-                    await session.DisposeAsync();
+                await session.DisposeAsync();
 
-                    return;
-                }
+                return;
+            }
 
-                if (session.Revision.Parsers.TryGetValue(msg.Header, out IParser parser))
-                {
-                    _logger.LogDebug($"Received {msg.Header}:{parser.GetType().Name}");
-                    await parser.HandleAsync(session, msg, _messageHub);
-                }
-                else
-                {
-                    _logger.LogDebug($"No matching parser found for message {msg.Header}:{msg}");
-                }
+            if (session.Revision.Parsers.TryGetValue(msg.Header, out var parser))
+            {
+                _logger.LogDebug($"Received {msg.Header}:{parser.GetType().Name}");
+                await parser.HandleAsync(session, msg, _messageHub);
+            }
+            else
+            {
+                _logger.LogDebug($"No matching parser found for message {msg.Header}:{msg}");
             }
         }
+    }
 
-        public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
-        {
-            if (exception is IOException) return;
-            _logger.LogError(exception.Message);
-        }
+    public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
+    {
+        if (exception is IOException) return;
+        _logger.LogError(exception.Message);
     }
 }

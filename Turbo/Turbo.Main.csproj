@@ -1,50 +1,50 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-	<SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-	<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0-beta.2" />
-    <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0" />
-    <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1" />
-    <PackageReference Include="System.Collections" Version="4.3.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0-beta.2"/>
+        <PackageReference Include="Serilog.Extensions.Hosting" Version="8.0.0"/>
+        <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.0"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="5.0.1"/>
+        <PackageReference Include="System.Collections" Version="4.3.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-	<Content Include="appsettings.json">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	</Content>
-	<Content Include="appsettings.Development.json;appsettings.Production.json">
-		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		<DependentUpon>appsettings.json</DependentUpon>
-	</Content>
-  </ItemGroup>
+    <ItemGroup>
+        <Content Include="appsettings.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </Content>
+        <Content Include="appsettings.Development.json;appsettings.Production.json">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <DependentUpon>appsettings.json</DependentUpon>
+        </Content>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Turbo.Catalog\Turbo.Catalog.csproj" />
-    <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
-    <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
-    <ProjectReference Include="..\Turbo.Furniture\Turbo.Furniture.csproj" />
-    <ProjectReference Include="..\Turbo.Navigator\Turbo.Navigator.csproj" />
-    <ProjectReference Include="..\Turbo.Networking\Turbo.Networking.csproj" />
-    <ProjectReference Include="..\Turbo.Players\Turbo.Players.csproj" />
-    <ProjectReference Include="..\Turbo.Plugins\Turbo.Plugins.csproj" />
-    <ProjectReference Include="..\Turbo.Rooms\Turbo.Rooms.csproj" />
-    <ProjectReference Include="..\Turbo.Security\Turbo.Security.csproj" />
-    <ProjectReference Include="..\Turbo.Inventory\Turbo.Inventory.csproj" />
-    <ProjectReference Include="..\Turbo.Events\Turbo.Events.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Turbo.Catalog\Turbo.Catalog.csproj"/>
+        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj"/>
+        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj"/>
+        <ProjectReference Include="..\Turbo.Furniture\Turbo.Furniture.csproj"/>
+        <ProjectReference Include="..\Turbo.Navigator\Turbo.Navigator.csproj"/>
+        <ProjectReference Include="..\Turbo.Networking\Turbo.Networking.csproj"/>
+        <ProjectReference Include="..\Turbo.Players\Turbo.Players.csproj"/>
+        <ProjectReference Include="..\Turbo.Plugins\Turbo.Plugins.csproj"/>
+        <ProjectReference Include="..\Turbo.Rooms\Turbo.Rooms.csproj"/>
+        <ProjectReference Include="..\Turbo.Security\Turbo.Security.csproj"/>
+        <ProjectReference Include="..\Turbo.Inventory\Turbo.Inventory.csproj"/>
+        <ProjectReference Include="..\Turbo.Events\Turbo.Events.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Migrations\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Migrations\"/>
+    </ItemGroup>
 </Project>

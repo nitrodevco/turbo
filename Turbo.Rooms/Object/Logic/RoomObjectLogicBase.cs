@@ -1,37 +1,33 @@
 ﻿using System.Threading.Tasks;
-using Turbo.Core.Game.Rooms.Object.Logic;
-using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Events;
+using Turbo.Core.Game.Rooms.Object.Logic;
 
-namespace Turbo.Rooms.Object.Logic
+namespace Turbo.Rooms.Object.Logic;
+
+public abstract class RoomObjectLogicBase : IRoomObjectLogic
 {
-    public abstract class RoomObjectLogicBase : IRoomObjectLogic
+    public ITurboEventHub EventHub { get; private set; }
+
+    public virtual void Dispose()
     {
-        public ITurboEventHub EventHub { get; private set; }
+        CleanUp();
+    }
 
-        public virtual void Dispose()
-        {
-            CleanUp();
-        }
+    public virtual bool OnReady()
+    {
+        return true;
+    }
 
-        protected virtual void CleanUp()
-        {
+    public virtual async Task Cycle()
+    {
+    }
 
-        }
+    public void SetEventHub(ITurboEventHub eventHub)
+    {
+        EventHub = eventHub;
+    }
 
-        public virtual bool OnReady()
-        {
-            return true;
-        }
-
-        public virtual async Task Cycle()
-        {
-
-        }
-
-        public void SetEventHub(ITurboEventHub eventHub)
-        {
-            EventHub = eventHub;
-        }
+    protected virtual void CleanUp()
+    {
     }
 }

@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Turbo.Core.Game
+namespace Turbo.Core.Game;
+
+public interface ICyclable
 {
-    public interface ICyclable
-    {
-        public Task Cycle();
-    }
+    public Task Cycle();
 }

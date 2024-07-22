@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Wired
+namespace Turbo.Packets.Outgoing.Wired;
+
+public record WiredRewardResultMessage : IComposer
 {
-    public record WiredRewardResultMessage : IComposer
-    {
-        public int Reason { get; init; }
-    }
+    public int Reason { get; init; }
 }

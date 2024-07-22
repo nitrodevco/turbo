@@ -1,11 +1,10 @@
-﻿namespace Turbo.Core.Game.Rooms.Object.Constants
+﻿namespace Turbo.Core.Game.Rooms.Object.Constants;
+
+public enum RoomObjectAvatarDanceType
 {
-    public enum RoomObjectAvatarDanceType
-    {
-        None = 0,
-        Dance = 1,
-        PogoMogo = 2,
-        DuckFunk = 3,
-        TheRollie = 4
-    }
+    None = 0,
+    Dance = 1,
+    PogoMogo = 2,
+    DuckFunk = 3,
+    TheRollie = 4
 }

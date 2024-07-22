@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Turbo.Core
+namespace Turbo.Core;
+
+public interface IAsyncInitialisable
 {
-    public interface IAsyncInitialisable
-    {
-        public ValueTask InitAsync();
-    }
+    public ValueTask InitAsync();
 }

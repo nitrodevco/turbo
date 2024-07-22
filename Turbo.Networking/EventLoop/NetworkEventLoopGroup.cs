@@ -1,16 +1,9 @@
 ﻿using DotNetty.Transport.Channels;
 using Turbo.Core.Configuration;
 
-namespace Turbo.Networking.EventLoop
-{
-    public class NetworkEventLoopGroup : INetworkEventLoopGroup
-    {
-        public IEventLoopGroup Group { get; }
+namespace Turbo.Networking.EventLoop;
 
-        public NetworkEventLoopGroup(
-            IEmulatorConfig config)
-        {
-            Group = new MultithreadEventLoopGroup(config.NetworkWorkerThreads);
-        }
-    }
+public class NetworkEventLoopGroup(IEmulatorConfig config) : INetworkEventLoopGroup
+{
+    public IEventLoopGroup Group { get; } = new MultithreadEventLoopGroup(config.NetworkWorkerThreads);
 }

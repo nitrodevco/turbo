@@ -1,41 +1,37 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace Turbo.Core.Utilities
+namespace Turbo.Core.Utilities;
+
+public abstract class Component : IComponent
 {
-    public abstract class Component : IComponent
+    public bool IsInitialized { get; private set; }
+    public bool IsInitializing { get; private set; }
+    public bool IsDisposed { get; private set; }
+    public bool IsDisposing { get; private set; }
+
+    public async ValueTask InitAsync()
     {
-        public bool IsInitialized { get; private set; }
-        public bool IsInitializing { get; private set; }
-        public bool IsDisposed { get; private set; }
-        public bool IsDisposing { get; private set; }
+        if (IsInitialized || IsInitializing) return;
 
-        public async ValueTask InitAsync()
-        {
-            if (IsInitialized || IsInitializing) return;
+        await OnInit();
 
-            await OnInit();
-
-            IsInitialized = true;
-            IsInitializing = false;
-        }
-
-        public async ValueTask DisposeAsync()
-        {
-            if (IsDisposed || IsDisposing) return;
-
-            IsDisposing = true;
-
-            await OnDispose();
-
-            IsDisposed = true;
-            IsDisposing = false;
-        }
-
-        protected abstract Task OnInit();
-
-        protected abstract Task OnDispose();
+        IsInitialized = true;
+        IsInitializing = false;
     }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (IsDisposed || IsDisposing) return;
+
+        IsDisposing = true;
+
+        await OnDispose();
+
+        IsDisposed = true;
+        IsDisposing = false;
+    }
+
+    protected abstract Task OnInit();
+
+    protected abstract Task OnDispose();
 }

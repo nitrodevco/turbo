@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Networking;
 
-namespace Turbo.Networking.Game.WebSocket
+namespace Turbo.Networking.Game.WebSocket;
+
+public interface IWSGameServer : IServer
 {
-    public interface IWSGameServer : IServer
-    {
-    }
 }

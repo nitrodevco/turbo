@@ -1,7 +1,5 @@
-namespace Turbo.Core.PacketHandlers
-{
-    public interface IInventoryMessageHandler
-    {
+namespace Turbo.Core.PacketHandlers;
 
-    }
+public interface IInventoryMessageHandler
+{
 }

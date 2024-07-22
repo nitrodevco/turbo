@@ -1,11 +1,10 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Action
+namespace Turbo.Packets.Incoming.Room.Action;
+
+public record BanUserWithDurationMessage : IMessageEvent
 {
-    public record BanUserWithDurationMessage : IMessageEvent
-    {
-        public int PlayerId { get; init; }
-        public int RoomId { get; init; }
-        public string BanType { get; init; }
-    }
+    public int PlayerId { get; init; }
+    public int RoomId { get; init; }
+    public string BanType { get; init; }
 }

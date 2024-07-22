@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Session
+namespace Turbo.Packets.Incoming.Room.Session;
+
+public record QuitMessage : IMessageEvent
 {
-    public record QuitMessage : IMessageEvent
-    {
-    }
 }

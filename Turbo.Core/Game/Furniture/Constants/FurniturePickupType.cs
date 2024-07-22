@@ -1,9 +1,8 @@
-namespace Turbo.Core.Game.Furniture.Constants
+namespace Turbo.Core.Game.Furniture.Constants;
+
+public enum FurniturePickupType
 {
-    public enum FurniturePickupType
-    {
-        None = 0,
-        SendToManipulator = 1,
-        SendToOwner = 2
-    }
+    None = 0,
+    SendToManipulator = 1,
+    SendToOwner = 2
 }

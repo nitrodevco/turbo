@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
@@ -14,210 +13,218 @@ using Turbo.Rooms.Object.Attributes;
 using Turbo.Rooms.Object.Logic.Avatar;
 using Turbo.Rooms.Utils;
 
-namespace Turbo.Rooms.Object.Logic.Furniture
+namespace Turbo.Rooms.Object.Logic.Furniture;
+
+[RoomObjectLogic("default_floor")]
+public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFurnitureFloorLogic
 {
-    [RoomObjectLogic("default_floor")]
-    public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFurnitureFloorLogic
+    private IRollerData _rollerData;
+    public IRoomObjectFloor RoomObject { get; private set; }
+
+    public bool SetRoomObject(IRoomObjectFloor roomObject)
     {
-        public IRoomObjectFloor RoomObject { get; private set; }
-        private IRollerData _rollerData;
+        if (roomObject == RoomObject) return true;
 
-        protected override void CleanUp()
+        if (RoomObject != null) RoomObject.SetLogic(null);
+
+        if (roomObject == null)
         {
-            _rollerData = null;
+            Dispose();
 
-            base.CleanUp();
+            RoomObject = null;
+
+            return false;
         }
 
-        public bool SetRoomObject(IRoomObjectFloor roomObject)
+        RoomObject = roomObject;
+
+        RoomObject.SetLogic(this);
+
+        return true;
+    }
+
+    public override void RefreshFurniture()
+    {
+        RoomObject.Room.SendComposer(new ObjectUpdateMessage
         {
-            if (roomObject == RoomObject) return true;
+            Object = RoomObject
+        });
+    }
 
-            if (RoomObject != null)
-            {
-                RoomObject.SetLogic(null);
-            }
+    public override void RefreshStuffData()
+    {
+        RoomObject.Room.SendComposer(new ObjectDataUpdateMessage
+        {
+            Object = RoomObject
+        });
+    }
 
-            if (roomObject == null)
-            {
-                Dispose();
+    public override bool SetState(int state, bool refresh = true)
+    {
+        if (StuffData == null) return false;
 
-                RoomObject = null;
+        if (state == StuffData.GetState()) return false;
 
-                return false;
-            }
+        StuffData.SetState(state.ToString());
 
-            RoomObject = roomObject;
+        if (RoomObject.RoomObjectHolder is IRoomFloorFurniture floorFurniture) floorFurniture.Save();
 
-            RoomObject.SetLogic(this);
+        if (refresh) RefreshStuffData();
 
-            return true;
+        return true;
+    }
+
+    public virtual void OnEnter(IRoomObjectAvatar avatar)
+    {
+        EventHub?.Dispatch(new AvatarEnterFloorFurnitureEvent
+        {
+            AvatarObject = avatar,
+            FloorObject = RoomObject
+        });
+    }
+
+    public virtual void OnLeave(IRoomObjectAvatar avatar)
+    {
+        EventHub?.Dispatch(new AvatarLeaveFloorFurnitureEvent
+        {
+            AvatarObject = avatar,
+            FloorObject = RoomObject
+        });
+    }
+
+    public virtual void OnStep(IRoomObjectAvatar roomObject)
+    {
+        EventHub?.Dispatch(new AvatarStepFloorFurnitureEvent
+        {
+            AvatarObject = roomObject,
+            FloorObject = RoomObject
+        });
+    }
+
+    public virtual void OnStop(IRoomObjectAvatar avatar)
+    {
+        if (avatar.Logic is not AvatarLogic avatarLogic) return;
+
+        if (CanSit())
+        {
+            avatarLogic.Sit(true, StackHeight, RoomObject.Rotation);
+
+            return;
         }
 
-        public override void RefreshFurniture()
+        if (CanLay()) avatarLogic.Lay(true, StackHeight, RoomObject.Rotation);
+    }
+
+    public override void OnInteract(IRoomObjectAvatar avatar, int param)
+    {
+        var message = EventHub?.Dispatch(new AvatarInteractFloorFurnitureEvent
         {
-            RoomObject.Room.SendComposer(new ObjectUpdateMessage
-            {
-                Object = RoomObject
-            });
-        }
+            AvatarObject = avatar,
+            FloorObject = RoomObject,
+            Param = param
+        });
 
-        public override void RefreshStuffData()
-        {
-            RoomObject.Room.SendComposer(new ObjectDataUpdateMessage
-            {
-                Object = RoomObject
-            });
-        }
-
-        public override bool SetState(int state, bool refresh = true)
-        {
-            if (StuffData == null) return false;
-
-            if (state == StuffData.GetState()) return false;
-
-            StuffData.SetState(state.ToString());
-
-            if (RoomObject.RoomObjectHolder is IRoomFloorFurniture floorFurniture) floorFurniture.Save();
-
-            if (refresh) RefreshStuffData();
-
-            return true;
-        }
-
-        public virtual void OnEnter(IRoomObjectAvatar avatar)
-        {
-            EventHub?.Dispatch(new AvatarEnterFloorFurnitureEvent
-            {
-                AvatarObject = avatar,
-                FloorObject = RoomObject
-            });
-        }
-
-        public virtual void OnLeave(IRoomObjectAvatar avatar)
-        {
-            EventHub?.Dispatch(new AvatarLeaveFloorFurnitureEvent
-            {
-                AvatarObject = avatar,
-                FloorObject = RoomObject
-            });
-        }
-
-        public virtual void OnStep(IRoomObjectAvatar roomObject)
-        {
-            EventHub?.Dispatch(new AvatarStepFloorFurnitureEvent
-            {
-                AvatarObject = roomObject,
-                FloorObject = RoomObject
-            });
-        }
-
-        public virtual void OnStop(IRoomObjectAvatar avatar)
-        {
-            if (avatar.Logic is not AvatarLogic avatarLogic) return;
-
-            if (CanSit())
-            {
-                avatarLogic.Sit(true, StackHeight, RoomObject.Rotation);
-
+        if (message != null)
+            if (message.IsCancelled)
                 return;
-            }
 
-            if (CanLay())
-            {
-                avatarLogic.Lay(true, StackHeight, RoomObject.Rotation);
+        base.OnInteract(avatar, param);
+    }
 
-                return;
-            }
-        }
+    public virtual bool CanStack()
+    {
+        return FurnitureDefinition.CanStack;
+    }
 
-        public override void OnInteract(IRoomObjectAvatar avatar, int param)
+    public virtual bool CanWalk(IRoomObjectAvatar avatar = null)
+    {
+        return FurnitureDefinition.CanWalk;
+    }
+
+    public virtual bool CanSit(IRoomObjectAvatar avatar = null)
+    {
+        return FurnitureDefinition.CanSit;
+    }
+
+    public virtual bool CanLay(IRoomObjectAvatar avatar = null)
+    {
+        return FurnitureDefinition.CanLay;
+    }
+
+    public virtual bool CanRoll()
+    {
+        return true;
+    }
+
+    public override bool CanToggle(IRoomObjectAvatar avatar)
+    {
+        if (UsagePolicy == FurniUsagePolicy.Nobody) return false;
+
+        if (UsagePolicy == FurniUsagePolicy.Controller)
         {
-            var message = EventHub?.Dispatch(new AvatarInteractFloorFurnitureEvent
-            {
-                AvatarObject = avatar,
-                FloorObject = RoomObject,
-                Param = param
-            });
+            if (avatar.RoomObjectHolder is IRoomManipulator roomManipulator)
+                if (RoomObject.Room.RoomSecurityManager.GetControllerLevel(roomManipulator) >=
+                    RoomControllerLevel.Rights)
+                    return true;
 
-            if (message != null)
-            {
-                if (message.IsCancelled) return;
-            }
-
-            base.OnInteract(avatar, param);
+            return false;
         }
 
-        public virtual bool CanStack() => FurnitureDefinition.CanStack;
+        return true;
+    }
 
-        public virtual bool CanWalk(IRoomObjectAvatar avatar = null) => FurnitureDefinition.CanWalk;
+    public virtual bool IsOpen(IRoomObjectAvatar avatar = null)
+    {
+        return CanWalk(avatar) || CanSit(avatar) || CanLay(avatar);
+    }
 
-        public virtual bool CanSit(IRoomObjectAvatar avatar = null) => FurnitureDefinition.CanSit;
+    public IRoomTile GetCurrentTile()
+    {
+        return RoomObject?.Room?.RoomMap?.GetTile(RoomObject.Location);
+    }
 
-        public virtual bool CanLay(IRoomObjectAvatar avatar = null) => FurnitureDefinition.CanLay;
+    public IList<IRoomTile> GetCurrentTiles()
+    {
+        var tiles = new List<IRoomTile>();
 
-        public virtual bool CanRoll() => true;
-
-        public override bool CanToggle(IRoomObjectAvatar avatar)
+        if (RoomObject != null)
         {
-            if (UsagePolicy == FurniUsagePolicy.Nobody) return false;
+            var points = AffectedPoints.GetPoints(RoomObject);
 
-            if (UsagePolicy == FurniUsagePolicy.Controller)
+            foreach (var point in points)
             {
-                if (avatar.RoomObjectHolder is IRoomManipulator roomManipulator)
-                {
-                    if (RoomObject.Room.RoomSecurityManager.GetControllerLevel(roomManipulator) >= RoomControllerLevel.Rights) return true;
-                }
+                var tile = RoomObject.Room?.RoomMap?.GetTile(point);
 
-                return false;
+                if (tile == null) continue;
+
+                tiles.Add(tile);
             }
-
-            return true;
         }
 
-        public virtual bool IsOpen(IRoomObjectAvatar avatar = null) => CanWalk(avatar) || CanSit(avatar) || CanLay(avatar);
+        return tiles;
+    }
 
-        public IRoomTile GetCurrentTile() => RoomObject?.Room?.RoomMap?.GetTile(RoomObject.Location);
+    public virtual double StackHeight => FurnitureDefinition.Z;
 
-        public IList<IRoomTile> GetCurrentTiles()
+    public double Height => RoomObject.Z + StackHeight;
+
+    public bool IsRolling => _rollerData != null;
+
+    public IRollerData RollerData
+    {
+        get => _rollerData;
+        set
         {
-            var tiles = new List<IRoomTile>();
+            if (_rollerData != null) _rollerData.RemoveRoomObject(RoomObject);
 
-            if (RoomObject != null)
-            {
-                var points = AffectedPoints.GetPoints(RoomObject);
-
-                foreach (var point in points)
-                {
-                    var tile = RoomObject.Room?.RoomMap?.GetTile(point);
-
-                    if (tile == null) continue;
-
-                    tiles.Add(tile);
-                }
-            }
-
-            return tiles;
+            _rollerData = value;
         }
+    }
 
-        public virtual double StackHeight => FurnitureDefinition.Z;
+    protected override void CleanUp()
+    {
+        _rollerData = null;
 
-        public double Height => RoomObject.Z + StackHeight;
-
-        public bool IsRolling => _rollerData != null;
-
-        public IRollerData RollerData
-        {
-            get => _rollerData;
-            set
-            {
-                if (_rollerData != null)
-                {
-                    _rollerData.RemoveRoomObject(RoomObject);
-                }
-
-                _rollerData = value;
-            }
-        }
+        base.CleanUp();
     }
 }

@@ -1,29 +1,27 @@
-using Turbo.Database.Entities.Players;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Storage;
+using Turbo.Database.Entities.Players;
 
-namespace Turbo.Inventory.Badges
+namespace Turbo.Inventory.Badges;
+
+public class PlayerBadge(
+    IStorageQueue _storageQueue,
+    PlayerBadgeEntity _badgeEntity) : IPlayerBadge
 {
-    public class PlayerBadge(
-        IStorageQueue _storageQueue,
-        PlayerBadgeEntity _badgeEntity) : IPlayerBadge
+    public int Id => _badgeEntity.Id;
+
+    public string BadgeCode => _badgeEntity.BadgeCode;
+
+    public int? SlotId => _badgeEntity.SlotId;
+
+    public void SetSlotId(int? slotId)
     {
+        if (_badgeEntity == null) return;
 
-        public void SetSlotId(int? slotId)
-        {
-            if (_badgeEntity == null) return;
+        if (_badgeEntity.SlotId == slotId) return;
 
-            if (_badgeEntity.SlotId == slotId) return;
+        _badgeEntity.SlotId = slotId;
 
-            _badgeEntity.SlotId = slotId;
-
-            _storageQueue.Add(_badgeEntity);
-        }
-
-        public int Id => _badgeEntity.Id;
-
-        public string BadgeCode => _badgeEntity.BadgeCode;
-
-        public int? SlotId => _badgeEntity.SlotId;
+        _storageQueue.Add(_badgeEntity);
     }
 }

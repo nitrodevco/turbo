@@ -1,10 +1,9 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Room.Furniture
+namespace Turbo.Packets.Outgoing.Room.Furniture;
+
+public record RequestSpamWallPostItMessage : IComposer
 {
-    public record RequestSpamWallPostItMessage : IComposer
-    {
-        public int ItemId { get; init; }
-        public string Location { get; init; }
-    }
+    public int ItemId { get; init; }
+    public string Location { get; init; }
 }

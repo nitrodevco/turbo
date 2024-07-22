@@ -1,8 +1,7 @@
 ﻿using Turbo.Database.Entities.Room;
 
-namespace Turbo.Database.Repositories.Room
+namespace Turbo.Database.Repositories.Room;
+
+public interface IRoomRepository : IBaseRepository<RoomEntity>
 {
-    public interface IRoomRepository : IBaseRepository<RoomEntity>
-    {
-    }
 }

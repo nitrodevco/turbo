@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Handshake
+namespace Turbo.Packets.Incoming.Handshake;
+
+public record CompleteDiffieHandshakeMessage : IMessageEvent
 {
-    public record CompleteDiffieHandshakeMessage : IMessageEvent
-    {
-        public string SharedKey { get; init; }
-    }
+    public string SharedKey { get; init; }
 }

@@ -1,7 +1,5 @@
-namespace Turbo.Core.PacketHandlers
-{
-    public interface IUserMessageHandler
-    {
+namespace Turbo.Core.PacketHandlers;
 
-    }
+public interface IUserMessageHandler
+{
 }

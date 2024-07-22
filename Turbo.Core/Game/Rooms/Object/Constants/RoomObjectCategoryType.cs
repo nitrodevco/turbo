@@ -1,9 +1,8 @@
-namespace Turbo.Core.Game.Rooms.Object.Constants
+namespace Turbo.Core.Game.Rooms.Object.Constants;
+
+public enum RoomObjectCategoryType
 {
-    public enum RoomObjectCategoryType
-    {
-        Floor = 10,
-        Wall = 20,
-        Unit = 100
-    }
+    Floor = 10,
+    Wall = 20,
+    Unit = 100
 }

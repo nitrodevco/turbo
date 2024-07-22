@@ -1,93 +1,90 @@
 ﻿using System.Threading.Tasks;
 using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Core.Game.Furniture.Data;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Furniture.Data;
-using Turbo.Core.Game.Furniture.Data;
-using Turbo.Core.Game.Rooms.Constants;
 
-namespace Turbo.Rooms.Object.Logic.Furniture
+namespace Turbo.Rooms.Object.Logic.Furniture;
+
+public abstract class FurnitureLogicBase : RoomObjectLogicBase, IFurnitureLogic
 {
-    public abstract class FurnitureLogicBase : RoomObjectLogicBase, IFurnitureLogic
+    public IFurnitureDefinition FurnitureDefinition { get; private set; }
+
+    public IStuffData StuffData { get; protected set; }
+
+    public virtual async Task<bool> Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
     {
-        public IFurnitureDefinition FurnitureDefinition { get; private set; }
+        if (furnitureDefinition == null) return false;
 
-        public IStuffData StuffData { get; protected set; }
+        FurnitureDefinition = furnitureDefinition;
 
-        public virtual async Task<bool> Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
-        {
-            if (furnitureDefinition == null) return false;
+        var stuffData = CreateStuffDataFromJson(jsonString);
 
-            FurnitureDefinition = furnitureDefinition;
+        StuffData = stuffData;
 
-            var stuffData = CreateStuffDataFromJson(jsonString);
+        return true;
+    }
 
-            StuffData = stuffData;
+    public abstract void RefreshFurniture();
 
-            return true;
-        }
+    public abstract void RefreshStuffData();
 
-        protected IStuffData CreateStuffData()
-        {
-            return StuffDataFactory.CreateStuffData((int)DataKey);
-        }
+    public virtual bool SetState(int state, bool refresh = true)
+    {
+        return false;
+    }
 
-        protected IStuffData CreateStuffDataFromJson(string jsonString)
-        {
-            return StuffDataFactory.CreateStuffDataFromJson((int)DataKey, jsonString);
-        }
+    public virtual void OnInteract(IRoomObjectAvatar avatar, int param)
+    {
+        if (!CanToggle(avatar)) return;
 
-        public abstract void RefreshFurniture();
+        param = GetNextToggleableState();
 
-        public abstract void RefreshStuffData();
+        if (!SetState(param)) return;
+    }
 
-        public virtual bool SetState(int state, bool refresh = true)
-        {
-            return false;
-        }
+    public virtual void OnPlace(IRoomManipulator roomManipulator)
+    {
+    }
 
-        public virtual void OnInteract(IRoomObjectAvatar avatar, int param)
-        {
-            if (!CanToggle(avatar)) return;
+    public virtual void OnMove(IRoomManipulator roomManipulator)
+    {
+    }
 
-            param = GetNextToggleableState();
+    public virtual void OnPickup(IRoomManipulator roomManipulator)
+    {
+    }
 
-            if (!SetState(param)) return;
-        }
+    public virtual bool CanToggle(IRoomObjectAvatar avatar)
+    {
+        return false;
+    }
 
-        public virtual void OnPlace(IRoomManipulator roomManipulator)
-        {
-            return;
-        }
+    public virtual FurniUsagePolicy UsagePolicy => FurnitureDefinition.TotalStates == 0
+        ? FurniUsagePolicy.Nobody
+        : FurnitureDefinition.UsagePolicy;
 
-        public virtual void OnMove(IRoomManipulator roomManipulator)
-        {
-            return;
-        }
+    public virtual StuffDataKey DataKey => StuffDataKey.LegacyKey;
 
-        public virtual void OnPickup(IRoomManipulator roomManipulator)
-        {
-            return;
-        }
+    protected IStuffData CreateStuffData()
+    {
+        return StuffDataFactory.CreateStuffData((int)DataKey);
+    }
 
-        public virtual bool CanToggle(IRoomObjectAvatar avatar)
-        {
-            return false;
-        }
+    protected IStuffData CreateStuffDataFromJson(string jsonString)
+    {
+        return StuffDataFactory.CreateStuffDataFromJson((int)DataKey, jsonString);
+    }
 
-        protected virtual int GetNextToggleableState()
-        {
-            int totalStates = FurnitureDefinition.TotalStates;
+    protected virtual int GetNextToggleableState()
+    {
+        var totalStates = FurnitureDefinition.TotalStates;
 
-            if (totalStates == 0) return 0;
+        if (totalStates == 0) return 0;
 
-            return (StuffData.GetState() + 1) % totalStates;
-        }
-
-        public virtual FurniUsagePolicy UsagePolicy => (FurnitureDefinition.TotalStates == 0) ? FurniUsagePolicy.Nobody : FurnitureDefinition.UsagePolicy;
-
-        public virtual StuffDataKey DataKey => StuffDataKey.LegacyKey;
+        return (StuffData.GetState() + 1) % totalStates;
     }
 }

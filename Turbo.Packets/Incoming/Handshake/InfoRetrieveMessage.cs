@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Handshake
+namespace Turbo.Packets.Incoming.Handshake;
+
+public record InfoRetrieveMessage : IMessageEvent
 {
-    public record InfoRetrieveMessage : IMessageEvent
-    {
-    }
 }

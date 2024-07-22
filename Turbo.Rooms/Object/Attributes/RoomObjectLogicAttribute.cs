@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace Turbo.Rooms.Object.Attributes
-{
-    [AttributeUsage(AttributeTargets.Class)]
-    public class RoomObjectLogicAttribute : Attribute
-    {
-        public readonly string Name;
+namespace Turbo.Rooms.Object.Attributes;
 
-        public RoomObjectLogicAttribute(string name)
-        {
-            Name = name;
-        }
+[AttributeUsage(AttributeTargets.Class)]
+public class RoomObjectLogicAttribute : Attribute
+{
+    public readonly string Name;
+
+    public RoomObjectLogicAttribute(string name)
+    {
+        Name = name;
     }
 }

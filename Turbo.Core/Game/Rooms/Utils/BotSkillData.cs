@@ -1,8 +1,7 @@
-﻿namespace Turbo.Core.Game.Rooms.Utils
+﻿namespace Turbo.Core.Game.Rooms.Utils;
+
+public class BotSkillData
 {
-    public class BotSkillData
-    {
-        public int Id { get; set; }
-        public string Data { get; set; }
-    }
+    public int Id { get; set; }
+    public string Data { get; set; }
 }

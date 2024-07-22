@@ -1,19 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Turbo.Core.Database.Dtos;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Players;
-using Turbo.Core.Database.Dtos;
 
-namespace Turbo.Database.Repositories.Player
+namespace Turbo.Database.Repositories.Player;
+
+public class PlayerRepository(IEmulatorContext _context) : IPlayerRepository
 {
-    public class PlayerRepository(IEmulatorContext _context) : IPlayerRepository
+    public async Task<PlayerEntity> FindAsync(int id)
     {
-        public async Task<PlayerEntity> FindAsync(int id) => await _context.Players
+        return await _context.Players
             .FindAsync(id);
+    }
 
-        public async Task<PlayerUsernameDto> FindUsernameAsync(int id) => await _context.Players
+    public async Task<PlayerUsernameDto> FindUsernameAsync(int id)
+    {
+        return await _context.Players
             .Where(player => id == player.Id)
             .Select(player => new PlayerUsernameDto
             {
@@ -21,8 +26,11 @@ namespace Turbo.Database.Repositories.Player
                 Name = player.Name
             })
             .FirstOrDefaultAsync();
+    }
 
-        public async Task<IList<PlayerUsernameDto>> FindUsernamesAsync(IList<int> ids) => await _context.Players
+    public async Task<IList<PlayerUsernameDto>> FindUsernamesAsync(IList<int> ids)
+    {
+        return await _context.Players
             .Where(player => ids.Any(id => id == player.Id))
             .Select(player => new PlayerUsernameDto
             {

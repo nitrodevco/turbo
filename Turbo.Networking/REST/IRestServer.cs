@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Networking;
 
-namespace Turbo.Networking.REST
+namespace Turbo.Networking.REST;
+
+public interface IRestServer : IServer
 {
-    public interface IRestServer : IServer
-    {
-    }
 }

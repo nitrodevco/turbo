@@ -1,9 +1,8 @@
-﻿namespace Turbo.Core.Game.Rooms.Constants
+﻿namespace Turbo.Core.Game.Rooms.Constants;
+
+public enum RoomTradeType
 {
-    public enum RoomTradeType
-    {
-        Disabled = 0,
-        RoomOwner = 1,
-        Everyone = 2
-    }
+    Disabled = 0,
+    RoomOwner = 1,
+    Everyone = 2
 }

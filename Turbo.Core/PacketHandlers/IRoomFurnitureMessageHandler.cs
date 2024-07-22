@@ -1,6 +1,5 @@
-﻿namespace Turbo.Core.PacketHandlers
+﻿namespace Turbo.Core.PacketHandlers;
+
+public interface IRoomFurnitureMessageHandler
 {
-    public interface IRoomFurnitureMessageHandler
-    {
-    }
 }

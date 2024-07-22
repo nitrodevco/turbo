@@ -1,6 +1,5 @@
-﻿namespace Turbo.Core.Game.Rooms.Object
+﻿namespace Turbo.Core.Game.Rooms.Object;
+
+public interface IRoomObjectFloorHolder : IRoomObjectFurnitureHolder<IRoomObjectFloor>
 {
-    public interface IRoomObjectFloorHolder : IRoomObjectFurnitureHolder<IRoomObjectFloor>
-    {
-    }
 }

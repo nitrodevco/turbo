@@ -1,54 +1,59 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
-using Turbo.Database.Entities.Furniture;
-using Turbo.Core.Game.Rooms.Managers;
-using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Inventory;
+using Turbo.Core.Game.Rooms.Managers;
+using Turbo.Database.Entities.Furniture;
 
-namespace Turbo.Furniture.Factories
+namespace Turbo.Furniture.Factories;
+
+public class FurnitureFactory(
+    IFurnitureManager _furnitureManager,
+    IServiceProvider _provider) : IFurnitureFactory
 {
-    public class FurnitureFactory(
-        IFurnitureManager _furnitureManager,
-        IServiceProvider _provider) : IFurnitureFactory
+    public IFurnitureDefinition GetFurnitureDefinition(int id)
     {
-        public IFurnitureDefinition GetFurnitureDefinition(int id)
-        {
-            return _furnitureManager.GetFurnitureDefinition(id);
-        }
+        return _furnitureManager.GetFurnitureDefinition(id);
+    }
 
-        public IRoomFloorFurniture CreateFloorFurniture(IRoomFurnitureManager roomFurnitureManager, FurnitureEntity furnitureEntity)
-        {
-            var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
+    public IRoomFloorFurniture CreateFloorFurniture(IRoomFurnitureManager roomFurnitureManager,
+        FurnitureEntity furnitureEntity)
+    {
+        var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
-            if (furnitureDefinition == null) return null;
+        if (furnitureDefinition == null) return null;
 
-            return ActivatorUtilities.CreateInstance<RoomFloorFurniture>(_provider, roomFurnitureManager, furnitureEntity, furnitureDefinition);
-        }
+        return ActivatorUtilities.CreateInstance<RoomFloorFurniture>(_provider, roomFurnitureManager, furnitureEntity,
+            furnitureDefinition);
+    }
 
-        public IRoomFloorFurniture CreateFloorFurnitureFromPlayerFurniture(IRoomFurnitureManager roomFurnitureManager, IPlayerFurniture playerFurniture)
-        {
-            if (playerFurniture is PlayerFurniture furniture) return CreateFloorFurniture(roomFurnitureManager, furniture.FurnitureEntity);
+    public IRoomFloorFurniture CreateFloorFurnitureFromPlayerFurniture(IRoomFurnitureManager roomFurnitureManager,
+        IPlayerFurniture playerFurniture)
+    {
+        if (playerFurniture is PlayerFurniture furniture)
+            return CreateFloorFurniture(roomFurnitureManager, furniture.FurnitureEntity);
 
-            return null;
-        }
+        return null;
+    }
 
-        public IRoomWallFurniture CreateWallFurniture(IRoomFurnitureManager roomFurnitureManager, FurnitureEntity furnitureEntity)
-        {
-            var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
+    public IRoomWallFurniture CreateWallFurniture(IRoomFurnitureManager roomFurnitureManager,
+        FurnitureEntity furnitureEntity)
+    {
+        var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
-            if (furnitureDefinition == null) return null;
+        if (furnitureDefinition == null) return null;
 
-            return ActivatorUtilities.CreateInstance<RoomWallFurniture>(_provider, roomFurnitureManager, furnitureEntity, furnitureDefinition);
-        }
+        return ActivatorUtilities.CreateInstance<RoomWallFurniture>(_provider, roomFurnitureManager, furnitureEntity,
+            furnitureDefinition);
+    }
 
-        public IRoomWallFurniture CreateWallFurnitureFromPlayerFurniture(IRoomFurnitureManager roomFurnitureManager, IPlayerFurniture playerFurniture)
-        {
-            if (playerFurniture is PlayerFurniture furniture) return CreateWallFurniture(roomFurnitureManager, furniture.FurnitureEntity);
+    public IRoomWallFurniture CreateWallFurnitureFromPlayerFurniture(IRoomFurnitureManager roomFurnitureManager,
+        IPlayerFurniture playerFurniture)
+    {
+        if (playerFurniture is PlayerFurniture furniture)
+            return CreateWallFurniture(roomFurnitureManager, furniture.FurnitureEntity);
 
-            return null;
-        }
+        return null;
     }
 }

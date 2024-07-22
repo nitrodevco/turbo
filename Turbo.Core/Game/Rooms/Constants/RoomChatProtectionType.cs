@@ -1,9 +1,8 @@
-﻿namespace Turbo.Core.Game.Rooms.Constants
+﻿namespace Turbo.Core.Game.Rooms.Constants;
+
+public enum RoomChatProtectionType
 {
-    public enum RoomChatProtectionType
-    {
-        Extra = 0,
-        Normal = 1,
-        Minimal = 2
-    }
+    Extra = 0,
+    Normal = 1,
+    Minimal = 2
 }

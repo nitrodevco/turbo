@@ -1,10 +1,9 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Handshake
+namespace Turbo.Packets.Incoming.Handshake;
+
+public record SSOTicketMessage : IMessageEvent
 {
-    public record SSOTicketMessage : IMessageEvent
-    {
-        public string SSO { get; init; }
-        public int ElapsedMilliseconds { get; init; }
-    }
+    public string SSO { get; init; }
+    public int ElapsedMilliseconds { get; init; }
 }

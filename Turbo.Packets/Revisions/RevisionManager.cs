@@ -1,43 +1,39 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;
 using Turbo.Core.Packets.Revisions;
 using Turbo.Packets.Incoming.Handshake;
 
-namespace Turbo.Packets.Revisions
+namespace Turbo.Packets.Revisions;
+
+public class RevisionManager : IRevisionManager
 {
-    public class RevisionManager : IRevisionManager
+    private readonly ILogger<IRevisionManager> _logger;
+
+    private readonly IPacketMessageHub _packetMessageHub;
+
+    public RevisionManager(ILogger<IRevisionManager> logger, IPacketMessageHub messageHub)
     {
-        public IDictionary<string, IRevision> Revisions { get; }
-        public IRevision DefaultRevision { get; set; }
+        _packetMessageHub = messageHub;
+        _logger = logger;
 
-        private readonly IPacketMessageHub _packetMessageHub;
-        private readonly ILogger<IRevisionManager> _logger;
+        Revisions = new Dictionary<string, IRevision>();
 
-        public RevisionManager(ILogger<IRevisionManager> logger, IPacketMessageHub messageHub)
-        {
-            this._packetMessageHub = messageHub;
-            this._logger = logger;
+        _packetMessageHub.Subscribe<ClientHelloMessage>(this, OnRevisionMessage);
+    }
 
-            this.Revisions = new Dictionary<string, IRevision>();
+    public IDictionary<string, IRevision> Revisions { get; }
+    public IRevision DefaultRevision { get; set; }
 
-            _packetMessageHub.Subscribe<ClientHelloMessage>(this, OnRevisionMessage);
-        }
+    public Task OnRevisionMessage(ClientHelloMessage message, ISession session)
+    {
+        if (Revisions.TryGetValue(message.Production, out var revision))
+            session.Revision = revision;
+        else
+            _logger.LogDebug($"No matching revision implementation found for {message.Production}");
 
-        public Task OnRevisionMessage(ClientHelloMessage message, ISession session)
-        {
-            if (Revisions.TryGetValue(message.Production, out IRevision revision))
-            {
-                session.Revision = revision;
-            }
-            else
-            {
-                _logger.LogDebug($"No matching revision implementation found for {message.Production}");
-            }
-
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

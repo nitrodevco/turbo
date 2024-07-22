@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Avatar
+namespace Turbo.Packets.Incoming.Room.Avatar;
+
+public record ChangeMottoMessage : IMessageEvent
 {
-    public record ChangeMottoMessage : IMessageEvent
-    {
-        public string Motto { get; init; }
-    }
+    public string Motto { get; init; }
 }

@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Furniture
+namespace Turbo.Packets.Incoming.Room.Furniture;
+
+public record GetYoutubeDisplayStatusMessage : IMessageEvent
 {
-    public record GetYoutubeDisplayStatusMessage : IMessageEvent
-    {
-        public int ItemId { get; init; }
-    }
+    public int ItemId { get; init; }
 }

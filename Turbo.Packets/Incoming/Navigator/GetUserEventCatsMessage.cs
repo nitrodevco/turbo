@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Navigator
+namespace Turbo.Packets.Incoming.Navigator;
+
+public record GetUserEventCatsMessage : IMessageEvent
 {
-    public record GetUserEventCatsMessage : IMessageEvent
-    {
-    }
 }

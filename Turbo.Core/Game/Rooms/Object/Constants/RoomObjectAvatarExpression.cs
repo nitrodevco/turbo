@@ -1,14 +1,13 @@
-﻿namespace Turbo.Core.Game.Rooms.Object.Constants
+﻿namespace Turbo.Core.Game.Rooms.Object.Constants;
+
+public enum RoomObjectAvatarExpression
 {
-    public enum RoomObjectAvatarExpression
-    {
-        None,
-        Wave,
-        Blow,
-        Laugh,
-        Cry,
-        Idle,
-        Jump,
-        Respect
-    }
+    None,
+    Wave,
+    Blow,
+    Laugh,
+    Cry,
+    Idle,
+    Jump,
+    Respect
 }

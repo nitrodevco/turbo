@@ -3,13 +3,12 @@ using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
 using Turbo.Packets.Outgoing;
 
-namespace Turbo.Networking.Game.Codec
+namespace Turbo.Networking.Game.Codec;
+
+public class GameEncoder : MessageToByteEncoder<ServerPacket>
 {
-    public class GameEncoder : MessageToByteEncoder<ServerPacket>
+    protected override void Encode(IChannelHandlerContext context, ServerPacket message, IByteBuffer output)
     {
-        protected override void Encode(IChannelHandlerContext context, ServerPacket message, IByteBuffer output)
-        {
-            output.WriteBytes(message.Content);
-        }
+        output.WriteBytes(message.Content);
     }
 }

@@ -1,10 +1,9 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Engine
+namespace Turbo.Packets.Incoming.Room.Engine;
+
+public record MoveWallItemMessage : IMessageEvent
 {
-    public record MoveWallItemMessage : IMessageEvent
-    {
-        public int ObjectId { get; init; }
-        public string Location { get; init; }
-    }
+    public int ObjectId { get; init; }
+    public string Location { get; init; }
 }

@@ -1,28 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Game\Rooms\Mapping\Constants\**" />
-    <EmbeddedResource Remove="Game\Rooms\Mapping\Constants\**" />
-    <None Remove="Game\Rooms\Mapping\Constants\**" />
-    <None Remove="Game\Inventory\" />
-    <None Remove="Game\Furniture\Data\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="Game\Rooms\Mapping\Constants\**"/>
+        <EmbeddedResource Remove="Game\Rooms\Mapping\Constants\**"/>
+        <None Remove="Game\Rooms\Mapping\Constants\**"/>
+        <None Remove="Game\Inventory\"/>
+        <None Remove="Game\Furniture\Data\"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0" />
-    <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
-    <PackageReference Include="DotNetty.Transport" Version="0.7.5" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="BouncyCastle.Cryptography" Version="2.4.0"/>
+        <PackageReference Include="DotNetty.Buffers" Version="0.7.5"/>
+        <PackageReference Include="DotNetty.Transport" Version="0.7.5"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Exceptions\Catalog\" />
-    <Folder Include="Game\Inventory\" />
-    <Folder Include="Game\Furniture\Data\" />
-  </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Exceptions\Catalog\"/>
+        <Folder Include="Game\Inventory\"/>
+        <Folder Include="Game\Furniture\Data\"/>
+    </ItemGroup>
 </Project>

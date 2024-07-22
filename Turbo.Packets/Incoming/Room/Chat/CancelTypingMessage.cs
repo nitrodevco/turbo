@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Chat
+namespace Turbo.Packets.Incoming.Room.Chat;
+
+public record CancelTypingMessage : IMessageEvent
 {
-    public record CancelTypingMessage : IMessageEvent
-    {
-    }
 }

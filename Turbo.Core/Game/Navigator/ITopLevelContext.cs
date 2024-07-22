@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace Turbo.Core.Game.Navigator
+namespace Turbo.Core.Game.Navigator;
+
+public interface ITopLevelContext
 {
-    public interface ITopLevelContext
-    {
-        public string SearchCode { get; }
-        public IList<INavigatorSavedSearch> SavedSearches { get; }
-    }
+    public string SearchCode { get; }
+    public IList<INavigatorSavedSearch> SavedSearches { get; }
 }

@@ -1,110 +1,101 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Storage;
 using Turbo.Database.Context;
-using Turbo.Database.Entities;
-using Microsoft.EntityFrameworkCore;
 
-namespace Turbo.Database.Queue
+namespace Turbo.Database.Queue;
+
+public class StorageQueue(IServiceScopeFactory _serviceScopeFactory) : IStorageQueue
 {
-    public class StorageQueue(IServiceScopeFactory _serviceScopeFactory) : IStorageQueue
+    private readonly IList<object> _entities = [];
+    private readonly object _entityLock = new();
+
+    public async ValueTask DisposeAsync()
     {
-        private readonly IList<object> _entities = [];
-        private readonly object _entityLock = new();
+        await SaveNow();
+    }
 
-        public async ValueTask DisposeAsync()
+    public void Add(object entity)
+    {
+        lock (_entityLock)
         {
-            await SaveNow();
+            if (_entities.Contains(entity)) return;
+
+            _entities.Add(entity);
         }
+    }
 
-        public void Add(object entity)
+    public void AddAll(ICollection<object> entities)
+    {
+        lock (_entityLock)
         {
-            lock (_entityLock)
+            foreach (var entity in entities)
             {
                 if (_entities.Contains(entity)) return;
 
                 _entities.Add(entity);
             }
         }
+    }
 
-        public void AddAll(ICollection<object> entities)
+    public async Task SaveNow()
+    {
+        List<object> entities = [];
+
+        lock (_entityLock)
         {
-            lock (_entityLock)
-            {
-                foreach (var entity in entities)
-                {
-                    if (_entities.Contains(entity)) return;
+            if (_entities.Count == 0) return;
 
-                    _entities.Add(entity);
-                }
-            }
+            foreach (var entity in _entities) entities.Add(entity);
+
+            _entities.Clear();
         }
 
-        public async Task SaveNow()
+        if (entities.Count == 0) return;
+
+        using var scope = _serviceScopeFactory.CreateScope();
+
+        var context = scope.ServiceProvider.GetService<TurboContext>();
+
+        foreach (var entity in entities) SaveEntity(entity, context);
+
+        await context.SaveChangesAsync();
+
+        context.ChangeTracker.Clear();
+    }
+
+    public async Task SaveEntityNow(object entity)
+    {
+        if (entity == null) return;
+
+        lock (_entityLock)
         {
-            List<object> entities = [];
-
-            lock (_entityLock)
-            {
-                if (_entities.Count == 0) return;
-
-                foreach (var entity in _entities) entities.Add(entity);
-
-                _entities.Clear();
-            }
-
-            if (entities.Count == 0) return;
-
-            using var scope = _serviceScopeFactory.CreateScope();
-
-            var context = scope.ServiceProvider.GetService<TurboContext>();
-
-            foreach (var entity in entities) SaveEntity(entity, context);
-
-            await context.SaveChangesAsync();
-
-            context.ChangeTracker.Clear();
+            if (_entities.Contains(entity)) _entities.Remove(entity);
         }
 
-        public async Task SaveEntityNow(object entity)
-        {
-            if (entity == null) return;
+        using var scope = _serviceScopeFactory.CreateScope();
 
-            lock (_entityLock)
-            {
-                if (_entities.Contains(entity))
-                {
-                    _entities.Remove(entity);
-                }
-            }
+        var context = scope.ServiceProvider.GetService<TurboContext>();
 
-            using var scope = _serviceScopeFactory.CreateScope();
+        SaveEntity(entity, context);
 
-            var context = scope.ServiceProvider.GetService<TurboContext>();
+        await context.SaveChangesAsync();
 
-            SaveEntity(entity, context);
+        context.ChangeTracker.Clear();
+    }
 
-            await context.SaveChangesAsync();
+    private void SaveEntity(object entity, TurboContext context)
+    {
+        if (entity == null || context == null) return;
 
-            context.ChangeTracker.Clear();
-        }
+        context.Attach(entity);
 
-        private void SaveEntity(object entity, TurboContext context)
-        {
-            if (entity == null || context == null) return;
+        var entry = context.Entry(entity);
 
-            context.Attach(entity);
+        var isTemporary = entry.Property("Id").IsTemporary;
 
-            var entry = context.Entry(entity);
-
-            var isTemporary = entry.Property("Id").IsTemporary;
-
-            entry.State = isTemporary ? EntityState.Added : EntityState.Modified;
-        }
+        entry.State = isTemporary ? EntityState.Added : EntityState.Modified;
     }
 }

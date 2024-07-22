@@ -3,47 +3,48 @@ using System.Threading.Tasks;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
-using Turbo.Rooms.Cycles;
 
-namespace Turbo.Rooms.Managers
+namespace Turbo.Rooms.Managers;
+
+public class RoomCycleManager(IRoom _room) : IRoomCycleManager
 {
-    public class RoomCycleManager(IRoom _room) : IRoomCycleManager
+    public List<ICyclable> _cycles = [];
+
+    private bool _running;
+
+    public void Start()
     {
-        public List<ICyclable> _cycles = [];
+        _running = true;
+    }
 
-        private bool _running;
+    public void Stop()
+    {
+        _running = false;
+    }
 
-        public void Start()
-        {
-            _running = true;
-        }
+    public void Dispose()
+    {
+        _cycles.Clear();
+    }
 
-        public void Stop()
-        {
-            _running = false;
-        }
+    public void AddCycle(ICyclable cycle)
+    {
+        if (cycle == null || _cycles.Contains(cycle)) return;
 
-        public void Dispose() => _cycles.Clear();
+        _cycles.Add(cycle);
+    }
 
-        public void AddCycle(ICyclable cycle)
-        {
-            if ((cycle == null) || _cycles.Contains(cycle)) return;
+    public void RemoveCycle(ICyclable cycle)
+    {
+        if (cycle == null || !_cycles.Contains(cycle)) return;
 
-            _cycles.Add(cycle);
-        }
+        _cycles.Remove(cycle);
+    }
 
-        public void RemoveCycle(ICyclable cycle)
-        {
-            if (cycle == null || !_cycles.Contains(cycle)) return;
+    public async Task Cycle()
+    {
+        if (!_running) return;
 
-            _cycles.Remove(cycle);
-        }
-
-        public async Task Cycle()
-        {
-            if (!_running) return;
-
-            _cycles.ForEach(async (x) => await x.Cycle());
-        }
+        _cycles.ForEach(async x => await x.Cycle());
     }
 }

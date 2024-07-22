@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Navigator
+namespace Turbo.Packets.Incoming.Navigator;
+
+public record MyGuildBasesSearchMessage : IMessageEvent
 {
-    public record MyGuildBasesSearchMessage : IMessageEvent
-    {
-    }
 }

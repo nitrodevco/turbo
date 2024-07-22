@@ -5,26 +5,31 @@ using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
 using Turbo.Database.Entities.Room;
 
-namespace Turbo.Database.Repositories.Room
-{
-    public class RoomMuteRepository(IEmulatorContext _context) : IRoomMuteRepository
-    {
-        public async Task<RoomMuteEntity> FindAsync(int id) => await _context.RoomMutes
-            .FirstOrDefaultAsync(entity => entity.Id == id);
+namespace Turbo.Database.Repositories.Room;
 
-        public async Task<List<RoomMuteEntity>> FindAllByRoomIdAsync(int roomId) => await _context.RoomMutes
+public class RoomMuteRepository(IEmulatorContext _context) : IRoomMuteRepository
+{
+    public async Task<RoomMuteEntity> FindAsync(int id)
+    {
+        return await _context.RoomMutes
+            .FirstOrDefaultAsync(entity => entity.Id == id);
+    }
+
+    public async Task<List<RoomMuteEntity>> FindAllByRoomIdAsync(int roomId)
+    {
+        return await _context.RoomMutes
             .Where(entity => entity.RoomEntityId == roomId)
             .ToListAsync();
+    }
 
-        public async Task<bool> RemoveMuteEntityAsync(RoomMuteEntity entity)
-        {
-            if (entity == null) return false;
+    public async Task<bool> RemoveMuteEntityAsync(RoomMuteEntity entity)
+    {
+        if (entity == null) return false;
 
-            _context.Remove(entity);
+        _context.Remove(entity);
 
-            await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
 
-            return true;
-        }
+        return true;
     }
 }

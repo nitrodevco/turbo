@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Inventory;
@@ -7,173 +6,166 @@ using Turbo.Core.Game.Inventory.Constants;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Utilities;
-using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Furniture.Factories;
 using Turbo.Packets.Outgoing.Inventory.Furni;
 
-namespace Turbo.Inventory.Furniture
+namespace Turbo.Inventory.Furniture;
+
+public class PlayerFurnitureInventory : Component, IPlayerFurnitureInventory
 {
-    public class PlayerFurnitureInventory : Component, IPlayerFurnitureInventory
+    private readonly IPlayer _player;
+    private readonly IPlayerFurnitureFactory _playerFurnitureFactory;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
+
+    private bool _requested;
+
+    public PlayerFurnitureInventory(
+        IPlayer player,
+        IPlayerFurnitureFactory playerFurnitureFactory,
+        IServiceScopeFactory serviceScopeFactory)
     {
-        private readonly IPlayer _player;
-        private readonly IPlayerFurnitureFactory _playerFurnitureFactory;
-        private readonly IServiceScopeFactory _serviceScopeFactory;
+        _player = player;
+        _playerFurnitureFactory = playerFurnitureFactory;
+        _serviceScopeFactory = serviceScopeFactory;
 
-        public IPlayerFurnitureContainer Furniture { get; private set; }
+        Furniture = new PlayerFurnitureContainer(RemoveFurniture);
+    }
 
-        private bool _requested;
+    public IPlayerFurnitureContainer Furniture { get; }
 
-        public PlayerFurnitureInventory(
-            IPlayer player,
-            IPlayerFurnitureFactory playerFurnitureFactory,
-            IServiceScopeFactory serviceScopeFactory)
+    public IPlayerFurniture? GetFurniture(int id)
+    {
+        return Furniture.GetPlayerFurniture(id);
+    }
+
+    public void AddFurnitureFromRoom(IRoomFurniture roomFurniture)
+    {
+        if (roomFurniture == null) return;
+
+        var playerFurniture = _playerFurnitureFactory.CreateFromRoomFurniture(Furniture, roomFurniture, _player.Id);
+
+        if (playerFurniture == null) return;
+
+        Furniture.AddFurniture(playerFurniture);
+
+        _player.PlayerInventory?.UnseenItemsManager?.Add(UnseenItemCategory.Furni, playerFurniture.Id);
+
+        if (!_requested) return;
+
+        _player.Session?.Send(new FurniListAddOrUpdateMessage
         {
-            _player = player;
-            _playerFurnitureFactory = playerFurnitureFactory;
-            _serviceScopeFactory = serviceScopeFactory;
+            Furniture = playerFurniture
+        });
+    }
 
-            Furniture = new PlayerFurnitureContainer(RemoveFurniture);
-        }
+    public void RemoveFurniture(IPlayerFurniture playerFurniture)
+    {
+        if (playerFurniture == null || playerFurniture.Disposed) return;
 
-        protected override async Task OnInit()
+        Furniture.RemoveFurniture(playerFurniture);
+
+        playerFurniture.Dispose();
+
+        if (!_requested) return;
+
+        _player.Session?.Send(new FurniListRemoveMessage
         {
-            await LoadFurniture();
-        }
+            ItemId = playerFurniture.Id
+        });
+    }
 
-        protected override async Task OnDispose()
+    public async Task GiveFurniture(int definitionId)
+    {
+        if (definitionId <= 0) return;
+
+        var playerFurniture = await _playerFurnitureFactory.CreateFromDefinitionId(Furniture, definitionId, _player.Id);
+
+        if (playerFurniture == null) return;
+
+        Furniture.AddFurniture(playerFurniture);
+
+        _player.PlayerInventory?.UnseenItemsManager?.Add(UnseenItemCategory.Furni, playerFurniture.Id);
+
+        if (!_requested) return;
+
+        _player.Session?.Send(new FurniListAddOrUpdateMessage
         {
-            Furniture.PlayerFurniture.Clear();
-        }
+            Furniture = playerFurniture
+        });
+    }
 
-        public IPlayerFurniture? GetFurniture(int id)
+    public void SendFurnitureToSession(ISession session)
+    {
+        List<IPlayerFurniture> playerFurnitures = [];
+
+        var totalFragments =
+            (int)Math.Ceiling((double)Furniture.PlayerFurniture.Count / DefaultSettings.FurniPerFragment);
+
+        if (totalFragments == 0) totalFragments = 1;
+
+        var currentFragment = 0;
+        var count = 0;
+
+        foreach (var playerFurniture in Furniture.PlayerFurniture.Values)
         {
-            return Furniture.GetPlayerFurniture(id);
-        }
+            playerFurnitures.Add(playerFurniture);
 
-        public void AddFurnitureFromRoom(IRoomFurniture roomFurniture)
-        {
-            if (roomFurniture == null) return;
+            count++;
 
-            var playerFurniture = _playerFurnitureFactory.CreateFromRoomFurniture(Furniture, roomFurniture, _player.Id);
-
-            if (playerFurniture == null) return;
-
-            Furniture.AddFurniture(playerFurniture);
-
-            _player.PlayerInventory?.UnseenItemsManager?.Add(UnseenItemCategory.Furni, playerFurniture.Id);
-
-            if (!_requested) return;
-
-            _player.Session?.Send(new FurniListAddOrUpdateMessage
+            if (count == DefaultSettings.FurniPerFragment)
             {
-                Furniture = playerFurniture
-            });
-        }
-
-        public void RemoveFurniture(IPlayerFurniture playerFurniture)
-        {
-            if ((playerFurniture == null) || playerFurniture.Disposed) return;
-
-            Furniture.RemoveFurniture(playerFurniture);
-
-            playerFurniture.Dispose();
-
-            if (!_requested) return;
-
-            _player.Session?.Send(new FurniListRemoveMessage
-            {
-                ItemId = playerFurniture.Id
-            });
-        }
-
-        public async Task GiveFurniture(int definitionId)
-        {
-            if (definitionId <= 0) return;
-
-            var playerFurniture = await _playerFurnitureFactory.CreateFromDefinitionId(Furniture, definitionId, _player.Id);
-
-            if (playerFurniture == null) return;
-
-            Furniture.AddFurniture(playerFurniture);
-
-            _player.PlayerInventory?.UnseenItemsManager?.Add(UnseenItemCategory.Furni, playerFurniture.Id);
-
-            if (!_requested) return;
-
-            _player.Session?.Send(new FurniListAddOrUpdateMessage
-            {
-                Furniture = playerFurniture
-            });
-        }
-
-        public void SendFurnitureToSession(ISession session)
-        {
-            List<IPlayerFurniture> playerFurnitures = [];
-
-            var totalFragments = (int)Math.Ceiling((double)Furniture.PlayerFurniture.Count / DefaultSettings.FurniPerFragment);
-
-            if (totalFragments == 0) totalFragments = 1;
-
-            int currentFragment = 0;
-            int count = 0;
-
-            foreach (var playerFurniture in Furniture.PlayerFurniture.Values)
-            {
-                playerFurnitures.Add(playerFurniture);
-
-                count++;
-
-                if (count == DefaultSettings.FurniPerFragment)
+                session.Send(new FurniListMessage
                 {
-                    session.Send(new FurniListMessage
-                    {
-                        TotalFragments = totalFragments,
-                        CurrentFragment = currentFragment,
-                        Furniture = playerFurnitures
-                    });
+                    TotalFragments = totalFragments,
+                    CurrentFragment = currentFragment,
+                    Furniture = playerFurnitures
+                });
 
-                    playerFurnitures.Clear();
-                    count = 0;
-                    currentFragment++;
-                }
+                playerFurnitures.Clear();
+                count = 0;
+                currentFragment++;
             }
-
-            session.Send(new FurniListMessage
-            {
-                TotalFragments = totalFragments,
-                CurrentFragment = currentFragment,
-                Furniture = playerFurnitures
-            });
-
-            _requested = true;
         }
 
-        private async Task LoadFurniture()
+        session.Send(new FurniListMessage
         {
-            Furniture.PlayerFurniture.Clear();
+            TotalFragments = totalFragments,
+            CurrentFragment = currentFragment,
+            Furniture = playerFurnitures
+        });
 
-            using var scope = _serviceScopeFactory.CreateScope();
+        _requested = true;
+    }
 
-            var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+    protected override async Task OnInit()
+    {
+        await LoadFurniture();
+    }
 
-            var entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
+    protected override async Task OnDispose()
+    {
+        Furniture.PlayerFurniture.Clear();
+    }
 
-            if (entities != null)
+    private async Task LoadFurniture()
+    {
+        Furniture.PlayerFurniture.Clear();
+
+        using var scope = _serviceScopeFactory.CreateScope();
+
+        var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
+
+        var entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
+
+        if (entities != null)
+            foreach (var furnitureEntity in entities)
             {
-                foreach (var furnitureEntity in entities)
-                {
-                    var playerFurniture = _playerFurnitureFactory.Create(Furniture, furnitureEntity);
+                var playerFurniture = _playerFurnitureFactory.Create(Furniture, furnitureEntity);
 
-                    Furniture.AddFurniture(playerFurniture);
-                }
+                Furniture.AddFurniture(playerFurniture);
             }
 
-            if (_requested)
-            {
-                _player.Session?.Send(new FurniListInvalidateMessage());
-            }
-        }
+        if (_requested) _player.Session?.Send(new FurniListInvalidateMessage());
     }
 }
-

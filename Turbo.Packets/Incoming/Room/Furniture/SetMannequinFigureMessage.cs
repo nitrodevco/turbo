@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Furniture
+namespace Turbo.Packets.Incoming.Room.Furniture;
+
+public record SetMannequinFigureMessage : IMessageEvent
 {
-    public record SetMannequinFigureMessage : IMessageEvent
-    {
-        public int FurniId { get; init; }
-    }
+    public int FurniId { get; init; }
 }

@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Engine
+namespace Turbo.Packets.Incoming.Room.Engine;
+
+public record CompostPlantMessage : IMessageEvent
 {
-    public record CompostPlantMessage : IMessageEvent
-    {
-        public int PetId { get; init; }
-    }
+    public int PetId { get; init; }
 }

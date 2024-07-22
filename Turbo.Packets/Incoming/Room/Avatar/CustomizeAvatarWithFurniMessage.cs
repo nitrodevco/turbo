@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Avatar
+namespace Turbo.Packets.Incoming.Room.Avatar;
+
+public record CustomizeAvatarWithFurniMessage : IMessageEvent
 {
-    public record CustomizeAvatarWithFurniMessage : IMessageEvent
-    {
-        public int ObjectId { get; init; }
-    }
+    public int ObjectId { get; init; }
 }

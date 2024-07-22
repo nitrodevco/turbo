@@ -1,10 +1,9 @@
-namespace Turbo.Core.Game.Rooms.Games.Constants
+namespace Turbo.Core.Game.Rooms.Games.Constants;
+
+public enum GameTeamColor
 {
-    public enum GameTeamColor
-    {
-        Red = 0,
-        Green = 1,
-        Blue = 2,
-        Yellow = 3
-    }
+    Red = 0,
+    Green = 1,
+    Blue = 2,
+    Yellow = 3
 }

@@ -1,8 +1,7 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Layout
+namespace Turbo.Packets.Incoming.Room.Layout;
+
+public record GetOccupiedTilesMessage : IMessageEvent
 {
-    public record GetOccupiedTilesMessage : IMessageEvent
-    {
-    }
 }

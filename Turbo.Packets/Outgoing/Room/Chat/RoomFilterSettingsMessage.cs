@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Room.Chat
+namespace Turbo.Packets.Outgoing.Room.Chat;
+
+public record RoomFilterSettingsMessage : IComposer
 {
-    public record RoomFilterSettingsMessage : IComposer
-    {
-        public IList<string> BadWords { get; init; }
-    }
+    public IList<string> BadWords { get; init; }
 }

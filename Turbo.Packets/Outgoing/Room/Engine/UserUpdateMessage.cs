@@ -2,10 +2,9 @@
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Outgoing.Room.Engine
+namespace Turbo.Packets.Outgoing.Room.Engine;
+
+public record UserUpdateMessage : IComposer
 {
-    public record UserUpdateMessage : IComposer
-    {
-        public IList<IRoomObjectAvatar> RoomObjects { get; init; }
-    }
+    public IList<IRoomObjectAvatar> RoomObjects { get; init; }
 }

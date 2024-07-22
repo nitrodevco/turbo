@@ -1,7 +1,5 @@
-namespace Turbo.Core.PacketHandlers
-{
-    public class IRoomSettingsMessageHandler
-    {
+namespace Turbo.Core.PacketHandlers;
 
-    }
+public class IRoomSettingsMessageHandler
+{
 }

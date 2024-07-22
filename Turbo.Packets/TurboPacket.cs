@@ -1,27 +1,23 @@
-﻿using DotNetty.Buffers;
-using System.Text;
+﻿using System.Text;
+using DotNetty.Buffers;
 
-namespace Turbo.Packets
+namespace Turbo.Packets;
+
+public class TurboPacket : DefaultByteBufferHolder
 {
-    public class TurboPacket : DefaultByteBufferHolder
+    public TurboPacket(int header, IByteBuffer body) : base(body)
     {
-        public int Header { get; set; }
+        Header = header;
+    }
 
-        public TurboPacket(int header, IByteBuffer body) : base(body)
-        {
-            this.Header = header;
-        }
+    public int Header { get; set; }
 
-        public override string ToString()
-        {
-            string body = Content.ToString(Encoding.UTF8);
+    public override string ToString()
+    {
+        var body = Content.ToString(Encoding.UTF8);
 
-            for (int i = 0; i < 13; i++)
-            {
-                body = body.Replace(((char)i).ToString(), "[" + i + "]");
-            }
+        for (var i = 0; i < 13; i++) body = body.Replace(((char)i).ToString(), "[" + i + "]");
 
-            return body;
-        }
+        return body;
     }
 }

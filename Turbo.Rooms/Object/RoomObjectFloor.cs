@@ -1,149 +1,146 @@
+using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Object;
-using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Game.Rooms.Object.Logic;
+using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Rooms.Utils;
-using System;
-using Turbo.Core.Game.Furniture;
 
-namespace Turbo.Rooms.Object
+namespace Turbo.Rooms.Object;
+
+public class RoomObjectFloor : RoomObject, IRoomObjectFloor
 {
-    public class RoomObjectFloor : RoomObject, IRoomObjectFloor
+    private IRoomObjectContainer<IRoomObjectFloor> _roomObjectContainer;
+
+    public RoomObjectFloor(IRoom room, IRoomObjectContainer<IRoomObjectFloor> roomObjectContainer, int id) : base(room,
+        id)
     {
-        public IRoomObjectFloorHolder RoomObjectHolder { get; protected set; }
-        public IFurnitureFloorLogic Logic { get; protected set; }
-        public IPoint Location { get; private set; }
+        Location = new Point();
 
-        private IRoomObjectContainer<IRoomObjectFloor> _roomObjectContainer;
+        _roomObjectContainer = roomObjectContainer;
+    }
 
-        public RoomObjectFloor(IRoom room, IRoomObjectContainer<IRoomObjectFloor> roomObjectContainer, int id) : base(room, id)
+    public IRoomObjectFloorHolder RoomObjectHolder { get; protected set; }
+    public IFurnitureFloorLogic Logic { get; protected set; }
+    public IPoint Location { get; }
+
+    public virtual bool SetHolder(IRoomObjectFloorHolder roomObjectHolder)
+    {
+        if (roomObjectHolder == null) return false;
+
+        RoomObjectHolder = roomObjectHolder;
+
+        return true;
+    }
+
+    public virtual void SetLogic(IFurnitureFloorLogic logic)
+    {
+        if (logic == Logic) return;
+
+        var currentLogic = Logic;
+
+        if (currentLogic != null)
         {
-            Location = new Point();
+            Logic = null;
 
-            _roomObjectContainer = roomObjectContainer;
+            currentLogic.SetRoomObject(null);
         }
 
-        protected override void OnDispose()
+        Logic = logic;
+
+        if (Logic != null) Logic.SetRoomObject(this);
+    }
+
+    public virtual void SetLocation(IPoint point, bool save = true, bool update = true)
+    {
+        if (point == null) return;
+
+        if (point.X == Location.X && point.Y == Location.Y && point.Z == Location.Z &&
+            point.Rotation == Location.Rotation && point.HeadRotation == Location.HeadRotation) return;
+
+        Location.X = point.X;
+        Location.Y = point.Y;
+        Location.Z = point.Z;
+        Location.Rotation = point.Rotation;
+        Location.HeadRotation = point.HeadRotation;
+
+        if (save) Save();
+
+        if (update) NeedsUpdate = true;
+    }
+
+    public int X
+    {
+        get => Location.X;
+        set
         {
-            if (_roomObjectContainer != null) _roomObjectContainer.RemoveRoomObject(Id);
+            Location.X = value;
 
-            if (RoomObjectHolder != null)
-            {
-                RoomObjectHolder.ClearRoomObject();
+            Save();
+        }
+    }
 
-                RoomObjectHolder = null;
-            }
+    public int Y
+    {
+        get => Location.Y;
+        set
+        {
+            Location.Y = value;
 
-            SetLogic(null);
+            Save();
+        }
+    }
 
-            _roomObjectContainer = null;
+    public double Z
+    {
+        get => Location.Z;
+        set
+        {
+            Location.Z = value;
+
+            Save();
+        }
+    }
+
+    public Rotation Rotation
+    {
+        get => Location.Rotation;
+        set
+        {
+            Location.Rotation = value;
+
+            Save();
+        }
+    }
+
+    public Rotation HeadRotation
+    {
+        get => Location.HeadRotation;
+        set
+        {
+            Location.HeadRotation = value;
+
+            Save();
+        }
+    }
+
+    protected override void OnDispose()
+    {
+        if (_roomObjectContainer != null) _roomObjectContainer.RemoveRoomObject(Id);
+
+        if (RoomObjectHolder != null)
+        {
+            RoomObjectHolder.ClearRoomObject();
+
+            RoomObjectHolder = null;
         }
 
-        public virtual bool SetHolder(IRoomObjectFloorHolder roomObjectHolder)
-        {
-            if (roomObjectHolder == null) return false;
+        SetLogic(null);
 
-            RoomObjectHolder = roomObjectHolder;
+        _roomObjectContainer = null;
+    }
 
-            return true;
-        }
-
-        public virtual void SetLogic(IFurnitureFloorLogic logic)
-        {
-            if (logic == Logic) return;
-
-            var currentLogic = Logic;
-
-            if (currentLogic != null)
-            {
-                Logic = null;
-
-                currentLogic.SetRoomObject(null);
-            }
-
-            Logic = logic;
-
-            if (Logic != null)
-            {
-                Logic.SetRoomObject(this);
-            }
-        }
-
-        public virtual void SetLocation(IPoint point, bool save = true, bool update = true)
-        {
-            if (point == null) return;
-
-            if ((point.X == Location.X) && (point.Y == Location.Y) && (point.Z == Location.Z) && (point.Rotation == Location.Rotation) && (point.HeadRotation == Location.HeadRotation)) return;
-
-            Location.X = point.X;
-            Location.Y = point.Y;
-            Location.Z = point.Z;
-            Location.Rotation = point.Rotation;
-            Location.HeadRotation = point.HeadRotation;
-
-            if (save) Save();
-
-            if (update) NeedsUpdate = true;
-        }
-
-        private void Save()
-        {
-            if (RoomObjectHolder is IRoomFloorFurniture floorFurniture) floorFurniture.Save();
-        }
-
-        public int X
-        {
-            get => Location.X;
-            set
-            {
-                Location.X = value;
-
-                Save();
-            }
-        }
-
-        public int Y
-        {
-            get => Location.Y;
-            set
-            {
-                Location.Y = value;
-
-                Save();
-            }
-        }
-
-        public double Z
-        {
-            get => Location.Z;
-            set
-            {
-                Location.Z = value;
-
-                Save();
-            }
-        }
-
-        public Rotation Rotation
-        {
-            get => Location.Rotation;
-            set
-            {
-                Location.Rotation = value;
-
-                Save();
-            }
-        }
-
-        public Rotation HeadRotation
-        {
-            get => Location.HeadRotation;
-            set
-            {
-                Location.HeadRotation = value;
-
-                Save();
-            }
-        }
+    private void Save()
+    {
+        if (RoomObjectHolder is IRoomFloorFurniture floorFurniture) floorFurniture.Save();
     }
 }

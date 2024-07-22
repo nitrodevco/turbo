@@ -1,11 +1,10 @@
-﻿namespace Turbo.Core.Game.Groups
+﻿namespace Turbo.Core.Game.Groups;
+
+public enum GroupState
 {
-    public enum GroupState
-    {
-        Open,
-        Exclusive,
-        Closed,
-        Large,
-        LargeClosed
-    }
+    Open,
+    Exclusive,
+    Closed,
+    Large,
+    LargeClosed
 }

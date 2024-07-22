@@ -8,89 +8,95 @@ using Turbo.Core.Packets.Messages;
 using Turbo.Core.Packets.Revisions;
 using Turbo.Core.Security;
 
-namespace Turbo.Networking.Game.Clients
+namespace Turbo.Networking.Game.Clients;
+
+public class Session : ISession
 {
-    public class Session : ISession
+    private readonly IChannelHandlerContext _channel;
+    private readonly ILogger<Session> _logger;
+
+    public Session(IChannelHandlerContext channel, IRevision initialRevision, ILogger<Session> logger)
     {
-        private readonly IChannelHandlerContext _channel;
-        private readonly ILogger<Session> _logger;
-        public IChannel Channel => _channel.Channel;
-        public IRevision Revision { get; set; }
-        public IRc4Service Rc4 { get; set; }
-        public IPlayer Player { get; private set; }
+        _channel = channel;
+        _logger = logger;
 
-        public string IPAddress { get; private set; }
-        public long LastPongTimestamp { get; set; }
+        Revision = initialRevision;
+        LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+    }
 
-        public Session(IChannelHandlerContext channel, IRevision initialRevision, ILogger<Session> logger)
+    public IChannel Channel => _channel.Channel;
+    public IRevision Revision { get; set; }
+    public IRc4Service Rc4 { get; set; }
+    public IPlayer Player { get; private set; }
+
+    public string IPAddress { get; }
+    public long LastPongTimestamp { get; set; }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (Player != null)
         {
-            _channel = channel;
-            _logger = logger;
+            await Player.DisposeAsync();
 
-            Revision = initialRevision;
-            LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            Player = null;
         }
 
-        public async ValueTask DisposeAsync()
-        {
-            if (Player != null)
-            {
-                await Player.DisposeAsync();
+        await _channel.CloseAsync();
+    }
 
-                Player = null;
+    public bool SetPlayer(IPlayer player)
+    {
+        if (Player != null && Player != player) return false;
+
+        Player = player;
+
+        return true;
+    }
+
+    public async Task Send(IComposer composer)
+    {
+        await Send(composer, false);
+    }
+
+    public async Task SendQueue(IComposer composer)
+    {
+        await Send(composer, true);
+    }
+
+    public void Flush()
+    {
+        _channel.Flush();
+    }
+
+    protected async Task Send(IComposer composer, bool queue)
+    {
+        if (!IsConnected()) return;
+
+        if (Revision.Serializers.TryGetValue(composer.GetType(), out var serializer))
+        {
+            var packet = serializer.Serialize(_channel.Allocator.Buffer(), composer);
+
+            try
+            {
+                if (queue) await _channel.WriteAsync(packet);
+                else await _channel.WriteAndFlushAsync(packet);
             }
 
-            await _channel.CloseAsync();
-        }
-
-        public bool SetPlayer(IPlayer player)
-        {
-            if ((Player != null) && (Player != player)) return false;
-
-            Player = player;
-
-            return true;
-        }
-
-        public async Task Send(IComposer composer)
-        {
-            await Send(composer, false);
-        }
-
-        public async Task SendQueue(IComposer composer)
-        {
-            await Send(composer, true);
-        }
-
-        protected async Task Send(IComposer composer, bool queue)
-        {
-            if (!IsConnected()) return;
-
-            if (Revision.Serializers.TryGetValue(composer.GetType(), out ISerializer serializer))
+            catch (Exception exception)
             {
-                IServerPacket packet = serializer.Serialize(_channel.Allocator.Buffer(), composer);
-
-                try
-                {
-                    if (queue) await _channel.WriteAsync(packet);
-                    else await _channel.WriteAndFlushAsync(packet);
-                }
-
-                catch (Exception exception)
-                {
-                    _logger.LogDebug(exception.Message);
-                }
-
-                _logger.LogDebug($"Sent {packet.Header}: {composer.GetType().Name}");
+                _logger.LogDebug(exception.Message);
             }
-            else
-            {
-                _logger.LogDebug($"No matching serializer found for message {composer.GetType().Name}");
-            }
+
+            _logger.LogDebug($"Sent {packet.Header}: {composer.GetType().Name}");
         }
+        else
+        {
+            _logger.LogDebug($"No matching serializer found for message {composer.GetType().Name}");
+        }
+    }
 
-        public void Flush() => _channel.Flush();
-
-        public bool IsConnected() => _channel.Channel.Open;
+    public bool IsConnected()
+    {
+        return _channel.Channel.Open;
     }
 }

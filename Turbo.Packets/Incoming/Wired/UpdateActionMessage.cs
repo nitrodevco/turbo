@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Turbo.Core.Packets.Messages;
+﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Wired
+namespace Turbo.Packets.Incoming.Wired;
+
+public record UpdateActionMessage : UpdateWired, IMessageEvent
 {
-    public record UpdateActionMessage : UpdateWired, IMessageEvent
-    {
-        public int Delay { get; init; }
-    }
+    public int Delay { get; init; }
 }

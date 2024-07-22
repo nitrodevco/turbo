@@ -1,9 +1,8 @@
 ﻿using Turbo.Core.Packets.Messages;
 
-namespace Turbo.Packets.Incoming.Room.Avatar
+namespace Turbo.Packets.Incoming.Room.Avatar;
+
+public record ChangePostureMessage : IMessageEvent
 {
-    public record ChangePostureMessage : IMessageEvent
-    {
-        public int Posture { get; init; }
-    }
+    public int Posture { get; init; }
 }

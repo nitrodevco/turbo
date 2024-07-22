@@ -1,9 +1,8 @@
 ﻿using Turbo.Rooms.Object.Attributes;
 
-namespace Turbo.Rooms.Object.Logic.Avatar
+namespace Turbo.Rooms.Object.Logic.Avatar;
+
+[RoomObjectLogic("pet")]
+public class PetLogic : MovingAvatarLogic
 {
-    [RoomObjectLogic("pet")]
-    public class PetLogic : MovingAvatarLogic
-    {
-    }
 }
