@@ -8,11 +8,11 @@ using Turbo.Events.Game.Rooms.Furniture;
 
 namespace Turbo.EventHandlers
 {
-    public class TestEventHandler : ITestEventHandler
+    public class EventHandler : IEventHandler
     {
         private readonly ITurboEventHub _eventHub;
 
-        public TestEventHandler(ITurboEventHub eventHub)
+        public EventHandler(ITurboEventHub eventHub)
         {
             _eventHub = eventHub;
 

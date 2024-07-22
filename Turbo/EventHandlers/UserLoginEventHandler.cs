@@ -9,7 +9,7 @@ using ChatMessage = Turbo.Packets.Outgoing.Room.Chat.ChatMessage;
 
 namespace Turbo.EventHandlers;
 
-public class UserLoginEventHandler : ILoginEventHandler
+public class UserLoginEventHandler : IEventHandler
 {
     
     private readonly ITurboEventHub _eventHub;
