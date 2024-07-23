@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
+using Turbo.Core.Packets;
 using Turbo.Core.Packets.Messages;
 using Turbo.Core.Packets.Revisions;
 using Turbo.Core.Security;
+using Turbo.Networking.Extensions;
 
 namespace Turbo.Networking.Game.Clients;
 
@@ -14,11 +18,19 @@ public class Session : ISession
 {
     private readonly IChannelHandlerContext _channel;
     private readonly ILogger<Session> _logger;
+    private readonly ConcurrentQueue<IClientPacket> pendingReadMessages = new();
+    private readonly IPacketMessageHub _messageHub;
 
-    public Session(IChannelHandlerContext channel, IRevision initialRevision, ILogger<Session> logger)
+    public Session(
+        IChannelHandlerContext channel,
+        IRevision initialRevision,
+        ILogger<Session> logger,
+        IPacketMessageHub messageHub
+    )
     {
         _channel = channel;
         _logger = logger;
+        _messageHub = messageHub;
 
         Revision = initialRevision;
         LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
@@ -66,6 +78,49 @@ public class Session : ISession
     public void Flush()
     {
         _channel.Flush();
+    }
+
+    private bool TryAddMessage(IClientPacket messageEvent)
+    {
+        pendingReadMessages.Enqueue(messageEvent);
+        messageEvent.Content.Retain();
+        return true;
+    }
+
+    public void OnMessageReceived(IClientPacket messageEvent)
+    {
+        if (!TryAddMessage(messageEvent))
+        {
+            messageEvent.Content.ReleaseAll();
+        }
+    }
+
+    public async Task HandleDecodedMessages()
+    {
+        while (true)
+        {
+            if (pendingReadMessages.IsEmpty)
+            {
+                break;
+            }
+
+            if (!pendingReadMessages.TryDequeue(out var msg)) continue;
+            try
+            {
+                if (Revision.Parsers.TryGetValue(msg.Header, out var parser))
+                {
+                    await parser.HandleAsync(this, msg, _messageHub);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error handling message");
+            }
+            finally
+            {
+                msg.Content.Release();
+            }
+        }
     }
 
     protected async Task Send(IComposer composer, bool queue)

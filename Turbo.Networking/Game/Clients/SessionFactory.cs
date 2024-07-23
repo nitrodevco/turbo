@@ -19,6 +19,7 @@ public class SessionFactory : ISessionFactory
     public ISession Create(IChannelHandlerContext context, IRevision initialRevision)
     {
         var logger = _provider.GetService<ILogger<Session>>();
-        return new Session(context, initialRevision, logger);
+        
+        return ActivatorUtilities.CreateInstance<Session>(_provider, context, initialRevision, logger);
     }
 }

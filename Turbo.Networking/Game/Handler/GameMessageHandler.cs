@@ -44,25 +44,22 @@ public class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
 
     protected override async void ChannelRead0(IChannelHandlerContext ctx, IClientPacket msg)
     {
-        if (_sessionManager.TryGetSession(ctx.Channel.Id, out var session))
+        if (!_sessionManager.TryGetSession(ctx.Channel.Id, out var session))
         {
-            if (session.Revision == null)
-            {
-                await session.DisposeAsync();
-
-                return;
-            }
-
-            if (session.Revision.Parsers.TryGetValue(msg.Header, out var parser))
-            {
-                _logger.LogDebug($"Received {msg.Header}:{parser.GetType().Name}");
-                await parser.HandleAsync(session, msg, _messageHub);
-            }
-            else
-            {
-                _logger.LogDebug($"No matching parser found for message {msg.Header}:{msg}");
-            }
+            _logger.LogInformation("Session not found for {}", ctx.Channel.RemoteAddress);
+            return;
         }
+
+        if (session.Revision == null)
+        {
+            _logger.LogInformation("Session revision not set for {}", ctx.Channel.RemoteAddress);
+
+            await session.DisposeAsync();
+
+            return;
+        }
+
+        session.OnMessageReceived(msg);
     }
 
     public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)

@@ -12,7 +12,7 @@ public interface ISession : IAsyncDisposable
 {
     public IChannel Channel { get; }
 
-    public IRevision Revision { get; set; }
+    public IRevision? Revision { get; set; }
     public IRc4Service Rc4 { get; set; }
     public IPlayer Player { get; }
     public string IPAddress { get; }
@@ -21,4 +21,6 @@ public interface ISession : IAsyncDisposable
     public Task Send(IComposer composer);
     public Task SendQueue(IComposer composer);
     public void Flush();
+    void OnMessageReceived(IClientPacket msg);
+    Task HandleDecodedMessages();
 }

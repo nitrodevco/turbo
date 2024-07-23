@@ -1,27 +1,27 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;
+using Turbo.Networking.Clients;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
 
-namespace Turbo.Networking.Clients;
+namespace Turbo.Networking.Game.Clients;
 
 public class SessionManager : ISessionManager
 {
-    private const int _pingIntervalSeconds = 30;
     private readonly ConcurrentDictionary<IChannelId, ISession> _clients;
-    private readonly IPacketMessageHub _packetHub;
+    private const int _pingIntervalSeconds = 30;
     private long _lastPingSeconds;
 
     public SessionManager(IPacketMessageHub packetHub)
     {
-        _packetHub = packetHub;
         _clients = new ConcurrentDictionary<IChannelId, ISession>();
 
-        _packetHub.Subscribe<PongMessage>(this, OnPongMessage);
+        packetHub.Subscribe<PongMessage>(this, OnPongMessage);
     }
 
     public bool TryGetSession(IChannelId id, out ISession session)
@@ -34,45 +34,78 @@ public class SessionManager : ISessionManager
         return _clients.TryAdd(id, session);
     }
 
-    public void DisconnectSession(IChannelId id)
+    public async void DisconnectSession(IChannelId id)
     {
-        if (_clients.TryRemove(id, out var session)) session.DisposeAsync();
-    }
+        if (!_clients.TryRemove(id, out var session)) return;
 
-    public Task Cycle()
-    {
-        ProcessPing();
-
-        return Task.CompletedTask;
+        await session.DisposeAsync();
     }
 
     /// <summary>
-    ///     Pings sessions every 30 seconds and disconnects sessions
-    ///     that have timed out for 60 seconds.
+    /// Pings sessions every 30 seconds and disconnects sessions
+    /// that have timed out for 60 seconds.
     /// </summary>
-    private void ProcessPing()
+    private async Task ProcessPing()
     {
         var timeNow = DateTimeOffset.Now.ToUnixTimeSeconds();
 
         if (timeNow - _lastPingSeconds < _pingIntervalSeconds) return;
 
+        var tasks = new ConcurrentBag<Task>();
+
         foreach (var session in _clients.Values)
         {
             if (timeNow - session.LastPongTimestamp > 60)
             {
-                session.DisposeAsync();
+                tasks.Add(session.DisposeAsync().AsTask());
 
                 continue;
             }
 
-            session.Send(new PingMessage());
+            await session.Send(new PingMessage());
         }
+
+        await Task.WhenAll(tasks);
 
         _lastPingSeconds = timeNow;
     }
 
-    public static void OnPongMessage(PongMessage message, ISession session)
+    private void OnPongMessage(PongMessage message, ISession session)
     {
         session.LastPongTimestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+    }
+
+    private async Task Process()
+    {
+        var tasks = new ConcurrentBag<Task>();
+        
+        foreach (var session in _clients.Values)
+        {
+            if (session == null) continue;
+
+            try
+            {
+                tasks.Add(session.HandleDecodedMessages());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating task for session: {ex}");
+            }
+        }
+        
+        await Task.WhenAll(tasks);
+    }
+
+    public async Task Cycle()
+    {
+        try
+        {
+            await ProcessPing();
+            await Process();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 }
