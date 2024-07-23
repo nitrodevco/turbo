@@ -5,6 +5,7 @@ namespace Turbo.Main.PacketHandlers;
 public class PacketHandlerManager : IPacketHandlerManager
 {
     private readonly IAuthenticationMessageHandler _authenticationMessageHandler;
+    private readonly ICompetitionMessageHandler _competitionMessageHandler;
     private readonly ICatalogMessageHandler _catalogMessageHandler;
     private readonly IInventoryMessageHandler _inventoryMessageHandler;
     private readonly INavigatorMessageHandler _navigatorMessageHandler;
@@ -18,6 +19,7 @@ public class PacketHandlerManager : IPacketHandlerManager
 
     public PacketHandlerManager(
         IAuthenticationMessageHandler authenticationMessageHandler,
+        ICompetitionMessageHandler competitionMessageHandler,
         ICatalogMessageHandler catalogMessageHandler,
         IInventoryMessageHandler inventoryMessageHandler,
         INavigatorMessageHandler navigatorMessageHandler,
@@ -30,6 +32,7 @@ public class PacketHandlerManager : IPacketHandlerManager
         IUserMessageHandler userMessageHandler)
     {
         _authenticationMessageHandler = authenticationMessageHandler;
+        _competitionMessageHandler = competitionMessageHandler;
         _catalogMessageHandler = catalogMessageHandler;
         _inventoryMessageHandler = inventoryMessageHandler;
         _navigatorMessageHandler = navigatorMessageHandler;

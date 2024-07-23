@@ -10,7 +10,10 @@ using Turbo.Core.Security;
 using Turbo.Events.Game.Security;
 using Turbo.Networking.Game.Codec;
 using Turbo.Packets.Incoming.Handshake;
+using Turbo.Packets.Outgoing.Availability;
 using Turbo.Packets.Outgoing.Handshake;
+using Turbo.Packets.Outgoing.Navigator;
+using Turbo.Packets.Outgoing.Notifications;
 using Turbo.Security;
 
 namespace Turbo.Main.PacketHandlers;
@@ -22,7 +25,6 @@ public class AuthenticationMessageHandler : IAuthenticationMessageHandler
     private readonly ILogger<AuthenticationMessageHandler> _logger;
     private readonly IPacketMessageHub _messageHub;
     private readonly IPlayerManager _playerManager;
-    private readonly IRsaService _rsaService;
     private readonly ISecurityManager _securityManager;
 
     public AuthenticationMessageHandler(
@@ -40,7 +42,6 @@ public class AuthenticationMessageHandler : IAuthenticationMessageHandler
         _playerManager = playerManager;
         _logger = logger;
         _eventHub = eventHub;
-        _rsaService = rsaService;
         _diffieService = diffieService;
 
         _messageHub.Subscribe<InitDiffieHandshakeMessage>(this, OnHandshake);
@@ -78,7 +79,7 @@ public class AuthenticationMessageHandler : IAuthenticationMessageHandler
         });
     }
 
-    public async Task OnSSOTicket(SSOTicketMessage message, ISession session)
+    private async Task OnSSOTicket(SSOTicketMessage message, ISession session)
     {
         var userId = await _securityManager.GetPlayerIdFromTicket(message.SSO);
 
@@ -105,10 +106,29 @@ public class AuthenticationMessageHandler : IAuthenticationMessageHandler
             SuggestedLoginActions = [],
             IdentityId = session.Player.Id
         });
+
+        await session.Send(new NavigatorSettingsMessage
+        {
+            HomeRoomId = 0,
+            RoomIdToEnter = 0
+        });
+
+        await session.Send(new AvailabilityStatusMessage
+        {
+            IsOpen = true,
+            OnShutDown = false,
+            IsAuthenticHabbo = true
+        });
+
+        await session.Send(new InfoFeedEnableMessage
+        {
+            Enabled = true
+        });
+
         await session.Send(new UserRightsMessage
         {
             ClubLevel = ClubLevelEnum.Vip,
-            SecurityLevel = SecurityLevelEnum.Moderator,
+            SecurityLevel = SecurityLevelEnum.Administrator,
             IsAmbassador = false
         });
 

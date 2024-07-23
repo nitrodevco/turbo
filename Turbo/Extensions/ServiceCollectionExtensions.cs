@@ -84,6 +84,7 @@ public static class ServiceCollectionExtensions
 
         // Packet Handlers
         services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
+        services.AddTransient<ICompetitionMessageHandler, CompetitionPacketHandlers>();
         services.AddTransient<ICatalogMessageHandler, CatalogMessageHandler>();
         services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
         services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();

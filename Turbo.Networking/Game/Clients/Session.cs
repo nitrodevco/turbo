@@ -109,7 +109,13 @@ public class Session : ISession
             {
                 if (Revision.Parsers.TryGetValue(msg.Header, out var parser))
                 {
+                    _logger.LogInformation("Received {}: {}", msg.Header, parser.GetType().Name);
+                    
                     await parser.HandleAsync(this, msg, _messageHub);
+                }
+                else
+                {
+                    _logger.LogInformation("No matching parser found for message {}", msg.Header);
                 }
             }
             catch (Exception ex)

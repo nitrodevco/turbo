@@ -2,6 +2,4 @@
 
 namespace Turbo.Packets.Incoming.Handshake;
 
-public record PongMessage : IMessageEvent
-{
-}
+public record PongMessage : IMessageEvent;
