@@ -2,30 +2,34 @@ using System.Collections.Generic;
 
 namespace Turbo.Core.Configuration;
 
+public class IGameConfig 
+{
+    public IHostConfig Tcp { get; init; }
+    public IWhiteListedHostConfig WebSocket { get; init; }
+    public IWhiteListedHostConfig Rcon { get; init; }
+}
+
+public class IHostConfig 
+{
+    public bool Enabled { get; init; }
+    public string Host { get; init; }
+    public int Port { get; init; }
+}
+
+public class IWhiteListedHostConfig 
+{
+    public bool Enabled { get; init; }
+    public string Host { get; init; }
+    public int Port { get; init; }
+    public List<string> Whitelist { get; init; }
+}
+
 public interface IEmulatorConfig
 {
-    public string GameHost { get; }
-
-    public bool GameTCPEnabled { get; }
-    public int GameTCPPort { get; }
-
-    public bool GameWSEnabled { get; }
-    public int GameWSPort { get; }
-    public List<string> GameWSWhitelist { get; }
-
-    public string RCONHost { get; }
-    public int RCONPort { get; }
-    public List<string> RCONWhitelist { get; }
-    public string DatabaseHost { get; }
-    public string DatabaseUser { get; }
-    public string DatabasePassword { get; }
-    public string DatabaseName { get; }
+    public IGameConfig Game { get; }
     public bool DatabaseLoggingEnabled { get; }
-
     public int NetworkWorkerThreads { get; }
-
     public List<string> PluginOrder { get; }
-
     public int FloodMessageLimit { get; }
     public int FloodTimeFrameSeconds { get; }
     public int FloodMuteDurationSeconds { get; }

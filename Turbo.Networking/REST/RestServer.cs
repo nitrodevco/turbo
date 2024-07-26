@@ -31,8 +31,8 @@ public class RestServer : IRestServer
         _eventLoopGroup = eventLoopGroup;
         _provider = provider;
 
-        Host = _config.RCONHost;
-        Port = _config.RCONPort;
+        Host = _config.Game.Rcon.Host;
+        Port = _config.Game.Rcon.Port;
 
         _serverBootstrap = new ServerBootstrap();
         InitializeBoostrap();

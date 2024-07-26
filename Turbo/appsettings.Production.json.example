@@ -1,9 +1,5 @@
 {
 	"Turbo": {
-		"DatabaseHost": "localhost",
-		"DatabaseUser": "root",
-		"DatabasePassword": "",
-		"DatabaseName": "turbo",
 		"DatabaseLoggingEnabled": false,
         "FloodMessageLimit": 3,
         "FloodTimeFrameSeconds": 10,

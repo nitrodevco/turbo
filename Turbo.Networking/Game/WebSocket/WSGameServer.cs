@@ -30,8 +30,8 @@ public class WSGameServer : IWSGameServer
         _eventLoopGroup = eventLoopGroup;
         _provider = provider;
 
-        Host = _config.GameHost;
-        Port = _config.GameWSPort;
+        Host = _config.Game.WebSocket.Host;
+        Port = _config.Game.WebSocket.Port;
 
         _serverBootstrap = new ServerBootstrap();
         InitializeBoostrap();

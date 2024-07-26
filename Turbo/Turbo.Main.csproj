@@ -4,6 +4,7 @@
         <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+        <UserSecretsId>015bb4f6-0745-4819-b16f-c5e4f10fc4ad</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>

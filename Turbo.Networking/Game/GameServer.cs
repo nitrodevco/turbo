@@ -31,8 +31,8 @@ public class GameServer : IGameServer
         _eventLoopGroup = eventLoopGroup;
         _provider = provider;
 
-        Host = _config.GameHost;
-        Port = _config.GameTCPPort;
+        Host = _config.Game.Tcp.Host;
+        Port = _config.Game.Tcp.Port;
 
         _serverBootstrap = new ServerBootstrap();
         InitializeBoostrap();
