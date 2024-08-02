@@ -7,28 +7,19 @@ using Turbo.Packets.Outgoing.Advertising;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class AdvertisingHandler : IAdvertisingHandler
+public class AdvertisingHandler(
+    IPacketMessageHub messageHub,
+    ILogger<AdvertisingHandler> logger) : IPacketHandlerManager
 {
-    private readonly ILogger<AuthenticationMessageHandler> _logger;
-    private readonly IPacketMessageHub _messageHub;
-
-    public AdvertisingHandler(
-
-        IPacketMessageHub messageHub,
-        ILogger<AuthenticationMessageHandler> logger
-    )
+    public void Register()
     {
-        _messageHub = messageHub;
-        _logger = logger;
-        
-        
-        _messageHub.Subscribe<InterstitialShownMessage>(this, OnInterstitialShownMessage);
-        _messageHub.Subscribe<GetInterstitialMessage>(this, OnInterstitialMessage);
+        messageHub.Subscribe<InterstitialShownMessage>(this, OnInterstitialShownMessage);
+        messageHub.Subscribe<GetInterstitialMessage>(this, OnInterstitialMessage);
     }
 
     private async void OnInterstitialMessage(GetInterstitialMessage message, ISession session)
     {
-        _logger.LogInformation("Received InterstitialMessage");
+        logger.LogInformation("Received InterstitialMessage");
 
         await session.Send(new InterstitialMessage()
             {
@@ -40,6 +31,6 @@ public class AdvertisingHandler : IAdvertisingHandler
     
     private async void OnInterstitialShownMessage(InterstitialShownMessage message, ISession session)
     {
-        _logger.LogInformation("Received InterstitialShownMessage");
+        logger.LogInformation("Received InterstitialShownMessage");
     }
 }

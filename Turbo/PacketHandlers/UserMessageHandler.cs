@@ -10,8 +10,7 @@ namespace Turbo.Main.PacketHandlers;
 
 public class UserMessageHandler(
     IPacketMessageHub messageHub,
-    IPlayerManager playerManager)
-    : IPacketHandlerManager
+    IPlayerManager playerManager) : IPacketHandlerManager
 {
     public void Register()
     {

@@ -11,36 +11,27 @@ using Turbo.Packets.Outgoing.Tracking;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class TrackingHandler : ITrackingHandler
+public class TrackingHandler(
+    IPacketMessageHub messageHub,
+    IServiceScopeFactory serviceScopeFactory,
+    ILogger<TrackingHandler> logger) : IPacketHandlerManager
 {
-    private readonly ILogger<AuthenticationMessageHandler> _logger;
-    private readonly IPacketMessageHub _messageHub;
-    private readonly IServiceScopeFactory _serviceScopeFactory;
-    
-    public TrackingHandler(
-        IPacketMessageHub messageHub,
-        ILogger<AuthenticationMessageHandler> logger,
-        IServiceScopeFactory serviceScopeFactory
-    )
+    public void Register()
     {
-        _messageHub = messageHub;
-        _logger = logger;
-        _serviceScopeFactory = serviceScopeFactory;
-        
-        _messageHub.Subscribe<LatencyPingReportMessage>(this, OnLatencyPingReport);
-        _messageHub.Subscribe<LatencyPingRequestMessage>(this, OnLatencyPingRequest);
-        _messageHub.Subscribe<PerformanceLogMessage>(this, OnPerformanceTracker);
-        _messageHub.Subscribe<LagWarningReportMessage>(this, OnLagWarningReport);
+        messageHub.Subscribe<LatencyPingReportMessage>(this, OnLatencyPingReport);
+        messageHub.Subscribe<LatencyPingRequestMessage>(this, OnLatencyPingRequest);
+        messageHub.Subscribe<PerformanceLogMessage>(this, OnPerformanceTracker);
+        messageHub.Subscribe<LagWarningReportMessage>(this, OnLagWarningReport);
     }
     
     private async void OnLatencyPingReport(LatencyPingReportMessage message, ISession session)
     {
-        _logger.LogInformation("Latency Ping Report: {0} {1} {2} from {3}", message.AverageLatency, message.ValidPingAverage, message.NumPings, session.IPAddress);
+        logger.LogInformation("Latency Ping Report: {0} {1} {2} from {3}", message.AverageLatency, message.ValidPingAverage, message.NumPings, session.IPAddress);
     }
     
     private async void OnLatencyPingRequest(LatencyPingRequestMessage message, ISession session)
     {
-        _logger.LogInformation("Latency Ping Request: {0} from {1}", message.ID, session.IPAddress);
+        logger.LogInformation("Latency Ping Request: {0} from {1}", message.ID, session.IPAddress);
         
         await session.Send(new LatencyPingResponseMessage()
         {
@@ -50,7 +41,7 @@ public class TrackingHandler : ITrackingHandler
     
     private async Task OnPerformanceTracker(PerformanceLogMessage message, ISession session)
     {
-        using var scope = _serviceScopeFactory.CreateScope();
+        using var scope = serviceScopeFactory.CreateScope();
         var performanceLogRepository = scope.ServiceProvider.GetRequiredService<IPerformanceLogRepository>();
 
         var performanceLog = new PerformanceLogEntity
@@ -71,6 +62,6 @@ public class TrackingHandler : ITrackingHandler
     
     public async void OnLagWarningReport(LagWarningReportMessage message, ISession session)
     {
-        _logger.LogInformation("Lag Warning Report: {0} from {1}", message.WarningCount, session.IPAddress);
+        logger.LogInformation("Lag Warning Report: {0} from {1}", message.WarningCount, session.IPAddress);
     }
 }

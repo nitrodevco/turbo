@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Turbo.Catalog;
 using Turbo.Catalog.Factories;
+using Turbo.Core.Configuration;
 using Turbo.Core.EventHandlers;
 using Turbo.Core.Events;
 using Turbo.Core.Game.Catalog;
