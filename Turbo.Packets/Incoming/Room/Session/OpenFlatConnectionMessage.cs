@@ -6,4 +6,5 @@ public record OpenFlatConnectionMessage : IMessageEvent
 {
     public int RoomId { get; init; }
     public string Password { get; init; }
+    public int Unused { get; init; }
 }
