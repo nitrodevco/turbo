@@ -31,6 +31,10 @@ internal class Program
     private static IHostBuilder CreateHostBuilder(string[] args)
     {
         return Host.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((_, config) =>
+            {
+                config.AddUserSecrets<Program>();
+            })
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddLogging();
@@ -41,7 +45,7 @@ internal class Program
                 services.AddSingleton<IEmulatorConfig>(turboConfig);
 
                 var connectionString = hostContext.Configuration.GetConnectionString("DefaultConnection");
-                
+
                 services.AddDbContext<IEmulatorContext, TurboContext>(
                     options =>
                     {
