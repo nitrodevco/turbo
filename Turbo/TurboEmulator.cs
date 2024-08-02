@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Turbo.Core;
@@ -24,6 +25,7 @@ namespace Turbo.Main;
 public class TurboEmulator(
     IHostApplicationLifetime _appLifetime,
     ILogger<TurboEmulator> _logger,
+    IServiceProvider _serviceProvider,
     IStorageQueue _storageQueue,
     IPluginManager _pluginManager,
     IServerManager _serverManager,
@@ -34,7 +36,6 @@ public class TurboEmulator(
     INavigatorManager _navigatorManager,
     IPlayerManager _playerManager,
     ISessionManager _sessionManager,
-    IPacketHandlerManager _packetHandlers,
     IEventHandlerManager _eventHandlers) : IEmulator
 {
     public const int MAJOR = 0;
@@ -71,6 +72,12 @@ public class TurboEmulator(
         Console.WriteLine();
 
         SetDefaultCulture(CultureInfo.InvariantCulture);
+        
+        var packetHandlers = _serviceProvider.GetServices<IPacketHandlerManager>();
+        foreach (var packetHandler in packetHandlers)
+        {
+            packetHandler.Register();
+        }
 
         // Register applicaton lifetime events
         _appLifetime.ApplicationStarted.Register(OnStarted);

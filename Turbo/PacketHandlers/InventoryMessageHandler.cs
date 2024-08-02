@@ -1,5 +1,4 @@
-﻿using Turbo.Core.Game.Rooms;
-using Turbo.Core.Networking.Game.Clients;
+﻿using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Inventory.Badges;
@@ -7,24 +6,18 @@ using Turbo.Packets.Incoming.Inventory.Furni;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class InventoryMessageHandler : IInventoryMessageHandler
+public class InventoryMessageHandler(
+    IPacketMessageHub messageHub
+) : IPacketHandlerManager
 {
-    private readonly IPacketMessageHub _messageHub;
-    private readonly IRoomManager _roomManager;
-
-    public InventoryMessageHandler(
-        IPacketMessageHub messageHub,
-        IRoomManager roomManager)
+    public void Register()
     {
-        _messageHub = messageHub;
-        _roomManager = roomManager;
-
-        _messageHub.Subscribe<GetBadgesMessage>(this, OnGetBadgesMessage);
-        _messageHub.Subscribe<SetActivatedBadgesMessage>(this, OnSetActivatedBadgesMessage);
-        _messageHub.Subscribe<RequestFurniInventoryMessage>(this, OnRequestFurniInventoryMessage);
-        _messageHub.Subscribe<RequestFurniInventoryWhenNotInRoomMessage>(this,
+        messageHub.Subscribe<GetBadgesMessage>(this, OnGetBadgesMessage);
+        messageHub.Subscribe<SetActivatedBadgesMessage>(this, OnSetActivatedBadgesMessage);
+        messageHub.Subscribe<RequestFurniInventoryMessage>(this, OnRequestFurniInventoryMessage);
+        messageHub.Subscribe<RequestFurniInventoryWhenNotInRoomMessage>(this,
             OnRequestFurniInventoryWhenNotInRoomMessage);
-        _messageHub.Subscribe<RequestRoomPropertySetMessage>(this, OnRequestRoomPropertySetMessage);
+        messageHub.Subscribe<RequestRoomPropertySetMessage>(this, OnRequestRoomPropertySetMessage);
     }
 
     protected virtual void OnGetBadgesMessage(GetBadgesMessage message, ISession session)

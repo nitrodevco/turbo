@@ -6,35 +6,30 @@ using Turbo.Packets.Incoming.Navigator;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class NavigatorMessageHandler : INavigatorMessageHandler
+public class NavigatorMessageHandler(
+    IPacketMessageHub messageHub,
+    INavigatorManager navigatorManager)
+    : IPacketHandlerManager
 {
-    private readonly IPacketMessageHub _messageHub;
-    private readonly INavigatorManager _navigatorManager;
-
-    public NavigatorMessageHandler(
-        IPacketMessageHub messageHub,
-        INavigatorManager navigatorManager)
+    public void Register()
     {
-        _messageHub = messageHub;
-        _navigatorManager = navigatorManager;
-
-        _messageHub.Subscribe<GetGuestRoomMessage>(this, OnGetGuestRoomMessage);
-        _messageHub.Subscribe<GetUserFlatCatsMessage>(this, OnGetUserFlatCatsMessage);
-        _messageHub.Subscribe<NewNavigatorInitMessage>(this, OnNewNavigatorInitMessage);
+        messageHub.Subscribe<GetUserFlatCatsMessage>(this, OnGetUserFlatCatsMessage);
+        messageHub.Subscribe<GetGuestRoomMessage>(this, OnGetGuestRoomMessage);
+        messageHub.Subscribe<NewNavigatorInitMessage>(this, OnNewNavigatorInitMessage);
     }
 
     protected virtual async void OnGetUserFlatCatsMessage(GetUserFlatCatsMessage message, ISession session)
     {
         if (session.Player == null) return;
 
-        await _navigatorManager.SendNavigatorCategories(session.Player);
+        await navigatorManager.SendNavigatorCategories(session.Player);
     }
 
     protected virtual async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
     {
         if (session.Player == null) return;
 
-        await _navigatorManager.GetGuestRoomMessage(session.Player, message.RoomId, message.EnterRoom,
+        await navigatorManager.GetGuestRoomMessage(session.Player, message.RoomId, message.EnterRoom,
             message.RoomForward);
     }
 
@@ -42,10 +37,10 @@ public class NavigatorMessageHandler : INavigatorMessageHandler
     {
         if (session.Player == null) return;
 
-        await _navigatorManager.SendNavigatorSettings(session.Player);
-        await _navigatorManager.SendNavigatorMetaData(session.Player);
-        await _navigatorManager.SendNavigatorLiftedRooms(session.Player);
-        await _navigatorManager.SendNavigatorSavedSearches(session.Player);
-        await _navigatorManager.SendNavigatorEventCategories(session.Player);
+        await navigatorManager.SendNavigatorSettings(session.Player);
+        await navigatorManager.SendNavigatorMetaData(session.Player);
+        await navigatorManager.SendNavigatorLiftedRooms(session.Player);
+        await navigatorManager.SendNavigatorSavedSearches(session.Player);
+        await navigatorManager.SendNavigatorEventCategories(session.Player);
     }
 }

@@ -8,27 +8,22 @@ using Turbo.Packets.Outgoing.Users;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class UserMessageHandler : IUserMessageHandler
+public class UserMessageHandler(
+    IPacketMessageHub messageHub,
+    IPlayerManager playerManager)
+    : IPacketHandlerManager
 {
-    private readonly IPacketMessageHub _messageHub;
-    private readonly IPlayerManager _playerManager;
-
-    public UserMessageHandler(
-        IPacketMessageHub messageHub,
-        IPlayerManager playerManager)
+    public void Register()
     {
-        _messageHub = messageHub;
-        _playerManager = playerManager;
-
-        _messageHub.Subscribe<GetSelectedBadgesMessage>(this, OnGetSelectedBadgesMessage);
-        _messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
+        messageHub.Subscribe<GetSelectedBadgesMessage>(this, OnGetSelectedBadgesMessage);
+        messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
     }
 
     protected virtual async void OnGetSelectedBadgesMessage(GetSelectedBadgesMessage message, ISession session)
     {
         if (session.Player == null) return;
 
-        var activeBadges = await _playerManager.GetPlayerActiveBadges(message.PlayerId);
+        var activeBadges = await playerManager.GetPlayerActiveBadges(message.PlayerId);
 
         await session.Send(new UserBadgesMessage
         {

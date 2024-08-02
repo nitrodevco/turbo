@@ -1,34 +1,26 @@
 using System.Threading.Tasks;
-using Turbo.Core.Game.Rooms;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Room.Action;
 
-namespace Turbo.PacketHandlers;
+namespace Turbo.Main.PacketHandlers;
 
-public class RoomActionMessageHandler : IRoomActionMessageHandler
+public class RoomActionMessageHandler(
+    IPacketMessageHub messageHub) : IPacketHandlerManager
 {
-    private readonly IPacketMessageHub _messageHub;
-    private readonly IRoomManager _roomManager;
-
-    public RoomActionMessageHandler(
-        IPacketMessageHub messageHub,
-        IRoomManager roomManager)
+    public void Register()
     {
-        _messageHub = messageHub;
-        _roomManager = roomManager;
-
-        _messageHub.Subscribe<AmbassadorAlertMessage>(this, OnAmbassadorAlertMessage);
-        _messageHub.Subscribe<AssignRightsMessage>(this, OnAssignRightsMessage);
-        _messageHub.Subscribe<BanUserWithDurationMessage>(this, OnBanUserWithDurationMessage);
-        _messageHub.Subscribe<LetUserInMessage>(this, OnLetUserInMessage);
-        _messageHub.Subscribe<MuteAllInRoomMessage>(this, OnMuteAllInRoomMessage);
-        _messageHub.Subscribe<RemoveAllRightsMessage>(this, OnRemoveAllRightsMessage);
-        _messageHub.Subscribe<RemoveRightsMessage>(this, OnRemoveRightsMessage);
-        _messageHub.Subscribe<KickUserMessage>(this, OnRoomUserKickMessage);
-        _messageHub.Subscribe<MuteUserMessage>(this, OnRoomUserMuteMessage);
-        _messageHub.Subscribe<UnbanUserFromRoomMessage>(this, OnUnbanUserFromRoomMessage);
+        messageHub.Subscribe<AmbassadorAlertMessage>(this, OnAmbassadorAlertMessage);
+        messageHub.Subscribe<AssignRightsMessage>(this, OnAssignRightsMessage);
+        messageHub.Subscribe<BanUserWithDurationMessage>(this, OnBanUserWithDurationMessage);
+        messageHub.Subscribe<LetUserInMessage>(this, OnLetUserInMessage);
+        messageHub.Subscribe<MuteAllInRoomMessage>(this, OnMuteAllInRoomMessage);
+        messageHub.Subscribe<RemoveAllRightsMessage>(this, OnRemoveAllRightsMessage);
+        messageHub.Subscribe<RemoveRightsMessage>(this, OnRemoveRightsMessage);
+        messageHub.Subscribe<KickUserMessage>(this, OnRoomUserKickMessage);
+        messageHub.Subscribe<MuteUserMessage>(this, OnRoomUserMuteMessage);
+        messageHub.Subscribe<UnbanUserFromRoomMessage>(this, OnUnbanUserFromRoomMessage);
     }
 
     private void OnAmbassadorAlertMessage(AmbassadorAlertMessage message, ISession session)

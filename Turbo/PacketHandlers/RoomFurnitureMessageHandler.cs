@@ -7,21 +7,13 @@ using Turbo.Rooms.Object.Logic.Furniture;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class RoomFurnitureMessageHandler : IRoomFurnitureMessageHandler
+public class RoomFurnitureMessageHandler(IPacketMessageHub messageHub) : IPacketHandlerManager
 {
-    private readonly IPacketMessageHub _messageHub;
-    private readonly IRoomManager _roomManager;
-
-    public RoomFurnitureMessageHandler(
-        IPacketMessageHub messageHub,
-        IRoomManager roomManager)
+    public void Register()
     {
-        _messageHub = messageHub;
-        _roomManager = roomManager;
-
-        _messageHub.Subscribe<ThrowDiceMessage>(this, OnThrowDiceMessage);
-        _messageHub.Subscribe<SetCustomStackingHeightMessage>(this, OnSetCustomStackingHeightMessage);
-        _messageHub.Subscribe<DiceOffMessage>(this, OnDiceOffMessage);
+        messageHub.Subscribe<ThrowDiceMessage>(this, OnThrowDiceMessage);
+        messageHub.Subscribe<SetCustomStackingHeightMessage>(this, OnSetCustomStackingHeightMessage);
+        messageHub.Subscribe<DiceOffMessage>(this, OnDiceOffMessage);
     }
 
     protected virtual void OnThrowDiceMessage(ThrowDiceMessage message, ISession session)

@@ -1,5 +1,4 @@
-﻿using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Rooms.Object;
+﻿using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
@@ -10,27 +9,20 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class RoomAvatarMessageHandler : IRoomAvatarMessageHandler
+public class RoomAvatarMessageHandler(
+    IPacketMessageHub messageHub) : IPacketHandlerManager
 {
-    private readonly IPacketMessageHub _messageHub;
-    private readonly IRoomManager _roomManager;
-
-    public RoomAvatarMessageHandler(
-        IPacketMessageHub messageHub,
-        IRoomManager roomManager)
+    public void Register()
     {
-        _messageHub = messageHub;
-        _roomManager = roomManager;
-
-        _messageHub.Subscribe<AvatarExpressionMessage>(this, OnAvatarExpressionMessage);
-        _messageHub.Subscribe<ChangeMottoMessage>(this, OnChangeMottoMessage);
-        _messageHub.Subscribe<ChangePostureMessage>(this, OnChangePostureMessage);
-        _messageHub.Subscribe<DanceMessage>(this, OnDanceMessage);
-        _messageHub.Subscribe<DropCarryItemMessage>(this, OnDropCarryItemMessage);
-        _messageHub.Subscribe<LookToMessage>(this, OnLookToMessage);
-        _messageHub.Subscribe<PassCarryItemMessage>(this, OnPassCarryItemMessage);
-        _messageHub.Subscribe<PassCarryItemToPetMessage>(this, OnPassCarryItemToPetMessage);
-        _messageHub.Subscribe<SignMessage>(this, OnSignMessage);
+        messageHub.Subscribe<AvatarExpressionMessage>(this, OnAvatarExpressionMessage);
+        messageHub.Subscribe<ChangeMottoMessage>(this, OnChangeMottoMessage);
+        messageHub.Subscribe<ChangePostureMessage>(this, OnChangePostureMessage);
+        messageHub.Subscribe<DanceMessage>(this, OnDanceMessage);
+        messageHub.Subscribe<DropCarryItemMessage>(this, OnDropCarryItemMessage);
+        messageHub.Subscribe<LookToMessage>(this, OnLookToMessage);
+        messageHub.Subscribe<PassCarryItemMessage>(this, OnPassCarryItemMessage);
+        messageHub.Subscribe<PassCarryItemToPetMessage>(this, OnPassCarryItemToPetMessage);
+        messageHub.Subscribe<SignMessage>(this, OnSignMessage);
     }
 
     private void OnAvatarExpressionMessage(AvatarExpressionMessage message, ISession session)

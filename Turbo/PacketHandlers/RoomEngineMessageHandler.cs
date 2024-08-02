@@ -13,37 +13,29 @@ using Turbo.Rooms.Utils;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class RoomEngineMessageHandler : IRoomEngineMessageHandler
+public class RoomEngineMessageHandler(
+    IPacketMessageHub messageHub,
+    INavigatorManager navigatorManager)
+    : IPacketHandlerManager
 {
-    private readonly IPacketMessageHub _messageHub;
-    private readonly INavigatorManager _navigatorManager;
-    private readonly IRoomManager _roomManager;
-
-    public RoomEngineMessageHandler(
-        IPacketMessageHub messageHub,
-        IRoomManager roomManager,
-        INavigatorManager navigatorManager)
+    public void Register()
     {
-        _messageHub = messageHub;
-        _roomManager = roomManager;
-        _navigatorManager = navigatorManager;
-
-        _messageHub.Subscribe<GetFurnitureAliasesMessage>(this, OnGetFurnitureAliasesMessage);
-        _messageHub.Subscribe<GetItemDataMessage>(this, OnGetItemDataMessage);
-        _messageHub.Subscribe<GetRoomEntryDataMessage>(this, OnGetRoomEntryDataMessage);
-        _messageHub.Subscribe<MoveAvatarMessage>(this, OnMoveAvatarMessage);
-        _messageHub.Subscribe<MoveObjectMessage>(this, OnMoveObjectMessage);
-        _messageHub.Subscribe<MoveWallItemMessage>(this, OnMoveWallItemMessage);
-        _messageHub.Subscribe<PickupObjectMessage>(this, OnPickupObjectMessage);
-        _messageHub.Subscribe<PlaceObjectMessage>(this, OnPlaceObjectMessage);
-        _messageHub.Subscribe<RemoveItemMessage>(this, OnRemoveItemMessage);
-        _messageHub.Subscribe<SetItemDataMessage>(this, OnSetItemDataMessage);
-        _messageHub.Subscribe<SetObjectDataMessage>(this, OnSetObjectDataMessage);
-        _messageHub.Subscribe<UseFurnitureMessage>(this, OnUseFurnitureMessage);
-        _messageHub.Subscribe<UseWallItemMessage>(this, OnUseWallItemMessage);
-        _messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
-        _messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
-        _messageHub.Subscribe<ShoutMessage>(this, OnShoutMessage);
+        messageHub.Subscribe<GetFurnitureAliasesMessage>(this, OnGetFurnitureAliasesMessage);
+        messageHub.Subscribe<GetItemDataMessage>(this, OnGetItemDataMessage);
+        messageHub.Subscribe<GetRoomEntryDataMessage>(this, OnGetRoomEntryDataMessage);
+        messageHub.Subscribe<MoveAvatarMessage>(this, OnMoveAvatarMessage);
+        messageHub.Subscribe<MoveObjectMessage>(this, OnMoveObjectMessage);
+        messageHub.Subscribe<MoveWallItemMessage>(this, OnMoveWallItemMessage);
+        messageHub.Subscribe<PickupObjectMessage>(this, OnPickupObjectMessage);
+        messageHub.Subscribe<PlaceObjectMessage>(this, OnPlaceObjectMessage);
+        messageHub.Subscribe<RemoveItemMessage>(this, OnRemoveItemMessage);
+        messageHub.Subscribe<SetItemDataMessage>(this, OnSetItemDataMessage);
+        messageHub.Subscribe<SetObjectDataMessage>(this, OnSetObjectDataMessage);
+        messageHub.Subscribe<UseFurnitureMessage>(this, OnUseFurnitureMessage);
+        messageHub.Subscribe<UseWallItemMessage>(this, OnUseWallItemMessage);
+        messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
+        messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
+        messageHub.Subscribe<ShoutMessage>(this, OnShoutMessage);
     }
 
     protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
@@ -71,7 +63,7 @@ public class RoomEngineMessageHandler : IRoomEngineMessageHandler
     {
         if (session.Player == null) return;
 
-        await _navigatorManager.ContinueEnteringRoom(session.Player);
+        await navigatorManager.ContinueEnteringRoom(session.Player);
     }
 
     protected virtual void OnMoveAvatarMessage(MoveAvatarMessage message, ISession session)

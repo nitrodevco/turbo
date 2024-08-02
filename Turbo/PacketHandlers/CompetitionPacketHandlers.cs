@@ -8,11 +8,11 @@ using Turbo.Packets.Outgoing.Competition;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class CompetitionPacketHandlers : ICompetitionMessageHandler
+public class CompetitionPacketHandlers(
+    IPacketMessageHub messageHub
+) : IPacketHandlerManager
 {
-    public CompetitionPacketHandlers(
-        IPacketMessageHub messageHub
-    )
+    public void Register()
     {
         messageHub.Subscribe<GetCurrentTimingCodeMessage>(this, OnCurrentTimingCodeMessage);
     }

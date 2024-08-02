@@ -37,7 +37,6 @@ using Turbo.Networking.Game;
 using Turbo.Networking.Game.Clients;
 using Turbo.Networking.Game.WebSocket;
 using Turbo.Networking.REST;
-using Turbo.PacketHandlers;
 using Turbo.Packets;
 using Turbo.Packets.Revisions;
 using Turbo.Players;
@@ -83,19 +82,18 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IEventHandler, UserLoginEventHandler>();
 
         // Packet Handlers
-        services.AddTransient<IAuthenticationMessageHandler, AuthenticationMessageHandler>();
-        services.AddTransient<ICompetitionMessageHandler, CompetitionPacketHandlers>();
-        services.AddTransient<ICatalogMessageHandler, CatalogMessageHandler>();
-        services.AddTransient<IInventoryMessageHandler, InventoryMessageHandler>();
-        services.AddTransient<INavigatorMessageHandler, NavigatorMessageHandler>();
-        services.AddTransient<IPacketHandlerManager, PacketHandlerManager>();
-        services.AddTransient<IRoomActionMessageHandler, RoomActionMessageHandler>();
-        services.AddTransient<IRoomAvatarMessageHandler, RoomAvatarMessageHandler>();
-        services.AddTransient<IRoomEngineMessageHandler, RoomEngineMessageHandler>();
-        services.AddTransient<IRoomFurnitureMessageHandler, RoomFurnitureMessageHandler>();
-        services.AddTransient<IRoomSessionMessageHandler, RoomSessionMessageHandler>();
-        services.AddTransient<IRoomSettingsMessageHandler, RoomSettingsMessageHandler>();
-        services.AddTransient<IUserMessageHandler, UserMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, AuthenticationMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, CompetitionPacketHandlers>();
+        services.AddTransient<IPacketHandlerManager, CatalogMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, InventoryMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, NavigatorMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, RoomActionMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, RoomAvatarMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, RoomEngineMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, RoomFurnitureMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, RoomSessionMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, RoomSettingsMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, UserMessageHandler>();
     }
 
     public static void AddManagers(this IServiceCollection services)

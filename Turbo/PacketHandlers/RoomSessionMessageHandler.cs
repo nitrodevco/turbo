@@ -7,30 +7,22 @@ using Turbo.Packets.Incoming.Room.Session;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class RoomSessionMessageHandler : IRoomSessionMessageHandler
+public class RoomSessionMessageHandler(
+    IPacketMessageHub messageHub,
+    INavigatorManager navigatorManager)
+    : IPacketHandlerManager
 {
-    private readonly IPacketMessageHub _messageHub;
-    private readonly INavigatorManager _navigatorManager;
-    private readonly IRoomManager _roomManager;
-
-    public RoomSessionMessageHandler(
-        IPacketMessageHub messageHub,
-        IRoomManager roomManager,
-        INavigatorManager navigatorManager)
+    public void Register()
     {
-        _messageHub = messageHub;
-        _roomManager = roomManager;
-        _navigatorManager = navigatorManager;
-
-        _messageHub.Subscribe<OpenFlatConnectionMessage>(this, OnOpenFlatConnectionMessage);
-        _messageHub.Subscribe<QuitMessage>(this, OnQuitMessage);
+        messageHub.Subscribe<OpenFlatConnectionMessage>(this, OnOpenFlatConnectionMessage);
+        messageHub.Subscribe<QuitMessage>(this, OnQuitMessage);
     }
 
     protected virtual async void OnOpenFlatConnectionMessage(OpenFlatConnectionMessage message, ISession session)
     {
         if (session.Player == null) return;
 
-        await _navigatorManager.EnterRoom(session.Player, message.RoomId);
+        await navigatorManager.EnterRoom(session.Player, message.RoomId);
     }
 
     protected virtual void OnQuitMessage(QuitMessage message, ISession session)

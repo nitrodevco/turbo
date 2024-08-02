@@ -18,59 +18,44 @@ using Turbo.Security;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class AuthenticationMessageHandler : IAuthenticationMessageHandler
+public class AuthenticationMessageHandler(
+    IPacketMessageHub messageHub,
+    ISecurityManager securityManager,
+    IPlayerManager playerManager,
+    ILogger<AuthenticationMessageHandler> logger,
+    ITurboEventHub eventHub,
+    IDiffieService diffieService)
+    : IPacketHandlerManager
 {
-    private readonly IDiffieService _diffieService;
-    private readonly ITurboEventHub _eventHub;
-    private readonly ILogger<AuthenticationMessageHandler> _logger;
-    private readonly IPacketMessageHub _messageHub;
-    private readonly IPlayerManager _playerManager;
-    private readonly ISecurityManager _securityManager;
-
-    public AuthenticationMessageHandler(
-        IPacketMessageHub messageHub,
-        ISecurityManager securityManager,
-        IPlayerManager playerManager,
-        ILogger<AuthenticationMessageHandler> logger,
-        ITurboEventHub eventHub,
-        IRsaService rsaService,
-        IDiffieService diffieService
-    )
+    public void Register()
     {
-        _messageHub = messageHub;
-        _securityManager = securityManager;
-        _playerManager = playerManager;
-        _logger = logger;
-        _eventHub = eventHub;
-        _diffieService = diffieService;
-
-        _messageHub.Subscribe<InitDiffieHandshakeMessage>(this, OnHandshake);
-        _messageHub.Subscribe<CompleteDiffieHandshakeMessage>(this, OnCompleteHandshake);
-        _messageHub.Subscribe<SSOTicketMessage>(this, OnSSOTicket);
-        _messageHub.Subscribe<InfoRetrieveMessage>(this, OnInfoRetrieve);
+        messageHub.Subscribe<InitDiffieHandshakeMessage>(this, OnHandshake);
+        messageHub.Subscribe<CompleteDiffieHandshakeMessage>(this, OnCompleteHandshake);
+        messageHub.Subscribe<SSOTicketMessage>(this, OnSSOTicket);
+        messageHub.Subscribe<InfoRetrieveMessage>(this, OnInfoRetrieve);
     }
 
     private async void OnCompleteHandshake(CompleteDiffieHandshakeMessage message, ISession session)
     {
-        var sharedKey = _diffieService.GetSharedKey(message.SharedKey);
+        var sharedKey = diffieService.GetSharedKey(message.SharedKey);
 
         session.Rc4 = new Rc4Service(sharedKey);
 
-        _logger.LogInformation("Diffie handshake completed for {0}", session.IPAddress);
+        logger.LogInformation("Diffie handshake completed for {0}", session.IPAddress);
 
         session.Channel.Pipeline.AddBefore("frameDecoder", "encryptionDecoder", new EncryptionDecoder(session));
 
         await session.Send(new CompleteDiffieHandshakeComposer
         {
-            PublicKey = _diffieService.GetPublicKey()
+            PublicKey = diffieService.GetPublicKey()
         });
     }
 
     private async void OnHandshake(InitDiffieHandshakeMessage message, ISession session)
     {
         // rsa
-        var prime = _diffieService.GetSignedPrime();
-        var generator = _diffieService.GetSignedGenerator();
+        var prime = diffieService.GetSignedPrime();
+        var generator = diffieService.GetSignedGenerator();
 
         await session.Send(new InitDiffieHandshakeComposer
         {
@@ -81,7 +66,7 @@ public class AuthenticationMessageHandler : IAuthenticationMessageHandler
 
     private async Task OnSSOTicket(SSOTicketMessage message, ISession session)
     {
-        var userId = await _securityManager.GetPlayerIdFromTicket(message.SSO);
+        var userId = await securityManager.GetPlayerIdFromTicket(message.SSO);
 
         if (userId <= 0)
         {
@@ -90,7 +75,7 @@ public class AuthenticationMessageHandler : IAuthenticationMessageHandler
             return;
         }
 
-        var player = await _playerManager.CreatePlayer(userId, session);
+        var player = await playerManager.CreatePlayer(userId, session);
 
         if (player == null)
         {
@@ -133,7 +118,7 @@ public class AuthenticationMessageHandler : IAuthenticationMessageHandler
         });
 
 
-        var messager = _eventHub.Dispatch(new UserLoginEvent
+        var messager = eventHub.Dispatch(new UserLoginEvent
         {
             Player = player
         });
