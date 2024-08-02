@@ -10,6 +10,7 @@ using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
 using Turbo.Database.Entities.Room;
 using Turbo.Database.Entities.Security;
+using Turbo.Database.Entities.Tracking;
 
 namespace Turbo.Database.Context;
 
@@ -36,6 +37,7 @@ public interface IEmulatorContext : IDisposable
     public DbSet<NavigatorTabEntity> NavigatorTabs { get; set; }
     public DbSet<PlayerChatStyleEntity> PlayerChatStyles { get; set; }
     public DbSet<PlayerChatStyleOwnedEntity> PlayerOwnedChatStyles { get; set; }
+    public DbSet<PerformanceLogEntity> PerformanceLogs { get; set; }
 
     public int SaveChanges(bool acceptAllChangesOnSuccess);
     public int SaveChanges();

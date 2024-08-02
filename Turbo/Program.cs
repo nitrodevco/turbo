@@ -60,7 +60,7 @@ internal class Program
                     }
                 );
 
-                services.AddEncryption();
+                services.AddEncryption(hostContext.Configuration);
                 services.AddRepositories();
                 services.AddManagers();
                 services.AddFactories();

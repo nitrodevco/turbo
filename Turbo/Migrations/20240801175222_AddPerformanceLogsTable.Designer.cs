@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Context;
 
@@ -10,9 +11,11 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    partial class TurboContextModelSnapshot : ModelSnapshot
+    [Migration("20240801175222_AddPerformanceLogsTable")]
+    partial class AddPerformanceLogsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

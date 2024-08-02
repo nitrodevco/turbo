@@ -7,14 +7,16 @@ using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;
 using Turbo.Networking.Clients;
 using Turbo.Packets.Incoming.Handshake;
+using Turbo.Packets.Incoming.Tracking;
 using Turbo.Packets.Outgoing.Handshake;
+using Turbo.Packets.Outgoing.Tracking;
 
 namespace Turbo.Networking.Game.Clients;
 
 public class SessionManager : ISessionManager
 {
     private readonly ConcurrentDictionary<IChannelId, ISession> _clients;
-    private const int _pingIntervalSeconds = 30;
+    private const int _pingIntervalSeconds = 60;
     private long _lastPingSeconds;
 
     public SessionManager(IPacketMessageHub packetHub)
