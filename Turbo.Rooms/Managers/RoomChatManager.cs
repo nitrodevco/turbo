@@ -12,7 +12,7 @@ using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
-using Turbo.Database.Entities.Room;
+using Turbo.Core.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Room.Chat;
 

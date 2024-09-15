@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Turbo.Database.Entities.Catalog;
+using Turbo.Core.Database.Entities.Catalog;
 
 namespace Turbo.Database.Repositories.Catalog;
 

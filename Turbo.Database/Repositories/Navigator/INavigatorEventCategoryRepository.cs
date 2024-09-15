@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Turbo.Database.Entities.Navigator;
+using Turbo.Core.Database.Entities.Navigator;
 
 namespace Turbo.Database.Repositories.Navigator;
 

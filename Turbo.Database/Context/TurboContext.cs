@@ -4,15 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Turbo.Core.Database.Attributes;
+using Turbo.Core.Database.Entities;
+using Turbo.Core.Database.Entities.Catalog;
+using Turbo.Core.Database.Entities.Furniture;
+using Turbo.Core.Database.Entities.Navigator;
+using Turbo.Core.Database.Entities.Players;
+using Turbo.Core.Database.Entities.Room;
+using Turbo.Core.Database.Entities.Security;
+using Turbo.Core.Database.Entities.Tracking;
 using Turbo.Database.Attributes;
-using Turbo.Database.Entities;
-using Turbo.Database.Entities.Catalog;
-using Turbo.Database.Entities.Furniture;
-using Turbo.Database.Entities.Navigator;
-using Turbo.Database.Entities.Players;
-using Turbo.Database.Entities.Room;
-using Turbo.Database.Entities.Security;
-using Turbo.Database.Entities.Tracking;
 
 namespace Turbo.Database.Context;
 
@@ -45,6 +46,15 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
     {
         OnModelCreatingAddDefaultSqlValues(modelBuilder);
 
+        modelBuilder.Entity<CatalogPageEntity>(entity =>
+        {
+            entity.Property(e => e.ImageData)
+                .HasColumnType("json");
+            
+            entity.Property(e => e.TextData)
+                .HasColumnType("json");
+        });
+
         var entityMethod = typeof(ModelBuilder).GetMethod("Entity", Type.EmptyTypes);
 
         if (!Directory.Exists("plugins")) Directory.CreateDirectory("plugins");
@@ -67,7 +77,7 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
 
     private void OnModelCreatingAddDefaultSqlValues(ModelBuilder modelBuilder)
     {
-        var asm = Assembly.Load("Turbo.Database");
+        var asm = Assembly.Load("Turbo.Core");
 
         if (asm == null) return;
 
@@ -81,16 +91,17 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
         foreach (var pi in dbSets) dbSetTypes.Add(pi.PropertyType.GetGenericArguments()[0]);
 
         foreach (var t in types)
-            if (typeof(Entity).IsAssignableFrom(t) && t.Name != nameof(Entity) && dbSetTypes.Contains(t))
+        {
+            if (!typeof(Entity).IsAssignableFrom(t) || t.Name == nameof(Entity) || !dbSetTypes.Contains(t)) continue;
+            
+            var properties = t.GetProperties().ToList();
+
+            foreach (var p in properties)
             {
-                var properties = t.GetProperties().ToList();
+                var att = p.GetCustomAttribute<DefaultValueSqlAttribute>();
 
-                foreach (var p in properties)
-                {
-                    var att = p.GetCustomAttribute<DefaultValueSqlAttribute>();
-
-                    if (att != null) modelBuilder.Entity(t).Property(p.Name).HasDefaultValueSql(att.DefaultValueSql);
-                }
+                if (att != null) modelBuilder.Entity(t).Property(p.Name).HasDefaultValueSql(att.Value?.ToString());
             }
+        }
     }
 }

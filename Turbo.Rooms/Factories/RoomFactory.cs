@@ -1,7 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Turbo.Core.Game.Rooms;
-using Turbo.Database.Entities.Room;
+using Turbo.Core.Database.Entities.Room;
+using Turbo.Core.Database.Factories;
+using Turbo.Core.Database.Factories.Rooms;
 
 namespace Turbo.Rooms.Factories;
 

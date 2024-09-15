@@ -8,7 +8,7 @@ using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Storage;
-using Turbo.Database.Entities.Furniture;
+using Turbo.Core.Database.Entities.Furniture;
 
 namespace Turbo.Furniture;
 

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
-using Turbo.Database.Entities.Tracking;
+using Turbo.Core.Database.Entities.Tracking;
 using Turbo.Database.Repositories.Tracking;
 using Turbo.Packets.Incoming.Tracking;
 using Turbo.Packets.Outgoing.Tracking;

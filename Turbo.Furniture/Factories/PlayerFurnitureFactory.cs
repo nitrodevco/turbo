@@ -5,7 +5,9 @@ using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Database.Context;
-using Turbo.Database.Entities.Furniture;
+using Turbo.Core.Database.Entities.Furniture;
+using Turbo.Core.Database.Factories;
+using Turbo.Core.Database.Factories.Players;
 
 namespace Turbo.Furniture.Factories;
 

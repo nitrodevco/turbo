@@ -4,7 +4,7 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Storage;
-using Turbo.Database.Entities.Players;
+using Turbo.Core.Database.Entities.Players;
 
 namespace Turbo.Players;
 
@@ -92,7 +92,9 @@ public class PlayerDetails(
         }
     }
 
-    public DateTime DateCreated => _playerEntity.DateCreated;
+    public DateTime CreatedAt => _playerEntity.CreatedAt;
 
-    public DateTime DateUpdated => _playerEntity.DateUpdated;
+    public DateTime UpdatedAt => _playerEntity.UpdatedAt;
+
+    public DateTime? DeletedAt => _playerEntity.DeletedAt;
 }

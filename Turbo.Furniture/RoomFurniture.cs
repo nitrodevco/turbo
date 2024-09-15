@@ -5,7 +5,7 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object.Constants;
-using Turbo.Database.Entities.Furniture;
+using Turbo.Core.Database.Entities.Furniture;
 
 namespace Turbo.Furniture;
 

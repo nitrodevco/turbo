@@ -4,7 +4,7 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Storage;
-using Turbo.Database.Entities.Room;
+using Turbo.Core.Database.Entities.Room;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Chat;
 using Turbo.Packets.Outgoing.Room.Engine;

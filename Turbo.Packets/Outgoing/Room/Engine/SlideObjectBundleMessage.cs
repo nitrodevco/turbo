@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Packets.Messages;
 

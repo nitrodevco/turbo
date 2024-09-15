@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Turbo.Core.Database.Factories;
+using Turbo.Core.Database.Factories.Furniture;
 using Turbo.Core.Events;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Furniture;

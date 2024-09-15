@@ -2,6 +2,7 @@
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.PathFinder;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Utils;

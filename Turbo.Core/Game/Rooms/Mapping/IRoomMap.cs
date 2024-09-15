@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Turbo.Core.Game.Rooms.Object;
+using Turbo.Core.Game.Rooms.PathFinder;
 using Turbo.Core.Game.Rooms.Utils;
 
 namespace Turbo.Core.Game.Rooms.Mapping;

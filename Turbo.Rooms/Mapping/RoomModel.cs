@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Game.Rooms.Utils;
-using Turbo.Database.Entities.Room;
+using Turbo.Core.Database.Entities.Room;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Rooms.Mapping;

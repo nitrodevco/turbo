@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
-using Turbo.Database.Entities.Players;
+using Turbo.Core.Database.Entities.Players;
 
 namespace Turbo.Database.Repositories.ChatStyles;
 

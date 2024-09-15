@@ -4,7 +4,7 @@ using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Players;
-using Turbo.Database.Entities.Catalog;
+using Turbo.Core.Database.Entities.Catalog;
 
 namespace Turbo.Catalog;
 

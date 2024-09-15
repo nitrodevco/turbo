@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
-using Turbo.Database.Entities.Security;
+using Turbo.Core.Database.Entities.Security;
 
 namespace Turbo.Database.Repositories.Security;
 

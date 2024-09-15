@@ -1,6 +1,6 @@
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Storage;
-using Turbo.Database.Entities.Players;
+using Turbo.Core.Database.Entities.Players;
 
 namespace Turbo.Inventory.Badges;
 

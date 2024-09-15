@@ -1,6 +1,6 @@
 ﻿using Turbo.Core.Game.Rooms.Utils;
 
-namespace Turbo.Core.Game.Rooms.Mapping;
+namespace Turbo.Core.Game.Rooms.PathFinder;
 
 public interface IPathFinderNode
 {

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Catalog.Factories;
+using Turbo.Core.Database.Factories.Catalog;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Players;

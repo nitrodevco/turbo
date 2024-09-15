@@ -1,4 +1,4 @@
-﻿using Turbo.Database.Entities.Room;
+﻿using Turbo.Core.Database.Entities.Room;
 
 namespace Turbo.Database.Repositories.Room;
 

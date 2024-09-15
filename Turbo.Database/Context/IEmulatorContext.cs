@@ -4,13 +4,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Turbo.Database.Entities.Catalog;
-using Turbo.Database.Entities.Furniture;
-using Turbo.Database.Entities.Navigator;
-using Turbo.Database.Entities.Players;
-using Turbo.Database.Entities.Room;
-using Turbo.Database.Entities.Security;
-using Turbo.Database.Entities.Tracking;
+using Turbo.Core.Database.Entities.Catalog;
+using Turbo.Core.Database.Entities.Furniture;
+using Turbo.Core.Database.Entities.Navigator;
+using Turbo.Core.Database.Entities.Players;
+using Turbo.Core.Database.Entities.Room;
+using Turbo.Core.Database.Entities.Security;
+using Turbo.Core.Database.Entities.Tracking;
 
 namespace Turbo.Database.Context;
 

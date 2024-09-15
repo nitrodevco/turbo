@@ -13,8 +13,9 @@ public interface IPlayerDetails
     public string Figure { get; set; }
     public AvatarGender Gender { get; set; }
     public PlayerStatusEnum PlayerStatus { get; set; }
-    public DateTime DateCreated { get; }
-    public DateTime DateUpdated { get; }
+    public DateTime CreatedAt { get; }
+    public DateTime UpdatedAt { get; }
+    public DateTime? DeletedAt { get; }
     public Task DisposeAsync();
     public int GetValidChatStyleId(int styleId);
     public void SetPreferredChatStyleByClientId(int styleId);

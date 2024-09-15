@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Core.Database.Dtos;
 using Turbo.Database.Context;
-using Turbo.Database.Entities.Furniture;
+using Turbo.Core.Database.Entities.Furniture;
 
 namespace Turbo.Database.Repositories.Furniture;
 

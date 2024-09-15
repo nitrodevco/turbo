@@ -44,8 +44,4 @@
         <ProjectReference Include="..\Turbo.Inventory\Turbo.Inventory.csproj"/>
         <ProjectReference Include="..\Turbo.Events\Turbo.Events.csproj"/>
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Migrations\"/>
-    </ItemGroup>
 </Project>
