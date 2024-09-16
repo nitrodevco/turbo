@@ -82,6 +82,16 @@ namespace Turbo.Players
             }
         }
 
+        public int Credits
+        {
+            get => _playerEntity.Credits;
+            set
+            {
+                _playerEntity.Credits = value;
+                _storageQueue.Add(_playerEntity);
+            }
+        }
+
         public int? ChatStyleId
         {
             get => _playerEntity.RoomChatStyleId == null ? -1 : _playerEntity.RoomChatStyleId;

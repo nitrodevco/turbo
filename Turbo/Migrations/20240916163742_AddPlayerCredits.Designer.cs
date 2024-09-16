@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Context;
 
@@ -10,9 +11,11 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    partial class TurboContextModelSnapshot : ModelSnapshot
+    [Migration("20240916163742_AddPlayerCredits")]
+    partial class AddPlayerCredits
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -816,8 +819,9 @@ namespace Turbo.Main.Migrations
                         .HasColumnType("int")
                         .HasColumnName("player_id");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int")
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
                         .HasColumnName("type");
 
                     b.HasKey("Id");
@@ -834,12 +838,6 @@ namespace Turbo.Main.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    b.Property<int>("Credits")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("credits")
-                        .HasDefaultValueSql("0");
 
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()

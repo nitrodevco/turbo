@@ -9,5 +9,6 @@ namespace Turbo.Core.Game.Players
 {
     public interface IPlayerWallet : IComponent
     {
+        IDictionary<int, int> Wallet { get; }
     }
 }

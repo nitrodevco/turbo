@@ -17,6 +17,7 @@ namespace Turbo.Core.Game.Players
         public string Figure { get; set; }
         public AvatarGender Gender { get; set; }
         public PlayerStatusEnum PlayerStatus { get; set; }
+        public int Credits { get; set; }
         public DateTime DateCreated { get; }
         public DateTime DateUpdated { get; }
     }

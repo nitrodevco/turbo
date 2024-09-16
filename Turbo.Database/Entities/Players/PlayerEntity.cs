@@ -30,6 +30,9 @@ namespace Turbo.Database.Entities.Players
         [Column("status"), Required, DefaultValueSql("0")] // PlayerStatus.Offline
         public PlayerStatusEnum PlayerStatus { get; set; }
 
+        [Column("credits"), Required, DefaultValueSql("0")]
+        public int Credits { get; set; }
+
         [Column("room_chat_style_id")]
         public int? RoomChatStyleId { get; set; }
 
