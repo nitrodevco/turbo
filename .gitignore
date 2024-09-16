@@ -41,3 +41,6 @@ msbuild.wrn
 **/appsettings.*.json
 
 Turbo/plugins/*
+/Turbo/appsettings.json
+/Turbo/appsettings.Development.json.example
+/Turbo/appsettings.Production.json.example
