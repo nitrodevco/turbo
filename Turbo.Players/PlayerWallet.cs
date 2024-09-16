@@ -1,16 +1,10 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Utilities;
-using Turbo.Database.Entities.Furniture;
 using Turbo.Database.Entities.Players;
-using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
-using Turbo.Packets.Outgoing.Inventory.Furni;
 
 namespace Turbo.Players
 {
@@ -18,6 +12,8 @@ namespace Turbo.Players
         IPlayer _player,
         IServiceScopeFactory _serviceScopeFactory) : Component, IPlayerWallet
     {
+        public IDictionary<int, int> Wallet { get; private set; } = new Dictionary<int, int>();
+
         protected override async Task OnInit()
         {
             await LoadCurrencies();
@@ -39,6 +35,7 @@ namespace Turbo.Players
             {
                 foreach (var currencyEntity in entities)
                 {
+                    Wallet.Add(currencyEntity.Type, currencyEntity.Amount);
                 }
             }
         }

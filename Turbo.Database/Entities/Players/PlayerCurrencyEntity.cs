@@ -13,7 +13,7 @@ namespace Turbo.Database.Entities.Players
         public int PlayerEntityId { get; set; }
 
         [Column("type"), Required]
-        public string Type { get; set; }
+        public int Type { get; set; }
 
         [Column("amount"), Required, DefaultValueSql("0")]
         public int Amount { get; set; }

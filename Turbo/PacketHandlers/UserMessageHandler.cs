@@ -27,6 +27,7 @@ namespace Turbo.Main.PacketHandlers
             _playerManager = playerManager;
 
             _messageHub.Subscribe<GetSelectedBadgesMessage>(this, OnGetSelectedBadgesMessage);
+            _messageHub.Subscribe<GetUserWalletMessage>(this, OnGetUserWallet);
             _messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
         }
 
@@ -40,6 +41,21 @@ namespace Turbo.Main.PacketHandlers
             {
                 PlayerId = message.PlayerId,
                 ActiveBadges = activeBadges
+            });
+        }
+
+        protected async void OnGetUserWallet(GetUserWalletMessage message, ISession session)
+        {
+            if (session.Player == null) return;
+
+            await session.Send(new UserCreditsMessage
+            {
+                credits = session.Player.PlayerDetails.Credits
+            });
+
+            await session.Send(new UserCurrencyMessage
+            {
+                playerWallet = session.Player.PlayerWallet
             });
         }
 
