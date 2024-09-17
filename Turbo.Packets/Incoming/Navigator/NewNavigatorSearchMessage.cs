@@ -4,6 +4,6 @@ namespace Turbo.Packets.Incoming.Navigator;
 
 public record NewNavigatorSearchMessage : IMessageEvent
 {
-    public string View { get; init; }
-    public string Query { get; init; }
+    public string SearchCodeOriginal { get; init; }
+    public string FilteringData { get; init; }
 }
