@@ -14,6 +14,7 @@ using Turbo.Database.Repositories.Navigator;
 using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
+using Turbo.Packets.Shared.Navigator;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Navigator;
@@ -277,12 +278,21 @@ public class NavigatorManager(
 
     public async Task SendNavigatorMetaData(IPlayer player)
     {
-        List<ITopLevelContext> tabs = [];
-        tabs.AddRange(_tabs.Select(tab => tab.TopLevelContext));
+        if (_tabs == null || _tabs.Count == 0)
+        {
+            _logger.LogError("No Navigator tabs found.");
+            return;
+        }
+
+        IList<ITopLevelContext> topLevelContexts = _tabs.Select(tab => new TopLevelContext
+        {
+            SearchCode = tab.SearchCode,
+            SavedSearches = new List<INavigatorSavedSearch>()
+        }).Cast<ITopLevelContext>().ToList();
 
         await player.Session.Send(new NavigatorMetaDataMessage
         {
-            TopLevelContexts = tabs
+            TopLevelContexts = topLevelContexts
         });
     }
 
