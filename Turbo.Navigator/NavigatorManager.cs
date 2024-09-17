@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,9 @@ public class NavigatorManager(
 
     private readonly IDictionary<int, INavigatorEventCategory> _eventCategories =
         new Dictionary<int, INavigatorEventCategory>();
+    
+    private readonly IDictionary<int, INavigatorCollapsedCategories> _collapsedCategories =
+        new Dictionary<int, INavigatorCollapsedCategories>();
 
     private readonly ConcurrentDictionary<int, IPendingRoomInfo> _pendingRoomIds = new();
     private readonly IList<INavigatorTab> _tabs = new List<INavigatorTab>();
@@ -248,6 +252,10 @@ public class NavigatorManager(
 
     public async Task SendNavigatorCategories(IPlayer player)
     {
+        await player.Session.Send(new UserEventCatsMessage
+            {
+            EventCategories = [.. _eventCategories.Values]
+        });
         await player.Session.Send(new UserFlatCatsMessage
         {
             Categories = [.. _categories.Values]
@@ -270,8 +278,7 @@ public class NavigatorManager(
     public async Task SendNavigatorMetaData(IPlayer player)
     {
         List<ITopLevelContext> tabs = [];
-
-        foreach (var tab in _tabs) tabs.Add(tab.TopLevelContext);
+        tabs.AddRange(_tabs.Select(tab => tab.TopLevelContext));
 
         await player.Session.Send(new NavigatorMetaDataMessage
         {
@@ -300,6 +307,25 @@ public class NavigatorManager(
             EventCategories = [.. _eventCategories.Values]
         });
     }
+    
+    public async Task SendNavigatorCollapsedCategories(IPlayer player)
+    {
+        if (_collapsedCategories.TryGetValue(player.Id, out var collapsedCategories))
+        {
+            await player.Session.Send(new NavigatorCollapsedCategoriesMessage
+            {
+                CollapsedCategories = collapsedCategories.CollapsedCategories
+            });
+        }
+        else
+        {
+            await player.Session.Send(new NavigatorCollapsedCategoriesMessage
+            {
+                CollapsedCategories = []
+            });
+        }
+    }
+
 
     protected override async Task OnInit()
     {

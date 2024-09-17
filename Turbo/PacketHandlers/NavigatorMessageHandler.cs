@@ -42,5 +42,6 @@ public class NavigatorMessageHandler(
         await navigatorManager.SendNavigatorLiftedRooms(session.Player);
         await navigatorManager.SendNavigatorSavedSearches(session.Player);
         await navigatorManager.SendNavigatorEventCategories(session.Player);
+        await navigatorManager.SendNavigatorCollapsedCategories(session.Player);
     }
 }

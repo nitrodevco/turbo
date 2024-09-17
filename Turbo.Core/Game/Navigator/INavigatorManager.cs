@@ -23,4 +23,5 @@ public interface INavigatorManager : IComponent
     public Task SendNavigatorLiftedRooms(IPlayer player);
     public Task SendNavigatorSavedSearches(IPlayer player);
     public Task SendNavigatorEventCategories(IPlayer player);
+    public Task SendNavigatorCollapsedCategories(IPlayer player);
 }
