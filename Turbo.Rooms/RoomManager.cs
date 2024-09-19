@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,9 @@ using Microsoft.Extensions.Logging;
 using Turbo.Core.Database.Factories;
 using Turbo.Core.Database.Factories.Rooms;
 using Turbo.Core.Game;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Player;
@@ -182,5 +185,73 @@ public class RoomManager(
         });
 
         _logger.LogInformation("Loaded {0} room models", _models.Count);
+    }
+    
+    //TODO: Finish implementing this
+    public async Task<List<IRoomDetails>> GetRoomsByCriteria(
+    int? ownerId = null,
+    string searchText = null,
+    string tag = null,
+    string roomName = null,
+    string groupName = null,
+    string ownerName = null,
+    string category = null,
+    int? searchType = null,
+    IPlayer player = null,
+    bool popularRooms = false,
+    bool highestScore = false,
+    bool friendsRooms = false,
+    bool whereFriendsAre = false,
+    bool favourites = false,
+    bool recommended = false,
+    int maxResults = 50)
+    {
+        var roomsQuery = _rooms.Values.AsQueryable();
+
+        if (ownerId.HasValue)
+            roomsQuery = roomsQuery.Where(room => room.RoomDetails.PlayerId == ownerId.Value);
+
+        if (!string.IsNullOrEmpty(searchText))
+            roomsQuery = roomsQuery.Where(room => room.RoomDetails.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrEmpty(roomName))
+            roomsQuery = roomsQuery.Where(room => room.RoomDetails.Name.Equals(roomName, StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrEmpty(ownerName))
+            roomsQuery = roomsQuery.Where(room => room.RoomDetails.PlayerName.Equals(ownerName, StringComparison.OrdinalIgnoreCase));
+
+        if (popularRooms)
+            roomsQuery = roomsQuery
+                .OrderByDescending(room => room.RoomDetails.UsersNow);
+        
+
+        var roomsList = roomsQuery.ToList();
+
+        if (friendsRooms && player != null)
+        {
+            //
+        }
+
+        if (whereFriendsAre && player != null)
+        {
+            //
+        }
+
+        if (favourites && player != null)
+        {
+            //
+        }
+
+        if (recommended && player != null)
+        {
+            //
+        }
+
+        roomsList = roomsList
+            .Where(room => room.RoomDetails.UsersNow > 0 && room.RoomDetails.State != RoomStateType.Invisible)
+            .Take(maxResults)
+            .ToList();
+
+        return roomsList.Select(room => room.RoomDetails).ToList();
     }
 }

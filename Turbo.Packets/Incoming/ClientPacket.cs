@@ -13,9 +13,14 @@ public class ClientPacket : TurboPacket, IClientPacket
 
     public string PopString()
     {
-        int length = Content.ReadShort();
-        var data = Content.ReadBytes(length);
-        return Encoding.UTF8.GetString(data.Array);
+        ushort length = Content.ReadUnsignedShort(); // Read the length as an unsigned short
+        if (length == 0)
+            return string.Empty;
+
+        byte[] data = new byte[length];
+        Content.ReadBytes(data); // Read the exact number of bytes into the array
+
+        return Encoding.UTF8.GetString(data); // Convert bytes to string
     }
 
     public int PopInt()
@@ -41,6 +46,11 @@ public class ClientPacket : TurboPacket, IClientPacket
     public short PopShort()
     {
         return Content.ReadShort();
+    }
+    
+    public ushort PopUShort()
+    {
+        return Content.ReadUnsignedShort();
     }
 
     public double PopDouble()

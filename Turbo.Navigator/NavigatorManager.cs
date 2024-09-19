@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Navigator;
+using Turbo.Core.Game.Navigator.Constants;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
@@ -298,7 +299,18 @@ public class NavigatorManager(
 
     public async Task SendNavigatorLiftedRooms(IPlayer player)
     {
-        await player.Session.Send(new NavigatorLiftedRoomsMessage());
+        await player.Session.Send(new NavigatorLiftedRoomsMessage
+        {
+            LiftedRooms = [
+                new LiftedRoom
+                {
+                    FlatId = 1,
+                    Unused = 0,
+                    Image = "",
+                    Caption = ""
+                }
+            ]
+        });
     }
 
     public async Task SendNavigatorSavedSearches(IPlayer player)
@@ -335,7 +347,50 @@ public class NavigatorManager(
             });
         }
     }
+    
+    public async Task SendGuestRoomSearchResult(IPlayer player, int searchType, string searchParam)
+    {
+        // Use GetRoomsByCriteria method in RoomManager to get rooms based on searchType and searchParam
+        var rooms = await _roomManager.GetRoomsByCriteria(
+            ownerId: searchType == (int)NavigatorSearchType.MyRooms && player != null ? (int?)player.Id : null,
+            searchText: searchType == (int)NavigatorSearchType.TextSearch ? searchParam : null,
+            tag: searchType == (int)NavigatorSearchType.TagSearch ? searchParam : null,
+            roomName: searchType == (int)NavigatorSearchType.RoomNameSearch ? searchParam : null,
+            groupName: searchType == (int)NavigatorSearchType.GroupNameSearch ? searchParam : null,
+            ownerName: searchType == (int)NavigatorSearchType.ByOwner ? searchParam : null,
+            category: searchType == (int)NavigatorSearchType.Categories ? searchParam : null,
+            searchType: searchType,
+            player: player,
+            popularRooms: searchType == (int)NavigatorSearchType.PopularRooms,
+            highestScore: searchType == (int)NavigatorSearchType.RoomsWithHighestScore,
+            friendsRooms: searchType == (int)NavigatorSearchType.MyFriendsRooms,
+            whereFriendsAre: searchType == (int)NavigatorSearchType.RoomsWhereMyFriendsAre,
+            favourites: searchType == (int)NavigatorSearchType.MyFavourites,
+            recommended: searchType == (int)NavigatorSearchType.RecommendedRooms
+        );
+        
+        var results = new List<ISearchResultData>
+        {
+            new SearchResultData
+            {
+                SearchCode = searchParam,
+                Text = "Search Results",
+                ActionAllowed = 0,
+                ForceClosed = false,
+                ViewMode = 0,
+                Rooms = rooms
+            }
+        };
 
+        var message = new NavigatorSearchResultBlocksMessage
+        {
+            SearchCode = searchParam,
+            Filtering = searchParam,
+            Results = results
+        };
+        
+        await player.Session.Send(message);
+    }
 
     protected override async Task OnInit()
     {

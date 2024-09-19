@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
 using Turbo.Core.Database.Entities.Room;
@@ -11,5 +13,12 @@ public class RoomRepository(IEmulatorContext _context) : IRoomRepository
     {
         return await _context.Rooms
             .FirstOrDefaultAsync(room => room.Id == id);
+    }
+    
+    public async Task<List<RoomEntity>> GetRoomsOrderedByPopularityAsync()
+    {
+        return await _context.Rooms
+            .OrderByDescending(room => room.UsersNow)
+            .ToListAsync();
     }
 }
