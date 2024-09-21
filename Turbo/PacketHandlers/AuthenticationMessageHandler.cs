@@ -11,10 +11,17 @@ using Turbo.Events.Game.Security;
 using Turbo.Networking.Game.Codec;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Availability;
+using Turbo.Packets.Outgoing.Catalog.Clothing;
+using Turbo.Packets.Outgoing.Catalog;
 using Turbo.Packets.Outgoing.Handshake;
+using Turbo.Packets.Outgoing.Inventory.AvatarEffect;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Notifications;
+using Turbo.Packets.Outgoing.Users;
 using Turbo.Security;
+using Turbo.Packets.Outgoing.CallForHelp;
+using Turbo.Packets.Outgoing.Inventory.Achievements;
+using Turbo.Packets.Outgoing.MysteryBox;
 
 namespace Turbo.Main.PacketHandlers;
 
@@ -92,6 +99,22 @@ public class AuthenticationMessageHandler(
             IdentityId = session.Player.Id
         });
 
+        await session.Send(new AvatarEffectsMessage { });
+
+        await session.Send(new FavouritesMessage { });
+        await session.Send(new ScrSendUserInfoMessage { });
+        await session.Send(new BuildersClubSubscriptionStatusMessage { });
+        await session.Send(new UnseenItemsMessage { });
+        await session.Send(new FigureSetIdsMessage { });
+        await session.Send(new NoobnessLevelMessage { });
+
+        await session.Send(new UserRightsMessage
+        {
+            ClubLevel = ClubLevelEnum.Vip,
+            SecurityLevel = SecurityLevelEnum.Administrator,
+            IsAmbassador = false
+        });
+
         await session.Send(new NavigatorSettingsMessage
         {
             HomeRoomId = 0,
@@ -110,13 +133,11 @@ public class AuthenticationMessageHandler(
             Enabled = true
         });
 
-        await session.Send(new UserRightsMessage
-        {
-            ClubLevel = ClubLevelEnum.Vip,
-            SecurityLevel = SecurityLevelEnum.Administrator,
-            IsAmbassador = false
-        });
-
+        await session.Send(new ActivityPointsMessage { });
+        await session.Send(new AchievementsScoreMessage { });
+        await session.Send(new IsFirstLoginOfDayMessage { });
+        await session.Send(new MysteryBoxKeysMessage { });
+        await session.Send(new CfhTopicsInitMessage { });
 
         var messager = eventHub.Dispatch(new UserLoginEvent
         {

@@ -21,6 +21,7 @@ public class CatalogMessageHandler(
         messageHub.Subscribe<GetCatalogPageMessage>(this, OnGetCatalogPageMessage);
         messageHub.Subscribe<PurchaseFromCatalogMessage>(this, OnPurchaseFromCatalogMessage);
         messageHub.Subscribe<GetProductOfferMessage>(this, OnGetProductOfferMessage);
+        messageHub.Subscribe<GetBonusRareInfoMessage>(this, OnGetBonusRareInfoMessage);
     }
 
     public void OnGetCatalogIndexMessage(GetCatalogIndexMessage message, ISession session)
@@ -81,5 +82,12 @@ public class CatalogMessageHandler(
         {
             Offer = offer
         });
+    }
+
+    public void OnGetBonusRareInfoMessage(GetBonusRareInfoMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+
+        session.Send(new BonusRareInfoMessage { });
     }
 }

@@ -8,18 +8,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Compile Remove="Rcon\**"/>
-        <EmbeddedResource Remove="Rcon\**"/>
-        <None Remove="Rcon\**"/>
+        <Compile Remove="Rcon\**" />
+        <EmbeddedResource Remove="Rcon\**" />
+        <None Remove="Rcon\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DotNetty.Buffers" Version="0.7.5"/>
+        <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj"/>
-        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj"/>
+        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
+        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
     </ItemGroup>
 
 </Project>

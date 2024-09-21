@@ -3,6 +3,8 @@ using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Inventory.Badges;
 using Turbo.Packets.Incoming.Inventory.Furni;
+using Turbo.Packets.Incoming.Inventory.Purse;
+using Turbo.Packets.Outgoing.Inventory.Purse;
 
 namespace Turbo.Main.PacketHandlers;
 
@@ -12,12 +14,22 @@ public class InventoryMessageHandler(
 {
     public void Register()
     {
+        messageHub.Subscribe<GetCreditsInfoMessage>(this, OnGetCreditsInfoMessage);
         messageHub.Subscribe<GetBadgesMessage>(this, OnGetBadgesMessage);
         messageHub.Subscribe<SetActivatedBadgesMessage>(this, OnSetActivatedBadgesMessage);
         messageHub.Subscribe<RequestFurniInventoryMessage>(this, OnRequestFurniInventoryMessage);
         messageHub.Subscribe<RequestFurniInventoryWhenNotInRoomMessage>(this,
             OnRequestFurniInventoryWhenNotInRoomMessage);
         messageHub.Subscribe<RequestRoomPropertySetMessage>(this, OnRequestRoomPropertySetMessage);
+    }
+
+    protected virtual void OnGetCreditsInfoMessage(GetCreditsInfoMessage message, ISession session) 
+    {
+        if (session.Player == null) return;
+
+        session.Send(new CreditBalanceMessage { 
+            credits = 100
+        });
     }
 
     protected virtual void OnGetBadgesMessage(GetBadgesMessage message, ISession session)
