@@ -2,7 +2,7 @@
 
 namespace Turbo.Packets.Outgoing.Room.Session;
 
-public record YouAreSpectatorMessage : IComposer
+public record YouAreNotSpectatorMessage : IComposer
 {
     public int flatId { get; init; }
 }
