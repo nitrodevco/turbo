@@ -53,19 +53,10 @@ public class NavigatorMessageHandler(
     {
         if (session.Player == null) return;
 
-        // Log the incoming message for debugging
-        logger.LogInformation($"Received NewNavigatorSearchMessage: {message}'");
+        string searchCode = message.SearchCodeOriginal?.ToLower() ?? string.Empty;
+        string searchTerm = message.FilteringData ?? string.Empty;
 
-        // Split the SearchCodeOriginal into the tab and the search term, if present
-        string searchCode = message.SearchCodeOriginal;
-        string searchTerm = message.FilteringData;
-
-        // Parse the search type based on the search code
-        int searchType = ParseSearchType(searchCode);
-        logger.LogDebug($"Parsed search type: {searchType} from SearchCodeOriginal: {searchCode}");
-
-        // Send the search result based on the search type and search term (using FilteringData or searchTerm)
-        await navigatorManager.SendGuestRoomSearchResult(session.Player, searchType, searchTerm);
+        await navigatorManager.HandleNavigatorSearch(session.Player, searchCode, searchTerm);
     }
     
     private int ParseSearchType(string searchCode)

@@ -3,9 +3,9 @@ using Turbo.Core.Database.Entities.Navigator;
 
 namespace Turbo.Navigator;
 
-public class NavigatorEventCategory(NavigatorEventCategoryEntity _entity) : INavigatorEventCategory
+public class NavigatorEventCategory(NavigatorEventCategoryEntity entity) : INavigatorEventCategory
 {
-    public int Id => _entity.Id;
-    public string Name => _entity.Name;
-    public bool Enabled => _entity.Enabled;
+    public int Id => entity.Id;
+    public string Name => entity.Name;
+    public bool Visible => entity.Visible;
 }

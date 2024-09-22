@@ -3,10 +3,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Turbo.Core.Database.Entities.Navigator;
 
-[Table("navigator_event_categories")]
+[Table("navigator_eventcats")]
 public class NavigatorEventCategoryEntity : Entity
 {
-    [Column("name")] [Required] public string Name { get; set; }
+    [Key]
+    [Column("id")]
+    public int Id { get; set; }
 
-    [Column("enabled")] [Required] public bool Enabled { get; set; }
+    [Column("name")]
+    [Required]
+    public string Name { get; set; }
+
+    [Column("visible")]
+    [Required]
+    public bool Visible { get; set; }
 }

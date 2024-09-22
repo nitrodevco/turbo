@@ -152,6 +152,8 @@ public class RoomDetails(
     }
 
     public int ModelId => _roomEntity.RoomModelEntityId;
+    
+    public int? CategoryId => _roomEntity.NavigatorCategoryEntityId;
 
     public int UsersNow
     {

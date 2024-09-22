@@ -4,21 +4,61 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
 using Turbo.Core.Database.Entities.Room;
+using Turbo.Core.Game.Rooms.Constants;
 
 namespace Turbo.Database.Repositories.Room;
 
-public class RoomRepository(IEmulatorContext _context) : IRoomRepository
+public class RoomRepository(IEmulatorContext context) : IRoomRepository
 {
     public async Task<RoomEntity> FindAsync(int id)
     {
-        return await _context.Rooms
+        return await context.Rooms
             .FirstOrDefaultAsync(room => room.Id == id);
     }
-    
+
+    public async Task<List<RoomEntity>> FindRoomsByOwnerIdAsync(int ownerId)
+    {
+        return await context.Rooms
+            .Where(r => r.PlayerEntityId == ownerId)
+            .ToListAsync();
+    }
+
     public async Task<List<RoomEntity>> GetRoomsOrderedByPopularityAsync()
     {
-        return await _context.Rooms
+        return await context.Rooms
             .OrderByDescending(room => room.UsersNow)
+            .ToListAsync();
+    }
+
+    public async Task<List<RoomEntity>> SearchRoomsByNameAsync(string searchTerm)
+    {
+        return await context.Rooms
+            .AsNoTracking()
+            .Where(r => EF.Functions.Like(r.Name, $"%{searchTerm}%"))
+            .ToListAsync();
+    }
+
+    public async Task<List<RoomEntity>> GetRoomsByCategoryIdsAsync(IEnumerable<int> categoryIds)
+    {
+        var idsList = categoryIds.ToList();
+
+        if (!idsList.Any())
+        {
+            return new List<RoomEntity>();
+        }
+
+        return await context.Rooms
+            .Where(r => r.NavigatorCategoryEntityId.HasValue && idsList.Contains(r.NavigatorCategoryEntityId.Value))
+            .OrderByDescending(r => r.UsersNow)
+            .Take(50)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<List<RoomEntity>> GetRoomsByStateAsync(RoomStateType state)
+    {
+        return await context.Rooms
+            .Where(r => r.RoomState == state)
             .ToListAsync();
     }
 }

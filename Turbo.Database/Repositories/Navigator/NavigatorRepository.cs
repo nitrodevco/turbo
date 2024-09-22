@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Database.Context;
@@ -8,33 +9,29 @@ namespace Turbo.Database.Repositories.Navigator;
 
 public class NavigatorRepository(IEmulatorContext _context) : INavigatorRepository
 {
-    public async Task<NavigatorCategoryEntity> FindNavigatorCategoryAsync(int id)
+    public async Task<List<NavigatorFlatCategoryEntity>> GetFlatCategoriesAsync()
     {
-        return await _context.NavigatorCategories.FindAsync(id);
+        return await _context.NavigatorFlatCategories
+            .AsNoTracking()
+            .Where(c => c.Visible)
+            .OrderBy(c => c.OrderNum)
+            .ToListAsync();
+    }
+    
+    public async Task<List<NavigatorEventCategoryEntity>> GetEventCategoriesAsync()
+    {
+        return await _context.NavigatorEventCategories
+            .AsNoTracking()
+            .Where(c => c.Visible)
+            .ToListAsync();
     }
 
-    public async Task<List<NavigatorCategoryEntity>> FindAllNavigatorCategoriesAsync()
+    public async Task<List<NavigatorTopLevelContextEntity>> GetTopLevelContextsAsync()
     {
-        return await _context.NavigatorCategories.ToListAsync();
-    }
-
-    public async Task<NavigatorEventCategoryEntity> FindNavigatorEventCategoryAsync(int id)
-    {
-        return await _context.NavigatorEventCategories.FindAsync(id);
-    }
-
-    public async Task<List<NavigatorEventCategoryEntity>> FindAllNavigatorEventCategoriesAsync()
-    {
-        return await _context.NavigatorEventCategories.ToListAsync();
-    }
-
-    public async Task<NavigatorTabEntity> FindNavigatorTabAsync(int id)
-    {
-        return await _context.NavigatorTabs.FindAsync(id);
-    }
-
-    public async Task<List<NavigatorTabEntity>> FindAllNavigatorTabsAsync()
-    {
-        return await _context.NavigatorTabs.ToListAsync();
+        return await _context.NavigatorTopLevelContexts
+            .AsNoTracking()
+            .Where(c => c.Visible)
+            .OrderBy(c => c.OrderNum)
+            .ToListAsync();
     }
 }

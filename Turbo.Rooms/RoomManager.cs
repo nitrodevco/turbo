@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Database.Factories;
@@ -187,71 +188,125 @@ public class RoomManager(
         _logger.LogInformation("Loaded {0} room models", _models.Count);
     }
     
-    //TODO: Finish implementing this
-    public async Task<List<IRoomDetails>> GetRoomsByCriteria(
-    int? ownerId = null,
-    string searchText = null,
-    string tag = null,
-    string roomName = null,
-    string groupName = null,
-    string ownerName = null,
-    string category = null,
-    int? searchType = null,
-    IPlayer player = null,
-    bool popularRooms = false,
-    bool highestScore = false,
-    bool friendsRooms = false,
-    bool whereFriendsAre = false,
-    bool favourites = false,
-    bool recommended = false,
-    int maxResults = 50)
+    public async Task<List<IRoom>> GetRoomsByOwnerAsync(int ownerId)
     {
-        var roomsQuery = _rooms.Values.AsQueryable();
+        var rooms = new List<IRoom>();
 
-        if (ownerId.HasValue)
-            roomsQuery = roomsQuery.Where(room => room.RoomDetails.PlayerId == ownerId.Value);
+        using var scope = _serviceScopeFactory.CreateScope();
+        var roomRepository = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
+        var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
 
-        if (!string.IsNullOrEmpty(searchText))
-            roomsQuery = roomsQuery.Where(room => room.RoomDetails.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase));
+        var roomEntities = await roomRepository.FindRoomsByOwnerIdAsync(ownerId);
 
-        if (!string.IsNullOrEmpty(roomName))
-            roomsQuery = roomsQuery.Where(room => room.RoomDetails.Name.Equals(roomName, StringComparison.OrdinalIgnoreCase));
-
-        if (!string.IsNullOrEmpty(ownerName))
-            roomsQuery = roomsQuery.Where(room => room.RoomDetails.PlayerName.Equals(ownerName, StringComparison.OrdinalIgnoreCase));
-
-        if (popularRooms)
-            roomsQuery = roomsQuery
-                .OrderByDescending(room => room.RoomDetails.UsersNow);
-        
-
-        var roomsList = roomsQuery.ToList();
-
-        if (friendsRooms && player != null)
+        foreach (var roomEntity in roomEntities)
         {
-            //
+            var room = await GetRoom(roomEntity.Id);
+            
+            if (room != null)
+            {
+                // Set OwnerName if not already set
+                if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
+                {
+                    room.RoomDetails.PlayerName = (await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId))?.Name ?? "Unknown";
+                }
+                
+                if (_rooms.TryGetValue(roomEntity.Id, out var activeRoom))
+                {
+                    room.RoomDetails.UsersNow = activeRoom.RoomDetails.UsersNow;
+                }
+                
+                rooms.Add(room);
+            }
         }
 
-        if (whereFriendsAre && player != null)
-        {
-            //
-        }
-
-        if (favourites && player != null)
-        {
-            //
-        }
-
-        if (recommended && player != null)
-        {
-            //
-        }
-
-        roomsList = roomsList
-            .Where(room => room.RoomDetails.UsersNow > 0 && room.RoomDetails.State != RoomStateType.Invisible)
-            .Take(maxResults)
-            .ToList();
-
-        return roomsList.Select(room => room.RoomDetails).ToList();
+        return rooms;
     }
+
+    public async Task<List<IRoom>> GetRoomsByCategoriesAsync(IEnumerable<int> categoryIds)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var roomRepository = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
+        var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+
+        var roomEntities = await roomRepository.GetRoomsByCategoryIdsAsync(categoryIds);
+
+        var playerNamesCache = new ConcurrentDictionary<int, string>();
+
+        var roomTasks = roomEntities.Select(async roomEntity =>
+        {
+            var room = await GetRoom(roomEntity.Id);
+            if (room == null)
+                return null;
+
+            if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
+            {
+                if (!playerNamesCache.TryGetValue(roomEntity.PlayerEntityId, out var playerName))
+                {
+                    playerName = (await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId))?.Name ?? "Unknown";
+                    playerNamesCache[roomEntity.PlayerEntityId] = playerName;
+                }
+                room.RoomDetails.PlayerName = playerName;
+            }
+
+            return room;
+        }).ToList();
+
+        var rooms = await Task.WhenAll(roomTasks);
+
+        return rooms.Where(r => r != null).ToList();
+    }
+    
+    public async Task<List<IRoom>> GetRoomsOrderedByPopularityAsync()
+    {
+        var rooms = new List<IRoom>();
+
+        using var scope = _serviceScopeFactory.CreateScope();
+        var roomRepository = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
+        var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+
+        var roomEntities = await roomRepository.GetRoomsOrderedByPopularityAsync();
+
+        foreach (var roomEntity in roomEntities)
+        {
+            var room = await GetRoom(roomEntity.Id);
+            if (room != null)
+            {
+                if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
+                {
+                    room.RoomDetails.PlayerName = (await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId))?.Name ?? "Unknown";
+                }
+                rooms.Add(room);
+            }
+        }
+
+        return rooms;
+    }
+    
+    public async Task<List<IRoom>> SearchRooms(string searchTerm)
+    {
+        var rooms = new List<IRoom>();
+
+        using var scope = _serviceScopeFactory.CreateScope();
+        var roomRepository = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
+        var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+
+        var roomEntities = await roomRepository.SearchRoomsByNameAsync(searchTerm);
+
+        foreach (var roomEntity in roomEntities)
+        {
+            var room = await GetRoom(roomEntity.Id);
+            if (room != null)
+            {
+                // Set OwnerName if not already set
+                if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
+                {
+                    room.RoomDetails.PlayerName = (await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId))?.Name ?? "Unknown";
+                }
+                rooms.Add(room);
+            }
+        }
+
+        return rooms;
+    }
+
 }

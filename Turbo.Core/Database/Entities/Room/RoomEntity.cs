@@ -161,7 +161,7 @@ public class RoomEntity : Entity
     public RoomModelEntity RoomModelEntity { get; set; }
 
     [ForeignKey(nameof(NavigatorCategoryEntityId))]
-    public NavigatorCategoryEntity NavigatorCategoryEntity { get; set; }
+    public NavigatorFlatCategoryEntity NavigatorFlatCategoryEntity { get; set; }
 
     [InverseProperty("RoomEntity")] public List<RoomBanEntity> RoomBans { get; set; }
 

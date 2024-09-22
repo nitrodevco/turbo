@@ -11,5 +11,5 @@ public class SearchResultData : ISearchResultData
     public int ActionAllowed { get; set;  }
     public bool ForceClosed { get; set; }
     public int ViewMode { get; set; }
-    public ICollection<IRoomDetails> Rooms { get; set; }
+    public ICollection<IRoom> Rooms { get; set; }
 }

@@ -13,6 +13,7 @@ public interface IRoomDetails
     public string PlayerName { get; set; }
     public RoomStateType State { get; }
     public string Password { get; }
+    public int? CategoryId { get; }
     public int ModelId { get; }
     public int UsersNow { get; set; }
     public int UsersMax { get; }

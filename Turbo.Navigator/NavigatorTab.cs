@@ -4,11 +4,9 @@ using Turbo.Packets.Shared.Navigator;
 
 namespace Turbo.Navigator;
 
-public class NavigatorTab(NavigatorTabEntity _entity) : INavigatorTab
+public class NavigatorTopLevelContext(NavigatorTopLevelContextEntity entity) : INavigatorTopLevelContext
 {
-    public int Id => _entity.Id;
-
-    public string SearchCode => _entity.SearchCode;
-
-    public ITopLevelContext TopLevelContext => new TopLevelContext { SearchCode = SearchCode };
+    public int Id => entity.Id;
+    public string SearchCode => entity.SearchCode;
+    public bool Visible => entity.Visible;
 }

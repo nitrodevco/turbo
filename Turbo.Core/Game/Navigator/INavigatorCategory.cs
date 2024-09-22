@@ -9,4 +9,5 @@ public interface INavigatorCategory
     public bool StaffOnly { get; }
     public string AutomaticCategoryKey { get; }
     public string GlobalCategoryKey { get; }
+    public int OrderNum { get; }
 }

@@ -3,17 +3,14 @@ using Turbo.Core.Database.Entities.Navigator;
 
 namespace Turbo.Navigator;
 
-public class NavigatorCategory(NavigatorCategoryEntity _categoryEntity) : INavigatorCategory
+public class NavigatorFlatCategory(NavigatorFlatCategoryEntity entity) : INavigatorCategory
 {
-    public int Id => _categoryEntity.Id;
-    public string Name => _categoryEntity.Name;
-    public bool Visible => true;
-    public bool Automatic => true;
-    public string AutomaticCategoryKey => ""; // The client doesn't do anything with this value
-
-    public string GlobalCategoryKey =>
-        _categoryEntity
-            .LocalizationName; // If this value is null / empty then the client will display the Name value, otherwise `navigator.flatcategory.global.${ GlobalCategoryKey }`
-
-    public bool StaffOnly => false;
+    public int Id => entity.Id;
+    public string Name => entity.Name;
+    public bool Visible => entity.Visible;
+    public bool Automatic => entity.Automatic;
+    public string AutomaticCategoryKey => entity.AutomaticCategory;
+    public string GlobalCategoryKey => entity.GlobalCategory;
+    public bool StaffOnly => entity.StaffOnly;
+    public int OrderNum => entity.OrderNum;
 }

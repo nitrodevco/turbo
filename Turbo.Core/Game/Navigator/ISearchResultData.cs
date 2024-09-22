@@ -10,5 +10,5 @@ public interface ISearchResultData
     int ActionAllowed { get; }
     bool ForceClosed { get; }
     int ViewMode { get; }
-    ICollection<IRoomDetails> Rooms { get; }
+    ICollection<IRoom> Rooms { get; }
 }

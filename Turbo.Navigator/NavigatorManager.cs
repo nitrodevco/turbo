@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ public class NavigatorManager(
         new Dictionary<int, INavigatorCollapsedCategories>();
 
     private readonly ConcurrentDictionary<int, IPendingRoomInfo> _pendingRoomIds = new();
-    private readonly IList<INavigatorTab> _tabs = new List<INavigatorTab>();
+    private readonly IList<INavigatorTopLevelContext> _tabs = new List<INavigatorTopLevelContext>();
 
     public int GetPendingRoomId(int userId)
     {
@@ -47,12 +48,11 @@ public class NavigatorManager(
     {
         if (userId <= 0 || roomId <= 0) return;
 
-        _pendingRoomIds.Remove(userId, out var pendingRoomInfo);
-        _pendingRoomIds.TryAdd(userId, new PendingRoomInfo
-        {
-            RoomId = roomId,
-            Approved = approved
-        });
+        _pendingRoomIds.AddOrUpdate(
+            userId,
+            new PendingRoomInfo { RoomId = roomId, Approved = approved },
+            (key, existingVal) => new PendingRoomInfo { RoomId = roomId, Approved = approved }
+        );
     }
 
     public void ClearPendingRoomId(int userId)
@@ -285,11 +285,11 @@ public class NavigatorManager(
             return;
         }
 
-        IList<ITopLevelContext> topLevelContexts = _tabs.Select(tab => new TopLevelContext
+        var topLevelContexts = _tabs.Select(tab => new TopLevelContext
         {
             SearchCode = tab.SearchCode,
             SavedSearches = new List<INavigatorSavedSearch>()
-        }).Cast<ITopLevelContext>().ToList();
+        }).ToList<ITopLevelContext>();
 
         await player.Session.Send(new NavigatorMetaDataMessage
         {
@@ -350,24 +350,7 @@ public class NavigatorManager(
     
     public async Task SendGuestRoomSearchResult(IPlayer player, int searchType, string searchParam)
     {
-        // Use GetRoomsByCriteria method in RoomManager to get rooms based on searchType and searchParam
-        var rooms = await _roomManager.GetRoomsByCriteria(
-            ownerId: searchType == (int)NavigatorSearchType.MyRooms && player != null ? (int?)player.Id : null,
-            searchText: searchType == (int)NavigatorSearchType.TextSearch ? searchParam : null,
-            tag: searchType == (int)NavigatorSearchType.TagSearch ? searchParam : null,
-            roomName: searchType == (int)NavigatorSearchType.RoomNameSearch ? searchParam : null,
-            groupName: searchType == (int)NavigatorSearchType.GroupNameSearch ? searchParam : null,
-            ownerName: searchType == (int)NavigatorSearchType.ByOwner ? searchParam : null,
-            category: searchType == (int)NavigatorSearchType.Categories ? searchParam : null,
-            searchType: searchType,
-            player: player,
-            popularRooms: searchType == (int)NavigatorSearchType.PopularRooms,
-            highestScore: searchType == (int)NavigatorSearchType.RoomsWithHighestScore,
-            friendsRooms: searchType == (int)NavigatorSearchType.MyFriendsRooms,
-            whereFriendsAre: searchType == (int)NavigatorSearchType.RoomsWhereMyFriendsAre,
-            favourites: searchType == (int)NavigatorSearchType.MyFavourites,
-            recommended: searchType == (int)NavigatorSearchType.RecommendedRooms
-        );
+        var rooms = await _roomManager.SearchRooms(searchParam);
         
         var results = new List<ISearchResultData>
         {
@@ -415,28 +398,27 @@ public class NavigatorManager(
         _eventCategories.Clear();
 
         using var scope = _serviceScopeFactory.CreateScope();
+        var navigatorRepository = scope.ServiceProvider.GetRequiredService<INavigatorRepository>();
 
-        var navigatorRepository = scope.ServiceProvider.GetService<INavigatorRepository>();
-
-        var tabEntities = await navigatorRepository.FindAllNavigatorTabsAsync();
-        var categoryEntities = await navigatorRepository.FindAllNavigatorCategoriesAsync();
-        var eventCategoriesEntities = await navigatorRepository.FindAllNavigatorEventCategoriesAsync();
+        var tabEntities = await navigatorRepository.GetTopLevelContextsAsync();
+        var flatCategoryEntities = await navigatorRepository.GetFlatCategoriesAsync();
+        var eventCategoryEntities = await navigatorRepository.GetEventCategoriesAsync();
 
         tabEntities.ForEach(entity =>
         {
-            var tab = new NavigatorTab(entity);
+            var tab = new NavigatorTopLevelContext(entity);
 
             _tabs.Add(tab);
         });
 
-        categoryEntities.ForEach(entity =>
+        flatCategoryEntities.ForEach(entity =>
         {
-            var category = new NavigatorCategory(entity);
+            var category = new NavigatorFlatCategory(entity);
 
             _categories.Add(category.Id, category);
         });
 
-        eventCategoriesEntities.ForEach(entity =>
+        eventCategoryEntities.ForEach(entity =>
         {
             var eventCategory = new NavigatorEventCategory(entity);
 
@@ -446,5 +428,260 @@ public class NavigatorManager(
         _logger.LogInformation("Loaded {0} navigator tabs", _tabs.Count);
         _logger.LogInformation("Loaded {0} navigator categories", _categories.Count);
         _logger.LogInformation("Loaded {0} navigator event categories", _eventCategories.Count);
+    }
+    
+    public async Task HandleNavigatorSearch(IPlayer player, string searchCode, string searchParam)
+    {
+        _logger.LogInformation("HandleNavigatorSearch called with searchCode: {searchCode}, searchParam: {searchParam}", searchCode, searchParam);
+
+        switch (searchCode)
+        {
+            case "official_view":
+                await SendOfficialRooms(player);
+                break;
+            case "hotel_view":
+                await SendHotelView(player);
+                break;
+            case "myworld_view":
+                await SendMyWorldView(player);
+                break;
+            case "category":
+                await SendCategoryRooms(player, searchParam);
+                break;
+            default:
+                _logger.LogWarning("Unhandled searchCode: {searchCode}", searchCode);
+                await SendEmptySearchResults(player, searchCode);
+                break;
+        }
+    }
+    
+    public async Task SendOfficialRooms(IPlayer player)
+    {
+        var categoryKeys = new[] { "OFFICIAL", "NEW", "RoomBundles" };
+        var categories = _categories.Values
+            .Where(c => categoryKeys.Contains(c.GlobalCategoryKey))
+            .OrderBy(c => c.OrderNum)
+            .ToList();
+
+        var categoryIds = categories.Select(c => c.Id).ToList();
+
+        // Fetch all rooms for the categories in a single call
+        var rooms = await _roomManager.GetRoomsByCategoriesAsync(categoryIds);
+
+        // Group rooms by category
+        var roomsByCategory = rooms.GroupBy(r => r.RoomDetails.CategoryId);
+
+        var results = new List<ISearchResultData>();
+
+        foreach (var category in categories)
+        {
+            var roomsInCategory = roomsByCategory.FirstOrDefault(g => g.Key == category.Id)?.ToList();
+
+            if (roomsInCategory != null && roomsInCategory.Any())
+            {
+                results.Add(new SearchResultData
+                {
+                    SearchCode = "official_view",
+                    Text = category.Name,
+                    ActionAllowed = 0,
+                    ForceClosed = false,
+                    ViewMode = 0,
+                    Rooms = roomsInCategory
+                });
+            }
+        }
+
+        var message = new NavigatorSearchResultBlocksMessage
+        {
+            SearchCode = "official_view",
+            Filtering = "",
+            Results = results
+        };
+
+        await player.Session.Send(message);
+    }
+    
+    public async Task SendHotelView(IPlayer player)
+    {
+        // Fetch most popular rooms
+        var popularRoomsTask = _roomManager.GetRoomsOrderedByPopularityAsync();
+
+        // Fetch categories associated with the 'All Rooms' tab
+        var categories = _categories.Values
+            .Where(c => c.GlobalCategoryKey != "OFFICIAL" && c.GlobalCategoryKey != "NEW" && c.GlobalCategoryKey != "RoomBundles")
+            .OrderBy(c => c.OrderNum)
+            .ToList();
+
+        var categoryIds = categories.Select(c => c.Id).ToList();
+
+        // Fetch rooms for all categories in one call
+        var roomsByCategoryTask = _roomManager.GetRoomsByCategoriesAsync(categoryIds);
+
+        // Wait for both tasks to complete concurrently
+        await Task.WhenAll(popularRoomsTask, roomsByCategoryTask);
+
+        var popularRooms = popularRoomsTask.Result;
+        var roomsByCategory = roomsByCategoryTask.Result;
+
+        // Group rooms by their category ID
+        var roomsGroupedByCategoryId = roomsByCategory
+            .GroupBy(r => r.RoomDetails.CategoryId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        var results = new List<ISearchResultData>
+        {
+            new SearchResultData
+            {
+                SearchCode = "hotel_view",
+                Text = "Most Popular Rooms",
+                ActionAllowed = 0,
+                ForceClosed = false,
+                ViewMode = 0,
+                Rooms = popularRooms
+            }
+        };
+
+        // You may also add "Recommended For You" here if applicable
+
+        foreach (var category in categories)
+        {
+            if (roomsGroupedByCategoryId.TryGetValue(category.Id, out var rooms) && rooms.Any())
+            {
+                results.Add(new SearchResultData
+                {
+                    SearchCode = "category__" + category.GlobalCategoryKey.ToLower(),
+                    Text = category.Name,
+                    ActionAllowed = 0,
+                    ForceClosed = false,
+                    ViewMode = 0,
+                    Rooms = rooms
+                });
+            }
+        }
+
+        var message = new NavigatorSearchResultBlocksMessage
+        {
+            SearchCode = "hotel_view",
+            Filtering = "",
+            Results = results
+        };
+
+        await player.Session.Send(message);
+    }
+    
+    public async Task SendMyWorldView(IPlayer player)
+    {
+        _logger.LogInformation("Sending My World view to player {playerId}", player.Id);
+
+        // Fetch data concurrently
+        var myRoomsTask = _roomManager.GetRoomsByOwnerAsync(player.Id);
+        //var favoriteRoomsTask = _roomManager.GetFavoriteRoomsAsync(player.Id);
+        //var rightsRoomsTask = _roomManager.GetRoomsWithRightsAsync(player.Id);
+
+        await Task.WhenAll(myRoomsTask);
+
+        // Retrieve results
+        var myRooms = myRoomsTask.Result;
+        //var favoriteRooms = favoriteRoomsTask.Result;
+        //var rightsRooms = rightsRoomsTask.Result;
+
+        // Prepare search result blocks
+        var results = new List<ISearchResultData>();
+
+        if (myRooms.Any())
+            results.Add(CreateSearchResultData("my_rooms", "My Rooms", myRooms));
+
+        //if (favoriteRooms.Any())
+            //results.Add(CreateSearchResultData("favorites", "My Favourite Rooms", favoriteRooms));
+
+        //if (rightsRooms.Any())
+            //results.Add(CreateSearchResultData("with_rights", "Rooms where I have rights", rightsRooms));
+
+        var message = new NavigatorSearchResultBlocksMessage
+        {
+            SearchCode = "myworld_view",
+            Filtering = "",
+            Results = results
+        };
+
+        await player.Session.Send(message);
+    }
+    
+    public async Task SendCategoryRooms(IPlayer player, string searchParam)
+    {
+        var categoryKey = searchParam;
+
+        if (string.IsNullOrEmpty(categoryKey))
+        {
+            await SendEmptySearchResults(player, "category");
+            return;
+        }
+
+        var category = _categories.Values.FirstOrDefault(c => c.GlobalCategoryKey.Equals(categoryKey, StringComparison.OrdinalIgnoreCase));
+
+        if (category != null)
+        {
+            // Create a list containing the single category ID
+            var categoryIds = new List<int> { category.Id };
+            var rooms = await _roomManager.GetRoomsByCategoriesAsync(categoryIds);
+
+            if (rooms.Count != 0)
+            {
+                var results = new List<ISearchResultData>
+                {
+                    new SearchResultData
+                    {
+                        SearchCode = "category",
+                        Text = category.Name,
+                        ActionAllowed = 0,
+                        ForceClosed = false,
+                        ViewMode = 0,
+                        Rooms = rooms
+                    }
+                };
+
+                var message = new NavigatorSearchResultBlocksMessage
+                {
+                    SearchCode = "category",
+                    Filtering = category.GlobalCategoryKey.ToLower(),
+                    Results = results
+                };
+
+                await player.Session.Send(message);
+            }
+            else
+            {
+                await SendEmptySearchResults(player, "category");
+            }
+        }
+        else
+        {
+            await SendEmptySearchResults(player, "category");
+        }
+    }
+    
+    private ISearchResultData CreateSearchResultData(string searchCode, string text, IList<IRoom> rooms)
+    {
+        return new SearchResultData
+        {
+            SearchCode = searchCode,
+            Text = text,
+            ActionAllowed = 0, // Adjust if necessary
+            ForceClosed = false,
+            ViewMode = 0, // Adjust if necessary
+            Rooms = rooms
+        };
+    }
+
+    private async Task SendEmptySearchResults(IPlayer player, string searchCode)
+    {
+        var message = new NavigatorSearchResultBlocksMessage
+        {
+            SearchCode = searchCode,
+            Filtering = "",
+            Results = new List<ISearchResultData>()
+        };
+
+        await player.Session.Send(message);
     }
 }

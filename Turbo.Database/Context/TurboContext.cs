@@ -35,9 +35,9 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
     public DbSet<RoomRightEntity> RoomRights { get; set; }
     public DbSet<RoomChatlogEntity> Chatlogs { get; set; }
     public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
-    public DbSet<NavigatorCategoryEntity> NavigatorCategories { get; set; }
+    public DbSet<NavigatorTopLevelContextEntity> NavigatorTopLevelContexts { get; set; }
+    public DbSet<NavigatorFlatCategoryEntity> NavigatorFlatCategories { get; set; }
     public DbSet<NavigatorEventCategoryEntity> NavigatorEventCategories { get; set; }
-    public DbSet<NavigatorTabEntity> NavigatorTabs { get; set; }
     public DbSet<PlayerChatStyleEntity> PlayerChatStyles { get; set; }
     public DbSet<PlayerChatStyleOwnedEntity> PlayerOwnedChatStyles { get; set; }
     public DbSet<PerformanceLogEntity> PerformanceLogs { get; set; }

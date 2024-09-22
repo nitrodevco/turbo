@@ -9,7 +9,7 @@ public class GuestRoomSearchResultMessage : IComposer
 {
     public int SearchType { get; init; }
     public string SearchParam { get; init; }
-    public List <IRoomDetails> Rooms { get; init; } = new List<IRoomDetails>();
+    public List <IRoom> Rooms { get; init; } = [];
     
     public IAdData? Ad { get; init; }
 }
