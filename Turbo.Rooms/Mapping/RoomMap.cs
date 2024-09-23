@@ -242,7 +242,7 @@ public class RoomMap : IRoomMap
 
         var roomTile = GetTile(avatarObject.Location);
 
-        if (roomTile != null) roomTile.AddRoomObject(avatarObject);
+        roomTile?.AddRoomObject(avatarObject);
 
         avatarObject.Logic.InvokeCurrentLocation();
 
