@@ -95,9 +95,7 @@ public class RoomManager(
 
     public async Task<IRoomModel> GetModel(int id)
     {
-        if (_models.TryGetValue(id, out var model)) return model;
-
-        return null;
+        return _models.TryGetValue(id, out var model) ? model : null;
     }
 
     public IRoomModel GetModelByName(string name)

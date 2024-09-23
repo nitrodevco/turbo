@@ -7,19 +7,12 @@ using Turbo.Core.Packets.Revisions;
 
 namespace Turbo.Networking.Game.Clients;
 
-public class SessionFactory : ISessionFactory
+public class SessionFactory(IServiceProvider provider) : ISessionFactory
 {
-    private readonly IServiceProvider _provider;
-
-    public SessionFactory(IServiceProvider provider)
-    {
-        _provider = provider;
-    }
-
     public ISession Create(IChannelHandlerContext context, IRevision initialRevision)
     {
-        var logger = _provider.GetService<ILogger<Session>>();
+        var logger = provider.GetService<ILogger<Session>>();
         
-        return ActivatorUtilities.CreateInstance<Session>(_provider, context, initialRevision, logger);
+        return ActivatorUtilities.CreateInstance<Session>(provider, context, initialRevision, logger);
     }
 }

@@ -6,18 +6,12 @@ using Turbo.Core.Game.Rooms.Object;
 
 namespace Turbo.Rooms.Object;
 
-public class RoomObjectContainer<T> : IRoomObjectContainer<T> where T : IRoomObject
+public class RoomObjectContainer<T>(Action<T> onRemove) : IRoomObjectContainer<T>
+    where T : IRoomObject
 {
-    private readonly Action<T> _onRemove;
     private int _counter;
 
-    public RoomObjectContainer(Action<T> onRemove)
-    {
-        RoomObjects = new ConcurrentDictionary<int, T>();
-        _onRemove = onRemove;
-    }
-
-    public ConcurrentDictionary<int, T> RoomObjects { get; }
+    public ConcurrentDictionary<int, T> RoomObjects { get; } = new();
 
     public bool AddRoomObject(T roomObject)
     {
@@ -46,7 +40,7 @@ public class RoomObjectContainer<T> : IRoomObjectContainer<T> where T : IRoomObj
 
             if (!RoomObjects.TryRemove(new KeyValuePair<int, T>(roomObject.Id, roomObject))) continue;
 
-            if (_onRemove != null) _onRemove(roomObject);
+            onRemove?.Invoke(roomObject);
         }
     }
 

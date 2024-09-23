@@ -61,7 +61,7 @@ public class RoomUserManager : Component, IRoomUserManager
             return null;
         }
 
-        if (location == null) location = _room.RoomModel.DoorLocation.Clone();
+        location ??= _room.RoomModel.DoorLocation.Clone();
 
         avatarObject.SetLocation(location);
         avatarObject.Location.SetRotation(location.Rotation);
