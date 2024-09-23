@@ -158,6 +158,7 @@ public class AuthenticationMessageHandler(
         
         await session.Send(new PerkAllowancesMessage
         {
+            TotalPerks = 13,
             CITIZEN = await session.Player.PlayerPerks.HasPerkAsync("CITIZEN"),
             VOTE_IN_COMPETITIONS = await session.Player.PlayerPerks.HasPerkAsync("VOTE_IN_COMPETITIONS"),
             TRADE = await session.Player.PlayerPerks.HasPerkAsync("TRADE"),
