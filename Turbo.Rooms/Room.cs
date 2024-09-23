@@ -13,14 +13,12 @@ using Turbo.Core.Packets.Messages;
 using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
 using Turbo.Core.Database.Entities.Room;
-using Turbo.Core.Database.Factories;
 using Turbo.Core.Database.Factories.Rooms;
 using Turbo.Events.Game.Rooms.Avatar;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Layout;
 using Turbo.Rooms.Cycles;
-using Turbo.Rooms.Factories;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
 
@@ -136,11 +134,11 @@ public class Room : Component, IRoom
                 Value = RoomDetails.PaintFloor.ToString()
             });
         
-            player.Session.SendQueue(new RoomPropertyMessage
-            {
-                Property = RoomPropertyType.LANDSCAPE,
-                Value = RoomDetails.PaintLandscape.ToString()
-            });
+        player.Session.SendQueue(new RoomPropertyMessage
+        {
+            Property = RoomPropertyType.LANDSCAPE,
+            Value = RoomDetails.PaintLandscape.ToString()
+        });
 
         // would be nice to send this from the navigator so we aren't duplicating code
         player.Session.SendQueue(new GetGuestRoomResultMessage
