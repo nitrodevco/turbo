@@ -18,6 +18,7 @@ using Turbo.Core.Database.Factories.Rooms;
 using Turbo.Events.Game.Rooms.Avatar;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
+using Turbo.Packets.Outgoing.Room.Layout;
 using Turbo.Rooms.Cycles;
 using Turbo.Rooms.Factories;
 using Turbo.Rooms.Managers;
@@ -94,6 +95,13 @@ public class Room : Component, IRoom
     {
         if (player == null) return;
 
+        player.Session.SendQueue(new RoomEntryTileMessage
+        {
+            Direction = RoomModel.DoorLocation.Rotation,
+            X = RoomModel.DoorLocation.X,
+            Y = RoomModel.DoorLocation.Y
+        });
+
         player.Session.SendQueue(new HeightMapMessage
         {
             RoomModel = RoomModel,
@@ -127,8 +135,7 @@ public class Room : Component, IRoom
                 Property = RoomPropertyType.FLOOR,
                 Value = RoomDetails.PaintFloor.ToString()
             });
-
-        if (RoomDetails.PaintLandscape != 0.0)
+        
             player.Session.SendQueue(new RoomPropertyMessage
             {
                 Property = RoomPropertyType.LANDSCAPE,

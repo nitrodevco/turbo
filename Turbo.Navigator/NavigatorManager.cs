@@ -15,6 +15,7 @@ using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Navigator;
+using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Packets.Shared.Navigator;
 using Turbo.Rooms.Utils;
@@ -216,6 +217,8 @@ public class NavigatorManager(
             RoomId = room.Id,
             RoomType = room.RoomModel.Name
         });
+        
+        await ContinueEnteringRoom(player);
     }
 
     public async Task ContinueEnteringRoom(IPlayer player)
