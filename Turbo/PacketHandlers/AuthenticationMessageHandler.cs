@@ -22,6 +22,7 @@ using Turbo.Security;
 using Turbo.Packets.Outgoing.CallForHelp;
 using Turbo.Packets.Outgoing.Inventory.Achievements;
 using Turbo.Packets.Outgoing.MysteryBox;
+using Turbo.Packets.Outgoing.Perk;
 
 namespace Turbo.Main.PacketHandlers;
 
@@ -153,5 +154,7 @@ public class AuthenticationMessageHandler(
         {
             Player = session.Player
         });
+
+        await session.Send(new PerkAllowancesMessage { });
     }
 }
