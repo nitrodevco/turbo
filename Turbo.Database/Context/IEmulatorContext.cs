@@ -38,6 +38,7 @@ public interface IEmulatorContext : IDisposable
     public DbSet<PlayerChatStyleEntity> PlayerChatStyles { get; set; }
     public DbSet<PlayerChatStyleOwnedEntity> PlayerOwnedChatStyles { get; set; }
     public DbSet<PerformanceLogEntity> PerformanceLogs { get; set; }
+    public DbSet<PlayerPerksEntity> PlayerPerks { get; set; }
 
     public int SaveChanges(bool acceptAllChangesOnSuccess);
     public int SaveChanges();

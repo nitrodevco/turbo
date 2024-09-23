@@ -41,6 +41,7 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
     public DbSet<PlayerChatStyleEntity> PlayerChatStyles { get; set; }
     public DbSet<PlayerChatStyleOwnedEntity> PlayerOwnedChatStyles { get; set; }
     public DbSet<PerformanceLogEntity> PerformanceLogs { get; set; }
+    public DbSet<PlayerPerksEntity> PlayerPerks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -13,10 +13,12 @@ public interface IPlayer : IRoomObjectAvatarHolder, IRoomManipulator, IPermissio
     public IPlayerDetails PlayerDetails { get; }
     public IPlayerInventory PlayerInventory { get; }
     public IPlayerWallet PlayerWallet { get; }
+    public IPlayerPerks PlayerPerks { get; }
 
     public new int Id { get; }
     public new string Name { get; }
 
     public bool SetInventory(IPlayerInventory playerInventory);
     public bool SetWallet(IPlayerWallet playerWallet);
+    public bool SetPerks(IPlayerPerks playerPerks);
 }

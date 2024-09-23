@@ -19,9 +19,12 @@ public class PlayerFactory(
         var player = ActivatorUtilities.CreateInstance<Player>(_provider, playerDetails);
         var inventory = _playerInventoryFactory.Create(player);
         var wallet = new PlayerWallet(player, _serviceScopeFactory);
+        var perks = new PlayerPerks(player, _serviceScopeFactory);
+        
 
         player.SetInventory(inventory);
         player.SetWallet(wallet);
+        player.SetPerks(perks);
 
         return player;
     }

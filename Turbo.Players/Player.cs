@@ -19,6 +19,7 @@ public class Player(
     public IPlayerDetails PlayerDetails { get; } = _playerDetails;
     public IPlayerInventory PlayerInventory { get; private set; }
     public IPlayerWallet PlayerWallet { get; private set; }
+    public IPlayerPerks PlayerPerks { get; private set; }
 
     public ISession Session { get; private set; }
     public IRoomObjectAvatar RoomObject { get; private set; }
@@ -48,6 +49,15 @@ public class Player(
         if (PlayerWallet != null && PlayerWallet != playerWallet) return false;
 
         PlayerWallet = playerWallet;
+
+        return true;
+    }
+    
+    public bool SetPerks(IPlayerPerks playerPerks)
+    {
+        if (PlayerPerks != null && PlayerPerks != playerPerks) return false;
+
+        PlayerPerks = playerPerks;
 
         return true;
     }
