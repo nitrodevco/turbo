@@ -12,6 +12,8 @@ using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Navigator;
+using Turbo.Database.Repositories.Player;
+using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
@@ -41,7 +43,7 @@ public class NavigatorManager(
 
     //TODO: Add this to a configuration table
     private const int MaxFavoriteRooms = 30;
-    
+
     public async Task CreateFlat(IPlayer player, string name, string description, string modelName, int maxUsers, int categoryId, RoomTradeType tradeType)
     {
         using var scope = _serviceScopeFactory.CreateScope();
@@ -52,7 +54,7 @@ public class NavigatorManager(
 
         var flatCategoryEntity = await navigatorRepository.FlatCategoryEntityByIdAsync(categoryId);
 
-        if(flatCategoryEntity == null)
+        if (flatCategoryEntity == null)
         {
             _logger.LogError("Unidentified flat category entity with ID '{categoryId}'", categoryId);
         }
@@ -594,7 +596,7 @@ public class NavigatorManager(
     public async Task SendMyWorldView(IPlayer player, string? searchParam = null, string? filterMode = "anything")
     {
         // Fetch data concurrently
-        var myRoomsTask = _roomManager.GetRoomsByOwnerAsync(player.Id);
+        var myRoomsTask = _roomManager.GetRoomsByOwnerAsync(player.Id, searchParam, filterMode);
         var favoriteRoomsTask = _roomManager.GetFavoriteRoomsAsync(player.Id);
         var roomsHistoryTask = _roomManager.GetRoomsHistoryAsync(player.Id, searchParam, filterMode);
         //var rightsRoomsTask = _roomManager.GetRoomsWithRightsAsync(player.Id);
@@ -618,7 +620,7 @@ public class NavigatorManager(
 
         if (roomsHistory.Any())
             results.Add(CreateSearchResultData("history", "My Room Visit History", roomsHistory));
-        
+
         //if (rightsRooms.Any())
         //results.Add(CreateSearchResultData("with_rights", "Rooms where I have rights", rightsRooms));
 
@@ -795,7 +797,7 @@ public class NavigatorManager(
     }
 
     public async Task LoadFavoriteRoomsCacheAsync(int playerId) => await GetOrCreateFavoriteRoomsCacheAsync(playerId);
-    
+
     private (string key, string value) ParseSearchParam(string searchParam)
     {
         if (string.IsNullOrEmpty(searchParam))
@@ -803,15 +805,15 @@ public class NavigatorManager(
             _logger.LogError("Error parsing navigator searchParam: null value");
         }
 
-        var parts = searchParam.Split(new[] { ':' }, 2);
+        var parts = searchParam?.Split(new[] { ':' }, 2);
 
-        if (parts.Length < 2)
+        if (parts!.Length < 2)
         {
             _logger.LogError("Error parsing navigator searchParam: wrong length");
         }
 
-        string key = parts[0].Trim();
-        string value = parts[1].Trim();
+        var key = parts[0].Trim();
+        var value = parts[1].Trim();
 
         return (key.ToLower(), value);
     }

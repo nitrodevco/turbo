@@ -23,8 +23,8 @@ public sealed class NavigatorMessageHandler(
         messageHub.Subscribe<AddFavouriteRoomMessage>(this, OnAddFavouriteRoomMessage);
         messageHub.Subscribe<DeleteFavouriteRoomMessage>(this, OnDeleteFavouriteRoomMessage);
     }
-    
-    protected virtual async void OnCreateFlatMessage(CreateFlatMessage message, ISession session)
+
+    private async Task OnCreateFlatMessage(CreateFlatMessage message, ISession session)
     {
         if (session.Player == null) return;
 
@@ -54,15 +54,15 @@ public sealed class NavigatorMessageHandler(
         await navigatorManager.SendNavigatorEventCategories(session.Player);
     }
 
-    protected virtual async void OnNewNavigatorSearchMessage(NewNavigatorSearchMessage message, ISession session)
+    private async Task OnNewNavigatorSearchMessage(NewNavigatorSearchMessage message, ISession session)
     {
         if (session.Player == null) return;
 
-        string searchCode = message.SearchCodeOriginal?.ToLower() ?? string.Empty;
-        string searchTerm = message.FilteringData ?? string.Empty;
-        string filterMode = "anything";
+        var searchCode = message.SearchCodeOriginal?.ToLower() ?? string.Empty;
+        var searchTerm = message.FilteringData ?? string.Empty;
+        var filterMode = "anything";
 
-        if(!String.IsNullOrEmpty(searchTerm) && searchTerm.Contains(':'))
+        if (!string.IsNullOrEmpty(searchTerm) && searchTerm.Contains(':'))
         {
             var parts = searchTerm.Split(new[] { ':' }, 2);
 

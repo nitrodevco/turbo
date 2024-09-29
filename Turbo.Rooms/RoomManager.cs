@@ -32,8 +32,6 @@ public class RoomManager(
 
     private int _remainingTryDisposeTicks = DefaultSettings.RoomTryDisposeTicks;
 
-    public async Task<IRoom> GetRoom(int id) => await GetOfflineRoom(id);
-    
     public async Task<IRoom> CreateRoom(IPlayer player, string name, string description, string modelName, int userMax, int catId, RoomTradeType tradeType)
     {
         using var scope = _serviceScopeFactory.CreateScope();
@@ -43,12 +41,12 @@ public class RoomManager(
 
         var roomModel = await roomModelRepository.FindByNameAsync(modelName);
 
-        if(roomModel == null)
+        if (roomModel == null)
         {
             _logger.LogError("Unidentified Room model with name '{modelName}'.", modelName);
         }
 
-        var roomEntity = await roomRepository.CreateRoom(player.Id, name, description, roomModel.Id, userMax, catId, tradeType);
+        var roomEntity = await roomRepository.CreateRoom(player.Id, name, description, roomModel!.Id, userMax, catId, tradeType);
 
         if (roomEntity == null) return null;
 
@@ -65,10 +63,7 @@ public class RoomManager(
         return room;
     }
 
-    public async Task<IRoom> GetRoom(int id)
-    {
-        return await GetOfflineRoom(id);
-    }
+    public async Task<IRoom> GetRoom(int id) => await GetOfflineRoom(id);
 
     public IRoom GetOnlineRoom(int id)
     {
@@ -207,7 +202,7 @@ public class RoomManager(
 
         _logger.LogInformation("Loaded {0} room models", _models.Count);
     }
-    
+
     public async Task<List<IRoom>> GetRoomsByOwnerAsync(int ownerId, string? searchParam = null, string? filterMode = "anything")
     {
         _logger.LogInformation("Fetching My Rooms for PlayerID {playerId} By {filterMode}: {searchParam}", ownerId, filterMode, searchParam);
@@ -225,7 +220,7 @@ public class RoomManager(
         if (!string.IsNullOrEmpty(searchParam))
         {
             //TODO: Try do this query on the repository not on memory
-            if(filterMode.Equals("anything") || filterMode.Equals("roomname"))
+            if (filterMode.Equals("anything") || filterMode.Equals("roomname"))
             {
                 roomEntities = roomEntities.Where(r => EF.Functions.Like(r.Name, $"%{searchParam}%")).ToList();
             }
@@ -378,7 +373,7 @@ public class RoomManager(
         var roomRepository = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
         return await roomRepository.RoomExistsAsync(roomId);
     }
-    
+
     public async Task<List<IRoom>> GetRoomsHistoryAsync(int playerId, string searchParam, string filterMode)
     {
         _logger.LogInformation("Fetching Room Visit History for PlayerID {playerId} By {filterMode}: {searchParam}", playerId, filterMode, searchParam);
