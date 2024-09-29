@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
-using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Utilities;
 
@@ -31,4 +30,7 @@ public interface INavigatorManager : IComponent
     public Task SendHotelView(IPlayer player);
     public Task SendMyWorldView(IPlayer player);
     public Task SendCategoryRooms(IPlayer player, string searchParam);
+    public Task HandleFavouriteRoomChangeAsync(int playerId, int roomId, bool isAdding);
+    public Task<ConcurrentDictionary<int, byte>> GetFavoriteRoomsAsync(int playerId);
+    public Task LoadFavoriteRoomsCacheAsync(int playerId);
 }

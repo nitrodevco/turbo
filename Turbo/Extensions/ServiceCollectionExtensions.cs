@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Turbo.Catalog;
 using Turbo.Catalog.Factories;
 using Turbo.Core.Configuration;
-using Turbo.Core.Database.Factories;
 using Turbo.Core.Database.Factories.Catalog;
 using Turbo.Core.Database.Factories.Furniture;
 using Turbo.Core.Database.Factories.Players;
@@ -165,5 +164,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlayerChatStyleOwnedRepository, PlayerChatStyleOwnedRepository>();
         services.AddScoped<IPerformanceLogRepository, PerformanceLogRepository>();
         services.AddScoped<IPlayerPerksRepository, PlayerPerksRepository>();
+        services.AddScoped<IPlayerFavouriteRoomsRepository, PlayerFavouriteRoomsRepository>();
     }
 }

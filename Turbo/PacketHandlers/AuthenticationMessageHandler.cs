@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Events;
+using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Networking.Game.Clients;
@@ -11,18 +13,18 @@ using Turbo.Events.Game.Security;
 using Turbo.Networking.Game.Codec;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Availability;
-using Turbo.Packets.Outgoing.Catalog.Clothing;
+using Turbo.Packets.Outgoing.CallForHelp;
 using Turbo.Packets.Outgoing.Catalog;
+using Turbo.Packets.Outgoing.Catalog.Clothing;
 using Turbo.Packets.Outgoing.Handshake;
+using Turbo.Packets.Outgoing.Inventory.Achievements;
 using Turbo.Packets.Outgoing.Inventory.AvatarEffect;
+using Turbo.Packets.Outgoing.MysteryBox;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Notifications;
+using Turbo.Packets.Outgoing.Perk;
 using Turbo.Packets.Outgoing.Users;
 using Turbo.Security;
-using Turbo.Packets.Outgoing.CallForHelp;
-using Turbo.Packets.Outgoing.Inventory.Achievements;
-using Turbo.Packets.Outgoing.MysteryBox;
-using Turbo.Packets.Outgoing.Perk;
 
 namespace Turbo.Main.PacketHandlers;
 
@@ -30,6 +32,7 @@ public class AuthenticationMessageHandler(
     IPacketMessageHub messageHub,
     ISecurityManager securityManager,
     IPlayerManager playerManager,
+    INavigatorManager navigatorManager,
     ILogger<AuthenticationMessageHandler> logger,
     ITurboEventHub eventHub,
     IDiffieService diffieService)
@@ -102,7 +105,10 @@ public class AuthenticationMessageHandler(
 
         await session.Send(new AvatarEffectsMessage { });
 
-        await session.Send(new FavouritesMessage { });
+        await navigatorManager.LoadFavoriteRoomsCacheAsync(player.Id);
+        var favoriteRooms = await navigatorManager.GetFavoriteRoomsAsync(player.Id);
+        await session.Send(new FavouritesMessage(30, favoriteRooms.Keys.ToList()));
+
         await session.Send(new ScrSendUserInfoMessage { });
         await session.Send(new BuildersClubSubscriptionStatusMessage { });
         await session.Send(new UnseenItemsMessage { });
@@ -154,8 +160,7 @@ public class AuthenticationMessageHandler(
         {
             Player = session.Player
         });
-        
-        
+
         await session.Send(new PerkAllowancesMessage
         {
             TotalPerks = 13,
@@ -173,6 +178,5 @@ public class AuthenticationMessageHandler(
             BUILDER_AT_WORK = await session.Player.PlayerPerks.HasPerkAsync("BUILDER_AT_WORK"),
             CAMERA = await session.Player.PlayerPerks.HasPerkAsync("CAMERA")
         });
-        
     }
 }

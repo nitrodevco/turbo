@@ -1,17 +1,16 @@
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 using Turbo.Core.Game.Navigator;
-using Turbo.Core.Game.Navigator.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Navigator;
+using Turbo.Packets.Outgoing.Navigator;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class NavigatorMessageHandler(
+public sealed class NavigatorMessageHandler(
     IPacketMessageHub messageHub,
-    INavigatorManager navigatorManager,
-    ILogger<NavigatorMessageHandler> logger)
+    INavigatorManager navigatorManager)
     : IPacketHandlerManager
 {
     public void Register()
@@ -20,27 +19,25 @@ public class NavigatorMessageHandler(
         messageHub.Subscribe<GetGuestRoomMessage>(this, OnGetGuestRoomMessage);
         messageHub.Subscribe<NewNavigatorInitMessage>(this, OnNewNavigatorInitMessage);
         messageHub.Subscribe<NewNavigatorSearchMessage>(this, OnNewNavigatorSearchMessage);
+        messageHub.Subscribe<AddFavouriteRoomMessage>(this, OnAddFavouriteRoomMessage);
+        messageHub.Subscribe<DeleteFavouriteRoomMessage>(this, OnDeleteFavouriteRoomMessage);
     }
 
-    protected virtual async void OnGetUserFlatCatsMessage(GetUserFlatCatsMessage message, ISession session)
+    private async Task OnGetUserFlatCatsMessage(GetUserFlatCatsMessage message, ISession session)
     {
         if (session.Player == null) return;
-
         await navigatorManager.SendNavigatorCategories(session.Player);
     }
 
-    protected virtual async void OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
+    private async Task OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
     {
         if (session.Player == null) return;
-
-        await navigatorManager.GetGuestRoomMessage(session.Player, message.RoomId, message.EnterRoom,
-            message.RoomForward);
+        await navigatorManager.GetGuestRoomMessage(session.Player, message.RoomId, message.EnterRoom, message.RoomForward);
     }
 
-    protected virtual async void OnNewNavigatorInitMessage(NewNavigatorInitMessage message, ISession session)
+    private async Task OnNewNavigatorInitMessage(NewNavigatorInitMessage message, ISession session)
     {
         if (session.Player == null) return;
-
         await navigatorManager.SendNavigatorSettings(session.Player);
         await navigatorManager.SendNavigatorMetaData(session.Player);
         await navigatorManager.SendNavigatorLiftedRooms(session.Player);
@@ -48,34 +45,34 @@ public class NavigatorMessageHandler(
         await navigatorManager.SendNavigatorSavedSearches(session.Player);
         await navigatorManager.SendNavigatorEventCategories(session.Player);
     }
-    
-    protected virtual async void OnNewNavigatorSearchMessage(NewNavigatorSearchMessage message, ISession session)
+
+    private async Task OnNewNavigatorSearchMessage(NewNavigatorSearchMessage message, ISession session)
     {
         if (session.Player == null) return;
-
-        string searchCode = message.SearchCodeOriginal?.ToLower() ?? string.Empty;
-        string searchTerm = message.FilteringData ?? string.Empty;
-
+        var searchCode = message.SearchCodeOriginal?.ToLower() ?? string.Empty;
+        var searchTerm = message.FilteringData ?? string.Empty;
         await navigatorManager.HandleNavigatorSearch(session.Player, searchCode, searchTerm);
     }
-    
-    private int ParseSearchType(string searchCode)
-    {
-        if (string.IsNullOrEmpty(searchCode))
-        {
-            logger.LogWarning("Received a null or empty search code. Defaulting to 0.");
-            return 0;
-        }
 
-        // Map searchCode to the appropriate NavigatorSearchType integer
-        return searchCode.ToLower() switch
-        {
-            "popular" => (int)NavigatorSearchType.PopularRooms,
-            "highest_score" => (int)NavigatorSearchType.RoomsWithHighestScore,
-            "myworld_view" => (int)NavigatorSearchType.MyRooms,
-            "hotel_view" => (int)NavigatorSearchType.PopularRooms,
-            // Add additional mappings as necessary
-            _ => 0 // Default or error value
-        };
+    private async Task OnAddFavouriteRoomMessage(AddFavouriteRoomMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+        var playerId = session.Player.Id;
+        var roomId = message.RoomId;
+
+        await navigatorManager.HandleFavouriteRoomChangeAsync(playerId, roomId, true);
+        await SendFavouriteChangedMessage(session, roomId, true);
     }
+
+    private async Task OnDeleteFavouriteRoomMessage(DeleteFavouriteRoomMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+        var playerId = session.Player.Id;
+        var roomId = message.RoomId;
+
+        await navigatorManager.HandleFavouriteRoomChangeAsync(playerId, roomId, false);
+        await SendFavouriteChangedMessage(session, roomId, false);
+    }
+
+    private async Task SendFavouriteChangedMessage(ISession session, int roomId, bool isAdded) => await session.Send(new FavouriteChangedMessage(roomId, isAdded));
 }

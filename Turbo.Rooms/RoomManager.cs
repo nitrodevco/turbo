@@ -1,23 +1,17 @@
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Turbo.Core.Database.Factories;
 using Turbo.Core.Database.Factories.Rooms;
 using Turbo.Core.Game;
-using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
-using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Mapping;
 using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
-using Turbo.Rooms.Factories;
 using Turbo.Rooms.Mapping;
 
 namespace Turbo.Rooms;
@@ -34,10 +28,7 @@ public class RoomManager(
 
     private int _remainingTryDisposeTicks = DefaultSettings.RoomTryDisposeTicks;
 
-    public async Task<IRoom> GetRoom(int id)
-    {
-        return await GetOfflineRoom(id);
-    }
+    public async Task<IRoom> GetRoom(int id) => await GetOfflineRoom(id);
 
     public IRoom GetOnlineRoom(int id)
     {
@@ -93,10 +84,7 @@ public class RoomManager(
         if (_rooms.TryRemove(new KeyValuePair<int, IRoom>(room.Id, room))) await room.DisposeAsync();
     }
 
-    public async Task<IRoomModel> GetModel(int id)
-    {
-        return _models.TryGetValue(id, out var model) ? model : null;
-    }
+    public async Task<IRoomModel> GetModel(int id) => _models.TryGetValue(id, out var model) ? model : null;
 
     public IRoomModel GetModelByName(string name)
     {
@@ -126,15 +114,9 @@ public class RoomManager(
         return Task.WhenAll(_rooms.Values.Select(room => Task.Run(async () => await room.Cycle())));
     }
 
-    protected override async Task OnInit()
-    {
-        await LoadModels();
-    }
+    protected override async Task OnInit() => await LoadModels();
 
-    protected override async Task OnDispose()
-    {
-        await RemoveAllRooms();
-    }
+    protected override async Task OnDispose() => await RemoveAllRooms();
 
     public async Task<IRoom> AddRoom(IRoom room)
     {
@@ -185,7 +167,7 @@ public class RoomManager(
 
         _logger.LogInformation("Loaded {0} room models", _models.Count);
     }
-    
+
     public async Task<List<IRoom>> GetRoomsByOwnerAsync(int ownerId)
     {
         var rooms = new List<IRoom>();
@@ -199,7 +181,7 @@ public class RoomManager(
         foreach (var roomEntity in roomEntities)
         {
             var room = await GetRoom(roomEntity.Id);
-            
+
             if (room != null)
             {
                 // Set OwnerName if not already set
@@ -207,17 +189,47 @@ public class RoomManager(
                 {
                     room.RoomDetails.PlayerName = (await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId))?.Name ?? "Unknown";
                 }
-                
+
                 if (_rooms.TryGetValue(roomEntity.Id, out var activeRoom))
                 {
                     room.RoomDetails.UsersNow = activeRoom.RoomDetails.UsersNow;
                 }
-                
+
                 rooms.Add(room);
             }
         }
 
         return rooms;
+    }
+
+    public async Task<List<IRoom>> GetFavoriteRoomsAsync(int playerId)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var favouriteRoomsRepository = scope.ServiceProvider.GetRequiredService<IPlayerFavouriteRoomsRepository>();
+
+        // Fetch favorite room IDs from the repository
+        var favoriteRoomIds = await favouriteRoomsRepository.GetFavoriteRoomsAsync(playerId);
+
+        if (favoriteRoomIds == null || favoriteRoomIds.Count == 0)
+        {
+            _logger.LogInformation("Player {PlayerId} has no favorite rooms.", playerId);
+            return new List<IRoom>();
+        }
+
+        var roomTasks = favoriteRoomIds.Select(async roomId =>
+        {
+            var room = await GetRoom(roomId);
+            return room;
+        }).ToList();
+
+        var rooms = await Task.WhenAll(roomTasks);
+
+        // Filter out any null rooms (in case some rooms couldn't be retrieved)
+        var favoriteRooms = rooms.Where(r => r != null).ToList();
+
+        _logger.LogInformation("Player {PlayerId} has {Count} favorite rooms.", playerId, favoriteRooms.Count);
+
+        return favoriteRooms;
     }
 
     public async Task<List<IRoom>> GetRoomsByCategoriesAsync(IEnumerable<int> categoryIds)
@@ -253,7 +265,7 @@ public class RoomManager(
 
         return rooms.Where(r => r != null).ToList();
     }
-    
+
     public async Task<List<IRoom>> GetRoomsOrderedByPopularityAsync()
     {
         var rooms = new List<IRoom>();
@@ -279,7 +291,7 @@ public class RoomManager(
 
         return rooms;
     }
-    
+
     public async Task<List<IRoom>> SearchRooms(string searchTerm)
     {
         var rooms = new List<IRoom>();
@@ -307,4 +319,10 @@ public class RoomManager(
         return rooms;
     }
 
+    public async Task<bool> RoomExistsAsync(int roomId)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        var roomRepository = scope.ServiceProvider.GetRequiredService<IRoomRepository>();
+        return await roomRepository.RoomExistsAsync(roomId);
+    }
 }

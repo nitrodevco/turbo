@@ -4,18 +4,16 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Entities.Players;
+using Turbo.Core.Database.Factories.Players;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Utilities;
-using Turbo.Core.Database.Entities.Players;
-using Turbo.Core.Database.Factories;
-using Turbo.Core.Database.Factories.Players;
 using Turbo.Database.Repositories.ChatStyles;
 using Turbo.Database.Repositories.Player;
-using Turbo.Players.Factories;
 
 namespace Turbo.Players;
 
@@ -137,10 +135,7 @@ public class PlayerManager(
     }
 
     public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false,
-        IPoint location = null)
-    {
-        await _navigatorManager.EnterRoom(player, roomId, password, skipState, location);
-    }
+        IPoint location = null) => await _navigatorManager.EnterRoom(player, roomId, password, skipState, location);
 
     public async Task<string> GetPlayerName(int playerId)
     {
@@ -175,15 +170,9 @@ public class PlayerManager(
         return player.PlayerInventory?.BadgeInventory?.ActiveBadges;
     }
 
-    protected override async Task OnInit()
-    {
-        await LoadChatStyles();
-    }
+    protected override async Task OnInit() => await LoadChatStyles();
 
-    protected override async Task OnDispose()
-    {
-        await RemoveAllPlayers();
-    }
+    protected override async Task OnDispose() => await RemoveAllPlayers();
 
     public async Task LoadChatStyles()
     {

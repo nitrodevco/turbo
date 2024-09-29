@@ -12,4 +12,5 @@ public interface IRoomRepository : IBaseRepository<RoomEntity>
     Task<List<RoomEntity>> SearchRoomsByNameAsync(string searchTerm);
     Task<List<RoomEntity>> GetRoomsByCategoryIdsAsync(IEnumerable<int> categoryIds);
     Task<List<RoomEntity>> GetRoomsByStateAsync(RoomStateType state);
+    Task<bool> RoomExistsAsync(int roomId);
 }

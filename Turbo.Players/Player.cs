@@ -52,7 +52,7 @@ public class Player(
 
         return true;
     }
-    
+
     public bool SetPerks(IPlayerPerks playerPerks)
     {
         if (PlayerPerks != null && PlayerPerks != playerPerks) return false;
@@ -100,10 +100,7 @@ public class Player(
         PlayerManager.ClearPlayerRoomStatus(this);
     }
 
-    public bool HasPermission(string permission)
-    {
-        return false;
-    }
+    public bool HasPermission(string permission) => false;
 
     public RoomObjectHolderType Type => RoomObjectHolderType.User;
 

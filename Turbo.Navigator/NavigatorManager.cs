@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Navigator;
-using Turbo.Core.Game.Navigator.Constants;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Navigator;
+using Turbo.Database.Repositories.Player;
 using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Navigator;
-using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Packets.Shared.Navigator;
 using Turbo.Rooms.Utils;
@@ -31,19 +30,20 @@ public class NavigatorManager(
 
     private readonly IDictionary<int, INavigatorEventCategory> _eventCategories =
         new Dictionary<int, INavigatorEventCategory>();
-    
+
     private readonly IDictionary<int, INavigatorCollapsedCategories> _collapsedCategories =
         new Dictionary<int, INavigatorCollapsedCategories>();
 
     private readonly ConcurrentDictionary<int, IPendingRoomInfo> _pendingRoomIds = new();
     private readonly IList<INavigatorTopLevelContext> _tabs = new List<INavigatorTopLevelContext>();
 
-    public int GetPendingRoomId(int userId)
-    {
-        if (_pendingRoomIds.TryGetValue(userId, out var pendingRoomInfo)) return pendingRoomInfo.RoomId;
+    private readonly ConcurrentDictionary<int, FavoriteRoomsCacheItem> _favoriteRoomCache = new();
 
-        return -1;
-    }
+
+    //TODO: Add this to a configuration table
+    private const int MaxFavoriteRooms = 30;
+
+    public int GetPendingRoomId(int userId) => _pendingRoomIds.TryGetValue(userId, out var info) ? info.RoomId : -1;
 
     public void SetPendingRoomId(int userId, int roomId, bool approved = false)
     {
@@ -56,10 +56,7 @@ public class NavigatorManager(
         );
     }
 
-    public void ClearPendingRoomId(int userId)
-    {
-        _pendingRoomIds.Remove(userId, out var pendingRoomInfo);
-    }
+    public void ClearPendingRoomId(int userId) => _pendingRoomIds.Remove(userId, out var pendingRoomInfo);
 
     public void ClearRoomStatus(IPlayer player)
     {
@@ -163,7 +160,6 @@ public class NavigatorManager(
                 }
 
                 #endregion
-
                 #region RoomStateType.Password
 
                 else if (room.RoomDetails.State == RoomStateType.Password)
@@ -182,7 +178,6 @@ public class NavigatorManager(
                 }
 
                 #endregion
-
                 #region RoomStateType.Invisible
 
                 else if (room.RoomDetails.State == RoomStateType.Invisible)
@@ -217,7 +212,7 @@ public class NavigatorManager(
             RoomId = room.Id,
             RoomType = room.RoomModel.Name
         });
-        
+
         await ContinueEnteringRoom(player);
     }
 
@@ -258,7 +253,7 @@ public class NavigatorManager(
     public async Task SendNavigatorCategories(IPlayer player)
     {
         await player.Session.Send(new UserEventCatsMessage
-            {
+        {
             EventCategories = [.. _eventCategories.Values]
         });
         await player.Session.Send(new UserFlatCatsMessage
@@ -267,18 +262,15 @@ public class NavigatorManager(
         });
     }
 
-    public async Task SendNavigatorSettings(IPlayer player)
+    public async Task SendNavigatorSettings(IPlayer player) => await player.Session.Send(new NewNavigatorPreferencesMessage
     {
-        await player.Session.Send(new NewNavigatorPreferencesMessage
-        {
-            WindowX = 0,
-            WindowY = 0,
-            WindowWidth = 0,
-            WindowHeight = 0,
-            LeftPaneHidden = false,
-            ResultMode = 0
-        });
-    }
+        WindowX = 0,
+        WindowY = 0,
+        WindowWidth = 0,
+        WindowHeight = 0,
+        LeftPaneHidden = false,
+        ResultMode = 0
+    });
 
     public async Task SendNavigatorMetaData(IPlayer player)
     {
@@ -300,39 +292,31 @@ public class NavigatorManager(
         });
     }
 
-    public async Task SendNavigatorLiftedRooms(IPlayer player)
+    public async Task SendNavigatorLiftedRooms(IPlayer player) => await player.Session.Send(new NavigatorLiftedRoomsMessage
     {
-        await player.Session.Send(new NavigatorLiftedRoomsMessage
-        {
-            LiftedRooms = [
-                new LiftedRoom
-                {
-                    FlatId = 1,
-                    Unused = 0,
-                    Image = "",
-                    Caption = ""
-                }
-            ]
-        });
-    }
+        LiftedRooms =
+        [
+            new LiftedRoom
+            {
+                FlatId = 1,
+                Unused = 0,
+                Image = "",
+                Caption = ""
+            }
+        ]
+    });
 
-    public async Task SendNavigatorSavedSearches(IPlayer player)
+    public async Task SendNavigatorSavedSearches(IPlayer player) => await player.Session.Send(new NavigatorSavedSearchesMessage
     {
-        await player.Session.Send(new NavigatorSavedSearchesMessage
-        {
-            // Todo: Implement saved searches
-            SavedSearches = []
-        });
-    }
+        // Todo: Implement saved searches
+        SavedSearches = []
+    });
 
-    public async Task SendNavigatorEventCategories(IPlayer player)
+    public async Task SendNavigatorEventCategories(IPlayer player) => await player.Session.Send(new NavigatorEventCategoriesMessage
     {
-        await player.Session.Send(new NavigatorEventCategoriesMessage
-        {
-            EventCategories = [.. _eventCategories.Values]
-        });
-    }
-    
+        EventCategories = [.. _eventCategories.Values]
+    });
+
     public async Task SendNavigatorCollapsedCategories(IPlayer player)
     {
         if (_collapsedCategories.TryGetValue(player.Id, out var collapsedCategories))
@@ -350,11 +334,11 @@ public class NavigatorManager(
             });
         }
     }
-    
+
     public async Task SendGuestRoomSearchResult(IPlayer player, int searchType, string searchParam)
     {
         var rooms = await _roomManager.SearchRooms(searchParam);
-        
+
         var results = new List<ISearchResultData>
         {
             new SearchResultData
@@ -374,14 +358,11 @@ public class NavigatorManager(
             Filtering = searchParam,
             Results = results
         };
-        
+
         await player.Session.Send(message);
     }
 
-    protected override async Task OnInit()
-    {
-        await LoadNavigatorData();
-    }
+    protected override async Task OnInit() => await LoadNavigatorData();
 
     protected override async Task OnDispose()
     {
@@ -432,7 +413,7 @@ public class NavigatorManager(
         _logger.LogInformation("Loaded {0} navigator categories", _categories.Count);
         _logger.LogInformation("Loaded {0} navigator event categories", _eventCategories.Count);
     }
-    
+
     public async Task HandleNavigatorSearch(IPlayer player, string searchCode, string searchParam)
     {
         _logger.LogInformation("HandleNavigatorSearch called with searchCode: {searchCode}, searchParam: {searchParam}", searchCode, searchParam);
@@ -457,7 +438,7 @@ public class NavigatorManager(
                 break;
         }
     }
-    
+
     public async Task SendOfficialRooms(IPlayer player)
     {
         var categoryKeys = new[] { "OFFICIAL", "NEW", "RoomBundles" };
@@ -503,7 +484,7 @@ public class NavigatorManager(
 
         await player.Session.Send(message);
     }
-    
+
     public async Task SendHotelView(IPlayer player)
     {
         // Fetch most popular rooms
@@ -571,21 +552,19 @@ public class NavigatorManager(
 
         await player.Session.Send(message);
     }
-    
+
     public async Task SendMyWorldView(IPlayer player)
     {
-        _logger.LogInformation("Sending My World view to player {playerId}", player.Id);
-
         // Fetch data concurrently
         var myRoomsTask = _roomManager.GetRoomsByOwnerAsync(player.Id);
-        //var favoriteRoomsTask = _roomManager.GetFavoriteRoomsAsync(player.Id);
+        var favoriteRoomsTask = _roomManager.GetFavoriteRoomsAsync(player.Id);
         //var rightsRoomsTask = _roomManager.GetRoomsWithRightsAsync(player.Id);
 
-        await Task.WhenAll(myRoomsTask);
+        await Task.WhenAll(myRoomsTask, favoriteRoomsTask);
 
         // Retrieve results
         var myRooms = myRoomsTask.Result;
-        //var favoriteRooms = favoriteRoomsTask.Result;
+        var favoriteRooms = favoriteRoomsTask.Result;
         //var rightsRooms = rightsRoomsTask.Result;
 
         // Prepare search result blocks
@@ -594,11 +573,11 @@ public class NavigatorManager(
         if (myRooms.Any())
             results.Add(CreateSearchResultData("my_rooms", "My Rooms", myRooms));
 
-        //if (favoriteRooms.Any())
-            //results.Add(CreateSearchResultData("favorites", "My Favourite Rooms", favoriteRooms));
+        if (favoriteRooms.Any())
+            results.Add(CreateSearchResultData("favorites", "My Favourite Rooms", favoriteRooms));
 
         //if (rightsRooms.Any())
-            //results.Add(CreateSearchResultData("with_rights", "Rooms where I have rights", rightsRooms));
+        //results.Add(CreateSearchResultData("with_rights", "Rooms where I have rights", rightsRooms));
 
         var message = new NavigatorSearchResultBlocksMessage
         {
@@ -609,7 +588,7 @@ public class NavigatorManager(
 
         await player.Session.Send(message);
     }
-    
+
     public async Task SendCategoryRooms(IPlayer player, string searchParam)
     {
         var categoryKey = searchParam;
@@ -662,19 +641,16 @@ public class NavigatorManager(
             await SendEmptySearchResults(player, "category");
         }
     }
-    
-    private ISearchResultData CreateSearchResultData(string searchCode, string text, IList<IRoom> rooms)
+
+    private ISearchResultData CreateSearchResultData(string searchCode, string text, IList<IRoom> rooms) => new SearchResultData
     {
-        return new SearchResultData
-        {
-            SearchCode = searchCode,
-            Text = text,
-            ActionAllowed = 0, // Adjust if necessary
-            ForceClosed = false,
-            ViewMode = 0, // Adjust if necessary
-            Rooms = rooms
-        };
-    }
+        SearchCode = searchCode,
+        Text = text,
+        ActionAllowed = 0, // Adjust if necessary
+        ForceClosed = false,
+        ViewMode = 0, // Adjust if necessary
+        Rooms = rooms
+    };
 
     private async Task SendEmptySearchResults(IPlayer player, string searchCode)
     {
@@ -687,4 +663,93 @@ public class NavigatorManager(
 
         await player.Session.Send(message);
     }
+
+    public async Task HandleFavouriteRoomChangeAsync(int playerId, int roomId, bool isAdding)
+    {
+        try
+        {
+            var roomExists = await _roomManager.RoomExistsAsync(roomId);
+            if (!roomExists)
+            {
+                _logger.LogWarning("Player {PlayerId} tried to add non-existent Room {RoomId} to favorites.", playerId, roomId);
+                // Optionally, send an error message to the player
+                return;
+            }
+
+            var favoriteRooms = await GetOrCreateFavoriteRoomsCacheAsync(playerId);
+
+            if (isAdding)
+            {
+                if (favoriteRooms.Count >= MaxFavoriteRooms)
+                {
+                    _logger.LogWarning("Player {PlayerId} has reached the maximum number of favorite rooms.", playerId);
+                    // Optionally, send a message to the player indicating they've reached the limit
+                    return;
+                }
+
+                if (favoriteRooms.TryAdd(roomId, 0))
+                {
+                    // Update the database
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    var favouriteRoomsRepository = scope.ServiceProvider.GetRequiredService<IPlayerFavouriteRoomsRepository>();
+                    await favouriteRoomsRepository.AddFavoriteRoomAsync(playerId, roomId);
+                }
+            }
+            else
+            {
+                if (favoriteRooms.TryRemove(roomId, out _))
+                {
+                    // Update the database
+                    using var scope = _serviceScopeFactory.CreateScope();
+                    var favouriteRoomsRepository = scope.ServiceProvider.GetRequiredService<IPlayerFavouriteRoomsRepository>();
+                    await favouriteRoomsRepository.RemoveFavoriteRoomAsync(playerId, roomId);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating favorite rooms for PlayerId: {PlayerId}, RoomId: {RoomId}, IsAdding: {IsAdding}", playerId, roomId, isAdding);
+            throw;
+        }
+    }
+
+    public async Task<ConcurrentDictionary<int, byte>> GetFavoriteRoomsAsync(int playerId) => await GetOrCreateFavoriteRoomsCacheAsync(playerId);
+
+
+    private async Task<ConcurrentDictionary<int, byte>> GetOrCreateFavoriteRoomsCacheAsync(int playerId)
+    {
+        if (_favoriteRoomCache.TryGetValue(playerId, out var cacheItem))
+        {
+            if (cacheItem.Expiration > DateTime.UtcNow)
+            {
+                return cacheItem.FavoriteRooms;
+            }
+            else
+            {
+                // Remove expired cache item
+                _favoriteRoomCache.TryRemove(playerId, out _);
+            }
+        }
+
+        // Load from database
+        using var scope = _serviceScopeFactory.CreateScope();
+        var favouriteRoomsRepository = scope.ServiceProvider.GetRequiredService<IPlayerFavouriteRoomsRepository>();
+
+        var roomIds = await favouriteRoomsRepository.GetFavoriteRoomsAsync(playerId);
+        var favoriteRooms = new ConcurrentDictionary<int, byte>(roomIds.Select(id => new KeyValuePair<int, byte>(id, 0)));
+
+        // Set cache expiration (e.g., 30 minutes)
+        var expiration = DateTime.UtcNow.AddMinutes(30);
+        cacheItem = new FavoriteRoomsCacheItem
+        {
+            FavoriteRooms = favoriteRooms,
+            Expiration = expiration
+        };
+
+        _favoriteRoomCache[playerId] = cacheItem;
+
+        return favoriteRooms;
+    }
+
+    public async Task LoadFavoriteRoomsCacheAsync(int playerId) => await GetOrCreateFavoriteRoomsCacheAsync(playerId);
 }
