@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Context;
 
@@ -10,9 +11,11 @@ using Turbo.Database.Context;
 namespace Turbo.Main.Migrations
 {
     [DbContext(typeof(TurboContext))]
-    partial class TurboContextModelSnapshot : ModelSnapshot
+    [Migration("20240925171111_RoomEntryLogs")]
+    partial class RoomEntryLogs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -999,38 +1002,6 @@ namespace Turbo.Main.Migrations
                     b.ToTable("players");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerFavouriteRoomsEntity", b =>
-                {
-                    b.Property<int>("PlayerId")
-                        .HasColumnType("int")
-                        .HasColumnName("player_id");
-
-                    b.Property<int>("RoomId")
-                        .HasColumnType("int")
-                        .HasColumnName("room_id");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("PlayerId", "RoomId");
-
-                    b.HasIndex("RoomId");
-
-                    b.HasIndex("PlayerId", "RoomId")
-                        .IsUnique();
-
-                    b.ToTable("player_favourite_rooms");
-                });
-
             modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerPerksEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -1891,25 +1862,6 @@ namespace Turbo.Main.Migrations
                         .IsRequired();
 
                     b.Navigation("PlayerEntity");
-                });
-
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerFavouriteRoomsEntity", b =>
-                {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "Player")
-                        .WithMany()
-                        .HasForeignKey("PlayerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomEntity", "Room")
-                        .WithMany()
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Player");
-
-                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerPerksEntity", b =>

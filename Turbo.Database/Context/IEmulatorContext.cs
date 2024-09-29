@@ -31,6 +31,7 @@ public interface IEmulatorContext : IDisposable
     public DbSet<RoomModelEntity> RoomModels { get; set; }
     public DbSet<RoomMuteEntity> RoomMutes { get; set; }
     public DbSet<RoomRightEntity> RoomRights { get; set; }
+    public DbSet<RoomEntryLogEntity> RoomEntryLogs { get; set; }
     public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
     public DbSet<NavigatorTopLevelContextEntity> NavigatorTopLevelContexts { get; set; }
     public DbSet<NavigatorFlatCategoryEntity> NavigatorFlatCategories { get; set; }

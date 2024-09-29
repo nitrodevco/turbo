@@ -39,4 +39,16 @@ public class PlayerRepository(IEmulatorContext _context) : IPlayerRepository
             })
             .ToListAsync();
     }
+
+    public async Task<PlayerUsernameDto> FindUserIdAsync(string username)
+    {
+        return await _context.Players
+        .Where(player => username == player.Name)
+        .Select(player => new PlayerUsernameDto
+        {
+            Id = player.Id,
+            Name = player.Name
+        })
+        .FirstOrDefaultAsync();
+    }
 }

@@ -33,6 +33,7 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
     public DbSet<RoomModelEntity> RoomModels { get; set; }
     public DbSet<RoomMuteEntity> RoomMutes { get; set; }
     public DbSet<RoomRightEntity> RoomRights { get; set; }
+    public DbSet<RoomEntryLogEntity> RoomEntryLogs { get; set; }
     public DbSet<RoomChatlogEntity> Chatlogs { get; set; }
     public DbSet<SecurityTicketEntity> SecurityTickets { get; set; }
     public DbSet<NavigatorTopLevelContextEntity> NavigatorTopLevelContexts { get; set; }

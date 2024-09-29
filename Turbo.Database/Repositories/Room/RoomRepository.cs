@@ -10,6 +10,26 @@ namespace Turbo.Database.Repositories.Room;
 
 public class RoomRepository(IEmulatorContext context) : IRoomRepository
 {
+    public async Task<RoomEntity> CreateRoom(int ownerId, string name, string description, int modelId, int maxUsers, int categoryId, RoomTradeType tradeSetting)
+    {
+        var entity = new RoomEntity
+        {
+            Name = name,
+            Description = description,
+            PlayerEntityId = ownerId,
+            UsersMax = maxUsers,
+            NavigatorCategoryEntityId = categoryId,
+            RoomModelEntityId = modelId,
+            TradeType = tradeSetting
+        };
+
+        context.Add(entity);
+
+        await context.SaveChangesAsync();
+
+        return entity;
+    }
+    
     public async Task<RoomEntity> FindAsync(int id) => await context.Rooms
         .FirstOrDefaultAsync(room => room.Id == id);
 

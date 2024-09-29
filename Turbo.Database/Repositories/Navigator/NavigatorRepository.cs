@@ -9,6 +9,9 @@ namespace Turbo.Database.Repositories.Navigator;
 
 public class NavigatorRepository(IEmulatorContext _context) : INavigatorRepository
 {
+    public async Task<NavigatorFlatCategoryEntity> FlatCategoryEntityByIdAsync(int categoryId) => await _context.NavigatorFlatCategories
+        .FirstOrDefaultAsync(entity => entity.Id == categoryId);
+
     public async Task<List<NavigatorFlatCategoryEntity>> GetFlatCategoriesAsync() => await _context.NavigatorFlatCategories
         .AsNoTracking()
         .Where(c => c.Visible)

@@ -158,6 +158,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IRoomMuteRepository, RoomMuteRepository>();
         services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<IRoomRightRepository, RoomRightRepository>();
+        services.AddScoped<IRoomEntryLogRepository, RoomEntryLogRepository>();
         services.AddScoped<ISecurityTicketRepository, SecurityTicketRepository>();
         services.AddScoped<INavigatorRepository, NavigatorRepository>();
         services.AddScoped<IPlayerChatStyleRepository, PlayerChatStyleRepository>();

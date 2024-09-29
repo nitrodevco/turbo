@@ -6,6 +6,7 @@ namespace Turbo.Database.Repositories.Navigator;
 
 public interface INavigatorRepository
 {
+    Task<NavigatorFlatCategoryEntity> FlatCategoryEntityByIdAsync(int categoryId);
     Task<List<NavigatorFlatCategoryEntity>> GetFlatCategoriesAsync();
     Task<List<NavigatorEventCategoryEntity>> GetEventCategoriesAsync();
     Task<List<NavigatorTopLevelContextEntity>> GetTopLevelContextsAsync();

@@ -15,12 +15,20 @@ public sealed class NavigatorMessageHandler(
 {
     public void Register()
     {
+        messageHub.Subscribe<CreateFlatMessage>(this, OnCreateFlatMessage);
         messageHub.Subscribe<GetUserFlatCatsMessage>(this, OnGetUserFlatCatsMessage);
         messageHub.Subscribe<GetGuestRoomMessage>(this, OnGetGuestRoomMessage);
         messageHub.Subscribe<NewNavigatorInitMessage>(this, OnNewNavigatorInitMessage);
         messageHub.Subscribe<NewNavigatorSearchMessage>(this, OnNewNavigatorSearchMessage);
         messageHub.Subscribe<AddFavouriteRoomMessage>(this, OnAddFavouriteRoomMessage);
         messageHub.Subscribe<DeleteFavouriteRoomMessage>(this, OnDeleteFavouriteRoomMessage);
+    }
+    
+    protected virtual async void OnCreateFlatMessage(CreateFlatMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+
+        await navigatorManager.CreateFlat(session.Player, message.FlatName, message.FlatDescription, message.FlatModelName, message.MaxPlayers, message.CategoryID, message.TradeSetting);
     }
 
     private async Task OnGetUserFlatCatsMessage(GetUserFlatCatsMessage message, ISession session)
@@ -46,12 +54,34 @@ public sealed class NavigatorMessageHandler(
         await navigatorManager.SendNavigatorEventCategories(session.Player);
     }
 
-    private async Task OnNewNavigatorSearchMessage(NewNavigatorSearchMessage message, ISession session)
+    protected virtual async void OnNewNavigatorSearchMessage(NewNavigatorSearchMessage message, ISession session)
     {
         if (session.Player == null) return;
-        var searchCode = message.SearchCodeOriginal?.ToLower() ?? string.Empty;
-        var searchTerm = message.FilteringData ?? string.Empty;
-        await navigatorManager.HandleNavigatorSearch(session.Player, searchCode, searchTerm);
+
+        string searchCode = message.SearchCodeOriginal?.ToLower() ?? string.Empty;
+        string searchTerm = message.FilteringData ?? string.Empty;
+        string filterMode = "anything";
+
+        if(!String.IsNullOrEmpty(searchTerm) && searchTerm.Contains(':'))
+        {
+            var parts = searchTerm.Split(new[] { ':' }, 2);
+
+            filterMode = parts[0].Trim() switch
+            {
+                "tag" => "tag",
+                "owner" => "owner",
+                "roomname" => "roomname",
+                "group" => "group",
+                _ => "anything"
+            };
+
+            if (!filterMode.Equals("anything"))
+            {
+                searchTerm = parts[1].Trim();
+            }
+        }
+
+        await navigatorManager.HandleNavigatorSearch(session.Player, searchCode, searchTerm, filterMode);
     }
 
     private async Task OnAddFavouriteRoomMessage(AddFavouriteRoomMessage message, ISession session)
