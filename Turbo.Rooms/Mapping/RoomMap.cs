@@ -372,8 +372,6 @@ namespace Turbo.Rooms.Mapping
         {
             if (avatarObject == null) return;
 
-            avatarObject.Logic.StopWalking();
-
             var currentTile = avatarObject.Logic.GetCurrentTile();
 
             if (currentTile != null)
@@ -383,6 +381,7 @@ namespace Turbo.Rooms.Mapping
             }
 
             avatarObject.Logic.GetNextTile()?.RemoveRoomObject(avatarObject);
+            avatarObject.Logic.StopWalking();
 
             if (!_room.IsInitialized) return;
 
