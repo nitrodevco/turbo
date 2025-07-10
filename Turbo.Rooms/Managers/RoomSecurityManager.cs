@@ -115,18 +115,19 @@ public class RoomSecurityManager(
         if (avatarObject.RoomObjectHolder is IPlayer player)
         {
             var isOwner = IsOwner(player);
+
+            player.Session.Send(new RoomEntryInfoMessage
+            {
+                RoomId = _room.Id,
+                Owner = isOwner
+            });
+
             controllerLevel = GetControllerLevel(player);
 
             player.Session.Send(new YouAreControllerMessage
             {
                 RoomId = _room.Id,
                 RoomControllerLevel = controllerLevel
-            });
-
-            player.Session.Send(new RoomEntryInfoMessage
-            {
-                RoomId = _room.Id,
-                Owner = isOwner
             });
 
             if (isOwner) player.Session.Send(new YouAreOwnerMessage());

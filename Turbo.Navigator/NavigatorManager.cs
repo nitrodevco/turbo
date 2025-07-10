@@ -18,6 +18,7 @@ using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Packets.Shared.Navigator;
+using Turbo.Rooms;
 using Turbo.Rooms.Utils;
 
 namespace Turbo.Navigator;
@@ -114,8 +115,7 @@ public class NavigatorManager(
         });
     }
 
-    public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false,
-        IPoint location = null)
+    public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null)
     {
         if (player == null || roomId <= 0) return;
 
@@ -231,29 +231,27 @@ public class NavigatorManager(
 
         using var scope = _serviceScopeFactory.CreateScope();
         var roomEnterLogRepository = scope.ServiceProvider.GetRequiredService<IRoomEntryLogRepository>();
-
         await roomEnterLogRepository.AddRoomEntryLogAsync(roomId, player.Id);
 
-        //Is this not send when creating a room?
-        await player.Session.Send(new FlatAccessibleMessage
-        {
-            RoomId = roomId,
-            Username = player.Name
-        });
+        if (location != null) 
+            _pendingRoomIds[player.Id].Location = new Point(location);
 
-        if (location != null) _pendingRoomIds[player.Id].Location = new Point(location);
+        await PrepareRoomConnection(player, room);
+        await ContinueEnteringRoom(player);
+    }
 
+    public async Task PrepareRoomConnection(IPlayer player, IRoom room)
+    {
         await player.Session.Send(new OpenConnectionMessage
         {
-            RoomId = roomId
+            RoomId = room.Id
         });
+
         await player.Session.Send(new RoomReadyMessage
         {
             RoomId = room.Id,
             RoomType = room.RoomModel.Name
         });
-
-        await ContinueEnteringRoom(player);
     }
 
     public async Task ContinueEnteringRoom(IPlayer player)

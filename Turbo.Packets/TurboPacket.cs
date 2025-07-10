@@ -14,10 +14,23 @@ public class TurboPacket : DefaultByteBufferHolder
 
     public override string ToString()
     {
-        var body = Content.ToString(Encoding.UTF8);
+        if (Content == null || Content.ReferenceCount <= 0)
+            return "[Released buffer]";
 
-        for (var i = 0; i < 13; i++) body = body.Replace(((char)i).ToString(), "[" + i + "]");
+        var copy = Content.Copy();
 
-        return body;
+        try
+        {
+            var body = copy.ToString(Encoding.UTF8);
+
+            for (var i = 0; i < 13; i++)
+                body = body.Replace(((char)i).ToString(), $"[{i}]");
+
+            return body;
+        }
+        finally
+        {
+            copy.Release();
+        }
     }
 }

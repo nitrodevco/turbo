@@ -111,7 +111,6 @@ public class AuthenticationMessageHandler(
 
         await session.Send(new ScrSendUserInfoMessage { });
         await session.Send(new BuildersClubSubscriptionStatusMessage { });
-        await session.Send(new UnseenItemsMessage { });
         await session.Send(new FigureSetIdsMessage { });
         await session.Send(new NoobnessLevelMessage { });
 

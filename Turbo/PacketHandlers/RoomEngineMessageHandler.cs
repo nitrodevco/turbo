@@ -20,6 +20,7 @@ public class RoomEngineMessageHandler(
 {
     public void Register()
     {
+        messageHub.Subscribe<ClickFurniMessage>(this, OnClickFurniMessage);
         messageHub.Subscribe<GetFurnitureAliasesMessage>(this, OnGetFurnitureAliasesMessage);
         messageHub.Subscribe<GetItemDataMessage>(this, OnGetItemDataMessage);
         messageHub.Subscribe<GetRoomEntryDataMessage>(this, OnGetRoomEntryDataMessage);
@@ -36,6 +37,13 @@ public class RoomEngineMessageHandler(
         messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
         messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
         messageHub.Subscribe<ShoutMessage>(this, OnShoutMessage);
+    }
+
+    protected virtual void OnClickFurniMessage(ClickFurniMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+
+        //User clicks furni
     }
 
     protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
@@ -91,19 +99,22 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnPickupObjectMessage(PickupObjectMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player?.RoomObject?.Room?.RoomFurnitureManager == null) return;
 
-        if (message.ObjectCategory == 10)
+        var furnitureManager = session.Player.RoomObject.Room.RoomFurnitureManager;
+
+        switch (message.ObjectCategory)
         {
-            session.Player.RoomObject?.Room?.RoomFurnitureManager?.RemoveFloorFurnitureByObjectId(session.Player,
-                message.ObjectId);
+            case 2:
+            case 10:
+                furnitureManager.RemoveFloorFurnitureByObjectId(session.Player, message.ObjectId);
+                break;
 
-            return;
+            case 1:
+            case 20:
+                furnitureManager.RemoveWallFurnitureByObjectId(session.Player, message.ObjectId);
+                break;
         }
-
-        if (message.ObjectCategory == 20)
-            session.Player.RoomObject?.Room?.RoomFurnitureManager?.RemoveWallFurnitureByObjectId(session.Player,
-                message.ObjectId);
     }
 
     protected virtual void OnPlaceObjectMessage(PlaceObjectMessage message, ISession session)

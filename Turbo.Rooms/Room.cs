@@ -133,7 +133,7 @@ public class Room : Component, IRoom
                 Property = RoomPropertyType.FLOOR,
                 Value = RoomDetails.PaintFloor.ToString()
             });
-        
+
         player.Session.SendQueue(new RoomPropertyMessage
         {
             Property = RoomPropertyType.LANDSCAPE,

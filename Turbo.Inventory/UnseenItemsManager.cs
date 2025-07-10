@@ -9,8 +9,7 @@ public class UnseenItemsManager(IPlayer player) : IUnseenItemsManager
 {
     private readonly IPlayer _player = player;
 
-    private readonly IDictionary<UnseenItemCategory, IList<int>> _unseenCategories =
-        new Dictionary<UnseenItemCategory, IList<int>>();
+    private readonly IDictionary<UnseenItemCategory, IList<int>> _unseenCategories = new Dictionary<UnseenItemCategory, IList<int>>();
 
     public void Commit()
     {

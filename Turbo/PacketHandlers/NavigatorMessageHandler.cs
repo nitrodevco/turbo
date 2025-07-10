@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Networking.Game.Clients;
@@ -40,6 +41,7 @@ public sealed class NavigatorMessageHandler(
     private async Task OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
     {
         if (session.Player == null) return;
+
         await navigatorManager.GetGuestRoomMessage(session.Player, message.RoomId, message.EnterRoom, message.RoomForward);
     }
 

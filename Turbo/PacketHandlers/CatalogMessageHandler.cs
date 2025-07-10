@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Turbo.Core.Game.Catalog;
@@ -22,6 +23,7 @@ public class CatalogMessageHandler(
         messageHub.Subscribe<PurchaseFromCatalogMessage>(this, OnPurchaseFromCatalogMessage);
         messageHub.Subscribe<GetProductOfferMessage>(this, OnGetProductOfferMessage);
         messageHub.Subscribe<GetBonusRareInfoMessage>(this, OnGetBonusRareInfoMessage);
+        messageHub.Subscribe<GetMarketplaceConfigurationMessage>(this, OnGetMarketplaceConfiguration);
     }
 
     public void OnGetCatalogIndexMessage(GetCatalogIndexMessage message, ISession session)
@@ -89,5 +91,13 @@ public class CatalogMessageHandler(
         if (session.Player == null) return;
 
         session.Send(new BonusRareInfoMessage { });
+    }
+
+    //TODO Don't know if this is supposed to be here.
+    protected virtual void OnGetMarketplaceConfiguration(GetMarketplaceConfigurationMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+
+        session.Send(new MarketplaceConfigurationMessage { });
     }
 }

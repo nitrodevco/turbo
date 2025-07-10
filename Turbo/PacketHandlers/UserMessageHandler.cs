@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
+using Turbo.Networking.Game.Clients;
 using Turbo.Packets.Incoming.Preferences;
 using Turbo.Packets.Incoming.Users;
 using Turbo.Packets.Outgoing.Users;
@@ -14,8 +16,24 @@ public class UserMessageHandler(
 {
     public void Register()
     {
+        messageHub.Subscribe<GetRelationshipStatusInfoMessage>(this, OnGetRelationshipStatusInfo);
         messageHub.Subscribe<GetSelectedBadgesMessage>(this, OnGetSelectedBadgesMessage);
         messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
+        messageHub.Subscribe<GetExtendedProfileMessage>(this, OnExtendedProfileMessage);
+    }
+
+    protected virtual async void OnGetRelationshipStatusInfo(GetRelationshipStatusInfoMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+
+        var player = playerManager.GetPlayerById(message.PlayerId) ?? await playerManager.GetOfflinePlayerById(message.PlayerId);
+
+        if (player == null) return;
+
+        await session.Send(new RelationshipStatusInfoMessage
+        {
+            Player = player
+        });
     }
 
     protected virtual async void OnGetSelectedBadgesMessage(GetSelectedBadgesMessage message, ISession session)
@@ -37,4 +55,19 @@ public class UserMessageHandler(
 
         session.Player.PlayerDetails?.SetPreferredChatStyleByClientId(message.StyleId);
     }
+
+    protected virtual async Task OnExtendedProfileMessage(GetExtendedProfileMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+
+        var player = playerManager.GetPlayerById(message.PlayerId) ?? await playerManager.GetOfflinePlayerById(message.PlayerId);
+
+        if (player == null) return;
+
+        await session.Send(new ExtendedProfileMessage
+        {
+            Player = player
+        });
+    }
+
 }

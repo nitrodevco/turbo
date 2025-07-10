@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Catalog;
 
@@ -21,7 +22,6 @@ public class CatalogRoot(ILogger<ICatalogPage> _logger) : CatalogPage(_logger, n
     public override void AddChild(ICatalogPage catalogPage)
     {
         if (catalogPage == null || Children.ContainsKey(catalogPage.Id)) return;
-
         Children.Add(catalogPage.Id, catalogPage);
 
         catalogPage.SetParent(this);

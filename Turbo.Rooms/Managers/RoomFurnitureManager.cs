@@ -186,8 +186,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (floorFurniture == null) return;
 
-        var pickupType = _room?.RoomSecurityManager?.GetFurniturePickupType(manipulator, floorFurniture) ??
-                         FurniturePickupType.None;
+        var pickupType = _room?.RoomSecurityManager?.GetFurniturePickupType(manipulator, floorFurniture) ?? FurniturePickupType.None;
 
         if (pickupType == FurniturePickupType.None) return;
 

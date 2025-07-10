@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Players;
+using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Utilities;
@@ -16,9 +17,8 @@ public interface INavigatorManager : IComponent
     public void ClearRoomStatus(IPlayer player);
     public Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool roomForward = false);
 
-    public Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false,
-        IPoint location = null);
-
+    public Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null);
+    public Task PrepareRoomConnection(IPlayer player, IRoom room);
     public Task ContinueEnteringRoom(IPlayer player);
     public Task SendNavigatorCategories(IPlayer player);
     public Task SendNavigatorSettings(IPlayer player);

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,7 +46,11 @@ public class Catalog(
     {
         if (player == null) return null;
 
-        if (Offers.TryGetValue(offerId, out var offer)) return offer;
+        if (Offers.TryGetValue(offerId, out var offer))
+        {
+            Console.WriteLine($"Offer Id: {offer.Id}, PageId: {offer.PageId}, LocalizationId: {offer.LocalizationId}, CostCredits: {offer.CostCredits}, CostCurrency: {offer.CostCurrency}, CurrencyType: {offer.CurrencyType}, ClubLevel: {offer.ClubLevel}");
+            return offer;
+        }
 
         return null;
     }

@@ -6,5 +6,5 @@ namespace Turbo.Packets.Outgoing.Notifications;
 
 public class UnseenItemsMessage : IComposer
 {
-    public IDictionary<UnseenItemCategory, IList<int>> Categories { get; init; }
+    public required IDictionary<UnseenItemCategory, IList<int>> Categories { get; init; }
 }

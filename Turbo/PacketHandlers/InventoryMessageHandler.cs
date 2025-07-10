@@ -1,6 +1,7 @@
 ﻿using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
+using Turbo.Packets.Incoming.Catalog;
 using Turbo.Packets.Incoming.Inventory.Badges;
 using Turbo.Packets.Incoming.Inventory.Furni;
 using Turbo.Packets.Incoming.Inventory.Purse;
@@ -18,8 +19,7 @@ public class InventoryMessageHandler(
         messageHub.Subscribe<GetBadgesMessage>(this, OnGetBadgesMessage);
         messageHub.Subscribe<SetActivatedBadgesMessage>(this, OnSetActivatedBadgesMessage);
         messageHub.Subscribe<RequestFurniInventoryMessage>(this, OnRequestFurniInventoryMessage);
-        messageHub.Subscribe<RequestFurniInventoryWhenNotInRoomMessage>(this,
-            OnRequestFurniInventoryWhenNotInRoomMessage);
+        messageHub.Subscribe<RequestFurniInventoryWhenNotInRoomMessage>(this, OnRequestFurniInventoryWhenNotInRoomMessage);
         messageHub.Subscribe<RequestRoomPropertySetMessage>(this, OnRequestRoomPropertySetMessage);
     }
 
@@ -59,9 +59,13 @@ public class InventoryMessageHandler(
         if (playerFurnitureInventory != null) playerFurnitureInventory.SendFurnitureToSession(session);
     }
 
-    protected virtual void OnRequestFurniInventoryWhenNotInRoomMessage(
-        RequestFurniInventoryWhenNotInRoomMessage message, ISession session)
+    protected virtual void OnRequestFurniInventoryWhenNotInRoomMessage(RequestFurniInventoryWhenNotInRoomMessage message, ISession session)
     {
+        if (session.Player == null) return;
+
+        var playerFurnitureInventory = session.Player.PlayerInventory.FurnitureInventory;
+
+        if (playerFurnitureInventory != null) playerFurnitureInventory.SendFurnitureToSession(session);
     }
 
     protected virtual void OnRequestRoomPropertySetMessage(RequestRoomPropertySetMessage message, ISession session)
