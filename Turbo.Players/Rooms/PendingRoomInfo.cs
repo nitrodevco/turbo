@@ -1,8 +1,9 @@
-﻿using Turbo.Core.Game.Navigator;
+﻿using Turbo.Core.Game.Players.Rooms;
 using Turbo.Core.Game.Rooms.Utils;
 
-namespace Turbo.Navigator;
+namespace Turbo.Players.Rooms;
 
+//TODO Move IPendingRoomInfo to Player.Rooms 
 public class PendingRoomInfo : IPendingRoomInfo
 {
     public int RoomId { get; set; }

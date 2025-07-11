@@ -1,7 +1,6 @@
 ﻿using Turbo.Core.Game.Rooms.Utils;
 
-namespace Turbo.Core.Game.Navigator;
-
+namespace Turbo.Core.Game.Players.Rooms;
 public interface IPendingRoomInfo
 {
     public int RoomId { get; set; }

@@ -1,27 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Entities.Room;
+using Turbo.Core.Database.Factories.Rooms;
 using Turbo.Core.Events;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Mapping;
+using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets.Messages;
 using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
-using Turbo.Core.Database.Entities.Room;
-using Turbo.Core.Database.Factories.Rooms;
 using Turbo.Events.Game.Rooms.Avatar;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Layout;
+using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Rooms.Cycles;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
-using Turbo.Packets.Outgoing.Room.Session;
 
 namespace Turbo.Rooms;
 
@@ -92,51 +93,6 @@ public class Room : Component, IRoom
 
     public void EnterRoom(IPlayer player, IPoint location = null)
     {
-        // ORDER OF PACKETS
-        //INCOMING GetGuestRoom
-        // GetGuestRoomResult
-
-        // Phase 1
-
-        // INCOMING OpenFlatConnection
-        // OpenConnection
-        // RoomReady
-        // RoomProperty
-        // YouAreController
-        // WiredPermissions
-        // YouAreOwner
-        // RoomRating
-
-        // INCOMING GetHabboGroupBadges
-        // INCOMING GetFurnitureAliases
-        // HabboGroupBadges
-        // FurnitureAliases
-
-        //Phase 2
-
-        //INCOMING GetHeightMap
-        // RoomEntryTile
-        // HeightMap
-        // FloorHeightMap
-
-        // Users - Send other users in room to session
-        // Objects
-        // Items
-        // Users - Send session to other users in room
-        // RoomVisualizationSettings
-        // RoomEntryInfo
-        // RoomEvent
-        // HanditemConfiguration
-        // UserUpdate - Send Once and ALL Players in room including the one entering
-
-        // INCOMING RequestCameraConfiguration
-        // INCOMING GetAchievements
-        // INCOMING RoomCompetitionInit
-        // INCOMING GetGuestRoomResult
-
-        // InitCamera
-        // Achievements
-        //GetGuestRoomResult
         if (player == null) return;
 
         player.Session.SendQueue(new RoomEntryTileMessage
@@ -154,69 +110,48 @@ public class Room : Component, IRoom
 
         player.Session.SendQueue(new FloorHeightMapMessage
         {
-            IsZoomedIn = true,
+            IsZoomedIn = false,
             WallHeight = RoomDetails.WallHeight,
             RoomModel = RoomModel
         });
 
-        player.Session.SendQueue(new RoomVisualizationSettingsMessage
+        player.Session.Flush();
+
+        AddObserver(player.Session);
+
+        RoomUserManager.AddPlayerToRoom(player);
+
+        RoomFurnitureManager.SendFurnitureToSession(player.Session);
+
+        var avatarObject = RoomUserManager.CreateRoomObjectAndAssign(player, location);
+
+        avatarObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int) RoomSecurityManager.GetControllerLevel(player)).ToString());
+
+        player.Session.Send(new RoomVisualizationSettingsMessage
         {
             WallsHidden = RoomDetails.HideWalls,
             FloorThickness = (int)RoomDetails.ThicknessFloor,
             WallThickness = (int)RoomDetails.ThicknessWall
         });
 
-        player.Session.SendQueue(new RoomEventMessage());
-        player.Session.SendQueue(new HanditemConfigurationMessage());
-
-        if (RoomDetails.PaintWall != 0.0)
-            player.Session.SendQueue(new RoomPropertyMessage
-            {
-                Property = RoomPropertyType.WALLPAPER,
-                Value = RoomDetails.PaintWall.ToString()
-            });
-
-        if (RoomDetails.PaintFloor != 0.0)
-            player.Session.SendQueue(new RoomPropertyMessage
-            {
-                Property = RoomPropertyType.FLOOR,
-                Value = RoomDetails.PaintFloor.ToString()
-            });
-
-        player.Session.SendQueue(new RoomPropertyMessage
+        player.Session.Send(new RoomEntryInfoMessage
         {
-            Property = RoomPropertyType.LANDSCAPE,
-            Value = RoomDetails.PaintLandscape.ToString()
+            RoomId = Id,
+            Owner = RoomSecurityManager.IsOwner(player)
         });
 
-        player.Session.Flush();
+        player.Session.Send(new RoomEventMessage());
+        player.Session.Send(new HanditemConfigurationMessage());
 
-        RoomFurnitureManager.SendFurnitureToSession(player.Session);
-
-        //Must Add Observer after sending player to others in room.
-        AddObserver(player.Session);
-
-        // apply muted from security
-
-        var roomObject = RoomUserManager.EnterRoom(player, location);
-
-        if (roomObject != null)
+        if (player.RoomObject != null)
         {
-            RoomSecurityManager.RefreshControllerLevel(roomObject);
-
             var message = _eventHub.Dispatch(new AvatarEnterRoomEvent
             {
-                Avatar = roomObject
+                Avatar = player.RoomObject
             });
 
-            if (message.IsCancelled) roomObject.Dispose();
+            if (message.IsCancelled) player.RoomObject.Dispose();
         }
-
-        player.Session.Send(new RoomRatingMessage
-        {
-            CurrentScore = 9999,
-            CanRate = false
-        });
     }
 
     public void AddObserver(ISession session)

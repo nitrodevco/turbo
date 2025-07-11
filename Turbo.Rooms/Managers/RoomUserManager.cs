@@ -133,11 +133,9 @@ public class RoomUserManager : Component, IRoomUserManager
         _room.TryDispose();
     }
 
-    public IRoomObjectAvatar EnterRoom(IPlayer player, IPoint location = null)
+    public void AddPlayerToRoom(IPlayer player)
     {
-        if (IsDisposing || player == null) return null;
-
-        var avatarObject = CreateRoomObjectAndAssign(player, location);
+        if (IsDisposing || player == null) return;
 
         List<IRoomObjectAvatar> roomObjects = new();
         List<IComposer> composers = new();
@@ -167,22 +165,19 @@ public class RoomUserManager : Component, IRoomUserManager
             }
         }
 
-        //At this time we are sending also our user which is incorrect.
         player.Session.SendQueue(new UsersMessage
         {
             RoomObjects = roomObjects
         });
 
-        player.Session.SendQueue(new UserUpdateMessage
-        {
-            RoomObjects = roomObjects
-        });
+        //player.Session.SendQueue(new UserUpdateMessage
+        //{
+        //    RoomObjects = roomObjects
+        //});
 
         foreach (var composer in composers) player.Session.SendQueue(composer);
 
         player.Session.Flush();
-
-        return avatarObject;
     }
 
     public void SendComposer(IComposer composer)

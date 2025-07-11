@@ -214,7 +214,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
         {
             if (player.RoomObject.Room != RoomObject.Room)
             {
-                await player.PlayerManager.EnterRoom(player, RoomObject.Room.Id, null, true, RoomObject.Location);
+                await player.PlayerManager.OpenRoom(player, RoomObject.Room.Id, null, true, RoomObject.Location);
             }
             else
             {

@@ -1,8 +1,9 @@
 ﻿namespace Turbo.Core.Game.Rooms.Constants;
 
-public class RoomPropertyType
+public static class RoomPropertyType
 {
-    public static string Wallpaper = "wallpaper";
-    public static string Floor = "floor";
-    public static string Landscape = "landscape";
+    public const string FLOOR = "floor";
+    public const string WALLPAPER = "wallpaper";
+    public const string LANDSCAPE = "landscape";
+    public const string LANSDSCAPEANIM = "landscapeanim";
 }

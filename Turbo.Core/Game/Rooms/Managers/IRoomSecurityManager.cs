@@ -21,7 +21,7 @@ public interface IRoomSecurityManager : IComponent
     public bool IsOwner(int? playerId);
     public bool IsPlayerBanned(IPlayer player);
     public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator);
-    public void RefreshControllerLevel(IRoomObjectAvatar avatarObject);
+    public void RefreshControllerLevel(IPlayer player);
     public void KickPlayer(IRoomManipulator manipulator, int playerId);
     public Task BanPlayerIdWithDuration(IRoomManipulator manipulator, int playerId, double durationMs);
     public Task AdjustRightsForPlayerId(IRoomManipulator manipulator, int playerId, bool flag);

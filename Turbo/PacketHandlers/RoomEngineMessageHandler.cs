@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
-using Turbo.Core.Game.Navigator;
-using Turbo.Core.Game.Rooms;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Networking.Game.Clients;
@@ -15,7 +14,7 @@ namespace Turbo.Main.PacketHandlers;
 
 public class RoomEngineMessageHandler(
     IPacketMessageHub messageHub,
-    INavigatorManager navigatorManager)
+    IPlayerManager playerManager)
     : IPacketHandlerManager
 {
     public void Register()
@@ -73,7 +72,7 @@ public class RoomEngineMessageHandler(
         //TODO WIN Version Doesn't need this
         if (session.Player == null) return;
 
-        await navigatorManager.ContinueEnteringRoom(session.Player);
+        await playerManager.EnterRoom(session.Player);
     }
 
     protected virtual void OnMoveAvatarMessage(MoveAvatarMessage message, ISession session)
@@ -207,13 +206,10 @@ public class RoomEngineMessageHandler(
         roomObject.Room?.RoomChatManager?.SendShoutForPlayer(session.Player, message.Text, message.StyleId);
     }
     
-    public virtual void OnGetHeightMapMessage(GetHeightMapMessage message, ISession session)
+    protected virtual async void OnGetHeightMapMessage(GetHeightMapMessage message, ISession session)
     {
-        // Seems like this event no longer used on latest versions of Habbo.
         if (session.Player == null) return;
 
-        //Send RoomEntryTile
-        //Send HeightMap
-        //Send FloorHeightMap
+        await playerManager.EnterRoom(session.Player);
     }
 }

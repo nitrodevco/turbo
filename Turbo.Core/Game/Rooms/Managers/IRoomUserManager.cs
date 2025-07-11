@@ -14,6 +14,6 @@ public interface IRoomUserManager : IComponent
     public IRoomObjectAvatar AddRoomObject(IRoomObjectAvatar avatarObject, IPoint location = null);
     public IRoomObjectAvatar CreateRoomObjectAndAssign(IRoomObjectAvatarHolder userHolder, IPoint location = null);
     public void RemoveRoomObject(IRoomObjectAvatar avatarObject);
-    public IRoomObjectAvatar EnterRoom(IPlayer player, IPoint location = null);
+    public void AddPlayerToRoom(IPlayer player);
     public void SendComposer(IComposer composer);
 }

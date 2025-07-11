@@ -14,23 +14,33 @@ public class ClientPacket : TurboPacket, IClientPacket
     public string PopString()
     {
         ushort length = Content.ReadUnsignedShort(); // Read the length as an unsigned short
+
         if (length == 0)
+        {
+            _log.Append("{s:\"\"}");
             return string.Empty;
+        }
 
         byte[] data = new byte[length];
         Content.ReadBytes(data); // Read the exact number of bytes into the array
+        string value = Encoding.UTF8.GetString(data); // Convert bytes to string
 
-        return Encoding.UTF8.GetString(data); // Convert bytes to string
+        _log.Append($"{{s:\"{value}\"}}");
+        return value;
     }
 
     public int PopInt()
     {
-        return Content.ReadInt();
+        int value = Content.ReadInt();
+        _log.Append($"{{i:{value}}}");
+        return value;
     }
 
     public bool PopBoolean()
     {
-        return Content.ReadByte() == 1;
+        bool value = Content.ReadByte() == 1;
+        _log.Append($"{{b:{value.ToString().ToLower()}}}");
+        return value;
     }
 
     public int RemainingLength()
@@ -40,17 +50,23 @@ public class ClientPacket : TurboPacket, IClientPacket
 
     public long PopLong()
     {
-        return Content.ReadLong();
+        long value = Content.ReadLong();
+        _log.Append($"{{l:{value}}}");
+        return value;
     }
 
     public short PopShort()
     {
-        return Content.ReadShort();
+        short value = Content.ReadShort();
+        _log.Append($"{{h:{value}}}");
+        return value;
     }
     
     public ushort PopUShort()
     {
-        return Content.ReadUnsignedShort();
+        ushort value = Content.ReadUnsignedShort();
+        _log.Append($"{{h:{value}}}");
+        return value;
     }
 
     public double PopDouble()
@@ -59,7 +75,10 @@ public class ClientPacket : TurboPacket, IClientPacket
         var parsed = double.TryParse(doubleString, out var result);
 
         if (parsed)
+        {
+            _log.Append($"{{d:{result}}}");
             return result;
+        }
 
         throw new FormatException($"'{doubleString}' is not a valid double!");
     }

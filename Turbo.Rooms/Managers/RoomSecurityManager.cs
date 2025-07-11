@@ -86,7 +86,7 @@ public class RoomSecurityManager(
     {
         if (manipulator != null)
         {
-            if (IsOwner(manipulator)) return RoomControllerLevel.Moderator;
+            if (IsOwner(manipulator)) return RoomControllerLevel.Owner;
 
             if (_room.IsGroupRoom)
             {
@@ -107,40 +107,33 @@ public class RoomSecurityManager(
         return RoomControllerLevel.None;
     }
 
-    public void RefreshControllerLevel(IRoomObjectAvatar avatarObject)
+    public void RefreshControllerLevel(IPlayer player)
     {
-        if (avatarObject == null) return;
+        if (player == null) return;
 
         var controllerLevel = RoomControllerLevel.None;
 
-        if (avatarObject.RoomObjectHolder is IPlayer player)
+        var isOwner = IsOwner(player);
+
+        controllerLevel = GetControllerLevel(player);
+
+        player.Session.Send(new YouAreControllerMessage
         {
-            var isOwner = IsOwner(player);
+            RoomId = _room.Id,
+            RoomControllerLevel = controllerLevel
+        });
 
-            player.Session.Send(new RoomEntryInfoMessage
+        player.Session.Send(new WiredPermissionsMessage
+        {
+            CanModify = true,
+            CanRead = true
+        });
+
+        if (isOwner) 
+            player.Session.Send(new YouAreOwnerMessage
             {
-                RoomId = _room.Id,
-                Owner = isOwner
+                RoomId = _room.Id
             });
-
-            controllerLevel = GetControllerLevel(player);
-
-            player.Session.Send(new YouAreControllerMessage
-            {
-                RoomId = _room.Id,
-                RoomControllerLevel = controllerLevel
-            });
-
-            player.Session.Send(new WiredPermissionsMessage
-            {
-                CanModify = true,
-                CanRead = true
-            });
-
-            if (isOwner) player.Session.Send(new YouAreOwnerMessage());
-        }
-
-        avatarObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)controllerLevel).ToString());
     }
 
     public void KickPlayer(IRoomManipulator manipulator, int playerId)
@@ -231,7 +224,10 @@ public class RoomSecurityManager(
 
         var player = _playerManager.GetPlayerById(playerId);
 
-        if (player != null && player.RoomObject != null) RefreshControllerLevel(player.RoomObject);
+        if (player != null) RefreshControllerLevel(player);
+
+        if(player.RoomObject != null) player.RoomObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int) GetControllerLevel(player)).ToString());
+
     }
 
     public async Task RemoveAllRights(IRoomManipulator manipulator)

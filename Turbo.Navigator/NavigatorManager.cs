@@ -9,17 +9,11 @@ using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
-using Turbo.Core.Game.Rooms.Utils;
 using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
-using Turbo.Database.Repositories.Room;
-using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Navigator;
-using Turbo.Packets.Outgoing.Room.Session;
 using Turbo.Packets.Shared.Navigator;
-using Turbo.Rooms;
-using Turbo.Rooms.Utils;
 
 namespace Turbo.Navigator;
 
@@ -36,7 +30,6 @@ public class NavigatorManager(
     private readonly IDictionary<int, INavigatorCollapsedCategories> _collapsedCategories =
         new Dictionary<int, INavigatorCollapsedCategories>();
 
-    private readonly ConcurrentDictionary<int, IPendingRoomInfo> _pendingRoomIds = new();
     private readonly IList<INavigatorTopLevelContext> _tabs = new List<INavigatorTopLevelContext>();
 
     private readonly ConcurrentDictionary<int, FavoriteRoomsCacheItem> _favoriteRoomCache = new();
@@ -69,32 +62,6 @@ public class NavigatorManager(
         });
     }
 
-    public int GetPendingRoomId(int userId) => _pendingRoomIds.TryGetValue(userId, out var info) ? info.RoomId : -1;
-
-    public void SetPendingRoomId(int userId, int roomId, bool approved = false)
-    {
-        if (userId <= 0 || roomId <= 0) return;
-
-        _pendingRoomIds.AddOrUpdate(
-            userId,
-            new PendingRoomInfo { RoomId = roomId, Approved = approved },
-            (key, existingVal) => new PendingRoomInfo { RoomId = roomId, Approved = approved }
-        );
-    }
-
-    public void ClearPendingRoomId(int userId) => _pendingRoomIds.Remove(userId, out var pendingRoomInfo);
-
-    public void ClearRoomStatus(IPlayer player)
-    {
-        if (player == null) return;
-
-        ClearPendingDoorbell(player);
-
-        var pendingRoomId = GetPendingRoomId(player.Id);
-
-        if (pendingRoomId == -1) player.Session?.Send(new CloseConnectionMessage());
-    }
-
     public async Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool roomForward = false)
     {
         if (player == null) return;
@@ -113,186 +80,6 @@ public class NavigatorManager(
             AllInRoomMuted = false,
             CanMute = false
         });
-    }
-
-    public async Task OpenRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null)
-    {
-        if (player == null || roomId <= 0) return;
-
-        var pendingRoomId = GetPendingRoomId(player.Id);
-
-        if (pendingRoomId == roomId) return;
-
-        SetPendingRoomId(player.Id, roomId);
-
-        player.ClearRoomObject();
-
-        var room = await _roomManager.GetRoom(roomId);
-
-        if (room != null) await room.InitAsync();
-
-        if (room == null || room.RoomModel == null)
-        {
-            ClearPendingRoomId(player.Id);
-
-            await player.Session.Send(new CantConnectMessage
-            {
-                Reason = CantConnectReason.Closed,
-                Parameter = ""
-            });
-
-            return;
-        }
-
-        if (!room.RoomSecurityManager.IsOwner(player))
-        {
-            if (room.RoomSecurityManager.IsPlayerBanned(player))
-            {
-                ClearPendingRoomId(player.Id);
-
-                await player.Session.Send(new CantConnectMessage
-                {
-                    Reason = CantConnectReason.Banned,
-                    Parameter = ""
-                });
-
-                return;
-            }
-
-            if (room.RoomDetails.UsersNow >= room.RoomDetails.UsersMax)
-            {
-                ClearPendingRoomId(player.Id);
-
-                await player.Session.Send(new CantConnectMessage
-                {
-                    Reason = CantConnectReason.Full,
-                    Parameter = ""
-                });
-
-                return;
-            }
-
-            if (!skipState)
-            {
-                #region RoomStateType.Locked
-
-                if (room.RoomDetails.State == RoomStateType.Locked)
-                {
-                    ClearPendingRoomId(player.Id);
-
-                    // doorbell
-                    // if rights do u need 2 wait
-                }
-
-                #endregion
-                #region RoomStateType.Password
-
-                else if (room.RoomDetails.State == RoomStateType.Password)
-                {
-                    if (!password.Equals(room.RoomDetails.Password))
-                    {
-                        ClearPendingRoomId(player.Id);
-
-                        await player.Session.Send(new GenericErrorMessage
-                        {
-                            ErrorCode = RoomGenericErrorType.InvalidPassword
-                        });
-
-                        return;
-                    }
-                }
-
-                #endregion
-                #region RoomStateType.Invisible
-
-                else if (room.RoomDetails.State == RoomStateType.Invisible)
-                {
-                    if (room.RoomSecurityManager.GetControllerLevel(player) == RoomControllerLevel.None)
-                    {
-                        ClearPendingRoomId(player.Id);
-
-                        await player.Session.Send(new CantConnectMessage
-                        {
-                            Reason = CantConnectReason.Closed,
-                            Parameter = ""
-                        });
-
-                        return;
-                    }
-                }
-
-                #endregion
-            }
-        }
-
-        ClearPendingDoorbell(player);
-
-        SetPendingRoomId(player.Id, roomId, true);
-
-        using var scope = _serviceScopeFactory.CreateScope();
-        var roomEnterLogRepository = scope.ServiceProvider.GetRequiredService<IRoomEntryLogRepository>();
-        await roomEnterLogRepository.AddRoomEntryLogAsync(roomId, player.Id);
-
-        if (location != null) 
-            _pendingRoomIds[player.Id].Location = new Point(location);
-
-        await PrepareRoomConnection(player, room);
-    }
-
-    public async Task PrepareRoomConnection(IPlayer player, IRoom room)
-    {
-        //Phase 1
-                // OpenConnection
-        // RoomReady
-        // RoomProperty
-        // YouAreController
-        // WiredPermissions
-        // YouAreOwner
-        // RoomRating
-        await player.Session.Send(new OpenConnectionMessage
-        {
-            RoomId = room.Id
-        });
-
-        await player.Session.Send(new RoomReadyMessage
-        {
-            RoomId = room.Id,
-            RoomType = room.RoomModel.Name
-        });
-    }
-
-    public async Task ContinueEnteringRoom(IPlayer player)
-    {
-        if (player == null) return;
-
-        if (!_pendingRoomIds.ContainsKey(player.Id) || !_pendingRoomIds[player.Id].Approved)
-        {
-            await player.Session.Send(new CantConnectMessage
-            {
-                Reason = CantConnectReason.Closed
-            });
-
-            return;
-        }
-
-        var roomId = _pendingRoomIds[player.Id].RoomId;
-
-        var room = await _roomManager.GetRoom(roomId);
-
-        if (room == null)
-            await player.Session.Send(new CantConnectMessage
-            {
-                Reason = CantConnectReason.Closed
-            });
-
-        if (room != null)
-        {
-            await room.InitAsync();
-
-            room.EnterRoom(player, _pendingRoomIds[player.Id].Location);
-        }
-
-        ClearPendingRoomId(player.Id);
     }
 
     public async Task SendNavigatorCategories(IPlayer player)

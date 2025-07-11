@@ -109,13 +109,13 @@ public class Session : ISession
             {
                 if (Revision.Parsers.TryGetValue(msg.Header, out var parser))
                 {
-                    _logger.LogInformation($"INCOMING [{parser.GetType().Name}] -> {msg.ToString()}"); //\n\t[{msg.Header}] -> {msg.ToString()}
+                    _logger.LogInformation($"{{in:{parser.GetType().Name}}}{msg.ToString()}");
 
                     await parser.HandleAsync(this, msg, _messageHub);
                 }
                 else
                 {
-                    _logger.LogWarning("No matching parser found for message {}", msg.Header);
+                    _logger.LogWarning("No matching parser found for incoming message {}", msg.Header);
                 }
             }
             catch (Exception ex)
@@ -137,7 +137,7 @@ public class Session : ISession
         {
             var packet = serializer.Serialize(_channel.Allocator.Buffer(), composer);
 
-            _logger.LogInformation($"OUTGOING [{composer.GetType().Name}] -> {packet.ToString()}"); //\n\t[{packet.Header}] -> {packet.ToString()}
+            _logger.LogInformation($"{{out:{composer.GetType().Name}}}{packet.ToString()}");
 
             try
             {
@@ -152,7 +152,7 @@ public class Session : ISession
         }
         else
         {
-            _logger.LogWarning($"No matching serializer found for message {composer.GetType().Name}");
+            _logger.LogWarning($"No matching serializer found for outgoing message {composer.GetType().Name}");
         }
     }
 

@@ -1,4 +1,5 @@
 ﻿using Turbo.Core.Game.Navigator;
+using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
@@ -9,7 +10,7 @@ namespace Turbo.Main.PacketHandlers;
 
 public class RoomSessionMessageHandler(
     IPacketMessageHub messageHub,
-    INavigatorManager navigatorManager)
+    IPlayerManager playerManager)
     : IPacketHandlerManager
 {
     public void Register()
@@ -22,7 +23,7 @@ public class RoomSessionMessageHandler(
     {
         if (session.Player == null) return;
 
-        await navigatorManager.OpenRoom(session.Player, message.RoomId);
+        await playerManager.OpenRoom(session.Player, message.RoomId);
     }
 
     protected virtual void OnQuitMessage(QuitMessage message, ISession session)
