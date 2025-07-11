@@ -19,6 +19,7 @@ using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Permissions;
 using Turbo.Packets.Outgoing.RoomSettings;
+using Turbo.Packets.Outgoing.UserDefinedRoomEvents.WiredMenu;
 using Turbo.Rooms.Object.Logic.Avatar;
 
 namespace Turbo.Rooms.Managers;
@@ -128,6 +129,12 @@ public class RoomSecurityManager(
             {
                 RoomId = _room.Id,
                 RoomControllerLevel = controllerLevel
+            });
+
+            player.Session.Send(new WiredPermissionsMessage
+            {
+                CanModify = true,
+                CanRead = true
             });
 
             if (isOwner) player.Session.Send(new YouAreOwnerMessage());

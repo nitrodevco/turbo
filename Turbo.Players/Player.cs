@@ -20,7 +20,6 @@ public class Player(
     public IPlayerInventory PlayerInventory { get; private set; }
     public IPlayerWallet PlayerWallet { get; private set; }
     public IPlayerPerks PlayerPerks { get; private set; }
-
     public ISession Session { get; private set; }
     public IRoomObjectAvatar RoomObject { get; private set; }
 

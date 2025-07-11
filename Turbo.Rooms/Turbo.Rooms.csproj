@@ -5,10 +5,10 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj"/>
-        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj"/>
-        <ProjectReference Include="..\Turbo.Furniture\Turbo.Furniture.csproj"/>
-        <ProjectReference Include="..\Turbo.Packets\Turbo.Packets.csproj"/>
-        <ProjectReference Include="..\Turbo.Events\Turbo.Events.csproj"/>
+        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
+        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
+        <ProjectReference Include="..\Turbo.Furniture\Turbo.Furniture.csproj" />
+        <ProjectReference Include="..\Turbo.Packets\Turbo.Packets.csproj" />
+        <ProjectReference Include="..\Turbo.Events\Turbo.Events.csproj" />
     </ItemGroup>
 </Project>

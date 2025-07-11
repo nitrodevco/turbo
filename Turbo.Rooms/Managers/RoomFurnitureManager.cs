@@ -703,7 +703,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
             }
         }
 
-        if (count <= 0) return;
+        //if (count <= 0) return;
 
         session.Send(new ObjectsMessage
         {
@@ -736,7 +736,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
             }
         }
 
-        if (count <= 0) return;
+        //if (count <= 0) return;
 
         session.Send(new ItemsMessage
         {

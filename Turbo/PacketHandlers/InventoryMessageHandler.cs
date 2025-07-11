@@ -1,10 +1,13 @@
-﻿using Turbo.Core.Networking.Game.Clients;
+﻿using System;
+using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Catalog;
+using Turbo.Packets.Incoming.Inventory.Achievements;
 using Turbo.Packets.Incoming.Inventory.Badges;
 using Turbo.Packets.Incoming.Inventory.Furni;
 using Turbo.Packets.Incoming.Inventory.Purse;
+using Turbo.Packets.Outgoing.Inventory.Achievements;
 using Turbo.Packets.Outgoing.Inventory.Purse;
 
 namespace Turbo.Main.PacketHandlers;
@@ -21,6 +24,7 @@ public class InventoryMessageHandler(
         messageHub.Subscribe<RequestFurniInventoryMessage>(this, OnRequestFurniInventoryMessage);
         messageHub.Subscribe<RequestFurniInventoryWhenNotInRoomMessage>(this, OnRequestFurniInventoryWhenNotInRoomMessage);
         messageHub.Subscribe<RequestRoomPropertySetMessage>(this, OnRequestRoomPropertySetMessage);
+        messageHub.Subscribe<GetAchievementsMessage>(this, OnGetAchievementsMessage);
     }
 
     protected virtual void OnGetCreditsInfoMessage(GetCreditsInfoMessage message, ISession session) 
@@ -70,5 +74,12 @@ public class InventoryMessageHandler(
 
     protected virtual void OnRequestRoomPropertySetMessage(RequestRoomPropertySetMessage message, ISession session)
     {
+    }
+
+    private void OnGetAchievementsMessage(GetAchievementsMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+
+        session.Send(new AchievementsMessage());
     }
 }

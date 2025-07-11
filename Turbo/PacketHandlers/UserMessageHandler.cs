@@ -6,6 +6,7 @@ using Turbo.Core.Packets;
 using Turbo.Networking.Game.Clients;
 using Turbo.Packets.Incoming.Preferences;
 using Turbo.Packets.Incoming.Users;
+using Turbo.Packets.Outgoing.GroupForums;
 using Turbo.Packets.Outgoing.Users;
 
 namespace Turbo.Main.PacketHandlers;
@@ -20,6 +21,7 @@ public class UserMessageHandler(
         messageHub.Subscribe<GetSelectedBadgesMessage>(this, OnGetSelectedBadgesMessage);
         messageHub.Subscribe<ChatStylePreferenceMessage>(this, OnChatStylePreferenceMessage);
         messageHub.Subscribe<GetExtendedProfileMessage>(this, OnExtendedProfileMessage);
+        messageHub.Subscribe<GetHabboGroupBadgesMessage>(this, OnGetHabboGroupBadgesMessageAsync);
     }
 
     protected virtual async void OnGetRelationshipStatusInfo(GetRelationshipStatusInfoMessage message, ISession session)
@@ -68,6 +70,13 @@ public class UserMessageHandler(
         {
             Player = player
         });
+    }
+
+    protected virtual async Task OnGetHabboGroupBadgesMessageAsync(GetHabboGroupBadgesMessage message, ISession session)
+    {
+        if (session.Player == null) return;
+
+        await session.Send(new HabboGroupBadgesMessage());
     }
 
 }

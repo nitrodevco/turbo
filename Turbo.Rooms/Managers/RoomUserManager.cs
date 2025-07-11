@@ -167,6 +167,7 @@ public class RoomUserManager : Component, IRoomUserManager
             }
         }
 
+        //At this time we are sending also our user which is incorrect.
         player.Session.SendQueue(new UsersMessage
         {
             RoomObjects = roomObjects

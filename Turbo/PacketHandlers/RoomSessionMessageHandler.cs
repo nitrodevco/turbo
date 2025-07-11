@@ -22,7 +22,7 @@ public class RoomSessionMessageHandler(
     {
         if (session.Player == null) return;
 
-        await navigatorManager.EnterRoom(session.Player, message.RoomId);
+        await navigatorManager.OpenRoom(session.Player, message.RoomId);
     }
 
     protected virtual void OnQuitMessage(QuitMessage message, ISession session)

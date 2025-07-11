@@ -37,6 +37,7 @@ public class RoomEngineMessageHandler(
         messageHub.Subscribe<ChatMessage>(this, OnChatMessage);
         messageHub.Subscribe<WhisperMessage>(this, OnWhisperMessage);
         messageHub.Subscribe<ShoutMessage>(this, OnShoutMessage);
+        messageHub.Subscribe<GetHeightMapMessage>(this, OnGetHeightMapMessage);
     }
 
     protected virtual void OnClickFurniMessage(ClickFurniMessage message, ISession session)
@@ -50,7 +51,7 @@ public class RoomEngineMessageHandler(
     {
         if (session.Player == null) return;
 
-        await session.Send(new FurnitureAliasesMessage
+        await session.SendQueue(new FurnitureAliasesMessage
         {
             Aliases = new Dictionary<string, string>()
         });
@@ -64,11 +65,12 @@ public class RoomEngineMessageHandler(
 
         if (room == null) return;
 
-        // post it note / wall item data
+        //TODO post it note / wall item data
     }
 
     protected virtual async void OnGetRoomEntryDataMessage(GetRoomEntryDataMessage message, ISession session)
     {
+        //TODO WIN Version Doesn't need this
         if (session.Player == null) return;
 
         await navigatorManager.ContinueEnteringRoom(session.Player);
@@ -203,5 +205,15 @@ public class RoomEngineMessageHandler(
         if (roomObject == null) return;
 
         roomObject.Room?.RoomChatManager?.SendShoutForPlayer(session.Player, message.Text, message.StyleId);
+    }
+    
+    public virtual void OnGetHeightMapMessage(GetHeightMapMessage message, ISession session)
+    {
+        // Seems like this event no longer used on latest versions of Habbo.
+        if (session.Player == null) return;
+
+        //Send RoomEntryTile
+        //Send HeightMap
+        //Send FloorHeightMap
     }
 }

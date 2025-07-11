@@ -1,5 +1,5 @@
 namespace Turbo.Core.PacketHandlers;
 
-public class ICatalogMessageHandler
+public interface ICatalogMessageHandler
 {
 }

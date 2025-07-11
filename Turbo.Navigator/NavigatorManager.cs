@@ -115,7 +115,7 @@ public class NavigatorManager(
         });
     }
 
-    public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null)
+    public async Task OpenRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null)
     {
         if (player == null || roomId <= 0) return;
 
@@ -237,11 +237,18 @@ public class NavigatorManager(
             _pendingRoomIds[player.Id].Location = new Point(location);
 
         await PrepareRoomConnection(player, room);
-        await ContinueEnteringRoom(player);
     }
 
     public async Task PrepareRoomConnection(IPlayer player, IRoom room)
     {
+        //Phase 1
+                // OpenConnection
+        // RoomReady
+        // RoomProperty
+        // YouAreController
+        // WiredPermissions
+        // YouAreOwner
+        // RoomRating
         await player.Session.Send(new OpenConnectionMessage
         {
             RoomId = room.Id

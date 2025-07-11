@@ -21,6 +21,7 @@ using Turbo.Packets.Outgoing.Room.Layout;
 using Turbo.Rooms.Cycles;
 using Turbo.Rooms.Managers;
 using Turbo.Rooms.Mapping;
+using Turbo.Packets.Outgoing.Room.Session;
 
 namespace Turbo.Rooms;
 
@@ -91,6 +92,51 @@ public class Room : Component, IRoom
 
     public void EnterRoom(IPlayer player, IPoint location = null)
     {
+        // ORDER OF PACKETS
+        //INCOMING GetGuestRoom
+        // GetGuestRoomResult
+
+        // Phase 1
+
+        // INCOMING OpenFlatConnection
+        // OpenConnection
+        // RoomReady
+        // RoomProperty
+        // YouAreController
+        // WiredPermissions
+        // YouAreOwner
+        // RoomRating
+
+        // INCOMING GetHabboGroupBadges
+        // INCOMING GetFurnitureAliases
+        // HabboGroupBadges
+        // FurnitureAliases
+
+        //Phase 2
+
+        //INCOMING GetHeightMap
+        // RoomEntryTile
+        // HeightMap
+        // FloorHeightMap
+
+        // Users - Send other users in room to session
+        // Objects
+        // Items
+        // Users - Send session to other users in room
+        // RoomVisualizationSettings
+        // RoomEntryInfo
+        // RoomEvent
+        // HanditemConfiguration
+        // UserUpdate - Send Once and ALL Players in room including the one entering
+
+        // INCOMING RequestCameraConfiguration
+        // INCOMING GetAchievements
+        // INCOMING RoomCompetitionInit
+        // INCOMING GetGuestRoomResult
+
+        // InitCamera
+        // Achievements
+        //GetGuestRoomResult
         if (player == null) return;
 
         player.Session.SendQueue(new RoomEntryTileMessage
@@ -120,6 +166,9 @@ public class Room : Component, IRoom
             WallThickness = (int)RoomDetails.ThicknessWall
         });
 
+        player.Session.SendQueue(new RoomEventMessage());
+        player.Session.SendQueue(new HanditemConfigurationMessage());
+
         if (RoomDetails.PaintWall != 0.0)
             player.Session.SendQueue(new RoomPropertyMessage
             {
@@ -140,22 +189,11 @@ public class Room : Component, IRoom
             Value = RoomDetails.PaintLandscape.ToString()
         });
 
-        // would be nice to send this from the navigator so we aren't duplicating code
-        player.Session.SendQueue(new GetGuestRoomResultMessage
-        {
-            EnterRoom = true,
-            Room = this,
-            IsRoomForward = false,
-            IsStaffPick = false,
-            IsGroupMember = false,
-            AllInRoomMuted = false,
-            CanMute = false
-        });
-
         player.Session.Flush();
 
         RoomFurnitureManager.SendFurnitureToSession(player.Session);
 
+        //Must Add Observer after sending player to others in room.
         AddObserver(player.Session);
 
         // apply muted from security
@@ -173,6 +211,12 @@ public class Room : Component, IRoom
 
             if (message.IsCancelled) roomObject.Dispose();
         }
+
+        player.Session.Send(new RoomRatingMessage
+        {
+            CurrentScore = 9999,
+            CanRate = false
+        });
     }
 
     public void AddObserver(ISession session)

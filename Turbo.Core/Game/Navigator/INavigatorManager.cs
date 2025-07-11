@@ -16,8 +16,7 @@ public interface INavigatorManager : IComponent
     public void ClearPendingRoomId(int userId);
     public void ClearRoomStatus(IPlayer player);
     public Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool roomForward = false);
-
-    public Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null);
+    public Task OpenRoom(IPlayer player, int roomId, string password = null, bool skipState = false, IPoint location = null);
     public Task PrepareRoomConnection(IPlayer player, IRoom room);
     public Task ContinueEnteringRoom(IPlayer player);
     public Task SendNavigatorCategories(IPlayer player);

@@ -7,9 +7,9 @@ using Turbo.Packets.Outgoing.Advertising;
 
 namespace Turbo.Main.PacketHandlers;
 
-public class AdvertisingHandler(
+public class AdvertisementMessageHandler(
     IPacketMessageHub messageHub,
-    ILogger<AdvertisingHandler> logger) : IPacketHandlerManager
+    ILogger<AdvertisementMessageHandler> logger) : IPacketHandlerManager
 {
     public void Register()
     {
@@ -19,7 +19,7 @@ public class AdvertisingHandler(
 
     private async void OnInterstitialMessage(GetInterstitialMessage message, ISession session)
     {
-        logger.LogInformation("Received InterstitialMessage");
+        if (session.Player == null) return;
 
         await session.Send(new InterstitialMessage()
             {

@@ -135,7 +135,7 @@ public class PlayerManager(
     }
 
     public async Task EnterRoom(IPlayer player, int roomId, string password = null, bool skipState = false,
-        IPoint location = null) => await _navigatorManager.EnterRoom(player, roomId, password, skipState, location);
+        IPoint location = null) => await _navigatorManager.OpenRoom(player, roomId, password, skipState, location);
 
     public async Task<string> GetPlayerName(int playerId)
     {
