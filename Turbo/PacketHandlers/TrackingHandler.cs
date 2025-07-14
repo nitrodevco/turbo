@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Entities.Tracking;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
-using Turbo.Core.Database.Entities.Tracking;
 using Turbo.Database.Repositories.Tracking;
 using Turbo.Packets.Incoming.Tracking;
 using Turbo.Packets.Outgoing.Tracking;
@@ -23,22 +23,22 @@ public class TrackingHandler(
         messageHub.Subscribe<PerformanceLogMessage>(this, OnPerformanceTracker);
         messageHub.Subscribe<LagWarningReportMessage>(this, OnLagWarningReport);
     }
-    
+
     private async void OnLatencyPingReport(LatencyPingReportMessage message, ISession session)
     {
-        logger.LogInformation("Latency Ping Report: {0} {1} {2} from {3}", message.AverageLatency, message.ValidPingAverage, message.NumPings, session.IPAddress);
+        logger.LogInformation("\u001b[93mLatency Ping Report: {0} {1} {2} from {3}\u001b[0m", message.AverageLatency, message.ValidPingAverage, message.NumPings, session.IPAddress);
     }
-    
+
     private async void OnLatencyPingRequest(LatencyPingRequestMessage message, ISession session)
     {
-        logger.LogInformation("Latency Ping Request: {0} from {1}", message.ID, session.IPAddress);
-        
+        logger.LogInformation("\u001b[93mLatency Ping Request: {0} from {1}\u001b[0m", message.ID, session.IPAddress);
+
         await session.Send(new LatencyPingResponseMessage()
         {
             ID = message.ID
         });
     }
-    
+
     private async Task OnPerformanceTracker(PerformanceLogMessage message, ISession session)
     {
         using var scope = serviceScopeFactory.CreateScope();
@@ -59,7 +59,7 @@ public class TrackingHandler(
 
         await performanceLogRepository.AddAsync(performanceLog);
     }
-    
+
     public async void OnLagWarningReport(LagWarningReportMessage message, ISession session)
     {
         logger.LogInformation("Lag Warning Report: {0} from {1}", message.WarningCount, session.IPAddress);

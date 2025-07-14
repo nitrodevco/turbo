@@ -1,8 +1,6 @@
-﻿using System;
-using Turbo.Core.Networking.Game.Clients;
+﻿using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
-using Turbo.Packets.Incoming.Catalog;
 using Turbo.Packets.Incoming.Inventory.Achievements;
 using Turbo.Packets.Incoming.Inventory.Badges;
 using Turbo.Packets.Incoming.Inventory.Furni;
@@ -27,11 +25,12 @@ public class InventoryMessageHandler(
         messageHub.Subscribe<GetAchievementsMessage>(this, OnGetAchievementsMessage);
     }
 
-    protected virtual void OnGetCreditsInfoMessage(GetCreditsInfoMessage message, ISession session) 
+    protected virtual void OnGetCreditsInfoMessage(GetCreditsInfoMessage message, ISession session)
     {
         if (session.Player == null) return;
 
-        session.Send(new CreditBalanceMessage { 
+        session.Send(new CreditBalanceMessage
+        {
             credits = 100
         });
     }

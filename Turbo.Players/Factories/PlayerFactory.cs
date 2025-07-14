@@ -1,10 +1,8 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
-using Turbo.Core.Game.Players;
 using Turbo.Core.Database.Entities.Players;
-using Turbo.Core.Database.Factories;
 using Turbo.Core.Database.Factories.Players;
-using Turbo.Inventory.Factories;
+using Turbo.Core.Game.Players;
 
 namespace Turbo.Players.Factories;
 
@@ -20,7 +18,7 @@ public class PlayerFactory(
         var inventory = _playerInventoryFactory.Create(player);
         var wallet = new PlayerWallet(player, _serviceScopeFactory);
         var perks = new PlayerPerks(player, _serviceScopeFactory);
-        
+
 
         player.SetInventory(inventory);
         player.SetWallet(wallet);

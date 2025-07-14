@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Turbo.Database.Context;
 using Turbo.Core.Database.Entities.Tracking;
+using Turbo.Database.Context;
 
 namespace Turbo.Database.Repositories.Tracking;
 
@@ -11,7 +11,7 @@ public class PerformanceLogRepository(IEmulatorContext _context) : IPerformanceL
         return await _context.PerformanceLogs
             .FindAsync(id);
     }
-    
+
     public async Task AddAsync(PerformanceLogEntity entity)
     {
         _context.PerformanceLogs.Add(entity);

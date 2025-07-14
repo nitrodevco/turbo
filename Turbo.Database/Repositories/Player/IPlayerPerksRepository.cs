@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Database.Entities.Players;
-using Turbo.Core.Game.Players;
 
 namespace Turbo.Database.Repositories.Player;
 
 public interface IPlayerPerksRepository : IBaseRepository<PlayerPerksEntity>
 {
     public Task<List<PlayerPerksEntity>> FindAllByPlayerIdAsync(int playerId);
-    
+
     public Task<bool> IsCitizenAsync(int playerId);
     public Task<bool> IsVoteInCompetitionsAsync(int playerId);
     public Task<bool> IsTrade(int playerId);

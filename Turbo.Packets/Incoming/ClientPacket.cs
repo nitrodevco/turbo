@@ -61,7 +61,7 @@ public class ClientPacket : TurboPacket, IClientPacket
         _log.Append($"{{h:{value}}}");
         return value;
     }
-    
+
     public ushort PopUShort()
     {
         ushort value = Content.ReadUnsignedShort();

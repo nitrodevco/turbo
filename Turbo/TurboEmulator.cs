@@ -72,7 +72,7 @@ public class TurboEmulator(
         Console.WriteLine();
 
         SetDefaultCulture(CultureInfo.InvariantCulture);
-        
+
         var packetHandlers = _serviceProvider.GetServices<IPacketHandlerManager>();
         foreach (var packetHandler in packetHandlers)
         {

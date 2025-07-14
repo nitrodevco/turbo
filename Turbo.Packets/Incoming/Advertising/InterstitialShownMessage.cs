@@ -4,5 +4,5 @@ namespace Turbo.Packets.Incoming.Advertising;
 
 public class InterstitialShownMessage : IMessageEvent
 {
-    
+
 }

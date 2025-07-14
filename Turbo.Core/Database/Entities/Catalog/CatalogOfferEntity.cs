@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Core.Database.Attributes;
@@ -9,9 +8,9 @@ namespace Turbo.Core.Database.Entities.Catalog;
 [Table("catalog_offers")]
 public class CatalogOfferEntity : Entity
 {
-    [Column("page_id")] [Required] public int CatalogPageEntityId { get; set; }
+    [Column("page_id")][Required] public int CatalogPageEntityId { get; set; }
 
-    [Column("localization_id")] [Required] public string LocalizationId { get; set; }
+    [Column("localization_id")][Required] public string LocalizationId { get; set; }
 
     [Column("cost_credits")]
     [Required]

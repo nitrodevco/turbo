@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;
 using Turbo.Networking.Clients;
-using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Incoming.Tracking;
-using Turbo.Packets.Outgoing.Handshake;
 using Turbo.Packets.Outgoing.Tracking;
 
 namespace Turbo.Networking.Game.Clients;
@@ -80,7 +77,7 @@ public class SessionManager : ISessionManager
     private async Task Process()
     {
         var tasks = new ConcurrentBag<Task>();
-        
+
         foreach (var session in _clients.Values)
         {
             if (session == null) continue;
@@ -94,7 +91,7 @@ public class SessionManager : ISessionManager
                 Console.WriteLine($"Error creating task for session: {ex}");
             }
         }
-        
+
         await Task.WhenAll(tasks);
     }
 

@@ -8,9 +8,9 @@ namespace Turbo.Core.Database.Entities.Players;
 [Index(nameof(PlayerEntityId), nameof(BadgeCode), IsUnique = true)]
 public class PlayerBadgeEntity : Entity
 {
-    [Column("player_id")] [Required] public int PlayerEntityId { get; set; }
+    [Column("player_id")][Required] public int PlayerEntityId { get; set; }
 
-    [Column("badge_code")] [Required] public string BadgeCode { get; set; }
+    [Column("badge_code")][Required] public string BadgeCode { get; set; }
 
     [Column("slot_id")] public int? SlotId { get; set; }
 

@@ -8,9 +8,9 @@ namespace Turbo.Core.Database.Entities.Players;
 [Index(nameof(PlayerEntityId), nameof(ChatStyleId), IsUnique = true)]
 public class PlayerChatStyleOwnedEntity : Entity
 {
-    [Column("player_id")] [Required] public int PlayerEntityId { get; set; }
+    [Column("player_id")][Required] public int PlayerEntityId { get; set; }
 
-    [Column("chat_style_id")] [Required] public int ChatStyleId { get; set; }
+    [Column("chat_style_id")][Required] public int ChatStyleId { get; set; }
 
     [ForeignKey(nameof(PlayerEntityId))] public PlayerEntity PlayerEntity { get; set; }
 

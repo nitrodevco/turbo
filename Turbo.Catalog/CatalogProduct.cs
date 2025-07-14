@@ -1,10 +1,10 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Entities.Catalog;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Players;
-using Turbo.Core.Database.Entities.Catalog;
 
 namespace Turbo.Catalog;
 

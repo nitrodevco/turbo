@@ -4,5 +4,5 @@ namespace Turbo.Packets.Outgoing.Tracking;
 
 public class PingMessage : IComposer
 {
-    
+
 }

@@ -10,13 +10,11 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Game.Rooms.Managers;
-using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Packets.Messages;
 using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
-using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Packets.Outgoing.Room.Permissions;
 using Turbo.Packets.Outgoing.RoomSettings;
 using Turbo.Packets.Outgoing.UserDefinedRoomEvents.WiredMenu;
@@ -129,7 +127,7 @@ public class RoomSecurityManager(
             CanRead = true
         });
 
-        if (isOwner) 
+        if (isOwner)
             player.Session.Send(new YouAreOwnerMessage
             {
                 RoomId = _room.Id
@@ -226,7 +224,7 @@ public class RoomSecurityManager(
 
         if (player != null) RefreshControllerLevel(player);
 
-        if(player.RoomObject != null) player.RoomObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int) GetControllerLevel(player)).ToString());
+        if (player.RoomObject != null) player.RoomObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)GetControllerLevel(player)).ToString());
 
     }
 

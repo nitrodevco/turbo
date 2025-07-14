@@ -5,7 +5,6 @@ using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms.Constants;
-using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Packets.Messages;
 using Turbo.Core.Utilities;
 

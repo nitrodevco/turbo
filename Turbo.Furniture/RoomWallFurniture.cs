@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Entities.Furniture;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Storage;
-using Turbo.Core.Database.Entities.Furniture;
 
 namespace Turbo.Furniture;
 

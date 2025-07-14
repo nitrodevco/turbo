@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Concurrent;
-using System.Threading;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
@@ -109,13 +108,13 @@ public class Session : ISession
             {
                 if (Revision.Parsers.TryGetValue(msg.Header, out var parser))
                 {
-                    _logger.LogInformation($"{{in:{parser.GetType().Name}}}{msg.ToString()}");
+                    _logger.LogInformation($"\u001b[94mINCOMING[{msg.Header}] -> {{in:{parser.GetType().Name}}}{msg.ToString()}\u001b[0m");
 
                     await parser.HandleAsync(this, msg, _messageHub);
                 }
                 else
                 {
-                    _logger.LogWarning("No matching parser found for incoming message {}", msg.Header);
+                    _logger.LogWarning("\u001b[91mNo matching parser found for incoming message {}\u001b[0m", msg.Header);
                 }
             }
             catch (Exception ex)
@@ -137,7 +136,7 @@ public class Session : ISession
         {
             var packet = serializer.Serialize(_channel.Allocator.Buffer(), composer);
 
-            _logger.LogInformation($"{{out:{composer.GetType().Name}}}{packet.ToString()}");
+            _logger.LogInformation($"\u001b[92mOUTGOING[{packet.Header}] -> {{out:{composer.GetType().Name}}}{packet.ToString()}\u001b[0m");
 
             try
             {
@@ -152,7 +151,7 @@ public class Session : ISession
         }
         else
         {
-            _logger.LogWarning($"No matching serializer found for outgoing message {composer.GetType().Name}");
+            _logger.LogWarning($"\u001b[91mNo matching serializer found for outgoing message {composer.GetType().Name}\u001b[0m");
         }
     }
 

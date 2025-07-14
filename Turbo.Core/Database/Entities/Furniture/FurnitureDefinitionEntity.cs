@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +11,11 @@ namespace Turbo.Core.Database.Entities.Furniture;
 [Index(nameof(SpriteId), nameof(Type), IsUnique = true)]
 public class FurnitureDefinitionEntity : Entity
 {
-    [Column("sprite_id")] [Required] public int SpriteId { get; set; }
+    [Column("sprite_id")][Required] public int SpriteId { get; set; }
 
-    [Column("public_name")] [Required] public string PublicName { get; set; }
+    [Column("public_name")][Required] public string PublicName { get; set; }
 
-    [Column("product_name")] [Required] public string ProductName { get; set; }
+    [Column("product_name")][Required] public string ProductName { get; set; }
 
     [Column("type")]
     [Required]

@@ -1,10 +1,10 @@
 ﻿using System;
+using Turbo.Core.Database.Entities.Room;
 using Turbo.Core.Game;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
 using Turbo.Core.Storage;
-using Turbo.Core.Database.Entities.Room;
 using Turbo.Packets.Outgoing.Navigator;
 using Turbo.Packets.Outgoing.Room.Chat;
 using Turbo.Packets.Outgoing.Room.Engine;
@@ -152,7 +152,7 @@ public class RoomDetails(
     }
 
     public int ModelId => _roomEntity.RoomModelEntityId;
-    
+
     public int? CategoryId => _roomEntity.NavigatorCategoryEntityId;
 
     public int UsersNow

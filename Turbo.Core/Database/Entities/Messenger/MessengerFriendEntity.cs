@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Core.Database.Attributes;
@@ -12,9 +11,9 @@ namespace Turbo.Core.Database.Entities.Messenger;
 [Index(nameof(PlayerEntityId), nameof(FriendPlayerEntityId), IsUnique = true)]
 public class MessengerFriendEntity : Entity
 {
-    [Column("player_id")] [Required] public int PlayerEntityId { get; set; }
+    [Column("player_id")][Required] public int PlayerEntityId { get; set; }
 
-    [Column("requested_id")] [Required] public int FriendPlayerEntityId { get; set; }
+    [Column("requested_id")][Required] public int FriendPlayerEntityId { get; set; }
 
     [Column("category_id")] public int? MessengerCategoryEntityId { get; set; }
 

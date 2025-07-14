@@ -1,7 +1,7 @@
-﻿using Turbo.Core.Game;
+﻿using Turbo.Core.Database.Entities.Furniture;
+using Turbo.Core.Game;
 using Turbo.Core.Game.Furniture.Constants;
 using Turbo.Core.Game.Furniture.Definition;
-using Turbo.Core.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Definition;
 

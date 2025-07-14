@@ -3,7 +3,6 @@ using Turbo.Core.Game.Players;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
-using Turbo.Networking.Game.Clients;
 using Turbo.Packets.Incoming.Preferences;
 using Turbo.Packets.Incoming.Users;
 using Turbo.Packets.Outgoing.GroupForums;

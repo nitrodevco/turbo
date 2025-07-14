@@ -2,21 +2,21 @@ using System.Collections.Generic;
 
 namespace Turbo.Core.Configuration;
 
-public class IGameConfig 
+public class IGameConfig
 {
     public IHostConfig Tcp { get; init; }
     public IWhiteListedHostConfig WebSocket { get; init; }
     public IWhiteListedHostConfig Rcon { get; init; }
 }
 
-public class IHostConfig 
+public class IHostConfig
 {
     public bool Enabled { get; init; }
     public string Host { get; init; }
     public int Port { get; init; }
 }
 
-public class IWhiteListedHostConfig 
+public class IWhiteListedHostConfig
 {
     public bool Enabled { get; init; }
     public string Host { get; init; }

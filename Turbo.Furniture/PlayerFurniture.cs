@@ -1,8 +1,8 @@
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Entities.Furniture;
 using Turbo.Core.Game.Furniture.Data;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Inventory;
-using Turbo.Core.Database.Entities.Furniture;
 using Turbo.Furniture.Data;
 
 namespace Turbo.Furniture;

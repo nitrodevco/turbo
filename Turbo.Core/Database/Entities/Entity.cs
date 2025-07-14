@@ -6,7 +6,7 @@ namespace Turbo.Core.Database.Entities;
 
 public abstract class Entity
 {
-    [Key] [Column("id")] public int Id { get; set; }
+    [Key][Column("id")] public int Id { get; set; }
 
     [Column("created_at")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,7 +15,7 @@ public abstract class Entity
     [Column("updated_at")]
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public DateTime UpdatedAt { get; set; }
-    
+
     [Column("deleted_at")]
     [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
     public DateTime? DeletedAt { get; set; }

@@ -1,10 +1,10 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Turbo.Core.Database.Entities.Catalog;
+using Turbo.Core.Database.Factories.Catalog;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Catalog.Constants;
 using Turbo.Core.Game.Furniture;
-using Turbo.Core.Database.Entities.Catalog;
-using Turbo.Core.Database.Factories.Catalog;
 
 namespace Turbo.Catalog.Factories;
 

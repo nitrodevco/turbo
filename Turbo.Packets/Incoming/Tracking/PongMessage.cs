@@ -4,5 +4,5 @@ namespace Turbo.Packets.Incoming.Tracking;
 
 public class PongMessage : IMessageEvent
 {
-    
+
 }

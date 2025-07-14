@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
@@ -18,7 +17,7 @@ internal class CameraMessageHandler(
 
     private async void OnInitCameraMessage(RequestCameraConfigurationMessage message, ISession session)
     {
-        if(session.Player == null) return;
+        if (session.Player == null) return;
 
         await session.Send(new InitCameraMessage
         {

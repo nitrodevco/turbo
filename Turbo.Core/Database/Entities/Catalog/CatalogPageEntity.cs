@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Core.Database.Attributes;
@@ -16,7 +15,7 @@ public class CatalogPageEntity : Entity
     [MaxLength(50)]
     public required string Localization { get; set; }
 
-    [Column("name")] 
+    [Column("name")]
     [MaxLength(50)]
     public string? Name { get; set; }
 

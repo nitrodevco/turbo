@@ -22,13 +22,13 @@ public class AdvertisementMessageHandler(
         if (session.Player == null) return;
 
         await session.Send(new InterstitialMessage()
-            {
-                imageUrl = "https://images.habbo.com/c_images/AdWarningsUK/ad_warning_L.png",
-                clickUrl = "https://habbo.com"
-            }
+        {
+            imageUrl = "https://images.habbo.com/c_images/AdWarningsUK/ad_warning_L.png",
+            clickUrl = "https://habbo.com"
+        }
         );
     }
-    
+
     private async void OnInterstitialShownMessage(InterstitialShownMessage message, ISession session)
     {
         logger.LogInformation("Received InterstitialShownMessage");

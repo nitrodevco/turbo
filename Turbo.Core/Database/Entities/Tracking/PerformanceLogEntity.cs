@@ -9,25 +9,25 @@ namespace Turbo.Core.Database.Entities.Tracking;
 [Index(nameof(ElapsedTime))]
 public class PerformanceLogEntity
 {
-    [Key] [DatabaseGenerated(DatabaseGeneratedOption.Identity)] [Column("id")] public int Id { get; set; }
-    
-    [Column("elapsed_time")] [Required] public int ElapsedTime { get; set; }
+    [Key][DatabaseGenerated(DatabaseGeneratedOption.Identity)][Column("id")] public int Id { get; set; }
 
-    [Column("user_agent")] [Required] public string UserAgent { get; set; }
+    [Column("elapsed_time")][Required] public int ElapsedTime { get; set; }
 
-    [Column("flash_version")] [Required] public string FlashVersion { get; set; }
+    [Column("user_agent")][Required] public string UserAgent { get; set; }
 
-    [Column("os")] [Required] public string OS { get; set; }
+    [Column("flash_version")][Required] public string FlashVersion { get; set; }
 
-    [Column("browser")] [Required] public string Browser { get; set; }
+    [Column("os")][Required] public string OS { get; set; }
 
-    [Column("is_debugger")] [Required] public bool IsDebugger { get; set; }
+    [Column("browser")][Required] public string Browser { get; set; }
 
-    [Column("memory_usage")] [Required] public int MemoryUsage { get; set; }
+    [Column("is_debugger")][Required] public bool IsDebugger { get; set; }
 
-    [Column("garbage_collections")] [Required] public int GarbageCollections { get; set; }
+    [Column("memory_usage")][Required] public int MemoryUsage { get; set; }
 
-    [Column("average_frame_rate")] [Required] public int AverageFrameRate { get; set; }
+    [Column("garbage_collections")][Required] public int GarbageCollections { get; set; }
 
-    [Column("ip_address")] [Required] [MaxLength(45)] public string IPAddress { get; set; }
+    [Column("average_frame_rate")][Required] public int AverageFrameRate { get; set; }
+
+    [Column("ip_address")][Required][MaxLength(45)] public string IPAddress { get; set; }
 }

@@ -50,23 +50,23 @@ public class RoomMap : IRoomMap
         Map = new byte[totalX, totalY];
 
         for (var y = 0; y < totalY; y++)
-        for (var x = 0; x < totalX; x++)
-            Map[x, y] = 1;
+            for (var x = 0; x < totalX; x++)
+                Map[x, y] = 1;
 
         for (var y = 0; y < totalY; y++)
-        for (var x = 0; x < totalX; x++)
-        {
-            var height = roomModel.GetTileHeight(x, y);
-            var state = roomModel.GetTileState(x, y);
+            for (var x = 0; x < totalX; x++)
+            {
+                var height = roomModel.GetTileHeight(x, y);
+                var state = roomModel.GetTileState(x, y);
 
-            var roomTile = new RoomTile(new Point(x, y), height, state);
+                var roomTile = new RoomTile(new Point(x, y), height, state);
 
-            if (_map.Count - 1 < x) _map.Add(x, new Dictionary<int, IRoomTile>());
+                if (_map.Count - 1 < x) _map.Add(x, new Dictionary<int, IRoomTile>());
 
-            _map[x].Add(y, roomTile);
+                _map[x].Add(y, roomTile);
 
-            Tiles.Add(roomTile);
-        }
+                Tiles.Add(roomTile);
+            }
 
         var doorTile = GetTile(roomModel.DoorLocation);
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Core.Database.Attributes;
@@ -13,11 +12,11 @@ namespace Turbo.Core.Database.Entities.Room;
 [Table("rooms")]
 public class RoomEntity : Entity
 {
-    [Column("name")] [Required] public string Name { get; set; }
+    [Column("name")][Required] public string Name { get; set; }
 
     [Column("description")] public string? Description { get; set; }
 
-    [Column("player_id")] [Required] public int PlayerEntityId { get; set; }
+    [Column("player_id")][Required] public int PlayerEntityId { get; set; }
 
     [Column("state")]
     [Required]
@@ -27,7 +26,7 @@ public class RoomEntity : Entity
 
     [Column("password")] public string? Password { get; set; }
 
-    [Column("model_id")] [Required] public int RoomModelEntityId { get; set; }
+    [Column("model_id")][Required] public int RoomModelEntityId { get; set; }
 
     [Column("category_id")] public int? NavigatorCategoryEntityId { get; set; }
 

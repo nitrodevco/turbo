@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Turbo.Catalog.Factories;
 using Turbo.Core.Database.Factories.Catalog;
 using Turbo.Core.Game.Catalog;
 using Turbo.Core.Game.Catalog.Constants;

@@ -1,5 +1,4 @@
-﻿using Turbo.Core.Game.Rooms;
-using Turbo.Core.Networking.Game.Clients;
+﻿using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.Room.Furniture;

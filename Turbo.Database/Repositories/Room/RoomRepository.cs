@@ -29,7 +29,7 @@ public class RoomRepository(IEmulatorContext context) : IRoomRepository
 
         return entity;
     }
-    
+
     public async Task<RoomEntity> FindAsync(int id) => await context.Rooms
         .FirstOrDefaultAsync(room => room.Id == id);
 

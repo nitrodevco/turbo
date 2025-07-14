@@ -32,7 +32,7 @@ public class NavigatorFlatCategoryEntity : Entity
     [Column("staff_only")]
     [Required]
     public bool StaffOnly { get; set; }
-    
+
     [Column("min_rank"), DefaultValue(1)]
     [Required]
     public int MinRank { get; set; }

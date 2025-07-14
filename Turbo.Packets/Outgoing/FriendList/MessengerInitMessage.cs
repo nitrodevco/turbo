@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Turbo.Core.Packets.Messages;
+﻿using Turbo.Core.Packets.Messages;
 
 namespace Turbo.Packets.Outgoing.FriendList;
-public record MessengerInitMessage : IComposer;
+public record MessengerInitMessage : IComposer
+{
+    public int userFriendLimit { get; init; }
+    public int normalFriendLimit { get; init; }
+    public int extendedFriendLimit { get; init; }
+    //public List<IMessengerCategory> categories { get; init; }
+}

@@ -8,9 +8,9 @@ namespace Turbo.Core.Database.Entities.Navigator;
 [Index(nameof(SearchCode), IsUnique = true)]
 public class NavigatorTopLevelContextEntity : Entity
 {
-    [Column("search_code")] [Required] public string SearchCode { get; set; }
-    
-    [Column("visible")] [Required] public bool Visible { get; set; }
+    [Column("search_code")][Required] public string SearchCode { get; set; }
 
-    [Column("order_num")] [Required] public int OrderNum { get; set; }
+    [Column("visible")][Required] public bool Visible { get; set; }
+
+    [Column("order_num")][Required] public int OrderNum { get; set; }
 }

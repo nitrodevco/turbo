@@ -125,7 +125,7 @@ public class Room : Component, IRoom
 
         var avatarObject = RoomUserManager.CreateRoomObjectAndAssign(player, location);
 
-        avatarObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int) RoomSecurityManager.GetControllerLevel(player)).ToString());
+        avatarObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)RoomSecurityManager.GetControllerLevel(player)).ToString());
 
         player.Session.Send(new RoomVisualizationSettingsMessage
         {

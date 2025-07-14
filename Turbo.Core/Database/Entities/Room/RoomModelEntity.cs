@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Core.Database.Attributes;
@@ -11,9 +10,9 @@ namespace Turbo.Core.Database.Entities.Room;
 [Index(nameof(Name), IsUnique = true)]
 public class RoomModelEntity : Entity
 {
-    [Column("name")] [Required] public string Name { get; set; }
+    [Column("name")][Required] public string Name { get; set; }
 
-    [Column("model")] [Required] public string Model { get; set; }
+    [Column("model")][Required] public string Model { get; set; }
 
     [Column("door_x")]
     [Required]

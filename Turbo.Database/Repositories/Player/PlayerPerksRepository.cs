@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
-using Turbo.Core.Database.Entities.Players;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Game.Players;
+using Turbo.Core.Database.Entities.Players;
 using Turbo.Database.Context;
 
 namespace Turbo.Database.Repositories.Player;
 
 public class PlayerPerksRepository(IEmulatorContext _context) : IPlayerPerksRepository
 {
-    
+
     public async Task<PlayerPerksEntity> FindAsync(int id)
     {
         return await _context.PlayerPerks
@@ -21,7 +20,7 @@ public class PlayerPerksRepository(IEmulatorContext _context) : IPlayerPerksRepo
     {
         return await _context.PlayerPerks
             .Where(entity => entity.PlayerEntityId == playerId)
-            .ToListAsync();  
+            .ToListAsync();
     }
 
     public async Task<bool> IsCitizenAsync(int playerId)

@@ -10,7 +10,7 @@ public class PlayerPerks(
     IPlayer _player,
     IServiceScopeFactory _serviceScopeFactory) : Component, IPlayerPerks
 {
-    
+
     protected override async Task OnInit()
     {
         await LoadPerks();
@@ -27,13 +27,13 @@ public class PlayerPerks(
         var perksRepository = scope.ServiceProvider.GetService<IPlayerPerksRepository>();
 
         var entities = await perksRepository.FindAllByPlayerIdAsync(_player.Id);
-        
+
         if (entities != null)
             foreach (var perkEntity in entities)
             {
             }
     }
-    
+
     public async Task<bool> HasPerkAsync(string perk)
     {
         using var scope = _serviceScopeFactory.CreateScope();
@@ -71,7 +71,7 @@ public class PlayerPerks(
                 return await perksRepository.IsCameraAsync(_player.Id);
             default:
                 return false;
-            
+
         }
     }
 }

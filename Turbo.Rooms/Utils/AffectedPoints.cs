@@ -27,8 +27,8 @@ public class AffectedPoints
         if (rotation == Rotation.East || rotation == Rotation.West) (length, width) = (width, length);
 
         for (var x = point.X; x < point.X + width; x++)
-        for (var y = point.Y; y < point.Y + length; y++)
-            points.Add(new Point(x, y));
+            for (var y = point.Y; y < point.Y + length; y++)
+                points.Add(new Point(x, y));
 
         return points;
     }

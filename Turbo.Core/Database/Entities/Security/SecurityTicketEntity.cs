@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 using Turbo.Core.Database.Attributes;
@@ -14,9 +13,9 @@ public class SecurityTicketEntity : Entity
 {
     [Column("player_id")] public int PlayerEntityId { get; set; }
 
-    [Column("ticket")] [Required] public string Ticket { get; set; }
+    [Column("ticket")][Required] public string Ticket { get; set; }
 
-    [Column("ip_address")] [Required] public string IpAddress { get; set; }
+    [Column("ip_address")][Required] public string IpAddress { get; set; }
 
     [Column("is_locked")]
     [DefaultValueSql(false)]

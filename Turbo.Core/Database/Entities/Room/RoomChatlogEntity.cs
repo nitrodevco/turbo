@@ -7,9 +7,9 @@ namespace Turbo.Core.Database.Entities.Room;
 [Table("room_chatlogs")]
 public class RoomChatlogEntity : Entity
 {
-    [Column("room_id")] [Required] public int RoomEntityId { get; set; }
+    [Column("room_id")][Required] public int RoomEntityId { get; set; }
 
-    [Column("player_id")] [Required] public int PlayerEntityId { get; set; }
+    [Column("player_id")][Required] public int PlayerEntityId { get; set; }
 
     [Column("target_player_id")] public int? TargetPlayerEntityId { get; set; }
 

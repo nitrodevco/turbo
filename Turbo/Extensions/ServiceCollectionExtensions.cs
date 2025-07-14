@@ -110,6 +110,7 @@ public static class ServiceCollectionExtensions
         services.AddTransient<IPacketHandlerManager, TrackingHandler>();
         services.AddTransient<IPacketHandlerManager, AdvertisementMessageHandler>();
         services.AddTransient<IPacketHandlerManager, CameraMessageHandler>();
+        services.AddTransient<IPacketHandlerManager, FriendListMessageHandler>();
     }
 
     public static void AddManagers(this IServiceCollection services)

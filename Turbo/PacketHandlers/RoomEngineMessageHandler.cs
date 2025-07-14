@@ -205,7 +205,7 @@ public class RoomEngineMessageHandler(
 
         roomObject.Room?.RoomChatManager?.SendShoutForPlayer(session.Player, message.Text, message.StyleId);
     }
-    
+
     protected virtual async void OnGetHeightMapMessage(GetHeightMapMessage message, ISession session)
     {
         if (session.Player == null) return;

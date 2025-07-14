@@ -191,7 +191,7 @@ public class DefaultValueSqlAttribute : Attribute
     public DefaultValueSqlAttribute(object? value)
     {
         var type = value?.GetType();
-    
+
         if (type == null)
         {
             _value = "NULL"; // Handle null case appropriately

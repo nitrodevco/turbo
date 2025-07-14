@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using Turbo.Core.Database.Attributes;
 using Turbo.Core.Database.Entities.Players;
 using Turbo.Core.Database.Entities.Room;
@@ -16,9 +15,9 @@ public class FurnitureEntity : Entity
 
     [Column("room_id")] public int? RoomEntityId { get; set; }
 
-    [Column("x")] [DefaultValueSql("0")] public int X { get; set; } = 0;
+    [Column("x")][DefaultValueSql("0")] public int X { get; set; } = 0;
 
-    [Column("y")] [DefaultValueSql("0")] public int Y { get; set; } = 0;
+    [Column("y")][DefaultValueSql("0")] public int Y { get; set; } = 0;
 
     [Column("z", TypeName = "double(10,3)")]
     [DefaultValueSql(0.0d)]

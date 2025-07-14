@@ -1,6 +1,5 @@
-﻿using Turbo.Core.Game.Navigator;
-using Turbo.Core.Database.Entities.Navigator;
-using Turbo.Packets.Shared.Navigator;
+﻿using Turbo.Core.Database.Entities.Navigator;
+using Turbo.Core.Game.Navigator;
 
 namespace Turbo.Navigator;
 

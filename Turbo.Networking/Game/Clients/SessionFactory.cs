@@ -12,7 +12,7 @@ public class SessionFactory(IServiceProvider provider) : ISessionFactory
     public ISession Create(IChannelHandlerContext context, IRevision initialRevision)
     {
         var logger = provider.GetService<ILogger<Session>>();
-        
+
         return ActivatorUtilities.CreateInstance<Session>(provider, context, initialRevision, logger);
     }
 }

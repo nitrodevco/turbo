@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Turbo.Core.Database.Factories;
 using Turbo.Core.Database.Factories.Furniture;
 using Turbo.Core.Events;
 using Turbo.Core.Game;
@@ -20,7 +19,6 @@ using Turbo.Core.Utilities;
 using Turbo.Database.Repositories.Furniture;
 using Turbo.Database.Repositories.Player;
 using Turbo.Events.Game.Rooms.Furniture;
-using Turbo.Furniture.Factories;
 using Turbo.Packets.Outgoing.Room.Engine;
 using Turbo.Rooms.Object;
 using Turbo.Rooms.Object.Logic.Furniture;

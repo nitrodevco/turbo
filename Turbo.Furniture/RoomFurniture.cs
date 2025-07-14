@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Entities.Furniture;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object.Constants;
-using Turbo.Core.Database.Entities.Furniture;
 
 namespace Turbo.Furniture;
 

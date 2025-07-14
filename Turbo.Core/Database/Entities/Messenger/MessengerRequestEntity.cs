@@ -9,9 +9,9 @@ namespace Turbo.Core.Database.Entities.Messenger;
 [Index(nameof(PlayerEntityId), nameof(RequestedPlayerEntityId), IsUnique = true)]
 public class MessengerRequestEntity : Entity
 {
-    [Column("player_id")] [Required] public int PlayerEntityId { get; set; }
+    [Column("player_id")][Required] public int PlayerEntityId { get; set; }
 
-    [Column("requested_id")] [Required] public int RequestedPlayerEntityId { get; set; }
+    [Column("requested_id")][Required] public int RequestedPlayerEntityId { get; set; }
 
     [ForeignKey(nameof(PlayerEntityId))] public PlayerEntity PlayerEntity { get; set; }
 
