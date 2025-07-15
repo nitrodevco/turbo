@@ -56,7 +56,7 @@ public class RoomSettingsMessageHandler(
 
         foreach (var playerId in room.RoomSecurityManager.Bans.Keys)
         {
-            var player = playerManager.GetPlayerById(playerId);
+            var player = await playerManager.GetPlayerById(playerId);
 
             if (player != null)
             {
@@ -98,7 +98,7 @@ public class RoomSettingsMessageHandler(
 
         foreach (var playerId in room.RoomSecurityManager.Rights)
         {
-            var player = playerManager.GetPlayerById(playerId);
+            var player = await playerManager.GetPlayerById(playerId);
 
             if (player != null)
             {

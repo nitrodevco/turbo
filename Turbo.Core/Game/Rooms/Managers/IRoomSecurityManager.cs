@@ -17,11 +17,11 @@ public interface IRoomSecurityManager : IComponent
     public bool IsStrictOwner(IRoomManipulator manipulator);
     public bool IsStrictOwner(int? playerId);
     public bool IsOwner(IRoomManipulator manipulator);
-    public bool IsOwner(int? playerId);
+    public Task<bool> IsOwner(int? playerId);
     public bool IsPlayerBanned(IPlayer player);
     public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator);
     public void RefreshControllerLevel(IPlayer player);
-    public void KickPlayer(IRoomManipulator manipulator, int playerId);
+    public Task KickPlayer(IRoomManipulator manipulator, int playerId);
     public Task BanPlayerIdWithDuration(IRoomManipulator manipulator, int playerId, double durationMs);
     public Task AdjustRightsForPlayerId(IRoomManipulator manipulator, int playerId, bool flag);
     public Task RemoveAllRights(IRoomManipulator manipulator);

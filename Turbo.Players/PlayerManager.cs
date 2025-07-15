@@ -38,33 +38,33 @@ public class PlayerManager(
 
     public List<PlayerChatStyleEntity> PlayerChatStyles { get; } = [];
 
-    public IPlayer GetPlayerById(int id)
+    public async Task<IPlayer> GetPlayerById(int id)
     {
-        if (id <= 0 || !_players.TryGetValue(id, out var value)) return null;
+        if (id <= 0) return null;
 
-        return value;
+        if (_players.TryGetValue(id, out var value))
+            return value;
+
+        return await GetOfflinePlayerById(id);
     }
 
-    public IPlayer GetPlayerByUsername(string username)
+    public async Task<IPlayer> GetPlayerByUsername(string username)
     {
-        if (username.Length == 0) return null;
+        if (string.IsNullOrWhiteSpace(username))
+            return null;
 
         foreach (var player in _players.Values)
         {
-            if (player == null || !player.Name.Equals(username)) continue;
-
-            return player;
+            if (player == null) continue;
+            if (string.Equals(player.Name, username))
+                return player;
         }
 
-        return null;
+        return await GetOfflinePlayerByUsername(username);
     }
 
     public async Task<IPlayer> GetOfflinePlayerById(int id)
     {
-        var player = GetPlayerById(id);
-
-        if (player != null) return player;
-
         try
         {
             using var scope = _serviceScopeFactory.CreateScope();
@@ -75,26 +75,37 @@ public class PlayerManager(
 
             if (playerEntity == null) return null;
 
-            player = _playerFactory.Create(playerEntity);
+            return _playerFactory.Create(playerEntity);
         }
 
         catch (Exception ex)
         {
+            _logger.LogError(ex, "\u001b[91mError fetching offline player by ID\u001b[0m");
+            return null;
         }
-
-        return player;
     }
 
-    public async Task<IPlayer> GetOfflinePlayerByUsername(string username)
+    private async Task<IPlayer> GetOfflinePlayerByUsername(string username)
     {
-        var player = GetPlayerByUsername(username);
+        try
+        {
+            using var scope = _serviceScopeFactory.CreateScope();
 
-        if (player != null) return player;
+            var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
 
-        // lookup in repository
-        // create new Player(this, PlayerEntity);
+            var playerDTO = await playerRepository.FindUserIdAsync(username);
 
-        return null;
+            if (playerDTO == null) return null;
+
+            var playerEntity = await playerRepository.FindAsync(playerDTO.Id);
+
+            return _playerFactory.Create(playerEntity);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "\u001b[91mError fetching offline player by username\u001b[0m");
+            return null;
+        }
     }
 
     public async Task<IPlayer> CreatePlayer(int id, ISession session)
@@ -124,7 +135,7 @@ public class PlayerManager(
     {
         if (id <= 0) return;
 
-        var player = GetPlayerById(id);
+        var player = await GetPlayerById(id);
 
         if (player == null) return;
 
@@ -147,7 +158,7 @@ public class PlayerManager(
 
     public async Task<string> GetPlayerName(int playerId)
     {
-        var player = GetPlayerById(playerId);
+        var player = await GetPlayerById(playerId);
 
         if (player != null) return player.Name;
 
@@ -162,7 +173,7 @@ public class PlayerManager(
     {
         if (playerId <= 0) return null;
 
-        var player = GetPlayerById(playerId);
+        var player = await GetPlayerById(playerId);
 
         if (player == null)
         {
@@ -181,7 +192,6 @@ public class PlayerManager(
     protected override async Task OnInit() => await LoadChatStyles();
 
     protected override async Task OnDispose() => await RemoveAllPlayers();
-
     public async Task LoadChatStyles()
     {
         using var scope = _serviceScopeFactory.CreateScope();
@@ -337,7 +347,7 @@ public class PlayerManager(
             }
         }
 
-        ClearPendingDoorbell();
+        ClearPendingDoorbell(player);
 
         SetPendingRoomId(player.Id, roomId, true);
 
@@ -420,11 +430,5 @@ public class PlayerManager(
         }
 
         ClearPendingRoomId(player.Id);
-    }
-
-    public void ClearPendingDoorbell()
-    {
-
-        // remove user from pending doorbells
     }
 }

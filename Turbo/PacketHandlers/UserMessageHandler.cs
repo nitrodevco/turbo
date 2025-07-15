@@ -27,7 +27,7 @@ public class UserMessageHandler(
     {
         if (session.Player == null) return;
 
-        var player = playerManager.GetPlayerById(message.PlayerId) ?? await playerManager.GetOfflinePlayerById(message.PlayerId);
+        var player = await playerManager.GetPlayerById(message.PlayerId);
 
         if (player == null) return;
 
@@ -61,7 +61,7 @@ public class UserMessageHandler(
     {
         if (session.Player == null) return;
 
-        var player = playerManager.GetPlayerById(message.PlayerId) ?? await playerManager.GetOfflinePlayerById(message.PlayerId);
+        var player = await playerManager.GetPlayerById(message.PlayerId);
 
         if (player == null) return;
 

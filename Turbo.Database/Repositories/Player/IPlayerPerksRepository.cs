@@ -17,7 +17,7 @@ public interface IPlayerPerksRepository : IBaseRepository<PlayerPerksEntity>
     public Task<bool> IsUseGuideToolAsync(int playerId);
     public Task<bool> IsMouseZoomAsync(int playerId);
     public Task<bool> IsHabboClubOfferBetaAsync(int playerId);
-    public Task<bool> IsNavigatorPhaseTwo2024Async(int playerId);
+    public Task<bool> IsNavigatorPhaseTwo2014Async(int playerId);
     public Task<bool> IsUnityTradeAsync(int playerId);
     public Task<bool> IsBuilderAtWorkAsync(int playerId);
     public Task<bool> IsCameraAsync(int playerId);

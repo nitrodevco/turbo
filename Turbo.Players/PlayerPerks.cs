@@ -62,7 +62,7 @@ public class PlayerPerks(
             case "HABBO_CLUB_OFFER_BETA":
                 return await perksRepository.IsHabboClubOfferBetaAsync(_player.Id);
             case "NAVIGATOR_PHASE_TWO_2014":
-                return await perksRepository.IsNavigatorPhaseTwo2024Async(_player.Id);
+                return await perksRepository.IsNavigatorPhaseTwo2014Async(_player.Id);
             case "UNITY_TRADE":
                 return await perksRepository.IsUnityTradeAsync(_player.Id);
             case "BUILDER_AT_WORK":

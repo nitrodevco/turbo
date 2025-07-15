@@ -172,7 +172,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
         RemoveFloorFurniture(manipulator, floorFurniture);
     }
 
-    public void RemoveFloorFurniture(IRoomManipulator manipulator, IRoomFloorFurniture floorFurniture)
+    public async Task RemoveFloorFurniture(IRoomManipulator manipulator, IRoomFloorFurniture floorFurniture)
     {
         var message = _eventHub.Dispatch(new RemoveFloorFurnitureEvent
         {
@@ -195,7 +195,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
         FloorFurniture.Remove(floorFurniture.Id);
         floorFurniture.ClearRoomObject();
 
-        var player = _playerManager.GetPlayerById(pickerId);
+        var player = await _playerManager.GetPlayerById(pickerId);
 
         if (player == null)
         {
@@ -298,7 +298,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
         RemoveWallFurniture(manipulator, wallFurniture);
     }
 
-    public void RemoveWallFurniture(IRoomManipulator manipulator, IRoomWallFurniture wallFurniture)
+    public async Task RemoveWallFurniture(IRoomManipulator manipulator, IRoomWallFurniture wallFurniture)
     {
         var message = _eventHub.Dispatch(new RemoveWallFurnitureEvent
         {
@@ -322,7 +322,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
         WallFurniture.Remove(wallFurniture.Id);
         wallFurniture.ClearRoomObject();
 
-        var player = _playerManager.GetPlayerById(pickerId);
+        var player = await _playerManager.GetPlayerById(pickerId);
 
         if (player == null)
         {

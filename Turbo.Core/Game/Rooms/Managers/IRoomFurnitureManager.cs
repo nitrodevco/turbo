@@ -26,13 +26,13 @@ public interface IRoomFurnitureManager : IComponent
     public void RemoveFloorRoomObject(IRoomObjectFloor floorObject);
     public void RemoveFloorFurnitureById(IRoomManipulator manipulator, int furniId);
     public void RemoveFloorFurnitureByObjectId(IRoomManipulator manipulator, int objectId);
-    public void RemoveFloorFurniture(IRoomManipulator manipulator, IRoomFloorFurniture floorFurniture);
+    public Task RemoveFloorFurniture(IRoomManipulator manipulator, IRoomFloorFurniture floorFurniture);
     public IRoomObjectWall AddWallRoomObject(IRoomObjectWall wallObject, string location);
     public Task<IRoomObjectWall> CreateWallRoomObjectAndAssign(IRoomObjectWallHolder wallHolder, string location);
     public void RemoveWallRoomObject(IRoomObjectWall wallObject);
     public void RemoveWallFurnitureById(IRoomManipulator manipulator, int furniId);
     public void RemoveWallFurnitureByObjectId(IRoomManipulator manipulator, int objectId);
-    public void RemoveWallFurniture(IRoomManipulator manipulator, IRoomWallFurniture wallFurniture);
+    public Task RemoveWallFurniture(IRoomManipulator manipulator, IRoomWallFurniture wallFurniture);
 
     public bool CanPlaceOnTop(IRoomObjectFloor bottomObject, IRoomObjectFloor topLogic);
     public bool IsValidPlacement(IRoomObjectFloor roomObject, IPoint point);

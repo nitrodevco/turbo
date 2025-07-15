@@ -78,7 +78,7 @@ public class PlayerPerksRepository(IEmulatorContext _context) : IPlayerPerksRepo
             .AnyAsync(entity => entity.PlayerEntityId == playerId && entity.HabboClubOfferBeta);
     }
 
-    public Task<bool> IsNavigatorPhaseTwo2024Async(int playerId)
+    public Task<bool> IsNavigatorPhaseTwo2014Async(int playerId)
     {
         return _context.PlayerPerks
             .AnyAsync(entity => entity.PlayerEntityId == playerId && entity.NavigatorPhaseTwo2014);

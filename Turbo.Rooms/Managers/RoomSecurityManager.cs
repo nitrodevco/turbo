@@ -51,13 +51,13 @@ public class RoomSecurityManager(
         return manipulator?.HasPermission("any_room_owner") ?? false;
     }
 
-    public bool IsOwner(int? playerId)
+    public async Task<bool> IsOwner(int? playerId)
     {
         if (playerId <= 0) return false;
 
         if (IsStrictOwner(playerId)) return true;
 
-        var player = _playerManager.GetPlayerById((int)playerId);
+        var player = await _playerManager.GetPlayerById((int)playerId);
 
         if (player != null) return player.HasPermission("any_room_owner");
 
@@ -134,11 +134,11 @@ public class RoomSecurityManager(
             });
     }
 
-    public void KickPlayer(IRoomManipulator manipulator, int playerId)
+    public async Task KickPlayer(IRoomManipulator manipulator, int playerId)
     {
         if (playerId <= 0) return;
 
-        var player = _playerManager.GetPlayerById(playerId);
+        var player = await _playerManager.GetPlayerById(playerId);
 
         if (player == null || !CanKickPlayer(manipulator)) return;
 
@@ -150,14 +150,14 @@ public class RoomSecurityManager(
     public async Task BanPlayerIdWithDuration(IRoomManipulator manipulator, int playerId, double durationMs)
     {
         if (playerId <= 0 || durationMs == 0.0 || Bans.ContainsKey(playerId) ||
-            !CanAdjustPlayerBan(manipulator, true) || IsOwner(playerId)) return;
+            !CanAdjustPlayerBan(manipulator, true) || await IsOwner(playerId)) return;
 
         using var scope = _serviceScopeFactory.CreateScope();
 
         var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
         var roomBanRepository = scope.ServiceProvider.GetService<IRoomBanRepository>();
 
-        var player = _playerManager.GetPlayerById(playerId);
+        var player = await _playerManager.GetPlayerById(playerId);
 
         if (player == null)
         {
@@ -181,7 +181,7 @@ public class RoomSecurityManager(
 
     public async Task AdjustRightsForPlayerId(IRoomManipulator manipulator, int playerId, bool flag)
     {
-        if (manipulator != null && ((manipulator.Id != playerId && !IsOwner(manipulator)) || IsOwner(playerId))) return;
+        if (manipulator != null && ((manipulator.Id != playerId && !IsOwner(manipulator)) || await IsOwner(playerId))) return;
 
         if (Rights.Contains(playerId) == flag) return;
 
@@ -220,7 +220,7 @@ public class RoomSecurityManager(
             });
         }
 
-        var player = _playerManager.GetPlayerById(playerId);
+        var player = await _playerManager.GetPlayerById(playerId);
 
         if (player != null) RefreshControllerLevel(player);
 
