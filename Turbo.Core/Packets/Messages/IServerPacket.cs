@@ -2,14 +2,14 @@
 {
     public interface IServerPacket
     {
-        void WriteByte(byte b);
-        void WriteByte(int b);
-        void WriteDouble(double d);
-        void WriteString(string s);
-        void WriteShort(int s);
-        void WriteInteger(int i);
-        void WriteBoolean(bool b);
-        void WriteLong(long l);
+        IServerPacket WriteByte(byte b);
+        IServerPacket WriteByte(int b);
+        IServerPacket WriteDouble(double d);
+        IServerPacket WriteString(string s);
+        IServerPacket WriteShort(int s);
+        IServerPacket WriteInteger(int i);
+        IServerPacket WriteBoolean(bool b);
+        IServerPacket WriteLong(long l);
         public int Header { get; }
     }
 }

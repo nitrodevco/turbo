@@ -8,9 +8,10 @@ using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Core.Security;
 using Turbo.Events.Game.Security;
+using Turbo.Networking.Game.Codec;
 using Turbo.Packets.Incoming.Handshake;
 using Turbo.Packets.Outgoing.Handshake;
-using Turbo.Packets.Outgoing.Navigator;
+using Turbo.Security;
 
 namespace Turbo.Main.PacketHandlers
 {
@@ -21,17 +22,60 @@ namespace Turbo.Main.PacketHandlers
         private readonly ISecurityManager _securityManager;
         private readonly IPlayerManager _playerManager;
         private readonly ILogger<AuthenticationMessageHandler> _logger;
+        private readonly IRsaService _rsaService;
+        private readonly IDiffieService _diffieService;
 
-        public AuthenticationMessageHandler(IPacketMessageHub messageHub, ISecurityManager securityManager, IPlayerManager playerManager, ILogger<AuthenticationMessageHandler> logger, ITurboEventHub eventHub)
+        public AuthenticationMessageHandler(
+            IPacketMessageHub messageHub,
+            ISecurityManager securityManager,
+            IPlayerManager playerManager,
+            ILogger<AuthenticationMessageHandler> logger,
+            ITurboEventHub eventHub,
+            IRsaService rsaService,
+            IDiffieService diffieService
+        )
         {
             _messageHub = messageHub;
             _securityManager = securityManager;
             _playerManager = playerManager;
             _logger = logger;
             _eventHub = eventHub;
+            _rsaService = rsaService;
+            _diffieService = diffieService;
 
+            _messageHub.Subscribe<InitDiffieHandshakeMessageEvent>(this, OnHandshake);
+            _messageHub.Subscribe<CompleteDiffieHandshakeMessage>(this, OnCompleteHandshake);
             _messageHub.Subscribe<SSOTicketMessage>(this, OnSSOTicket);
             _messageHub.Subscribe<InfoRetrieveMessage>(this, OnInfoRetrieve);
+        }
+
+        private async void OnCompleteHandshake(CompleteDiffieHandshakeMessage message, ISession session)
+        {
+            var sharedKey = _diffieService.GetSharedKey(message.SharedKey);
+
+            session.Rc4 = new Rc4Service(sharedKey);
+            
+            _logger.LogInformation("Diffie handshake completed for {0}", session.IPAddress);
+
+            session.Channel.Pipeline.AddBefore("frameDecoder", "encryptionDecoder", new EncryptionDecoder(session));
+            
+            await session.Send(new CompleteDiffieHandshakeComposer
+            {
+                PublicKey = _diffieService.GetPublicKey()
+            });
+        }
+
+        private async void OnHandshake(InitDiffieHandshakeMessageEvent message, ISession session)
+        {
+            // rsa
+            var prime = _diffieService.GetSignedPrime();
+            var generator = _diffieService.GetSignedGenerator();
+
+            await session.Send(new InitDiffieHandshakeComposer
+            {
+                Prime = prime,
+                Generator = generator
+            });
         }
 
         public async Task OnSSOTicket(SSOTicketMessage message, ISession session)
@@ -55,7 +99,12 @@ namespace Turbo.Main.PacketHandlers
             }
 
             // send required composers for hotel view
-            await session.Send(new AuthenticationOKMessage());
+            await session.Send(new AuthenticationOKMessage
+            {
+                AccountId = session.Player.Id,
+                SuggestedLoginActions = [],
+                IdentityId = session.Player.Id
+            });
             await session.Send(new UserRightsMessage
             {
                 ClubLevel = ClubLevelEnum.Vip,
@@ -68,7 +117,7 @@ namespace Turbo.Main.PacketHandlers
             {
                 Player = player
             });
-            
+
             if (messager.IsCancelled)
             {
                 await player.DisposeAsync();
