@@ -38,33 +38,33 @@ public class PlayerManager(
 
     public List<PlayerChatStyleEntity> PlayerChatStyles { get; } = [];
 
-    public async Task<IPlayer> GetPlayerById(int id)
+    public IPlayer GetPlayerById(int id)
     {
-        if (id <= 0) return null;
+        if (id <= 0 || !_players.TryGetValue(id, out var value)) return null;
 
-        if (_players.TryGetValue(id, out var value))
-            return value;
-
-        return await GetOfflinePlayerById(id);
+        return value;
     }
 
-    public async Task<IPlayer> GetPlayerByUsername(string username)
+    public IPlayer GetPlayerByUsername(string username)
     {
-        if (string.IsNullOrWhiteSpace(username))
-            return null;
+        if (username.Length == 0) return null;
 
         foreach (var player in _players.Values)
         {
-            if (player == null) continue;
-            if (string.Equals(player.Name, username))
-                return player;
+            if (player == null || !player.Name.Equals(username)) continue;
+
+            return player;
         }
 
-        return await GetOfflinePlayerByUsername(username);
+        return null;
     }
 
     public async Task<IPlayer> GetOfflinePlayerById(int id)
     {
+        var player = GetPlayerById(id);
+
+        if (player != null) return player;
+
         try
         {
             using var scope = _serviceScopeFactory.CreateScope();
@@ -73,20 +73,23 @@ public class PlayerManager(
 
             var playerEntity = await playerRepository.FindAsync(id);
 
-            if (playerEntity == null) return null;
-
-            return _playerFactory.Create(playerEntity);
+            return playerEntity == null ? null : _playerFactory.Create(playerEntity);
         }
 
         catch (Exception ex)
         {
             _logger.LogError(ex, "\u001b[91mError fetching offline player by ID\u001b[0m");
+
             return null;
         }
     }
 
     private async Task<IPlayer> GetOfflinePlayerByUsername(string username)
     {
+        var player = GetPlayerByUsername(username);
+
+        if (player != null) return player;
+
         try
         {
             using var scope = _serviceScopeFactory.CreateScope();
@@ -99,11 +102,13 @@ public class PlayerManager(
 
             var playerEntity = await playerRepository.FindAsync(playerDTO.Id);
 
-            return _playerFactory.Create(playerEntity);
+            return playerEntity == null ? null : _playerFactory.Create(playerEntity);
         }
+
         catch (Exception ex)
         {
             _logger.LogError(ex, "\u001b[91mError fetching offline player by username\u001b[0m");
+
             return null;
         }
     }
@@ -135,7 +140,7 @@ public class PlayerManager(
     {
         if (id <= 0) return;
 
-        var player = await GetPlayerById(id);
+        var player = GetPlayerById(id);
 
         if (player == null) return;
 
@@ -158,7 +163,7 @@ public class PlayerManager(
 
     public async Task<string> GetPlayerName(int playerId)
     {
-        var player = await GetPlayerById(playerId);
+        var player = GetPlayerById(playerId);
 
         if (player != null) return player.Name;
 
@@ -173,7 +178,7 @@ public class PlayerManager(
     {
         if (playerId <= 0) return null;
 
-        var player = await GetPlayerById(playerId);
+        var player = GetPlayerById(playerId);
 
         if (player == null)
         {
