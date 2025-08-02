@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Turbo.Core.Database.Attributes;
-using Turbo.Core.Database.Entities.Furniture;
+using Turbo.Database.Attributes;
+using Turbo.Database.Entities.Furniture;
 
-namespace Turbo.Core.Database.Entities.Catalog;
+namespace Turbo.Database.Entities.Catalog;
 
 [Table("catalog_products")]
 public class CatalogProductEntity : Entity

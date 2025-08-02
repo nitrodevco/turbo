@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Entities.Players;
 using Turbo.Database.Context;
+using Turbo.Database.Entities.Players;
 
-namespace Turbo.Database.Repositories.ChatStyles;
+namespace Turbo.Database.Repositories.Player;
 
 public class PlayerChatStyleRepository(IEmulatorContext _context) : IPlayerChatStyleRepository
 {

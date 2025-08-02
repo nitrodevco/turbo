@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Configuration;
-using Turbo.Core.Database.Entities.Room;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Rooms;
 using Turbo.Core.Game.Rooms.Constants;
@@ -13,6 +12,7 @@ using Turbo.Core.Game.Rooms.Managers;
 using Turbo.Core.Game.Rooms.Object;
 using Turbo.Core.Storage;
 using Turbo.Core.Utilities;
+using Turbo.Database.Entities.Room;
 using Turbo.Database.Repositories.Room;
 using Turbo.Packets.Outgoing.Room.Chat;
 

@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Turbo.Core.Database.Entities.Navigator;
+namespace Turbo.Database.Entities.Navigator;
 
 [Table("navigator_flatcats")]
 public class NavigatorFlatCategoryEntity : Entity

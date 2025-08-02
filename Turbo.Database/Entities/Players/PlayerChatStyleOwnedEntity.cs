@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace Turbo.Core.Database.Entities.Players;
+namespace Turbo.Database.Entities.Players;
 
 [Table("player_chat_styles_owned")]
 [Index(nameof(PlayerEntityId), nameof(ChatStyleId), IsUnique = true)]

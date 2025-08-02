@@ -2,10 +2,11 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Entities.Room;
 using Turbo.Database.Context;
+using Turbo.Database.Entities.Room;
 
 namespace Turbo.Database.Repositories.Room;
+
 public class RoomEntryLogRepository(IEmulatorContext _context) : IRoomEntryLogRepository
 {
     public async Task<RoomEntryLogEntity> FindAsync(int id)

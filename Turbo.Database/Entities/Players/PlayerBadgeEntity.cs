@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace Turbo.Core.Database.Entities.Players;
+namespace Turbo.Database.Entities.Players;
 
 [Table("player_badges")]
 [Index(nameof(PlayerEntityId), nameof(BadgeCode), IsUnique = true)]

@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Entities.Navigator;
 using Turbo.Database.Context;
+using Turbo.Database.Entities.Navigator;
 
 namespace Turbo.Database.Repositories.Navigator;
 

@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Attributes;
+using Turbo.Database.Attributes;
 
-namespace Turbo.Core.Database.Entities.Players;
+namespace Turbo.Database.Entities.Players;
 
 [Table("player_currencies")]
 [Index(nameof(PlayerEntityId), nameof(Type), IsUnique = true)]

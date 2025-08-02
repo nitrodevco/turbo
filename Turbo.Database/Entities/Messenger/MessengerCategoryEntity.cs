@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Entities.Players;
+using Turbo.Database.Entities.Players;
 
-namespace Turbo.Core.Database.Entities.Messenger;
+namespace Turbo.Database.Entities.Messenger;
 
 [Table("messenger_categories")]
 [Index(nameof(PlayerEntityId), nameof(Name), IsUnique = true)]

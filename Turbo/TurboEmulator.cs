@@ -18,7 +18,7 @@ using Turbo.Core.Plugins;
 using Turbo.Core.Security;
 using Turbo.Core.Storage;
 using Turbo.Networking;
-using Turbo.Networking.Clients;
+using Turbo.Networking.Game.Clients;
 
 namespace Turbo.Main;
 

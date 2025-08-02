@@ -2,7 +2,7 @@ using Turbo.Core.EventHandlers;
 using Turbo.Core.Events;
 using Turbo.Events.Game.Rooms.Furniture;
 
-namespace Turbo.EventHandlers;
+namespace Turbo.Main.EventHandlers;
 
 public class EventHandler : IEventHandler
 {

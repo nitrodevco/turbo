@@ -4,16 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Attributes;
-using Turbo.Core.Database.Entities;
-using Turbo.Core.Database.Entities.Catalog;
-using Turbo.Core.Database.Entities.Furniture;
-using Turbo.Core.Database.Entities.Navigator;
-using Turbo.Core.Database.Entities.Players;
-using Turbo.Core.Database.Entities.Room;
-using Turbo.Core.Database.Entities.Security;
-using Turbo.Core.Database.Entities.Tracking;
 using Turbo.Database.Attributes;
+using Turbo.Database.Attributes;
+using Turbo.Database.Entities;
+using Turbo.Database.Entities.Catalog;
+using Turbo.Database.Entities.Furniture;
+using Turbo.Database.Entities.Navigator;
+using Turbo.Database.Entities.Players;
+using Turbo.Database.Entities.Room;
+using Turbo.Database.Entities.Security;
+using Turbo.Database.Entities.Tracking;
 
 namespace Turbo.Database.Context;
 

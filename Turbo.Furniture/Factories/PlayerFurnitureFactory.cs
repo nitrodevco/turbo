@@ -1,12 +1,11 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Turbo.Core.Database.Entities.Furniture;
-using Turbo.Core.Database.Factories.Players;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Rooms.Object.Logic;
 using Turbo.Database.Context;
+using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Furniture.Factories;
 

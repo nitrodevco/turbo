@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Turbo.Core.Database.Entities.Room;
+using Turbo.Database.Entities.Room;
 
 namespace Turbo.Database.Repositories.Room;
 

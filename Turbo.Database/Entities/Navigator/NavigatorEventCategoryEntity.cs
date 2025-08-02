@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Turbo.Core.Database.Entities.Navigator;
+namespace Turbo.Database.Entities.Navigator;
 
 [Table("navigator_eventcats")]
 public class NavigatorEventCategoryEntity : Entity

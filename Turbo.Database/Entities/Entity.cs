@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Turbo.Core.Database.Entities;
+namespace Turbo.Database.Entities;
 
 public abstract class Entity
 {

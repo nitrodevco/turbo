@@ -1,5 +1,5 @@
-using Turbo.Core.Database.Entities.Navigator;
 using Turbo.Core.Game.Navigator;
+using Turbo.Database.Entities.Navigator;
 
 namespace Turbo.Navigator;
 

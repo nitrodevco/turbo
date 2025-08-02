@@ -2,10 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Attributes;
 using Turbo.Core.Game.Furniture.Constants;
+using Turbo.Database.Attributes;
 
-namespace Turbo.Core.Database.Entities.Furniture;
+namespace Turbo.Database.Entities.Furniture;
 
 [Table("furniture_definitions")]
 [Index(nameof(SpriteId), nameof(Type), IsUnique = true)]

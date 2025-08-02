@@ -1,6 +1,6 @@
 using Turbo.Core.EventHandlers;
 
-namespace Turbo.EventHandlers;
+namespace Turbo.Main.EventHandlers;
 
 public class EventHandlerManager : IEventHandlerManager
 {

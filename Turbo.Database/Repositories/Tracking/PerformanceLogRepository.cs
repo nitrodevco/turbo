@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using Turbo.Core.Database.Entities.Tracking;
 using Turbo.Database.Context;
+using Turbo.Database.Entities.Tracking;
 
 namespace Turbo.Database.Repositories.Tracking;
 

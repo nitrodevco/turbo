@@ -2,7 +2,7 @@
 using Turbo.Core.Game;
 using Turbo.Core.Networking.Game.Clients;
 
-namespace Turbo.Networking.Clients;
+namespace Turbo.Networking.Game.Clients;
 
 public interface ISessionManager : ICyclable
 {

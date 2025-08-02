@@ -11,5 +11,5 @@ public interface IRoomFurniture
     public void Save();
     public void SetRoom(IRoom room);
     public bool SetPlayer(IPlayer player);
-    public bool SetPlayer(int playerId, string playerName = string.Empty);
+    public bool SetPlayer(int playerId, string playerName = "");
 }

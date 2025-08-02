@@ -1,7 +1,7 @@
-﻿using Turbo.Core.Database.Entities.Room;
-using Turbo.Core.Game.Rooms;
+﻿using Turbo.Core.Game.Rooms;
+using Turbo.Database.Entities.Room;
 
-namespace Turbo.Core.Database.Factories.Rooms;
+namespace Turbo.Rooms.Factories;
 
 public interface IRoomFactory
 {

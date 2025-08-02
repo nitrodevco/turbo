@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.Packets;
-using Turbo.Networking.Clients;
 using Turbo.Packets.Incoming.Tracking;
 using Turbo.Packets.Outgoing.Tracking;
 

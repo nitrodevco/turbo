@@ -3,7 +3,7 @@ using Turbo.Core.Events;
 using Turbo.Events.Game.Security;
 using Turbo.Packets.Outgoing.Navigator;
 
-namespace Turbo.EventHandlers;
+namespace Turbo.Main.EventHandlers;
 
 public class UserLoginEventHandler : IEventHandler
 {

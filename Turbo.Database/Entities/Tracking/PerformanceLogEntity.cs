@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
 
-namespace Turbo.Core.Database.Entities.Tracking;
+namespace Turbo.Database.Entities.Tracking;
 
 [Table("performance_logs")]
 [Index(nameof(IPAddress))]

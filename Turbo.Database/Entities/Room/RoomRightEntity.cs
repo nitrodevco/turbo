@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Entities.Players;
+using Turbo.Database.Entities.Players;
 
-namespace Turbo.Core.Database.Entities.Room;
+namespace Turbo.Database.Entities.Room;
 
 [Table("room_rights")]
 [Index(nameof(RoomEntityId), nameof(PlayerEntityId), IsUnique = true)]

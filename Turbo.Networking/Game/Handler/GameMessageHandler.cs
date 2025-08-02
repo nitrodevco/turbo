@@ -4,7 +4,6 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Packets;
 using Turbo.Core.Packets.Messages;
-using Turbo.Networking.Clients;
 using Turbo.Networking.Game.Clients;
 using Turbo.Packets.Revisions;
 

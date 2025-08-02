@@ -8,10 +8,10 @@ public interface IFurnitureWiredLogic : IFurnitureFloorLogic
 {
     public IWiredData WiredData { get; }
     public int WiredKey { get; }
-    public void SetupWiredData(string jsonString = null);
-    public IWiredData CreateWiredDataFromJson(string jsonString = null);
+    public void SetupWiredData(string jsonString);
+    public IWiredData CreateWiredDataFromJson(string jsonString);
     public bool SaveWiredData(IRoomObjectAvatar avatar, IWiredData wiredData);
 
-    public bool CanTrigger(IWiredArguments wiredArguments = null);
-    public void OnTriggered(IWiredArguments wiredArguments = null);
+    public bool CanTrigger(IWiredArguments wiredArguments);
+    public void OnTriggered(IWiredArguments wiredArguments);
 }

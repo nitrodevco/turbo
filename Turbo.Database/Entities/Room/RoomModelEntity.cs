@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Attributes;
 using Turbo.Core.Game.Rooms.Utils;
+using Turbo.Database.Attributes;
 
-namespace Turbo.Core.Database.Entities.Room;
+namespace Turbo.Database.Entities.Room;
 
 [Table("room_models")]
 [Index(nameof(Name), IsUnique = true)]

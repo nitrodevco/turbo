@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Threading;
 
-namespace Turbo.Core.Database.Attributes;
+namespace Turbo.Database.Attributes;
 
 /// <summary>
 /// Specifies the default value for a property.

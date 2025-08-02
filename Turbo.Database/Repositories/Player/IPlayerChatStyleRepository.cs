@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Turbo.Core.Database.Entities.Players;
+using Turbo.Database.Entities.Players;
 
-namespace Turbo.Database.Repositories.ChatStyles;
+namespace Turbo.Database.Repositories.Player;
 
 public interface IPlayerChatStyleRepository : IBaseRepository<PlayerChatStyleEntity>
 {

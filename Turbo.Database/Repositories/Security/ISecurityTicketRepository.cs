@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Turbo.Core.Database.Entities.Security;
+using Turbo.Database.Entities.Security;
 
 namespace Turbo.Database.Repositories.Security;
 

@@ -3,7 +3,6 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Packets;
-using Turbo.Networking.Clients;
 using Turbo.Networking.Game.Clients;
 using Turbo.Networking.Game.Codec;
 using Turbo.Networking.Game.Handler;

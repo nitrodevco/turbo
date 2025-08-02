@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Database.Dtos;
-using Turbo.Core.Database.Entities.Furniture;
+using Turbo.Database.Entities.Furniture;
 
 namespace Turbo.Database.Repositories.Furniture;
 

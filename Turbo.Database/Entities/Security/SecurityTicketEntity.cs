@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Core.Database.Attributes;
-using Turbo.Core.Database.Entities.Players;
+using Turbo.Database.Attributes;
+using Turbo.Database.Entities.Players;
 
-namespace Turbo.Core.Database.Entities.Security;
+namespace Turbo.Database.Entities.Security;
 
 [Table("security_tickets")]
 [Index(nameof(PlayerEntityId), IsUnique = true)]
