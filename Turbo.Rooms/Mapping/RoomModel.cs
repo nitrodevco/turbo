@@ -53,7 +53,7 @@ public class RoomModel : IRoomModel
         {
             var row = rows[y];
 
-            if (row == null || row.Equals("\r")) continue;
+            if (row is null || row.Equals("\r")) continue;
 
             var rowLength = row.Length;
 
@@ -122,7 +122,7 @@ public class RoomModel : IRoomModel
     {
         var rowStates = _tileStates.ElementAtOrDefault(x);
 
-        if (rowStates == null) return RoomTileState.Closed;
+        if (rowStates is null) return RoomTileState.Closed;
 
         if (rowStates.ElementAtOrDefault(y) != RoomTileState.Open) return RoomTileState.Closed;
 
@@ -133,7 +133,7 @@ public class RoomModel : IRoomModel
     {
         var rowHeights = _tileHeights.ElementAtOrDefault(x);
 
-        if (rowHeights == null) return 0;
+        if (rowHeights is null) return 0;
 
         return rowHeights.ElementAtOrDefault(y);
     }
@@ -144,7 +144,7 @@ public class RoomModel : IRoomModel
 
     public static string CleanModel(string model)
     {
-        if (model == null) return null;
+        if (model is null) return null;
 
         return _regex.Replace(model.ToLower(), "\r").Trim();
     }

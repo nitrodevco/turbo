@@ -26,7 +26,7 @@ public class FurnitureRepository(IEmulatorContext _context) : IFurnitureReposito
     public async Task<List<FurnitureEntity>> FindAllInventoryByPlayerIdAsync(int playerId)
     {
         return await _context.Furnitures
-            .Where(entity => entity.PlayerEntityId == playerId && entity.RoomEntityId == null)
+            .Where(entity => entity.PlayerEntityId == playerId && entity.RoomEntityId is null)
             .ToListAsync();
     }
 
@@ -34,7 +34,7 @@ public class FurnitureRepository(IEmulatorContext _context) : IFurnitureReposito
     {
         var linkEntity = await FindTeleportLinkByFurnitureIdAsync(furnitureId);
 
-        if (linkEntity == null) return null;
+        if (linkEntity is null) return null;
 
         FurnitureEntity furnitureEntity;
 
@@ -43,7 +43,7 @@ public class FurnitureRepository(IEmulatorContext _context) : IFurnitureReposito
         else
             furnitureEntity = await FindAsync(linkEntity.FurnitureEntityOneId);
 
-        if (furnitureEntity == null) return null;
+        if (furnitureEntity is null) return null;
 
         return new TeleportPairingDto
         {

@@ -119,7 +119,7 @@ public class RoomDetails(
 
     public string Description
     {
-        get => _roomEntity.Description == null ? "" : _roomEntity.Description;
+        get => _roomEntity.Description is null ? string.Empty : _roomEntity.Description;
         set
         {
             _roomEntity.Description = value;
@@ -393,7 +393,7 @@ public class RoomDetails(
         {
             RoomId = Id,
             ErrorCode = errorType,
-            Info = ""
+            Info = string.Empty
         });
     }
 

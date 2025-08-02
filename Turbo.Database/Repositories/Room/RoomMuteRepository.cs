@@ -24,7 +24,7 @@ public class RoomMuteRepository(IEmulatorContext _context) : IRoomMuteRepository
 
     public async Task<bool> RemoveMuteEntityAsync(RoomMuteEntity entity)
     {
-        if (entity == null) return false;
+        if (entity is null) return false;
 
         _context.Remove(entity);
 

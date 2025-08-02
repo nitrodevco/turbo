@@ -35,7 +35,7 @@ public class DefaultValueSqlAttribute : Attribute
         // The null check and try/catch here are because attributes should never throw exceptions.
         // We would fail to load an otherwise normal class.
 
-        if (type == null)
+        if (type is null)
         {
             return;
         }
@@ -46,12 +46,12 @@ public class DefaultValueSqlAttribute : Attribute
             {
                 _value = convertedValue;
             }
-            else if (type.IsSubclassOf(typeof(Enum)) && value != null)
+            else if (type.IsSubclassOf(typeof(Enum)) && value is not null)
             {
                 _value = Enum.Parse(type, value, true);
                 _value = Convert.ChangeType(convertedValue, Enum.GetUnderlyingType(type), CultureInfo.InvariantCulture);
             }
-            else if (type == typeof(TimeSpan) && value != null)
+            else if (type == typeof(TimeSpan) && value is not null)
             {
                 _value = TimeSpan.Parse(value);
             }
@@ -72,7 +72,7 @@ public class DefaultValueSqlAttribute : Attribute
                 conversionResult = null;
 
                 // lazy init reflection objects
-                if (s_convertFromInvariantString == null)
+                if (s_convertFromInvariantString is null)
                 {
                     var typeDescriptorType =
                         Type.GetType("System.ComponentModel.TypeDescriptor, System.ComponentModel.TypeConverter",
@@ -80,7 +80,7 @@ public class DefaultValueSqlAttribute : Attribute
                     var mi = typeDescriptorType?.GetMethod("ConvertFromInvariantString",
                         BindingFlags.NonPublic | BindingFlags.Static);
                     Volatile.Write(ref s_convertFromInvariantString,
-                        mi == null ? new object() : mi.CreateDelegate(typeof(Func<Type, string, object>)));
+                        mi is null ? new object() : mi.CreateDelegate(typeof(Func<Type, string, object>)));
                 }
 
                 if (!(s_convertFromInvariantString is Func<Type, string?, object> convertFromInvariantString))
@@ -192,7 +192,7 @@ public class DefaultValueSqlAttribute : Attribute
     {
         var type = value?.GetType();
 
-        if (type == null)
+        if (type is null)
         {
             _value = "NULL"; // Handle null case appropriately
             return;
@@ -277,9 +277,9 @@ public class DefaultValueSqlAttribute : Attribute
             return false;
         }
 
-        if (Value == null)
+        if (Value is null)
         {
-            return other.Value == null;
+            return other.Value is null;
         }
 
         return Value.Equals(other.Value);

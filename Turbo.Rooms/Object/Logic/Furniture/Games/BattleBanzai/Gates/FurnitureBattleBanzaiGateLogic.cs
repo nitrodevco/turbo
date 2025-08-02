@@ -14,6 +14,6 @@ public abstract class FurnitureBattleBanzaiGateLogic : FurnitureTeamItemLogic
 
     private void SetTeam(IRoomObjectAvatar avatar)
     {
-        if (avatar == null) return;
+        if (avatar is null) return;
     }
 }

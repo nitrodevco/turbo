@@ -43,7 +43,7 @@ public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
 
     private bool ProcessAvatarRoomObject(IRoomObjectAvatar avatarObject)
     {
-        if (avatarObject == null || avatarObject.Logic.IsRolling) return false;
+        if (avatarObject is null || avatarObject.Logic.IsRolling) return false;
 
         avatarObject.Logic.ProcessNextLocation();
 
@@ -55,7 +55,7 @@ public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
         {
             if (avatarObject.Logic.CurrentPath.Count == 0)
             {
-                if (avatarObject.Logic.BeforeGoalAction != null)
+                if (avatarObject.Logic.BeforeGoalAction is not null)
                 {
                     avatarObject.Logic.InvokeBeforeGoalAction();
 
@@ -86,7 +86,7 @@ public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
 
     private void CheckStep(IRoomObjectAvatar avatarObject, IPoint locationNext)
     {
-        if (locationNext == null)
+        if (locationNext is null)
         {
             avatarObject.Logic.StopWalking();
 
@@ -97,7 +97,7 @@ public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
         var currentTile = avatarObject.Logic.GetCurrentTile();
         var nextTile = _room.RoomMap.GetTile(locationNext);
 
-        if (currentTile == null || nextTile == null || currentTile == nextTile)
+        if (currentTile is null || nextTile is null || currentTile == nextTile)
         {
             avatarObject.Logic.StopWalking();
 
@@ -145,10 +145,10 @@ public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
         {
             var isSideValid =
                 _room.RoomMap.GetValidDiagonalTile(avatarObject,
-                    new Point(nextTile.Location.X, currentTile.Location.Y)) != null;
+                    new Point(nextTile.Location.X, currentTile.Location.Y)) is not null;
             var isOtherSideValid =
                 _room.RoomMap.GetValidDiagonalTile(avatarObject,
-                    new Point(currentTile.Location.X, nextTile.Location.Y)) != null;
+                    new Point(currentTile.Location.X, nextTile.Location.Y)) is not null;
 
             if (!isSideValid && !isOtherSideValid)
             {
@@ -158,7 +158,7 @@ public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
             }
         }
 
-        if (currentTile.HighestObject != null)
+        if (currentTile.HighestObject is not null)
             if (currentTile.HighestObject != nextTile.HighestObject)
                 currentTile.HighestObject.Logic.OnLeave(avatarObject);
 
@@ -171,7 +171,7 @@ public class RoomUserStatusCycle(IRoom _room) : RoomCycle(_room)
         avatarObject.Location.SetRotation(avatarObject.Location.CalculateWalkRotation(locationNext));
         avatarObject.Logic.LocationNext = locationNext;
 
-        if (nextTile.HighestObject != null)
+        if (nextTile.HighestObject is not null)
             if (nextTile.HighestObject != currentTile.HighestObject)
                 nextTile.HighestObject.Logic.OnEnter(avatarObject);
 

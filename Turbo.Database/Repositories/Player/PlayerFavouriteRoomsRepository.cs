@@ -34,7 +34,7 @@ public class PlayerFavouriteRoomsRepository(IEmulatorContext _context) : IPlayer
         var favoriteRoom = await _context.PlayerFavouriteRooms
             .FirstOrDefaultAsync(f => f.PlayerId == playerId && f.RoomId == roomId);
 
-        if (favoriteRoom == null) return false;
+        if (favoriteRoom is null) return false;
 
         _context.PlayerFavouriteRooms.Remove(favoriteRoom);
         await _context.SaveChangesAsync();

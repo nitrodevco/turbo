@@ -26,7 +26,7 @@ public class RoomWallFurniture(
     {
         ClearRoomObject();
 
-        if (roomObject == null || !roomObject.SetHolder(this)) return false;
+        if (roomObject is null || !roomObject.SetHolder(this)) return false;
 
         RoomObject = roomObject;
 
@@ -35,7 +35,7 @@ public class RoomWallFurniture(
 
     public async Task<bool> SetupRoomObject()
     {
-        if (RoomObject == null) return false;
+        if (RoomObject is null) return false;
 
         if (!await RoomObject.Logic.Setup(FurnitureDefinition, FurnitureEntity.StuffData)) return false;
 
@@ -44,7 +44,7 @@ public class RoomWallFurniture(
 
     public void ClearRoomObject()
     {
-        if (RoomObject == null) return;
+        if (RoomObject is null) return;
 
         Save();
 
@@ -62,11 +62,11 @@ public class RoomWallFurniture(
 
     protected override void OnSave()
     {
-        if (RoomObject != null)
+        if (RoomObject is not null)
         {
             FurnitureEntity.WallPosition = RoomObject.WallLocation;
 
-            if (RoomObject.Logic.StuffData != null)
+            if (RoomObject.Logic.StuffData is not null)
                 FurnitureEntity.StuffData =
                     JsonSerializer.Serialize(RoomObject.Logic.StuffData, RoomObject.Logic.StuffData.GetType());
         }

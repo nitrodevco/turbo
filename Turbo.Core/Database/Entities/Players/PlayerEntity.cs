@@ -38,6 +38,12 @@ public class PlayerEntity : Entity
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public PlayerStatusEnum PlayerStatus { get; set; }
 
+    [Column("perk_flags")]
+    [Required]
+    [DefaultValueSql("0")]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public int PlayerPerks { get; set; }
+
     [Column("room_chat_style_id")] public int? RoomChatStyleId { get; set; }
 
     [InverseProperty("PlayerEntity")] public List<PlayerBadgeEntity> PlayerBadges { get; set; }

@@ -17,24 +17,24 @@ public class RoomFurnitureMessageHandler(IPacketMessageHub messageHub) : IPacket
 
     protected virtual void OnThrowDiceMessage(ThrowDiceMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var diceObject =
             session.Player.RoomObject?.Room.RoomFurnitureManager.FloorObjects.GetRoomObject(message.ObjectId);
 
-        if (diceObject == null) return;
+        if (diceObject is null) return;
 
         if (diceObject.Logic is FurnitureDiceLogic diceLogic) diceLogic.ThrowDice(session.Player.RoomObject);
     }
 
     protected virtual void OnSetCustomStackingHeightMessage(SetCustomStackingHeightMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var stackHelperObject =
             session.Player.RoomObject?.Room.RoomFurnitureManager.FloorObjects.GetRoomObject(message.FurniId);
 
-        if (stackHelperObject == null) return;
+        if (stackHelperObject is null) return;
 
         if (stackHelperObject.Logic is FurnitureStackHelperLogic stackHelperLogic)
             stackHelperLogic.SetStackHelperHeight(session.Player.RoomObject, message.Height);
@@ -42,12 +42,12 @@ public class RoomFurnitureMessageHandler(IPacketMessageHub messageHub) : IPacket
 
     protected virtual void OnDiceOffMessage(DiceOffMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var diceObject =
             session.Player.RoomObject?.Room.RoomFurnitureManager.FloorObjects.GetRoomObject(message.ObjectId);
 
-        if (diceObject == null) return;
+        if (diceObject is null) return;
 
         if (diceObject.Logic is FurnitureDiceLogic diceLogic) diceLogic.DiceOff(session.Player.RoomObject);
     }

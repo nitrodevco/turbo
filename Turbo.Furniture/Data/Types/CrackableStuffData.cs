@@ -8,7 +8,7 @@ public class CrackableStuffData : StuffDataBase
 
     public override string GetLegacyString()
     {
-        return State == null ? "" : State;
+        return State is null ? string.Empty : State;
     }
 
     public override void SetState(string state)

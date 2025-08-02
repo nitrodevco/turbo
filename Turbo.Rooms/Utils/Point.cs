@@ -32,7 +32,7 @@ public class Point : IPoint
 
     public void SetRotation(Rotation? rotation)
     {
-        if (rotation == null) return;
+        if (rotation is null) return;
 
         Rotation = (Rotation)rotation;
         HeadRotation = (Rotation)rotation;
@@ -132,21 +132,21 @@ public class Point : IPoint
 
     public bool Compare(IPoint point)
     {
-        if (point == null || point.X != X || point.Y != Y) return false;
+        if (point is null || point.X != X || point.Y != Y) return false;
 
         return true;
     }
 
     public bool CompareStrict(IPoint point)
     {
-        if (point == null || point.X != X || point.Y != Y || point.Rotation != Rotation) return false;
+        if (point is null || point.X != X || point.Y != Y || point.Rotation != Rotation) return false;
 
         return true;
     }
 
     public Rotation CalculateHumanRotation(IPoint point)
     {
-        if (point == null) return Rotation.North;
+        if (point is null) return Rotation.North;
 
         if (X > point.X && Y > point.Y) return Rotation.NorthWest;
 
@@ -167,7 +167,7 @@ public class Point : IPoint
 
     public Rotation CalculateWalkRotation(IPoint point)
     {
-        if (point == null) return Rotation.NorthEast;
+        if (point is null) return Rotation.NorthEast;
 
         if (X == point.X)
         {
@@ -192,7 +192,7 @@ public class Point : IPoint
 
     public Rotation CalculateHeadRotation(IPoint point)
     {
-        if (point == null || (int)Rotation % 2 > 0) return Rotation;
+        if (point is null || (int)Rotation % 2 > 0) return Rotation;
 
         var difference = (int)Rotation - (int)CalculateHumanRotation(point);
 

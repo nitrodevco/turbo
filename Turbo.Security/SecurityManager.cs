@@ -10,13 +10,13 @@ public class SecurityManager(IServiceScopeFactory _serviceScopeFactory) : Compon
 {
     public async Task<int> GetPlayerIdFromTicket(string ticket)
     {
-        if (ticket == null || ticket.Length == 0) return 0;
+        if (ticket is null || ticket.Length == 0) return 0;
 
         using var scope = _serviceScopeFactory.CreateScope();
         var securityTicketRepository = scope.ServiceProvider.GetService<ISecurityTicketRepository>();
         var securityTicketEntity = await securityTicketRepository.FindByTicketAsync(ticket);
 
-        if (securityTicketEntity == null) return 0;
+        if (securityTicketEntity is null) return 0;
 
         if ((bool)!securityTicketEntity.IsLocked)
             securityTicketRepository.DeleteBySecurityTicketEntity(securityTicketEntity);

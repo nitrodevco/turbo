@@ -47,7 +47,7 @@ public class RoomTile : IRoomTile
 
     public void AddRoomObject(IRoomObject roomObject)
     {
-        if (roomObject == null) return;
+        if (roomObject is null) return;
 
         if (roomObject is IRoomObjectAvatar avatarObject)
         {
@@ -72,7 +72,7 @@ public class RoomTile : IRoomTile
 
     public void RemoveRoomObject(IRoomObject roomObject)
     {
-        if (roomObject == null) return;
+        if (roomObject is null) return;
 
         if (roomObject is IRoomObjectAvatar avatarObject)
         {
@@ -95,7 +95,7 @@ public class RoomTile : IRoomTile
 
     public IRoomObjectFloor GetFurnitureAbove(IRoomObjectFloor floorObject)
     {
-        if (floorObject == null) return null;
+        if (floorObject is null) return null;
 
         var index = Furniture.IndexOf(floorObject);
 
@@ -106,7 +106,7 @@ public class RoomTile : IRoomTile
 
     public IRoomObjectFloor GetFurnitureUnderneath(IRoomObjectFloor floorObject)
     {
-        if (floorObject == null) return null;
+        if (floorObject is null) return null;
 
         var index = Furniture.IndexOf(floorObject);
 
@@ -119,7 +119,7 @@ public class RoomTile : IRoomTile
     {
         _height = DefaultHeight;
 
-        if (HighestObject != null) _height = HighestObject.Logic.Height;
+        if (HighestObject is not null) _height = HighestObject.Logic.Height;
 
         ResetRelativeHeight();
     }
@@ -162,7 +162,7 @@ public class RoomTile : IRoomTile
     {
         var height = _height;
 
-        if (HighestObject != null)
+        if (HighestObject is not null)
             if (HighestObject.Logic.CanSit() || HighestObject.Logic.CanLay())
                 height -= HighestObject.Logic.StackHeight;
 
@@ -182,7 +182,7 @@ public class RoomTile : IRoomTile
     {
         if (State == RoomTileState.Closed) return false;
 
-        if (HighestObject != null)
+        if (HighestObject is not null)
         {
             if (!HighestObject.Logic.IsOpen(avatar)) return false;
 
@@ -192,7 +192,7 @@ public class RoomTile : IRoomTile
             {
                 var secondHighestObject = GetFurnitureUnderneath(HighestObject);
 
-                if (secondHighestObject != null)
+                if (secondHighestObject is not null)
                     if ((secondHighestObject.Logic?.Height ?? 0) >= (HighestObject.Location?.Z ?? 0))
                         return false;
             }
@@ -205,21 +205,21 @@ public class RoomTile : IRoomTile
 
     public bool CanSit(IRoomObjectAvatar avatar = null)
     {
-        if (HighestObject != null && HighestObject.Logic.CanSit(avatar)) return true;
+        if (HighestObject is not null && HighestObject.Logic.CanSit(avatar)) return true;
 
         return false;
     }
 
     public bool CanLay(IRoomObjectAvatar avatar = null)
     {
-        if (HighestObject != null && HighestObject.Logic.CanLay(avatar)) return true;
+        if (HighestObject is not null && HighestObject.Logic.CanLay(avatar)) return true;
 
         return false;
     }
 
     public bool CanStack()
     {
-        if (HighestObject != null && !HighestObject.Logic.CanStack()) return false;
+        if (HighestObject is not null && !HighestObject.Logic.CanStack()) return false;
 
         return true;
     }

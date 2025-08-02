@@ -34,7 +34,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
 
         SetState(_closedState);
 
-        if (_dto == null)
+        if (_dto is null)
             if (RoomObject.RoomObjectHolder is IRoomFloorFurniture furniture)
                 _dto = await furniture.GetTeleportPairing();
 
@@ -43,14 +43,14 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
 
     public override void Dispose()
     {
-        if (_pendingAvatar != null)
+        if (_pendingAvatar is not null)
         {
             _pendingAvatar.Logic.CanWalk = true;
 
             _pendingAvatar = null;
         }
 
-        if (_pendingPlayer != null) _pendingPlayer = null;
+        if (_pendingPlayer is not null) _pendingPlayer = null;
 
         base.Dispose();
     }
@@ -80,9 +80,9 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
             _needsAnimating = false;
         }
 
-        if (_pendingPlayer != null) await ReceiveTeleport(_pendingPlayer);
+        if (_pendingPlayer is not null) await ReceiveTeleport(_pendingPlayer);
 
-        if (_pendingAvatar == null) return;
+        if (_pendingAvatar is null) return;
 
         if (_pendingAvatar.Disposed)
         {
@@ -109,12 +109,12 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
 
         IRoom remoteRoom = null;
 
-        if (_dto != null && _dto.RoomId != null)
+        if (_dto is not null && _dto.RoomId is not null)
             remoteRoom = await RoomObject.Room.RoomManager.GetRoom((int)_dto.RoomId);
 
         var didFail = false;
 
-        if (_dto == null || remoteRoom == null)
+        if (_dto is null || remoteRoom is null)
         {
             didFail = true;
         }
@@ -144,7 +144,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
 
                 if (!_didFindTeleport)
                 {
-                    if (remoteFurniture == null)
+                    if (remoteFurniture is null)
                     {
                         didFail = true;
                     }
@@ -156,7 +156,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
                     }
                 }
 
-                if (remoteFurniture == null || remoteFurniture.RoomObject == null)
+                if (remoteFurniture is null || remoteFurniture.RoomObject is null)
                 {
                     didFail = true;
                 }
@@ -164,7 +164,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
                 else if (remoteFurniture.RoomObject is IRoomObjectFloor floorObject &&
                          floorObject.Logic is FurnitureTeleportLogic teleportLogic)
                 {
-                    if (_pendingAvatar != null && teleportLogic.StuffData.GetState() != _animatingState)
+                    if (_pendingAvatar is not null && teleportLogic.StuffData.GetState() != _animatingState)
                     {
                         teleportLogic.SetState(_animatingState);
 
@@ -199,7 +199,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
 
     private async Task ReceiveTeleport(IPlayer player)
     {
-        if (player.RoomObject == null || player.RoomObject.Disposed)
+        if (player.RoomObject is null || player.RoomObject.Disposed)
         {
             _pendingAvatar = null;
 
@@ -210,7 +210,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
 
         _pendingPlayer = player;
 
-        if (player.RoomObject != null)
+        if (player.RoomObject is not null)
         {
             if (player.RoomObject.Room != RoomObject.Room)
             {
@@ -218,7 +218,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
             }
             else
             {
-                if (player.RoomObject == null || player.RoomObject.Disposed)
+                if (player.RoomObject is null || player.RoomObject.Disposed)
                 {
                     _pendingPlayer = null;
 
@@ -259,7 +259,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
 
     public override void OnInteract(IRoomObjectAvatar avatar, int param = 0)
     {
-        if (_pendingAvatar != null && avatar != _pendingAvatar) return;
+        if (_pendingAvatar is not null && avatar != _pendingAvatar) return;
 
         var goalPoint = GetGoalPoint();
 
@@ -292,7 +292,7 @@ public class FurnitureTeleportLogic : FurnitureFloorLogic
 
     public override bool CanWalk(IRoomObjectAvatar avatar = null)
     {
-        if (_pendingAvatar != null && avatar == _pendingAvatar) return true;
+        if (_pendingAvatar is not null && avatar == _pendingAvatar) return true;
 
         return base.CanWalk(avatar);
     }

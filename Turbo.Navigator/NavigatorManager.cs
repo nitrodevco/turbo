@@ -48,7 +48,7 @@ public class NavigatorManager(
 
         var flatCategoryEntity = await navigatorRepository.FlatCategoryEntityByIdAsync(categoryId);
 
-        if (flatCategoryEntity == null)
+        if (flatCategoryEntity is null)
         {
             _logger.LogError("Unidentified flat category entity with ID '{categoryId}'", categoryId);
         }
@@ -64,11 +64,11 @@ public class NavigatorManager(
 
     public async Task GetGuestRoomMessage(IPlayer player, int roomId, bool enterRoom = false, bool roomForward = false)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         var room = await _roomManager.GetRoom(roomId);
 
-        if (room == null) return;
+        if (room is null) return;
 
         await player.Session.Send(new GetGuestRoomResultMessage
         {
@@ -106,7 +106,7 @@ public class NavigatorManager(
 
     public async Task SendNavigatorMetaData(IPlayer player)
     {
-        if (_tabs == null || _tabs.Count == 0)
+        if (_tabs is null || _tabs.Count == 0)
         {
             _logger.LogError("No Navigator tabs found.");
             return;
@@ -132,8 +132,8 @@ public class NavigatorManager(
             {
                 FlatId = 1,
                 Unused = 0,
-                Image = "",
-                Caption = ""
+                Image = string.Empty,
+                Caption = string.Empty
             }
         ]
     });
@@ -202,7 +202,7 @@ public class NavigatorManager(
 
     public void ClearPendingDoorbell(IPlayer player)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         // remove user from pending doorbells
     }
@@ -293,7 +293,7 @@ public class NavigatorManager(
         {
             var roomsInCategory = roomsByCategory.FirstOrDefault(g => g.Key == category.Id)?.ToList();
 
-            if (roomsInCategory != null && roomsInCategory.Any())
+            if (roomsInCategory is not null && roomsInCategory.Any())
             {
                 results.Add(new SearchResultData
                 {
@@ -310,7 +310,7 @@ public class NavigatorManager(
         var message = new NavigatorSearchResultBlocksMessage
         {
             SearchCode = "official_view",
-            Filtering = "",
+            Filtering = string.Empty,
             Results = results
         };
 
@@ -378,7 +378,7 @@ public class NavigatorManager(
         var message = new NavigatorSearchResultBlocksMessage
         {
             SearchCode = "hotel_view",
-            Filtering = "",
+            Filtering = string.Empty,
             Results = results
         };
 
@@ -419,7 +419,7 @@ public class NavigatorManager(
         var message = new NavigatorSearchResultBlocksMessage
         {
             SearchCode = "myworld_view",
-            Filtering = "",
+            Filtering = string.Empty,
             Results = results
         };
 
@@ -438,7 +438,7 @@ public class NavigatorManager(
 
         var category = _categories.Values.FirstOrDefault(c => c.GlobalCategoryKey.Equals(categoryKey, StringComparison.OrdinalIgnoreCase));
 
-        if (category != null)
+        if (category is not null)
         {
             // Create a list containing the single category ID
             var categoryIds = new List<int> { category.Id };
@@ -494,7 +494,7 @@ public class NavigatorManager(
         var message = new NavigatorSearchResultBlocksMessage
         {
             SearchCode = searchCode,
-            Filtering = "",
+            Filtering = string.Empty,
             Results = new List<ISearchResultData>()
         };
 

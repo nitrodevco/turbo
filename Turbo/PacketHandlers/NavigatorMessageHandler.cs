@@ -26,27 +26,27 @@ public sealed class NavigatorMessageHandler(
 
     private async Task OnCreateFlatMessage(CreateFlatMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await navigatorManager.CreateFlat(session.Player, message.FlatName, message.FlatDescription, message.FlatModelName, message.MaxPlayers, message.CategoryID, message.TradeSetting);
     }
 
     private async Task OnGetUserFlatCatsMessage(GetUserFlatCatsMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
         await navigatorManager.SendNavigatorCategories(session.Player);
     }
 
     private async Task OnGetGuestRoomMessage(GetGuestRoomMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await navigatorManager.GetGuestRoomMessage(session.Player, message.RoomId, message.EnterRoom, message.RoomForward);
     }
 
     private async Task OnNewNavigatorInitMessage(NewNavigatorInitMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
         await navigatorManager.SendNavigatorSettings(session.Player);
         await navigatorManager.SendNavigatorMetaData(session.Player);
         await navigatorManager.SendNavigatorLiftedRooms(session.Player);
@@ -57,7 +57,7 @@ public sealed class NavigatorMessageHandler(
 
     private async Task OnNewNavigatorSearchMessage(NewNavigatorSearchMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var searchCode = message.SearchCodeOriginal?.ToLower() ?? string.Empty;
         var searchTerm = message.FilteringData ?? string.Empty;
@@ -87,7 +87,7 @@ public sealed class NavigatorMessageHandler(
 
     private async Task OnAddFavouriteRoomMessage(AddFavouriteRoomMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
         var playerId = session.Player.Id;
         var roomId = message.RoomId;
 
@@ -97,7 +97,7 @@ public sealed class NavigatorMessageHandler(
 
     private async Task OnDeleteFavouriteRoomMessage(DeleteFavouriteRoomMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
         var playerId = session.Player.Id;
         var roomId = message.RoomId;
 

@@ -18,7 +18,7 @@ public class CatalogManager(
 
     public ICatalogPage GetRootForPlayer(IPlayer player, string catalogType)
     {
-        if (catalogType == null || catalogType == null) return null;
+        if (catalogType is null || catalogType is null) return null;
 
         if (Catalogs.TryGetValue(catalogType, out var catalog)) return catalog?.GetRootForPlayer(player) ?? null;
 
@@ -28,13 +28,13 @@ public class CatalogManager(
     public async Task<bool> PurchaseOfferForPlayer(IPlayer player, string catalogType, int pageId, int offerId,
         string extraParam, int quantity)
     {
-        if (player == null || catalogType == null) return false;
+        if (player is null || catalogType is null) return false;
 
         if (Catalogs.TryGetValue(catalogType, out var catalog))
         {
             var purchasedOffer = await catalog.PurchaseOffer(player, pageId, offerId, extraParam, quantity);
 
-            if (purchasedOffer == null)
+            if (purchasedOffer is null)
             {
                 player.Session?.Send(new PurchaseNotAllowedMessage
                 {
@@ -57,7 +57,7 @@ public class CatalogManager(
 
     public ICatalogOffer GetOfferForPlayer(IPlayer player, string catalogType, int offerId)
     {
-        if (player == null || catalogType == null) return null;
+        if (player is null || catalogType is null) return null;
 
         if (Catalogs.TryGetValue(catalogType, out var catalog))
             return catalog.GetOfferForPlayer(player, offerId) ?? null;
@@ -67,7 +67,7 @@ public class CatalogManager(
 
     public ICatalogPage GetPageForPlayer(IPlayer player, string catalogType, int pageId)
     {
-        if (player == null || catalogType == null) return null;
+        if (player is null || catalogType is null) return null;
 
         if (Catalogs.TryGetValue(catalogType, out var catalog)) return catalog.GetPageForPlayer(player, pageId) ?? null;
 

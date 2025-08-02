@@ -32,5 +32,5 @@ public class PlayerFurniture(
 
     public int Id => _furnitureEntity.Id;
     public IFurnitureDefinition FurnitureDefinition => _furnitureDefinition;
-    public bool Disposed => _playerFurnitureContainer == null;
+    public bool Disposed => _playerFurnitureContainer is null;
 }

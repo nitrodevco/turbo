@@ -13,7 +13,7 @@ public class FriendListMessageHandler(IPacketMessageHub messageHub) : IPacketHan
 
     protected virtual void OnMessengerInitMessage(Packets.Incoming.FriendList.MessengerInitMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Send(new Packets.Outgoing.FriendList.MessengerInitMessage
         {

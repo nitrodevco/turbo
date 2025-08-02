@@ -11,7 +11,7 @@ public class MapStuffData : StuffDataBase
     {
         if (Data.TryGetValue(_state, out var state)) return state;
 
-        return "";
+        return string.Empty;
     }
 
     public override void SetState(string state)
@@ -24,6 +24,6 @@ public class MapStuffData : StuffDataBase
     {
         if (Data.TryGetValue(key, out var value)) return value;
 
-        return "";
+        return string.Empty;
     }
 }

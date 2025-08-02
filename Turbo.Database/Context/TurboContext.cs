@@ -42,7 +42,6 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
     public DbSet<PlayerChatStyleEntity> PlayerChatStyles { get; set; }
     public DbSet<PlayerChatStyleOwnedEntity> PlayerOwnedChatStyles { get; set; }
     public DbSet<PerformanceLogEntity> PerformanceLogs { get; set; }
-    public DbSet<PlayerPerksEntity> PlayerPerks { get; set; }
     public DbSet<PlayerFavouriteRoomsEntity> PlayerFavouriteRooms { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -95,7 +94,7 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
     {
         var asm = Assembly.Load("Turbo.Core");
 
-        if (asm == null) return;
+        if (asm is null) return;
 
         var types = asm.GetTypes().ToList();
 
@@ -116,7 +115,7 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
             {
                 var att = p.GetCustomAttribute<DefaultValueSqlAttribute>();
 
-                if (att != null) modelBuilder.Entity(t).Property(p.Name).HasDefaultValueSql(att.Value?.ToString());
+                if (att is not null) modelBuilder.Entity(t).Property(p.Name).HasDefaultValueSql(att.Value?.ToString());
             }
         }
     }

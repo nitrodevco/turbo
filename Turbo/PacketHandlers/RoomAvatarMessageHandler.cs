@@ -27,7 +27,7 @@ public class RoomAvatarMessageHandler(
 
     private void OnAvatarExpressionMessage(AvatarExpressionMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             avatarLogic.Expression((RoomObjectAvatarExpression)message.TypeCode);
@@ -35,16 +35,16 @@ public class RoomAvatarMessageHandler(
 
     private void OnChangeMottoMessage(ChangeMottoMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         IRoomObject roomObject = session.Player.RoomObject;
 
-        if (roomObject == null) return;
+        if (roomObject is null) return;
     }
 
     private void OnChangePostureMessage(ChangePostureMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             switch ((RoomObjectAvatarPosture)message.Posture)
@@ -57,7 +57,7 @@ public class RoomAvatarMessageHandler(
 
     private void OnDanceMessage(DanceMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             avatarLogic.Dance((RoomObjectAvatarDanceType)message.Style);
@@ -65,7 +65,7 @@ public class RoomAvatarMessageHandler(
 
     private void OnDropCarryItemMessage(DropCarryItemMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
         {
@@ -74,7 +74,7 @@ public class RoomAvatarMessageHandler(
 
     private void OnLookToMessage(LookToMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic)
             avatarLogic.LookAtPoint(new Point(message.LocX, message.LocY));
@@ -90,7 +90,7 @@ public class RoomAvatarMessageHandler(
 
     private void OnSignMessage(SignMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         if (session.Player.RoomObject?.Logic is AvatarLogic avatarLogic) avatarLogic.Sign(message.SignId);
     }

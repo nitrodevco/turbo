@@ -10,7 +10,7 @@ public class CatalogRoot(ILogger<ICatalogPage> _logger) : CatalogPage(_logger, n
     public override int ParentId => -1;
     public override int Icon => 0;
     public override string Name => "root";
-    public override string Localization => "";
+    public override string Localization => string.Empty;
 
     public override bool Visible => true;
 
@@ -20,7 +20,7 @@ public class CatalogRoot(ILogger<ICatalogPage> _logger) : CatalogPage(_logger, n
 
     public override void AddChild(ICatalogPage catalogPage)
     {
-        if (catalogPage == null || Children.ContainsKey(catalogPage.Id)) return;
+        if (catalogPage is null || Children.ContainsKey(catalogPage.Id)) return;
         Children.Add(catalogPage.Id, catalogPage);
 
         catalogPage.SetParent(this);

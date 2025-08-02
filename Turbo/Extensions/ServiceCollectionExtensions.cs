@@ -166,7 +166,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlayerChatStyleRepository, PlayerChatStyleRepository>();
         services.AddScoped<IPlayerChatStyleOwnedRepository, PlayerChatStyleOwnedRepository>();
         services.AddScoped<IPerformanceLogRepository, PerformanceLogRepository>();
-        services.AddScoped<IPlayerPerksRepository, PlayerPerksRepository>();
         services.AddScoped<IPlayerFavouriteRoomsRepository, PlayerFavouriteRoomsRepository>();
     }
 }

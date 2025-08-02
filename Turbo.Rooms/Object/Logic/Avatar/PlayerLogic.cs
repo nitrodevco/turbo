@@ -46,7 +46,7 @@ public class PlayerLogic : AvatarLogic
     {
         var roomTile = GetCurrentTile();
 
-        if (IsKicked || (roomTile != null && roomTile.IsDoor && DidMove))
+        if (IsKicked || (roomTile is not null && roomTile.IsDoor && DidMove))
         {
             RoomObject.Dispose();
 

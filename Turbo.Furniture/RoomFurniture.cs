@@ -33,11 +33,11 @@ public abstract class RoomFurniture(
 
     public void SetRoom(IRoom room)
     {
-        if (room == null)
+        if (room is null)
         {
             _room = null;
 
-            if (FurnitureEntity.RoomEntityId != null)
+            if (FurnitureEntity.RoomEntityId is not null)
             {
                 FurnitureEntity.RoomEntityId = null;
 
@@ -58,12 +58,12 @@ public abstract class RoomFurniture(
 
     public bool SetPlayer(IPlayer player)
     {
-        if (player == null) return false;
+        if (player is null) return false;
 
         return SetPlayer(player.Id, player.Name);
     }
 
-    public bool SetPlayer(int playerId, string playerName = "")
+    public bool SetPlayer(int playerId, string playerName = string.Empty)
     {
         if (playerId <= 0) return false;
 

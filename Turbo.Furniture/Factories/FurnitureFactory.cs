@@ -23,7 +23,7 @@ public class FurnitureFactory(
     {
         var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
-        if (furnitureDefinition == null) return null;
+        if (furnitureDefinition is null) return null;
 
         return ActivatorUtilities.CreateInstance<RoomFloorFurniture>(_provider, roomFurnitureManager, furnitureEntity,
             furnitureDefinition);
@@ -43,7 +43,7 @@ public class FurnitureFactory(
     {
         var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
-        if (furnitureDefinition == null) return null;
+        if (furnitureDefinition is null) return null;
 
         return ActivatorUtilities.CreateInstance<RoomWallFurniture>(_provider, roomFurnitureManager, furnitureEntity,
             furnitureDefinition);

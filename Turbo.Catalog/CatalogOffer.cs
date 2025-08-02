@@ -17,7 +17,7 @@ public class CatalogOffer(
 
     public void SetPage(ICatalogPage catalogPage)
     {
-        if (catalogPage == null || Page == catalogPage) return;
+        if (catalogPage is null || Page == catalogPage) return;
 
         Page = catalogPage;
 
@@ -26,7 +26,7 @@ public class CatalogOffer(
 
     public void AddProduct(ICatalogProduct catalogProduct)
     {
-        if (catalogProduct == null || Products.Contains(catalogProduct)) return;
+        if (catalogProduct is null || Products.Contains(catalogProduct)) return;
 
         Products.Add(catalogProduct);
 
@@ -35,7 +35,7 @@ public class CatalogOffer(
 
     public async Task<ICatalogOffer> Purchase(IPlayer player, string extraParam, int quantity)
     {
-        if (player == null || quantity <= 0 || !Visible || Products.Count == 0) return null;
+        if (player is null || quantity <= 0 || !Visible || Products.Count == 0) return null;
 
         foreach (var product in Products)
             if (!product.CanPlayerRecieveProduct(player))
@@ -63,6 +63,6 @@ public class CatalogOffer(
     public bool CanBundle => _entity.CanBundle ?? false;
     public int ClubLevel => _entity.ClubLevel;
     public bool IsPet => Products.Count >= 1 ? Products[0].ProductType.Equals(ProductTypeEnum.Pet) : false;
-    public string PreviewImage => "";
+    public string PreviewImage => string.Empty;
     public bool Visible => _entity.Visible ?? false;
 }

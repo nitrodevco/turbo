@@ -4,7 +4,7 @@ public class LegacyStuffData : StuffDataBase
 {
     public LegacyStuffData()
     {
-        if (Data == null || Data.Equals("")) Data = "0";
+        if (Data is null || Data.Equals(string.Empty)) Data = "0";
     }
 
     public string Data { get; set; }

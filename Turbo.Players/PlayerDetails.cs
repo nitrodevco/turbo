@@ -1,23 +1,24 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Turbo.Core.Database.Entities.Players;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms.Object.Constants;
 using Turbo.Core.Storage;
+using Turbo.Players.Constants;
 
 namespace Turbo.Players;
 
 public class PlayerDetails(
-    IPlayerManager _playerManager,
     PlayerEntity _playerEntity,
     IStorageQueue _storageQueue) : IPlayerDetails
 {
-    private int _cachedChatStyleId = -1;
+    private readonly int _cachedChatStyleId = PlayerConstants.InvalidChatStyleId;
 
     public int? ChatStyleId
     {
-        get => _playerEntity.RoomChatStyleId == null ? -1 : _playerEntity.RoomChatStyleId;
+        get => _playerEntity.RoomChatStyleId ?? PlayerConstants.InvalidChatStyleId;
         set
         {
             _playerEntity.RoomChatStyleId = value;
@@ -54,7 +55,7 @@ public class PlayerDetails(
 
     public string Motto
     {
-        get => _playerEntity.Motto == null ? "" : _playerEntity.Motto;
+        get => _playerEntity.Motto ?? string.Empty;
         set
         {
             _playerEntity.Motto = value;
@@ -88,6 +89,36 @@ public class PlayerDetails(
         set
         {
             _playerEntity.PlayerStatus = value;
+            _storageQueue.Add(_playerEntity);
+        }
+    }
+
+    public IList<PlayerPerkEnum> PlayerPerks
+    {
+        get
+        {
+            var perkFlags = _playerEntity.PlayerPerks;
+            var result = new List<PlayerPerkEnum>();
+
+            foreach (PlayerPerkEnum flag in Enum.GetValues(typeof(PlayerPerkEnum)))
+            {
+                if (Convert.ToInt32(flag) != 0 && ((PlayerPerkEnum)perkFlags).HasFlag(flag))
+                {
+                    result.Add(flag);
+                }
+            }
+            return result;
+        }
+        set
+        {
+            var perkFlags = 0;
+
+            foreach (var flag in value)
+            {
+                perkFlags |= Convert.ToInt32(flag); // bitwise OR
+            }
+
+            _playerEntity.PlayerPerks = perkFlags;
             _storageQueue.Add(_playerEntity);
         }
     }

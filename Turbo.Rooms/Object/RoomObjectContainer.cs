@@ -15,7 +15,7 @@ public class RoomObjectContainer<T>(Action<T> onRemove) : IRoomObjectContainer<T
 
     public bool AddRoomObject(T roomObject)
     {
-        if (roomObject == null) return false;
+        if (roomObject is null) return false;
 
         return RoomObjects.TryAdd(roomObject.Id, roomObject);
     }
@@ -36,7 +36,7 @@ public class RoomObjectContainer<T>(Action<T> onRemove) : IRoomObjectContainer<T
     {
         foreach (var roomObject in roomObjects)
         {
-            if (roomObject == null) continue;
+            if (roomObject is null) continue;
 
             if (!RoomObjects.TryRemove(new KeyValuePair<int, T>(roomObject.Id, roomObject))) continue;
 

@@ -27,14 +27,14 @@ public class TurboPluginManager(
 
         var pluginOrder = _emulatorConfig.PluginOrder.ToArray();
 
-        if (pluginOrder != null) plugins = [.. plugins.OrderBy(value => Array.IndexOf(pluginOrder, value))];
+        if (pluginOrder is not null) plugins = [.. plugins.OrderBy(value => Array.IndexOf(pluginOrder, value))];
 
         foreach (var plugin in plugins)
             try
             {
                 var assembly = Assembly.LoadFrom(Path.Combine(Directory.GetCurrentDirectory(), plugin));
 
-                if (assembly == null) return;
+                if (assembly is null) return;
 
                 // Get a list of all types in assembly that implement ITurboPlugin. 
                 // Exclude interfaces, abstract and generic types.
@@ -83,7 +83,7 @@ public class TurboPluginManager(
 
             _plugins.Add(pluginInstance);
 
-            if (pluginInstance != null)
+            if (pluginInstance is not null)
                 _logger.LogInformation("{Context} -> Loaded {PluginName} by {PluginAuthor}", nameof(TurboPluginManager),
                     pluginInstance.PluginName, pluginInstance.PluginAuthor);
         }

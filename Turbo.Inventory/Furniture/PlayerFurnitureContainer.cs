@@ -16,7 +16,7 @@ public class PlayerFurnitureContainer(Action<IPlayerFurniture> _onRemove) : IPla
 
     public bool AddFurniture(IPlayerFurniture playerFurniture)
     {
-        if (playerFurniture == null) return false;
+        if (playerFurniture is null) return false;
 
         return PlayerFurniture.TryAdd(playerFurniture.Id, playerFurniture);
     }
@@ -25,7 +25,7 @@ public class PlayerFurnitureContainer(Action<IPlayerFurniture> _onRemove) : IPla
     {
         foreach (var playerFurniture in playerFurnitures)
         {
-            if (playerFurniture == null) continue;
+            if (playerFurniture is null) continue;
 
             if (!PlayerFurniture.TryRemove(
                     new KeyValuePair<int, IPlayerFurniture>(playerFurniture.Id, playerFurniture))) continue;
@@ -40,7 +40,7 @@ public class PlayerFurnitureContainer(Action<IPlayerFurniture> _onRemove) : IPla
         {
             var furniture = GetPlayerFurniture(id);
 
-            if (furniture == null) continue;
+            if (furniture is null) continue;
 
             RemoveFurniture(furniture);
         }

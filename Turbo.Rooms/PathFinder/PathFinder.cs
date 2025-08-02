@@ -25,19 +25,19 @@ public class PathFinder : IPathFinder
 
     public IList<IPoint> MakePath(IRoomObjectAvatar avatar, IPoint location)
     {
-        if (avatar == null || location == null) return null;
+        if (avatar is null || location is null) return null;
 
         location = location.Clone();
 
         var goalTile = _roomMap.GetValidTile(avatar, location);
 
-        if (goalTile == null) return null;
+        if (goalTile is null) return null;
 
         List<IPoint> points = new();
 
         var nodes = CalculatePathFinderNode(avatar, goalTile);
 
-        if (nodes != null)
+        if (nodes is not null)
             if (nodes.Count > 0)
             {
                 nodes.RemoveAt(0);
@@ -51,14 +51,14 @@ public class PathFinder : IPathFinder
     public bool IsValidStep(IRoomObjectAvatar avatar, IPoint location, IPoint nextLocation, IPoint goalLocation,
         bool blockingDisabled = false)
     {
-        if (_roomMap == null || avatar == null || location == null || nextLocation == null ||
-            goalLocation == null) return false;
+        if (_roomMap is null || avatar is null || location is null || nextLocation is null ||
+            goalLocation is null) return false;
 
         var isGoal = nextLocation.Compare(goalLocation);
         var currentTile = _roomMap.GetValidTile(avatar, location, false, blockingDisabled);
         var nextTile = _roomMap.GetValidTile(avatar, nextLocation, isGoal, blockingDisabled);
 
-        if (currentTile == null || nextTile == null || (nextTile.IsDoor && !isGoal)) return false;
+        if (currentTile is null || nextTile is null || (nextTile.IsDoor && !isGoal)) return false;
 
         var currentHeight = currentTile.GetWalkingHeight();
         var nextHeight = nextTile.GetWalkingHeight();
@@ -67,8 +67,8 @@ public class PathFinder : IPathFinder
 
         if (DefaultSettings.PathingAllowsDiagonals && !location.Compare(nextLocation))
         {
-            var isSideValid = _roomMap.GetValidDiagonalTile(avatar, new Point(nextLocation.X, location.Y)) != null;
-            var isOtherSideValid = _roomMap.GetValidDiagonalTile(avatar, new Point(location.X, nextLocation.Y)) != null;
+            var isSideValid = _roomMap.GetValidDiagonalTile(avatar, new Point(nextLocation.X, location.Y)) is not null;
+            var isOtherSideValid = _roomMap.GetValidDiagonalTile(avatar, new Point(location.X, nextLocation.Y)) is not null;
 
             if (!isSideValid && !isOtherSideValid) return false;
         }
@@ -83,7 +83,7 @@ public class PathFinder : IPathFinder
     private IList<PathFinderNode> CalculatePathFinderNode(IRoomObjectAvatar avatar, IRoomTile goalTile,
         bool blockingDisabled = false)
     {
-        if (avatar == null || _roomMap == null || goalTile == null) return null;
+        if (avatar is null || _roomMap is null || goalTile is null) return null;
 
         var location = goalTile.Location;
 

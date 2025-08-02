@@ -38,7 +38,7 @@ public class StuffDataFactory
                 break;
         }
 
-        if (stuffData == null) return null;
+        if (stuffData is null) return null;
 
         stuffData.Flags = flags;
 
@@ -47,7 +47,7 @@ public class StuffDataFactory
 
     public static IStuffData CreateStuffDataFromJson(int flags, string jsonString)
     {
-        if (jsonString == null) return CreateStuffData(flags);
+        if (jsonString is null) return CreateStuffData(flags);
 
         IStuffData stuffData = null;
 
@@ -79,7 +79,7 @@ public class StuffDataFactory
                 break;
         }
 
-        if (stuffData == null) return null;
+        if (stuffData is null) return null;
 
         stuffData.Flags = flags;
 

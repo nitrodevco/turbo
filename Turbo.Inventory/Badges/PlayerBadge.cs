@@ -16,7 +16,7 @@ public class PlayerBadge(
 
     public void SetSlotId(int? slotId)
     {
-        if (_badgeEntity == null) return;
+        if (_badgeEntity is null) return;
 
         if (_badgeEntity.SlotId == slotId) return;
 

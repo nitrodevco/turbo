@@ -19,7 +19,7 @@ public class FurnitureStackHelperLogic : FurnitureFloorLogic
     {
         var currentTile = GetCurrentTile();
 
-        if (currentTile == null || RoomObject == null) return;
+        if (currentTile is null || RoomObject is null) return;
 
         RoomObject.Z = currentTile.DefaultHeight;
 
@@ -43,7 +43,7 @@ public class FurnitureStackHelperLogic : FurnitureFloorLogic
             {
                 var highestObject = tile.HighestObject;
 
-                if (highestObject == null || !highestObject.Logic.CanStack()) continue;
+                if (highestObject is null || !highestObject.Logic.CanStack()) continue;
 
                 if (highestObject.Logic.Height < newHeight) continue;
 

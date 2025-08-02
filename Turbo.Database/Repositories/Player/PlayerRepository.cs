@@ -51,4 +51,16 @@ public class PlayerRepository(IEmulatorContext _context) : IPlayerRepository
         })
         .FirstOrDefaultAsync();
     }
+
+    public async Task<PlayerPerksDto> FindPerksByUserIdAsync(int id)
+    {
+        return await _context.Players
+        .Where(player => id == player.Id)
+        .Select(player => new PlayerPerksDto
+        {
+            Id = player.Id,
+            PlayerPerks = player.PlayerPerks
+        })
+        .FirstOrDefaultAsync();
+    }
 }

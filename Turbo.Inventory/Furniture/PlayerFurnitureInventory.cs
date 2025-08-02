@@ -41,11 +41,11 @@ public class PlayerFurnitureInventory : Component, IPlayerFurnitureInventory
 
     public void AddFurnitureFromRoom(IRoomFurniture roomFurniture)
     {
-        if (roomFurniture == null) return;
+        if (roomFurniture is null) return;
 
         var playerFurniture = _playerFurnitureFactory.CreateFromRoomFurniture(Furniture, roomFurniture, _player.Id);
 
-        if (playerFurniture == null) return;
+        if (playerFurniture is null) return;
 
         Furniture.AddFurniture(playerFurniture);
 
@@ -61,7 +61,7 @@ public class PlayerFurnitureInventory : Component, IPlayerFurnitureInventory
 
     public void RemoveFurniture(IPlayerFurniture playerFurniture)
     {
-        if (playerFurniture == null || playerFurniture.Disposed) return;
+        if (playerFurniture is null || playerFurniture.Disposed) return;
 
         Furniture.RemoveFurniture(playerFurniture);
 
@@ -81,7 +81,7 @@ public class PlayerFurnitureInventory : Component, IPlayerFurnitureInventory
 
         var playerFurniture = await _playerFurnitureFactory.CreateFromDefinitionId(Furniture, definitionId, _player.Id);
 
-        if (playerFurniture == null) return;
+        if (playerFurniture is null) return;
 
         Furniture.AddFurniture(playerFurniture);
 
@@ -158,7 +158,7 @@ public class PlayerFurnitureInventory : Component, IPlayerFurnitureInventory
 
         var entities = await furnitureRepository.FindAllInventoryByPlayerIdAsync(_player.Id);
 
-        if (entities != null)
+        if (entities is not null)
             foreach (var furnitureEntity in entities)
             {
                 var playerFurniture = _playerFurnitureFactory.Create(Furniture, furnitureEntity);

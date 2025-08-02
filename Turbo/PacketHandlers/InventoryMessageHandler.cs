@@ -27,7 +27,7 @@ public class InventoryMessageHandler(
 
     protected virtual void OnGetCreditsInfoMessage(GetCreditsInfoMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Send(new CreditBalanceMessage
         {
@@ -37,38 +37,38 @@ public class InventoryMessageHandler(
 
     protected virtual void OnGetBadgesMessage(GetBadgesMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var playerBadgeInventory = session.Player.PlayerInventory.BadgeInventory;
 
-        if (playerBadgeInventory != null) playerBadgeInventory.SendBadgesToSession(session);
+        if (playerBadgeInventory is not null) playerBadgeInventory.SendBadgesToSession(session);
     }
 
     protected virtual void OnSetActivatedBadgesMessage(SetActivatedBadgesMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var playerBadgeInventory = session.Player.PlayerInventory.BadgeInventory;
 
-        if (playerBadgeInventory != null) playerBadgeInventory.SetActivedBadges(message.Badges);
+        if (playerBadgeInventory is not null) playerBadgeInventory.SetActivedBadges(message.Badges);
     }
 
     protected virtual void OnRequestFurniInventoryMessage(RequestFurniInventoryMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var playerFurnitureInventory = session.Player.PlayerInventory.FurnitureInventory;
 
-        if (playerFurnitureInventory != null) playerFurnitureInventory.SendFurnitureToSession(session);
+        if (playerFurnitureInventory is not null) playerFurnitureInventory.SendFurnitureToSession(session);
     }
 
     protected virtual void OnRequestFurniInventoryWhenNotInRoomMessage(RequestFurniInventoryWhenNotInRoomMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var playerFurnitureInventory = session.Player.PlayerInventory.FurnitureInventory;
 
-        if (playerFurnitureInventory != null) playerFurnitureInventory.SendFurnitureToSession(session);
+        if (playerFurnitureInventory is not null) playerFurnitureInventory.SendFurnitureToSession(session);
     }
 
     protected virtual void OnRequestRoomPropertySetMessage(RequestRoomPropertySetMessage message, ISession session)
@@ -77,7 +77,7 @@ public class InventoryMessageHandler(
 
     private void OnGetAchievementsMessage(GetAchievementsMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Send(new AchievementsMessage());
     }

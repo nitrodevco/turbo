@@ -18,9 +18,9 @@ public class FurnitureWallLogic : FurnitureLogicBase, IFurnitureWallLogic
     {
         if (roomObject == RoomObject) return true;
 
-        if (RoomObject != null) RoomObject.SetLogic(null);
+        if (RoomObject is not null) RoomObject.SetLogic(null);
 
-        if (roomObject == null)
+        if (roomObject is null)
         {
             Dispose();
 
@@ -57,7 +57,7 @@ public class FurnitureWallLogic : FurnitureLogicBase, IFurnitureWallLogic
 
     public override bool SetState(int state, bool refresh = true)
     {
-        if (StuffData == null) return false;
+        if (StuffData is null) return false;
 
         if (state == StuffData.GetState()) return false;
 

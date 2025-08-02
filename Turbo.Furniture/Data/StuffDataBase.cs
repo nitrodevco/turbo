@@ -13,7 +13,7 @@ public class StuffDataBase : IStuffData
 
     public virtual string GetLegacyString()
     {
-        return "";
+        return string.Empty;
     }
 
     public virtual void SetState(string state)

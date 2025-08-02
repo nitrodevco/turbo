@@ -41,14 +41,14 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnClickFurniMessage(ClickFurniMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         //User clicks furni
     }
 
     protected virtual async void OnGetFurnitureAliasesMessage(GetFurnitureAliasesMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await session.SendQueue(new FurnitureAliasesMessage
         {
@@ -58,11 +58,11 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnGetItemDataMessage(GetItemDataMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var room = session.Player.RoomObject?.Room;
 
-        if (room == null) return;
+        if (room is null) return;
 
         //TODO post it note / wall item data
     }
@@ -70,21 +70,21 @@ public class RoomEngineMessageHandler(
     protected virtual async void OnGetRoomEntryDataMessage(GetRoomEntryDataMessage message, ISession session)
     {
         //TODO WIN Version Doesn't need this
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await playerManager.EnterRoom(session.Player);
     }
 
     protected virtual void OnMoveAvatarMessage(MoveAvatarMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Player.RoomObject?.Logic?.WalkTo(new Point(message.X, message.Y), true);
     }
 
     protected virtual void OnMoveObjectMessage(MoveObjectMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Player.RoomObject?.Room?.RoomFurnitureManager?.MoveFloorFurniture(session.Player, message.ObjectId,
             message.X, message.Y, (Rotation)message.Direction);
@@ -92,7 +92,7 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnMoveWallItemMessage(MoveWallItemMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Player.RoomObject?.Room?.RoomFurnitureManager?.MoveWallFurniture(session.Player, message.ObjectId,
             message.Location);
@@ -100,7 +100,7 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnPickupObjectMessage(PickupObjectMessage message, ISession session)
     {
-        if (session.Player?.RoomObject?.Room?.RoomFurnitureManager == null) return;
+        if (session.Player?.RoomObject?.Room?.RoomFurnitureManager is null) return;
 
         var furnitureManager = session.Player.RoomObject.Room.RoomFurnitureManager;
 
@@ -120,45 +120,45 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnPlaceObjectMessage(PlaceObjectMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
-        if (message.WallLocation == null)
+        if (message.WallLocation is null)
             session.Player.RoomObject?.Room?.RoomFurnitureManager?.PlaceFloorFurnitureByFurniId(session.Player,
                 message.ObjectId, new Point(message.X ?? 0, message.Y ?? 0, 0, (Rotation)message.Direction));
 
-        if (message.WallLocation != null && message.WallLocation.Length > 0)
+        if (message.WallLocation is not null && message.WallLocation.Length > 0)
             session.Player.RoomObject?.Room?.RoomFurnitureManager?.PlaceWallFurnitureByFurniId(session.Player,
                 message.ObjectId, message.WallLocation);
     }
 
     protected virtual void OnRemoveItemMessage(RemoveItemMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         IRoomObject roomObject = session.Player.RoomObject;
 
-        if (roomObject == null) return;
+        if (roomObject is null) return;
 
         // delete sticky
     }
 
     protected virtual void OnSetItemDataMessage(SetItemDataMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         // save sticky note
     }
 
     protected virtual void OnSetObjectDataMessage(SetObjectDataMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         // save strings of data, room background
     }
 
     protected virtual void OnUseFurnitureMessage(UseFurnitureMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Player.RoomObject?.Room?.RoomFurnitureManager?.FloorObjects?.GetRoomObject(message.ObjectId)?.Logic
             ?.OnInteract(session.Player.RoomObject, message.Param);
@@ -166,7 +166,7 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnUseWallItemMessage(UseWallItemMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Player.RoomObject?.Room?.RoomFurnitureManager?.WallObjects?.GetRoomObject(message.ObjectId)?.Logic
             ?.OnInteract(session.Player.RoomObject, message.Param);
@@ -174,22 +174,22 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnChatMessage(ChatMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var roomObject = session.Player.RoomObject;
 
-        if (roomObject == null) return;
+        if (roomObject is null) return;
 
         roomObject.Room?.RoomChatManager?.SendChatForPlayer(session.Player, message.Text, message.StyleId);
     }
 
     protected virtual void OnWhisperMessage(WhisperMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var roomObject = session.Player.RoomObject;
 
-        if (roomObject == null) return;
+        if (roomObject is null) return;
 
         roomObject.Room?.RoomChatManager?.SendWhisperForPlayer(session.Player, message.RecipientName, message.Text,
             message.StyleId);
@@ -197,18 +197,18 @@ public class RoomEngineMessageHandler(
 
     protected virtual void OnShoutMessage(ShoutMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var roomObject = session.Player.RoomObject;
 
-        if (roomObject == null) return;
+        if (roomObject is null) return;
 
         roomObject.Room?.RoomChatManager?.SendShoutForPlayer(session.Player, message.Text, message.StyleId);
     }
 
     protected virtual async void OnGetHeightMapMessage(GetHeightMapMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await playerManager.EnterRoom(session.Player);
     }

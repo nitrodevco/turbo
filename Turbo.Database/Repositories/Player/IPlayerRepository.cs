@@ -10,4 +10,5 @@ public interface IPlayerRepository : IBaseRepository<PlayerEntity>
     public Task<PlayerUsernameDto> FindUsernameAsync(int id);
     public Task<IList<PlayerUsernameDto>> FindUsernamesAsync(IList<int> ids);
     public Task<PlayerUsernameDto> FindUserIdAsync(string username);
+    public Task<PlayerPerksDto> FindPerksByUserIdAsync(int id);
 }

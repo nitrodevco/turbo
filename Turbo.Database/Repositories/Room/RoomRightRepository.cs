@@ -27,7 +27,7 @@ public class RoomRightRepository(IEmulatorContext _context) : IRoomRightReposito
         var entity = await _context.RoomRights.FirstOrDefaultAsync(entity =>
             entity.RoomEntityId == roomId && entity.PlayerEntityId == playerId);
 
-        if (entity != null) return false;
+        if (entity is not null) return false;
 
         entity = new RoomRightEntity
         {
@@ -47,7 +47,7 @@ public class RoomRightRepository(IEmulatorContext _context) : IRoomRightReposito
         var entity = await _context.RoomRights.FirstOrDefaultAsync(entity =>
             entity.RoomEntityId == roomId && entity.PlayerEntityId == playerId);
 
-        if (entity == null) return false;
+        if (entity is null) return false;
 
         _context.Remove(entity);
 

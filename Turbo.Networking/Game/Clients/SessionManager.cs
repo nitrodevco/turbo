@@ -80,7 +80,7 @@ public class SessionManager : ISessionManager
 
         foreach (var session in _clients.Values)
         {
-            if (session == null) continue;
+            if (session is null) continue;
 
             try
             {

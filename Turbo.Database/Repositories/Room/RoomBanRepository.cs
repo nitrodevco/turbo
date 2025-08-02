@@ -28,7 +28,7 @@ public class RoomBanRepository(IEmulatorContext _context) : IRoomBanRepository
         var entity = await _context.RoomBans.FirstOrDefaultAsync(entity =>
             entity.RoomEntityId == roomId && entity.PlayerEntityId == playerId);
 
-        if (entity != null) return false;
+        if (entity is not null) return false;
 
         entity = new RoomBanEntity();
 
@@ -45,7 +45,7 @@ public class RoomBanRepository(IEmulatorContext _context) : IRoomBanRepository
 
     public async Task<bool> RemoveBanEntityAsync(RoomBanEntity entity)
     {
-        if (entity == null) return false;
+        if (entity is null) return false;
 
         _context.Remove(entity);
 

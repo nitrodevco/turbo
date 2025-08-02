@@ -37,7 +37,7 @@ public class RoomMap : IRoomMap
     {
         var roomModel = _room.RoomModel;
 
-        if (roomModel == null) return;
+        if (roomModel is null) return;
 
         _map.Clear();
         Tiles.Clear();
@@ -70,16 +70,16 @@ public class RoomMap : IRoomMap
 
         var doorTile = GetTile(roomModel.DoorLocation);
 
-        if (doorTile != null) doorTile.IsDoor = true;
+        if (doorTile is not null) doorTile.IsDoor = true;
     }
 
     public IRoomTile GetTile(IPoint point)
     {
-        if (point == null || !_map.ContainsKey(point.X) || !_map[point.X].ContainsKey(point.Y)) return null;
+        if (point is null || !_map.ContainsKey(point.X) || !_map[point.X].ContainsKey(point.Y)) return null;
 
         var roomTile = _map[point.X][point.Y];
 
-        if (roomTile == null || roomTile.State == RoomTileState.Closed) return null;
+        if (roomTile is null || roomTile.State == RoomTileState.Closed) return null;
 
         return roomTile;
     }
@@ -87,11 +87,11 @@ public class RoomMap : IRoomMap
     public IRoomTile GetValidTile(IRoomObjectAvatar avatarObject, IPoint point, bool isGoal = true,
         bool blockingDisabled = false)
     {
-        if (avatarObject == null || point == null) return null;
+        if (avatarObject is null || point is null) return null;
 
         var roomTile = GetTile(point);
 
-        if (roomTile == null || roomTile.State == RoomTileState.Closed) return null;
+        if (roomTile is null || roomTile.State == RoomTileState.Closed) return null;
 
         if (roomTile.IsDoor) return roomTile;
 
@@ -116,11 +116,11 @@ public class RoomMap : IRoomMap
 
     public IRoomTile GetValidDiagonalTile(IRoomObjectAvatar avatarObject, IPoint point, bool blockingDisabled = false)
     {
-        if (avatarObject == null || point == null) return null;
+        if (avatarObject is null || point is null) return null;
 
         var roomTile = GetTile(point);
 
-        if (roomTile == null || roomTile.State == RoomTileState.Closed) return null;
+        if (roomTile is null || roomTile.State == RoomTileState.Closed) return null;
 
         if (roomTile.IsDoor) return roomTile;
 
@@ -142,7 +142,7 @@ public class RoomMap : IRoomMap
     {
         var pillowPoints = AffectedPoints.GetPillowPoints(floorObject);
 
-        if (pillowPoints == null || pillowPoints.Count == 0) return null;
+        if (pillowPoints is null || pillowPoints.Count == 0) return null;
 
         originalPoint = originalPoint.Clone();
 
@@ -153,7 +153,7 @@ public class RoomMap : IRoomMap
 
             var roomTile = GetValidTile(avatarObject, originalPoint);
 
-            if (roomTile != null) return roomTile.Location.Clone();
+            if (roomTile is not null) return roomTile.Location.Clone();
         }
 
         return null;
@@ -169,16 +169,16 @@ public class RoomMap : IRoomMap
         {
             var roomTile = GetTile(point);
 
-            if (roomTile == null) continue;
+            if (roomTile is null) continue;
 
-            if (highestTile == null)
+            if (highestTile is null)
             {
                 highestTile = roomTile;
 
                 continue;
             }
 
-            if (highestTile == null) continue;
+            if (highestTile is null) continue;
 
             var height = roomTile.Height;
 
@@ -194,7 +194,7 @@ public class RoomMap : IRoomMap
 
     public void AddFloorObject(IRoomObjectFloor floorObject)
     {
-        if (floorObject == null) return;
+        if (floorObject is null) return;
 
         List<IPoint> points = new();
 
@@ -205,7 +205,7 @@ public class RoomMap : IRoomMap
             {
                 var roomTile = GetTile(affectedPoint);
 
-                if (roomTile == null) continue;
+                if (roomTile is null) continue;
 
                 roomTile.AddRoomObject(floorObject);
 
@@ -217,7 +217,7 @@ public class RoomMap : IRoomMap
         _room.SendComposer(new ObjectAddMessage
         {
             Object = floorObject,
-            OwnerName = floorObject.RoomObjectHolder?.PlayerName ?? ""
+            OwnerName = floorObject.RoomObjectHolder?.PlayerName ?? string.Empty
         });
 
         UpdatePoints(true, points.ToArray());
@@ -225,20 +225,20 @@ public class RoomMap : IRoomMap
 
     public void AddWallObject(IRoomObjectWall wallObject)
     {
-        if (wallObject == null) return;
+        if (wallObject is null) return;
 
         if (!_room.IsInitialized) return;
 
         _room.SendComposer(new ItemAddMessage
         {
             Object = wallObject,
-            OwnerName = wallObject.RoomObjectHolder?.PlayerName ?? ""
+            OwnerName = wallObject.RoomObjectHolder?.PlayerName ?? string.Empty
         });
     }
 
     public void AddAvatarObject(IRoomObjectAvatar avatarObject)
     {
-        if (avatarObject == null) return;
+        if (avatarObject is null) return;
 
         var roomTile = GetTile(avatarObject.Location);
 
@@ -267,7 +267,7 @@ public class RoomMap : IRoomMap
     {
         List<IPoint> points = new();
 
-        if (oldLocation != null)
+        if (oldLocation is not null)
         {
             var oldAffectedPoints = AffectedPoints.GetPoints(floorObject, oldLocation);
 
@@ -276,7 +276,7 @@ public class RoomMap : IRoomMap
                 {
                     var roomTile = GetTile(point);
 
-                    if (roomTile == null) continue;
+                    if (roomTile is null) continue;
 
                     roomTile.RemoveRoomObject(floorObject);
 
@@ -291,7 +291,7 @@ public class RoomMap : IRoomMap
             {
                 var roomTile = GetTile(point);
 
-                if (roomTile == null) continue;
+                if (roomTile is null) continue;
 
                 roomTile.AddRoomObject(floorObject);
 
@@ -322,7 +322,7 @@ public class RoomMap : IRoomMap
 
     public void RemoveFloorObject(IRoomObjectFloor floorObject, int pickerId = -1)
     {
-        if (floorObject == null) return;
+        if (floorObject is null) return;
 
         List<IPoint> points = new();
 
@@ -333,7 +333,7 @@ public class RoomMap : IRoomMap
             {
                 var roomTile = GetTile(affectedPoint);
 
-                if (roomTile == null) continue;
+                if (roomTile is null) continue;
 
                 roomTile.RemoveRoomObject(floorObject);
 
@@ -355,7 +355,7 @@ public class RoomMap : IRoomMap
 
     public void RemoveWallObject(IRoomObjectWall wallObject, int pickerId = -1)
     {
-        if (wallObject == null) return;
+        if (wallObject is null) return;
 
         if (!_room.IsInitialized) return;
 
@@ -368,11 +368,11 @@ public class RoomMap : IRoomMap
 
     public void RemoveAvatarObject(IRoomObjectAvatar avatarObject)
     {
-        if (avatarObject == null) return;
+        if (avatarObject is null) return;
 
         var currentTile = avatarObject.Logic.GetCurrentTile();
 
-        if (currentTile != null)
+        if (currentTile is not null)
         {
             currentTile.HighestObject?.Logic?.OnLeave(avatarObject);
             currentTile.RemoveRoomObject(avatarObject);
@@ -400,7 +400,7 @@ public class RoomMap : IRoomMap
         {
             var roomTile = GetTile(point);
 
-            if (roomTile == null || roomTiles.Contains(roomTile)) continue;
+            if (roomTile is null || roomTiles.Contains(roomTile)) continue;
 
             if (updateUsers && roomTile.Avatars.Count > 0)
                 foreach (var avatarObject in roomTile.Avatars)

@@ -25,9 +25,9 @@ public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFur
     {
         if (roomObject == RoomObject) return true;
 
-        if (RoomObject != null) RoomObject.SetLogic(null);
+        if (RoomObject is not null) RoomObject.SetLogic(null);
 
-        if (roomObject == null)
+        if (roomObject is null)
         {
             Dispose();
 
@@ -61,7 +61,7 @@ public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFur
 
     public override bool SetState(int state, bool refresh = true)
     {
-        if (StuffData == null) return false;
+        if (StuffData is null) return false;
 
         if (state == StuffData.GetState()) return false;
 
@@ -124,7 +124,7 @@ public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFur
             Param = param
         });
 
-        if (message != null)
+        if (message is not null)
             if (message.IsCancelled)
                 return;
 
@@ -187,7 +187,7 @@ public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFur
     {
         var tiles = new List<IRoomTile>();
 
-        if (RoomObject != null)
+        if (RoomObject is not null)
         {
             var points = AffectedPoints.GetPoints(RoomObject);
 
@@ -195,7 +195,7 @@ public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFur
             {
                 var tile = RoomObject.Room?.RoomMap?.GetTile(point);
 
-                if (tile == null) continue;
+                if (tile is null) continue;
 
                 tiles.Add(tile);
             }
@@ -208,14 +208,14 @@ public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFur
 
     public double Height => RoomObject.Z + StackHeight;
 
-    public bool IsRolling => _rollerData != null;
+    public bool IsRolling => _rollerData is not null;
 
     public IRollerData RollerData
     {
         get => _rollerData;
         set
         {
-            if (_rollerData != null) _rollerData.RemoveRoomObject(RoomObject);
+            if (_rollerData is not null) _rollerData.RemoveRoomObject(RoomObject);
 
             _rollerData = value;
         }

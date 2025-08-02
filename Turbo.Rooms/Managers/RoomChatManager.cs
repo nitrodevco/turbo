@@ -34,7 +34,7 @@ public class RoomChatManager(
 
     public bool IsPlayerMuted(IPlayer player)
     {
-        if (player == null || !Mutes.ContainsKey(player.Id)) return false;
+        if (player is null || !Mutes.ContainsKey(player.Id)) return false;
 
         var isOwner = _room.RoomSecurityManager.IsOwner(player);
 
@@ -51,7 +51,7 @@ public class RoomChatManager(
     {
         var remainingTime = TimeSpan.Zero;
 
-        if (player != null)
+        if (player is not null)
             if (Mutes.TryGetValue(player.Id, out var expiration))
                 if (DateTime.Compare(DateTime.Now, expiration) < 0)
                     remainingTime = expiration - DateTime.Now;
@@ -70,7 +70,7 @@ public class RoomChatManager(
 
         var targetRoomObject = _room.RoomUserManager.GetRoomObjectByUsername(targetPlayerName);
 
-        if (targetRoomObject == null || targetRoomObject.RoomObjectHolder is not IPlayer targetPlayer) return;
+        if (targetRoomObject is null || targetRoomObject.RoomObjectHolder is not IPlayer targetPlayer) return;
 
         SendMessageForPlayer(player, message, RoomChatType.Whisper, chatStyleId, targetPlayer);
     }
@@ -123,7 +123,7 @@ public class RoomChatManager(
                     AnimationLength = 0
                 };
 
-                if (targetRoomObject != null && targetRoomObject.RoomObjectHolder is IPlayer targetPlayer)
+                if (targetRoomObject is not null && targetRoomObject.RoomObjectHolder is IPlayer targetPlayer)
                     targetPlayer.Session?.Send(whisperMessage);
 
                 if (roomObject.RoomObjectHolder is IPlayer roomObjectPlayer)
@@ -210,11 +210,11 @@ public class RoomChatManager(
     private void SendMessageForPlayer(IPlayer player, string message, RoomChatType chatType, int chatStyleId = -1,
         IPlayer targetPlayer = null)
     {
-        if (player == null || string.IsNullOrEmpty(message)) return;
+        if (player is null || string.IsNullOrEmpty(message)) return;
 
         var roomObject = player.RoomObject;
 
-        if (roomObject == null || roomObject.Room != _room) return;
+        if (roomObject is null || roomObject.Room != _room) return;
 
         var remainingMuteTime = GetPlayerRemainingMuteTime(player);
 
@@ -245,7 +245,7 @@ public class RoomChatManager(
         chatStyleId = player.PlayerDetails.GetValidChatStyleId(chatStyleId);
 
         if (chatType == RoomChatType.Whisper)
-            if (targetPlayer == null || targetPlayer.RoomObject == null || targetPlayer.RoomObject.Room != _room)
+            if (targetPlayer is null || targetPlayer.RoomObject is null || targetPlayer.RoomObject.Room != _room)
                 return;
 
         _storageQueue.Add(new RoomChatlogEntity

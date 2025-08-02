@@ -6,6 +6,6 @@ public class EmptyStuffData : StuffDataBase
 
     public override string GetLegacyString()
     {
-        return Data == null ? "" : Data;
+        return Data is null ? string.Empty : Data;
     }
 }

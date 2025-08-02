@@ -26,12 +26,12 @@ public class WiredMessageHandler : IWiredMessageHandler
 
     protected virtual void OnApplySnapshotMessage(ApplySnapshotMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     protected virtual void OnOpenWiredMessage(OpenWiredMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     protected virtual void OnUpdateActionMessage(UpdateActionMessage message, ISession session)
@@ -51,16 +51,16 @@ public class WiredMessageHandler : IWiredMessageHandler
 
     protected virtual void UpdateWired(UpdateWired message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var floorFurniture = session.Player.RoomObject?.Room?.RoomFurnitureManager?.GetFloorFurniture(message.ItemId);
 
-        if (floorFurniture == null || floorFurniture.RoomObject == null ||
+        if (floorFurniture is null || floorFurniture.RoomObject is null ||
             floorFurniture.RoomObject.Logic is not IFurnitureWiredLogic wiredLogic) return;
 
         var wiredData = wiredLogic.CreateWiredDataFromJson();
 
-        if (wiredData == null) return;
+        if (wiredData is null) return;
 
         wiredData.SetFromMessage((IMessageEvent)message);
 

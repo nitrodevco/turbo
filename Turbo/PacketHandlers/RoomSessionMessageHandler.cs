@@ -19,14 +19,14 @@ public class RoomSessionMessageHandler(
 
     protected virtual async void OnOpenFlatConnectionMessage(OpenFlatConnectionMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await playerManager.OpenRoom(session.Player, message.RoomId);
     }
 
     protected virtual void OnQuitMessage(QuitMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Player.ClearRoomObject();
     }

@@ -40,7 +40,7 @@ public class CatalogFactory(
         {
             var definition = _furnitureManager.GetFurnitureDefinition(product.FurnitureDefinitionId);
 
-            if (definition != null) product.SetFurnitureDefinition(definition);
+            if (definition is not null) product.SetFurnitureDefinition(definition);
         }
 
         return product;

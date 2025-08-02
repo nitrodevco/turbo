@@ -36,24 +36,24 @@ public class PlayerManager(
 
     private readonly ConcurrentDictionary<int, IPendingRoomInfo> _pendingRoomIds = new();
 
-    public List<PlayerChatStyleEntity> PlayerChatStyles { get; } = [];
+    public ConcurrentBag<PlayerChatStyleEntity> PlayerChatStyles { get; } = new();
 
     public IPlayer GetPlayerById(int id)
     {
-        if (id <= 0 || !_players.TryGetValue(id, out var value)) return null;
-
+        if (id <= 0) return null;
+        if (!_players.TryGetValue(id, out var value) || value is null) return null;
         return value;
     }
 
     public IPlayer GetPlayerByUsername(string username)
     {
-        if (username.Length == 0) return null;
+        if (string.IsNullOrEmpty(username)) return null;
 
         foreach (var player in _players.Values)
         {
-            if (player == null || !player.Name.Equals(username)) continue;
-
-            return player;
+            if (player is null) continue;
+            if (string.Equals(player.Name, username, StringComparison.OrdinalIgnoreCase))
+                return player;
         }
 
         return null;
@@ -63,63 +63,63 @@ public class PlayerManager(
     {
         var player = GetPlayerById(id);
 
-        if (player != null) return player;
+        if (player is not null) return player;
 
         try
         {
             using var scope = _serviceScopeFactory.CreateScope();
-
-            var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-
+            var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
             var playerEntity = await playerRepository.FindAsync(id);
-
-            return playerEntity == null ? null : _playerFactory.Create(playerEntity);
+            return playerEntity is null ? null : _playerFactory.Create(playerEntity);
         }
-
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Error fetching offline player by ID {PlayerId}: Service not found.", id);
+            return null;
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "\u001b[91mError fetching offline player by ID\u001b[0m");
-
+            _logger.LogError(ex, "Unexpected error fetching offline player by ID {PlayerId}", id);
             return null;
         }
     }
 
     private async Task<IPlayer> GetOfflinePlayerByUsername(string username)
     {
-        var player = GetPlayerByUsername(username);
 
-        if (player != null) return player;
+        if (string.IsNullOrEmpty(username)) return null;
+
+        var player = GetPlayerByUsername(username);
+        if (player is not null) return player;
 
         try
         {
             using var scope = _serviceScopeFactory.CreateScope();
-
-            var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-
+            var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
             var playerDTO = await playerRepository.FindUserIdAsync(username);
-
-            if (playerDTO == null) return null;
-
+            if (playerDTO is null) return null;
             var playerEntity = await playerRepository.FindAsync(playerDTO.Id);
-
-            return playerEntity == null ? null : _playerFactory.Create(playerEntity);
+            return playerEntity is null ? null : _playerFactory.Create(playerEntity);
         }
-
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Error fetching offline player by username '{Username}': Service not found.", username);
+            return null;
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "\u001b[91mError fetching offline player by username\u001b[0m");
-
+            _logger.LogError(ex, "Unexpected error fetching offline player by username '{Username}'", username);
             return null;
         }
     }
 
     public async Task<IPlayer> CreatePlayer(int id, ISession session)
     {
-        if (id <= 0 || session == null) return null;
+        if (id <= 0 || session is null) return null;
 
         var player = await GetOfflinePlayerById(id);
 
-        if (player == null) return null;
+        if (player is null) return null;
 
         if (!player.SetSession(session))
         {
@@ -142,7 +142,7 @@ public class PlayerManager(
 
         var player = GetPlayerById(id);
 
-        if (player == null) return;
+        if (player is null) return;
 
         _players.Remove(id, out var removedPlayer);
 
@@ -151,12 +151,18 @@ public class PlayerManager(
 
     public async Task RemoveAllPlayers()
     {
-        foreach (var id in _players.Keys) await RemovePlayer(id);
+        var ids = _players.Keys;
+        var tasks = new List<Task>();
+        foreach (var id in ids)
+        {
+            tasks.Add(RemovePlayer(id));
+        }
+        await Task.WhenAll(tasks);
     }
 
     public void ClearPlayerRoomStatus(IPlayer player)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         ClearRoomStatus(player);
     }
@@ -165,13 +171,24 @@ public class PlayerManager(
     {
         var player = GetPlayerById(playerId);
 
-        if (player != null) return player.Name;
+        if (player is not null) return player.Name;
 
-        using var scope = _serviceScopeFactory.CreateScope();
-
-        var playerRepository = scope.ServiceProvider.GetService<IPlayerRepository>();
-
-        return (await playerRepository.FindUsernameAsync(playerId))?.Name ?? "";
+        try
+        {
+            using var scope = _serviceScopeFactory.CreateScope();
+            var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+            return (await playerRepository.FindUsernameAsync(playerId))?.Name ?? string.Empty;
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogError(ex, "Error fetching player name for ID {PlayerId}: Service not found.", playerId);
+            return string.Empty;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error fetching player name for ID {PlayerId}", playerId);
+            return string.Empty;
+        }
     }
 
     public async Task<IList<IPlayerBadge>> GetPlayerActiveBadges(int playerId)
@@ -180,15 +197,25 @@ public class PlayerManager(
 
         var player = GetPlayerById(playerId);
 
-        if (player == null)
+        if (player is null)
         {
-            using var scope = _serviceScopeFactory.CreateScope();
-
-            var playerBadgeRepository = scope.ServiceProvider.GetService<IPlayerBadgeRepository>();
-
-            var entities = await playerBadgeRepository.FindActiveByPlayerIdAsync(playerId);
-
-            return (IList<IPlayerBadge>)entities;
+            try
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
+                var playerBadgeRepository = scope.ServiceProvider.GetRequiredService<IPlayerBadgeRepository>();
+                var entities = await playerBadgeRepository.FindActiveByPlayerIdAsync(playerId);
+                return (IList<IPlayerBadge>)entities;
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Error fetching active badges for player ID {PlayerId}: Service not found.", playerId);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error fetching active badges for player ID {PlayerId}", playerId);
+                return null;
+            }
         }
 
         return player.PlayerInventory?.BadgeInventory?.ActiveBadges;
@@ -204,7 +231,10 @@ public class PlayerManager(
         var chatStyleRepository = scope.ServiceProvider.GetService<IPlayerChatStyleRepository>();
         var chatStyleEntities = await chatStyleRepository.FindAllAsync();
 
-        foreach (var entity in chatStyleEntities) PlayerChatStyles.Add(entity);
+        foreach (var entity in chatStyleEntities)
+        {
+            PlayerChatStyles.Add(entity);
+        }
 
         _logger.LogInformation("Loaded {0} chat styles", PlayerChatStyles.Count);
     }
@@ -226,7 +256,7 @@ public class PlayerManager(
 
     public void ClearRoomStatus(IPlayer player)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         ClearPendingDoorbell(player);
 
@@ -237,7 +267,7 @@ public class PlayerManager(
 
     public void ClearPendingDoorbell(IPlayer player)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         // remove user from pending doorbells
     }
@@ -256,16 +286,16 @@ public class PlayerManager(
 
         var room = await _roomManager.GetRoom(roomId);
 
-        if (room != null) await room.InitAsync();
+        if (room is not null) await room.InitAsync();
 
-        if (room == null || room.RoomModel == null)
+        if (room is null || room.RoomModel is null)
         {
             ClearPendingRoomId(player.Id);
 
             await player.Session.Send(new CantConnectMessage
             {
                 Reason = CantConnectReason.Closed,
-                Parameter = ""
+                Parameter = string.Empty
             });
 
             return;
@@ -280,7 +310,7 @@ public class PlayerManager(
                 await player.Session.Send(new CantConnectMessage
                 {
                     Reason = CantConnectReason.Banned,
-                    Parameter = ""
+                    Parameter = string.Empty
                 });
 
                 return;
@@ -293,7 +323,7 @@ public class PlayerManager(
                 await player.Session.Send(new CantConnectMessage
                 {
                     Reason = CantConnectReason.Full,
-                    Parameter = ""
+                    Parameter = string.Empty
                 });
 
                 return;
@@ -341,7 +371,7 @@ public class PlayerManager(
                         await player.Session.Send(new CantConnectMessage
                         {
                             Reason = CantConnectReason.Closed,
-                            Parameter = ""
+                            Parameter = string.Empty
                         });
 
                         return;
@@ -360,7 +390,7 @@ public class PlayerManager(
         var roomEnterLogRepository = scope.ServiceProvider.GetRequiredService<IRoomEntryLogRepository>();
         await roomEnterLogRepository.AddRoomEntryLogAsync(roomId, player.Id);
 
-        if (location != null)
+        if (location is not null)
             _pendingRoomIds[player.Id].Location = new Point(location);
 
         await player.Session.Send(new OpenConnectionMessage
@@ -405,7 +435,7 @@ public class PlayerManager(
 
     public async Task EnterRoom(IPlayer player)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         if (!_pendingRoomIds.ContainsKey(player.Id) || !_pendingRoomIds[player.Id].Approved)
         {
@@ -421,13 +451,13 @@ public class PlayerManager(
 
         var room = await _roomManager.GetRoom(roomId);
 
-        if (room == null)
+        if (room is null)
             await player.Session.Send(new CantConnectMessage
             {
                 Reason = CantConnectReason.Closed
             });
 
-        if (room != null)
+        if (room is not null)
         {
             await room.InitAsync();
 

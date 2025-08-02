@@ -15,19 +15,20 @@ public class PlayerWallet(
         await LoadCurrencies();
     }
 
-    protected override async Task OnDispose()
+    protected override Task OnDispose()
     {
+        return Task.CompletedTask;
     }
 
     private async Task LoadCurrencies()
     {
         using var scope = _serviceScopeFactory.CreateScope();
 
-        var currencyRepository = scope.ServiceProvider.GetService<IPlayerCurrencyRepository>();
+        var currencyRepository = scope.ServiceProvider.GetRequiredService<IPlayerCurrencyRepository>();
 
         var entities = await currencyRepository.FindAllByPlayerIdAsync(_player.Id);
 
-        if (entities != null)
+        if (entities is not null)
             foreach (var currencyEntity in entities)
             {
             }

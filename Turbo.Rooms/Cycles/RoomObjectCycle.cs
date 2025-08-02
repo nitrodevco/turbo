@@ -7,7 +7,7 @@ public class RoomObjectCycle(IRoom _room) : RoomCycle(_room)
 {
     public override async Task Cycle()
     {
-        if (_room.RoomFurnitureManager != null)
+        if (_room.RoomFurnitureManager is not null)
         {
             var floorObjects = _room.RoomFurnitureManager.FloorObjects.RoomObjects;
 
@@ -22,7 +22,7 @@ public class RoomObjectCycle(IRoom _room) : RoomCycle(_room)
                     await wallObject.Logic.Cycle();
         }
 
-        if (_room.RoomUserManager != null)
+        if (_room.RoomUserManager is not null)
         {
             var avatarObjects = _room.RoomUserManager.AvatarObjects.RoomObjects;
 

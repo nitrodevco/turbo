@@ -41,18 +41,18 @@ public class RoomManager(
 
         var roomModel = await roomModelRepository.FindByNameAsync(modelName);
 
-        if (roomModel == null)
+        if (roomModel is null)
         {
             _logger.LogError("Unidentified Room model with name '{modelName}'.", modelName);
         }
 
         var roomEntity = await roomRepository.CreateRoom(player.Id, name, description, roomModel!.Id, userMax, catId, tradeType);
 
-        if (roomEntity == null) return null;
+        if (roomEntity is null) return null;
 
         var room = await GetRoom(roomEntity.Id);
 
-        if (room != null)
+        if (room is not null)
         {
             if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
             {
@@ -85,7 +85,7 @@ public class RoomManager(
         {
             var room = GetOnlineRoom(id);
 
-            if (room != null) return room;
+            if (room is not null) return room;
 
             using var scope = _serviceScopeFactory.CreateScope();
 
@@ -94,12 +94,12 @@ public class RoomManager(
 
             var roomEntity = await roomRepository.FindAsync(id);
 
-            if (roomEntity == null) return null;
+            if (roomEntity is null) return null;
 
             room = _roomFactory.Create(roomEntity);
 
             room.RoomDetails.PlayerName =
-                (await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId))?.Name ?? "";
+                (await playerRepository.FindUsernameAsync(roomEntity.PlayerEntityId))?.Name ?? string.Empty;
 
             return await AddRoom(room);
         }
@@ -114,7 +114,7 @@ public class RoomManager(
     {
         var room = GetOnlineRoom(id);
 
-        if (room == null) return;
+        if (room is null) return;
 
         if (_rooms.TryRemove(new KeyValuePair<int, IRoom>(room.Id, room))) await room.DisposeAsync();
     }
@@ -127,7 +127,7 @@ public class RoomManager(
 
         foreach (var roomModel in _models.Values)
         {
-            if (roomModel == null || !roomModel.Name.Equals(name)) continue;
+            if (roomModel is null || !roomModel.Name.Equals(name)) continue;
 
             return roomModel;
         }
@@ -155,11 +155,11 @@ public class RoomManager(
 
     public async Task<IRoom> AddRoom(IRoom room)
     {
-        if (room == null) return null;
+        if (room is null) return null;
 
         var existing = GetOnlineRoom(room.Id);
 
-        if (existing != null)
+        if (existing is not null)
         {
             if (room != existing) await room.DisposeAsync();
 
@@ -230,7 +230,7 @@ public class RoomManager(
         {
             var room = await GetRoom(roomEntity.Id);
 
-            if (room != null)
+            if (room is not null)
             {
                 // Set OwnerName if not already set
                 if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
@@ -258,7 +258,7 @@ public class RoomManager(
         // Fetch favorite room IDs from the repository
         var favoriteRoomIds = await favouriteRoomsRepository.GetFavoriteRoomsAsync(playerId);
 
-        if (favoriteRoomIds == null || favoriteRoomIds.Count == 0)
+        if (favoriteRoomIds is null || favoriteRoomIds.Count == 0)
         {
             _logger.LogInformation("Player {PlayerId} has no favorite rooms.", playerId);
             return new List<IRoom>();
@@ -273,7 +273,7 @@ public class RoomManager(
         var rooms = await Task.WhenAll(roomTasks);
 
         // Filter out any null rooms (in case some rooms couldn't be retrieved)
-        var favoriteRooms = rooms.Where(r => r != null).ToList();
+        var favoriteRooms = rooms.Where(r => r is not null).ToList();
 
         _logger.LogInformation("Player {PlayerId} has {Count} favorite rooms.", playerId, favoriteRooms.Count);
 
@@ -293,7 +293,7 @@ public class RoomManager(
         var roomTasks = roomEntities.Select(async roomEntity =>
         {
             var room = await GetRoom(roomEntity.Id);
-            if (room == null)
+            if (room is null)
                 return null;
 
             if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
@@ -311,7 +311,7 @@ public class RoomManager(
 
         var rooms = await Task.WhenAll(roomTasks);
 
-        return rooms.Where(r => r != null).ToList();
+        return rooms.Where(r => r is not null).ToList();
     }
 
     public async Task<List<IRoom>> GetRoomsOrderedByPopularityAsync()
@@ -327,7 +327,7 @@ public class RoomManager(
         foreach (var roomEntity in roomEntities)
         {
             var room = await GetRoom(roomEntity.Id);
-            if (room != null)
+            if (room is not null)
             {
                 if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
                 {
@@ -353,7 +353,7 @@ public class RoomManager(
         foreach (var roomEntity in roomEntities)
         {
             var room = await GetRoom(roomEntity.Id);
-            if (room != null)
+            if (room is not null)
             {
                 // Set OwnerName if not already set
                 if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
@@ -393,7 +393,7 @@ public class RoomManager(
         {
             var room = await GetRoom(roomEntity.Id);
 
-            if (room != null)
+            if (room is not null)
             {
                 if (string.IsNullOrEmpty(room.RoomDetails.PlayerName))
                 {

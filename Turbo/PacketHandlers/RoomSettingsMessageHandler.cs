@@ -36,17 +36,17 @@ public class RoomSettingsMessageHandler(
 
     protected virtual void OnDeleteRoomMessage(DeleteRoomMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     protected virtual async void OnGetBannedUsersFromRoomMessage(GetBannedUsersFromRoomMessage message,
         ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var room = await roomManager.GetOfflineRoom(message.RoomId);
 
-        if (room == null) return;
+        if (room is null) return;
 
         await room.RoomSecurityManager.InitAsync();
 
@@ -58,7 +58,7 @@ public class RoomSettingsMessageHandler(
         {
             var player = playerManager.GetPlayerById(playerId);
 
-            if (player != null)
+            if (player is not null)
             {
                 bans.Add(player.Id, player.Name);
             }
@@ -79,16 +79,16 @@ public class RoomSettingsMessageHandler(
 
     protected virtual void OnGetCustomRoomFilterMessage(GetCustomRoomFilterMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     protected virtual async void OnGetFlatControllersMessage(GetFlatControllersMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var room = await roomManager.GetOfflineRoom(message.RoomId);
 
-        if (room == null) return;
+        if (room is null) return;
 
         await room.RoomSecurityManager.InitAsync();
 
@@ -100,7 +100,7 @@ public class RoomSettingsMessageHandler(
         {
             var player = playerManager.GetPlayerById(playerId);
 
-            if (player != null)
+            if (player is not null)
             {
                 controllers.Add(player.Id, player.Name);
             }
@@ -121,11 +121,11 @@ public class RoomSettingsMessageHandler(
 
     protected virtual async void OnGetRoomSettingsMessage(GetRoomSettingsMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var room = await roomManager.GetOfflineRoom(message.RoomId);
 
-        if (room == null)
+        if (room is null)
         {
             await session.Send(new RoomSettingsErrorMessage
             {
@@ -157,11 +157,11 @@ public class RoomSettingsMessageHandler(
 
     protected virtual async void OnSaveRoomSettingsMessage(SaveRoomSettingsMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var room = await roomManager.GetOfflineRoom(message.RoomId);
 
-        if (room == null) return;
+        if (room is null) return;
 
         await room.RoomSecurityManager.InitAsync();
 
@@ -187,11 +187,11 @@ public class RoomSettingsMessageHandler(
     protected virtual void OnUpdateRoomCategoryAndTradeSettingsMessage(
         UpdateRoomCategoryAndTradeSettingsMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     protected virtual void OnUpdateRoomFilterMessage(UpdateRoomFilterMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 }

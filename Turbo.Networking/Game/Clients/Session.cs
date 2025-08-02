@@ -45,7 +45,7 @@ public class Session : ISession
 
     public async ValueTask DisposeAsync()
     {
-        if (Player != null)
+        if (Player is not null)
         {
             await Player.DisposeAsync();
 
@@ -57,7 +57,7 @@ public class Session : ISession
 
     public bool SetPlayer(IPlayer player)
     {
-        if (Player != null && Player != player) return false;
+        if (Player is not null && Player != player) return false;
 
         Player = player;
 

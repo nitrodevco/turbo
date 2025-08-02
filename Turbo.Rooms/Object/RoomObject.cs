@@ -32,7 +32,7 @@ public abstract class RoomObject : IRoomObject
         _isDisposing = false;
     }
 
-    public bool Disposed => Room == null;
+    public bool Disposed => Room is null;
 
     protected abstract void OnDispose();
 }

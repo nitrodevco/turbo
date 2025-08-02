@@ -25,12 +25,12 @@ public class RoomActionMessageHandler(
 
     private void OnAmbassadorAlertMessage(AmbassadorAlertMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     private async Task OnAssignRightsMessage(AssignRightsMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await session.Player.RoomObject?.Room?.RoomSecurityManager?.AdjustRightsForPlayerId(session.Player,
             message.PlayerId, true);
@@ -38,7 +38,7 @@ public class RoomActionMessageHandler(
 
     private async Task OnBanUserWithDurationMessage(BanUserWithDurationMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var durationMs = 0.0;
 
@@ -52,12 +52,12 @@ public class RoomActionMessageHandler(
 
     private void OnLetUserInMessage(LetUserInMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     private void OnMuteAllInRoomMessage(MuteAllInRoomMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     private async Task OnRemoveAllRightsMessage(RemoveAllRightsMessage message, ISession session)
@@ -67,11 +67,11 @@ public class RoomActionMessageHandler(
 
     private async Task OnRemoveRightsMessage(RemoveRightsMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var roomSecurityManager = session.Player.RoomObject?.Room?.RoomSecurityManager;
 
-        if (roomSecurityManager == null) return;
+        if (roomSecurityManager is null) return;
 
         foreach (var playerId in message.PlayerIds)
             await roomSecurityManager.AdjustRightsForPlayerId(session.Player, playerId, false);
@@ -84,11 +84,11 @@ public class RoomActionMessageHandler(
 
     private void OnRoomUserMuteMessage(MuteUserMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 
     private void OnUnbanUserFromRoomMessage(UnbanUserFromRoomMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
     }
 }

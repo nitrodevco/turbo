@@ -68,7 +68,7 @@ public class StorageQueue(IServiceScopeFactory _serviceScopeFactory) : IStorageQ
 
     public async Task SaveEntityNow(object entity)
     {
-        if (entity == null) return;
+        if (entity is null) return;
 
         lock (_entityLock)
         {
@@ -88,7 +88,7 @@ public class StorageQueue(IServiceScopeFactory _serviceScopeFactory) : IStorageQ
 
     private void SaveEntity(object entity, TurboContext context)
     {
-        if (entity == null || context == null) return;
+        if (entity is null || context is null) return;
 
         context.Attach(entity);
 

@@ -19,7 +19,7 @@ public class PlayerFurnitureFactory(
     {
         var furnitureDefinition = _furnitureManager.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
-        if (furnitureDefinition == null) return null;
+        if (furnitureDefinition is null) return null;
 
         var stuffDataKey = _roomObjectLogicFactory.GetStuffDataKeyForFurnitureType(furnitureDefinition.Logic);
 

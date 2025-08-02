@@ -110,7 +110,7 @@ public class PacketMessageHub : IPacketMessageHub
             var query = _listeners.Where(a => !a.Sender.IsAlive ||
                                               (a.Sender.Target.Equals(subscriber) && a.Type == typeof(T)));
 
-            if (handler != null)
+            if (handler is not null)
                 query = query.Where(a => a.Action.Equals(handler));
 
             foreach (var h in query.ToList())
@@ -125,7 +125,7 @@ public class PacketMessageHub : IPacketMessageHub
             var query = _listeners.Where(a => !a.Sender.IsAlive ||
                                               (a.Sender.Target.Equals(subscriber) && a.Type == typeof(T)));
 
-            if (handler != null)
+            if (handler is not null)
                 query = query.Where(a => a.Action.Equals(handler));
 
             foreach (var h in query.ToList())

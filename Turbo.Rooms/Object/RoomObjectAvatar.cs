@@ -24,7 +24,7 @@ public class RoomObjectAvatar : RoomObject, IRoomObjectAvatar
 
     public virtual bool SetHolder(IRoomObjectAvatarHolder roomObjectHolder)
     {
-        if (roomObjectHolder == null) return false;
+        if (roomObjectHolder is null) return false;
 
         RoomObjectHolder = roomObjectHolder;
 
@@ -37,7 +37,7 @@ public class RoomObjectAvatar : RoomObject, IRoomObjectAvatar
 
         var currentLogic = Logic;
 
-        if (currentLogic != null)
+        if (currentLogic is not null)
         {
             Logic = null;
 
@@ -46,12 +46,12 @@ public class RoomObjectAvatar : RoomObject, IRoomObjectAvatar
 
         Logic = logic;
 
-        if (Logic != null) Logic.SetRoomObject(this);
+        if (Logic is not null) Logic.SetRoomObject(this);
     }
 
     public virtual void SetLocation(IPoint point)
     {
-        if (point == null) return;
+        if (point is null) return;
 
         if (point.X == Location.X && point.Y == Location.Y && point.Z == Location.Z &&
             point.Rotation == Location.Rotation && point.HeadRotation == Location.HeadRotation) return;
@@ -122,9 +122,9 @@ public class RoomObjectAvatar : RoomObject, IRoomObjectAvatar
 
     protected override void OnDispose()
     {
-        if (_roomObjectContainer != null) _roomObjectContainer.RemoveRoomObject(Id);
+        if (_roomObjectContainer is not null) _roomObjectContainer.RemoveRoomObject(Id);
 
-        if (RoomObjectHolder != null)
+        if (RoomObjectHolder is not null)
         {
             RoomObjectHolder.ClearRoomObject();
 

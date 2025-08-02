@@ -24,7 +24,7 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
         {
             if (_remainingRollerCycles > -1)
             {
-                if (_lastRollingDatas != null) CompleteLastRolls();
+                if (_lastRollingDatas is not null) CompleteLastRolls();
 
                 if (_remainingRollerCycles > 0) _remainingRollerCycles--;
 
@@ -74,7 +74,7 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
                                 NewPos = rollingData.LocationNext,
                                 Avatar = rollerItemData,
                                 Furniture =
-                                    rollingData.Furniture != null ? rollingData.Furniture.Values.ToList() : null,
+                                    rollingData.Furniture is not null ? rollingData.Furniture.Values.ToList() : null,
                                 RollerItemId = rollingData.Roller.Id
                             });
 
@@ -118,7 +118,7 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
 
     private void CompleteLastRolls()
     {
-        if (_lastRollingPoints != null && _lastRollingPoints.Count > 0)
+        if (_lastRollingPoints is not null && _lastRollingPoints.Count > 0)
         {
             _room.RoomMap.UpdatePoints(true, _lastRollingPoints.ToArray());
 
@@ -134,7 +134,7 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
     {
         var roomTile = _room.RoomMap.GetTile(rollingData.Location);
 
-        if (roomTile == null) return false;
+        if (roomTile is null) return false;
 
         foreach (var floorObject in roomTile.Furniture)
         {
@@ -162,15 +162,15 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
 
         if (!avatarObject.Location.Compare(rollingData.Location)) return false;
 
-        if (rollingData.Roller != null)
+        if (rollingData.Roller is not null)
             if (avatarObject.Location.Z < rollingData.Roller.Logic.Height)
                 return false;
 
         var nextTile = _room.RoomMap.GetValidTile(avatarObject, rollingData.LocationNext);
 
-        if (nextTile == null) return false;
+        if (nextTile is null) return false;
 
-        if (nextTile.HighestObject != null)
+        if (nextTile.HighestObject is not null)
             if (nextTile.Height - nextTile.HighestObject.Logic.StackHeight > avatarObject.Location.Z)
                 return false;
 
@@ -178,7 +178,7 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
         {
             if (existingAvatarObject == avatarObject) continue;
 
-            if (existingAvatarObject.Logic.LocationNext != null)
+            if (existingAvatarObject.Logic.LocationNext is not null)
                 if (existingAvatarObject.Logic.LocationNext.Compare(rollingData.LocationNext))
                     return false;
 
@@ -207,9 +207,9 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
 
         var currentTile = avatarObject.Logic.GetCurrentTile();
 
-        if (currentTile == null) return false;
+        if (currentTile is null) return false;
 
-        if (currentTile.HighestObject != null)
+        if (currentTile.HighestObject is not null)
             if (currentTile.HighestObject.Logic is not FurnitureRollerLogic)
                 if (!ProcessRollingFurniture(rollingData, currentTile.HighestObject, true))
                     return false;
@@ -237,7 +237,7 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
 
         if (!floorObject.Logic.CanRoll()) return false;
 
-        if (rollingData.Roller != null)
+        if (rollingData.Roller is not null)
             if (floorObject.Location.Z < rollingData.Roller.Logic.Height)
                 return false;
 
@@ -245,7 +245,7 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
 
         foreach (var existingAvatarObject in _room.RoomUserManager.AvatarObjects.RoomObjects.Values)
         {
-            if (existingAvatarObject.Logic.LocationNext != null)
+            if (existingAvatarObject.Logic.LocationNext is not null)
                 if (existingAvatarObject.Logic.LocationNext.Compare(rollingData.LocationNext))
                     return false;
 
@@ -281,11 +281,11 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
 
         var nextHeight = floorObject.Location.Z;
 
-        if (rollingData.Roller != null)
+        if (rollingData.Roller is not null)
         {
             var roomTileNext = _room.RoomMap.GetTile(rollingData.LocationNext);
 
-            if (roomTileNext == null) return false;
+            if (roomTileNext is null) return false;
 
             if (!roomTileNext.HasLogic(typeof(FurnitureRollerLogic)))
                 nextHeight -= rollingData.Roller.Logic.StackHeight;
@@ -294,7 +294,7 @@ public class RoomRollerCycle(IRoom _room) : RoomCycle(_room)
         {
             var roomTile = _room.RoomMap.GetTile(rollingData.Location);
 
-            if (roomTile != null) nextHeight = roomTile.Height;
+            if (roomTile is not null) nextHeight = roomTile.Height;
         }
 
         rollingData.Furniture.Add(floorObject.Id, new RollerItemData<IRoomObjectFloor>

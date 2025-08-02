@@ -20,7 +20,7 @@ public class CatalogPage(
 
     public virtual void SetParent(ICatalogPage catalogPage)
     {
-        if (catalogPage == null || catalogPage == Parent) return;
+        if (catalogPage is null || catalogPage == Parent) return;
 
         Parent = catalogPage;
 
@@ -29,7 +29,7 @@ public class CatalogPage(
 
     public virtual void AddChild(ICatalogPage catalogPage)
     {
-        if (catalogPage == null || Children.ContainsKey(catalogPage.Id)) return;
+        if (catalogPage is null || Children.ContainsKey(catalogPage.Id)) return;
 
         Children.Add(catalogPage.Id, catalogPage);
 
@@ -38,7 +38,7 @@ public class CatalogPage(
 
     public virtual void AddOffer(ICatalogOffer catalogOffer)
     {
-        if (catalogOffer == null || Offers.ContainsKey(catalogOffer.Id)) return;
+        if (catalogOffer is null || Offers.ContainsKey(catalogOffer.Id)) return;
 
         Offers.Add(catalogOffer.Id, catalogOffer);
 
@@ -52,7 +52,7 @@ public class CatalogPage(
 
     public async Task<ICatalogOffer> PurchaseOffer(IPlayer player, int offerId, string extraParam, int quantity)
     {
-        if (player == null) return null;
+        if (player is null) return null;
 
         if (Offers.TryGetValue(offerId, out var offer)) return await offer.Purchase(player, extraParam, quantity);
 

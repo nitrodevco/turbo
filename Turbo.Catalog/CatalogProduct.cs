@@ -18,7 +18,7 @@ public class CatalogProduct(
 
     public void SetOffer(ICatalogOffer catalogOffer)
     {
-        if (catalogOffer == null || Offer == catalogOffer) return;
+        if (catalogOffer is null || Offer == catalogOffer) return;
 
         Offer = catalogOffer;
 
@@ -27,14 +27,14 @@ public class CatalogProduct(
 
     public void SetFurnitureDefinition(IFurnitureDefinition furnitureDefinition)
     {
-        if (furnitureDefinition == null || furnitureDefinition.Id != _entity.FurnitureDefinitionEntityId) return;
+        if (furnitureDefinition is null || furnitureDefinition.Id != _entity.FurnitureDefinitionEntityId) return;
 
         FurnitureDefinition = furnitureDefinition;
     }
 
     public bool CanPlayerRecieveProduct(IPlayer player)
     {
-        if (player == null) return false;
+        if (player is null) return false;
 
         // does player have badge
         // does player have effect
@@ -44,7 +44,7 @@ public class CatalogProduct(
 
     public async Task GiveProductToPlayer(IPlayer player)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         if ((ProductType.Equals(ProductTypeEnum.Floor) || ProductType.Equals(ProductTypeEnum.Wall)) &&
             FurnitureDefinitionId != -1)

@@ -8,7 +8,7 @@ public class AffectedPoints
 {
     public static IList<IPoint> GetPoints(IRoomObjectFloor floorObject, IPoint point = null)
     {
-        if (floorObject == null) return null;
+        if (floorObject is null) return null;
 
         point ??= floorObject.Location;
 
@@ -18,7 +18,7 @@ public class AffectedPoints
 
     public static IList<IPoint> GetPoints(int width, int length, IPoint point)
     {
-        if (point == null || width < 1 || length < 1) return null;
+        if (point is null || width < 1 || length < 1) return null;
 
         IList<IPoint> points = new List<IPoint>();
 

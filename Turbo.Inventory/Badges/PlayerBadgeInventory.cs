@@ -44,11 +44,11 @@ public class PlayerBadgeInventory(
             {
                 var badgeCode = badges[slotId];
 
-                if (badgeCode == null || badgeCode.Length == 0) continue;
+                if (badgeCode is null || badgeCode.Length == 0) continue;
 
                 var playerBadge = Badges[badgeCode];
 
-                if (playerBadge == null) continue;
+                if (playerBadge is null) continue;
 
                 if (playerBadge is PlayerBadge badge) badge.SetSlotId(slotId);
 
@@ -125,7 +125,7 @@ public class PlayerBadgeInventory(
 
         var entities = await playerBadgeRepository.FindAllByPlayerIdAsync(_player.Id);
 
-        if (entities != null)
+        if (entities is not null)
         {
             var activeBadges = new List<IPlayerBadge>();
 
@@ -135,7 +135,7 @@ public class PlayerBadgeInventory(
 
                 Badges.TryAdd(playerBadge.BadgeCode, playerBadge);
 
-                if (playerBadge.SlotId != null && playerBadge.SlotId > 0) activeBadges.Add(playerBadge);
+                if (playerBadge.SlotId is not null && playerBadge.SlotId > 0) activeBadges.Add(playerBadge);
             }
 
             if (activeBadges.Count > 0)

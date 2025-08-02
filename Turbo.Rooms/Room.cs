@@ -93,7 +93,7 @@ public class Room : Component, IRoom
 
     public void EnterRoom(IPlayer player, IPoint location = null)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         player.Session.SendQueue(new RoomEntryTileMessage
         {
@@ -143,7 +143,7 @@ public class Room : Component, IRoom
         player.Session.Send(new RoomEventMessage());
         player.Session.Send(new HanditemConfigurationMessage());
 
-        if (player.RoomObject != null)
+        if (player.RoomObject is not null)
         {
             var message = _eventHub.Dispatch(new AvatarEnterRoomEvent
             {
@@ -234,7 +234,7 @@ public class Room : Component, IRoom
 
     private async Task LoadMapping()
     {
-        if (RoomMap != null)
+        if (RoomMap is not null)
         {
             RoomMap.Dispose();
 
@@ -245,7 +245,7 @@ public class Room : Component, IRoom
 
         var roomModel = await RoomManager.GetModel(RoomDetails.ModelId);
 
-        if (roomModel == null || !roomModel.IsValid) return;
+        if (roomModel is null || !roomModel.IsValid) return;
 
         RoomModel = roomModel;
         RoomMap = new RoomMap(this);

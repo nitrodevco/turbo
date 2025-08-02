@@ -25,11 +25,11 @@ public class UserMessageHandler(
 
     protected virtual async void OnGetRelationshipStatusInfo(GetRelationshipStatusInfoMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var player = playerManager.GetPlayerById(message.PlayerId);
 
-        if (player == null) return;
+        if (player is null) return;
 
         await session.Send(new RelationshipStatusInfoMessage
         {
@@ -39,7 +39,7 @@ public class UserMessageHandler(
 
     protected virtual async void OnGetSelectedBadgesMessage(GetSelectedBadgesMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var activeBadges = await playerManager.GetPlayerActiveBadges(message.PlayerId);
 
@@ -52,18 +52,18 @@ public class UserMessageHandler(
 
     protected virtual void OnChatStylePreferenceMessage(ChatStylePreferenceMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Player.PlayerDetails?.SetPreferredChatStyleByClientId(message.StyleId);
     }
 
     protected virtual async Task OnExtendedProfileMessage(GetExtendedProfileMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var player = playerManager.GetPlayerById(message.PlayerId);
 
-        if (player == null) return;
+        if (player is null) return;
 
         await session.Send(new ExtendedProfileMessage
         {
@@ -73,7 +73,7 @@ public class UserMessageHandler(
 
     protected virtual async Task OnGetHabboGroupBadgesMessageAsync(GetHabboGroupBadgesMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await session.Send(new HabboGroupBadgesMessage());
     }

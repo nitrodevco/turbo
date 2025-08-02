@@ -44,7 +44,7 @@ public class RoomSecurityManager(
 
     public bool IsOwner(IRoomManipulator manipulator)
     {
-        if (manipulator == null) return false;
+        if (manipulator is null) return false;
 
         if (IsStrictOwner(manipulator)) return true;
 
@@ -59,14 +59,14 @@ public class RoomSecurityManager(
 
         var player = _playerManager.GetPlayerById((int)playerId);
 
-        if (player != null) return player.HasPermission("any_room_owner");
+        if (player is not null) return player.HasPermission("any_room_owner");
 
         return false;
     }
 
     public bool IsPlayerBanned(IPlayer player)
     {
-        if (player == null || !Bans.ContainsKey(player.Id)) return false;
+        if (player is null || !Bans.ContainsKey(player.Id)) return false;
 
         var isOwner = IsOwner(player);
 
@@ -82,7 +82,7 @@ public class RoomSecurityManager(
 
     public RoomControllerLevel GetControllerLevel(IRoomManipulator manipulator)
     {
-        if (manipulator != null)
+        if (manipulator is not null)
         {
             if (IsOwner(manipulator)) return RoomControllerLevel.Owner;
 
@@ -107,7 +107,7 @@ public class RoomSecurityManager(
 
     public void RefreshControllerLevel(IPlayer player)
     {
-        if (player == null) return;
+        if (player is null) return;
 
         var controllerLevel = RoomControllerLevel.None;
 
@@ -140,9 +140,9 @@ public class RoomSecurityManager(
 
         var player = _playerManager.GetPlayerById(playerId);
 
-        if (player == null || !CanKickPlayer(manipulator)) return;
+        if (player is null || !CanKickPlayer(manipulator)) return;
 
-        if (player.RoomObject == null || player.RoomObject.Room != _room) return;
+        if (player.RoomObject is null || player.RoomObject.Room != _room) return;
 
         if (player.RoomObject.Logic is PlayerLogic playerLogic) playerLogic.Kick();
     }
@@ -159,11 +159,11 @@ public class RoomSecurityManager(
 
         var player = _playerManager.GetPlayerById(playerId);
 
-        if (player == null)
+        if (player is null)
         {
             var playerEntity = await playerRepository.FindAsync(playerId);
 
-            if (playerEntity == null) return;
+            if (playerEntity is null) return;
         }
 
         var expiration = DateTime.Now.AddMilliseconds(durationMs);
@@ -172,7 +172,7 @@ public class RoomSecurityManager(
 
         Bans.Add(playerId, expiration);
 
-        if (player == null || player.RoomObject == null || player.RoomObject.Room != _room) return;
+        if (player is null || player.RoomObject is null || player.RoomObject.Room != _room) return;
 
         if (player.RoomObject.Logic is PlayerLogic playerLogic)
             // TODO we probably need to send a banned packet/alert
@@ -181,7 +181,7 @@ public class RoomSecurityManager(
 
     public async Task AdjustRightsForPlayerId(IRoomManipulator manipulator, int playerId, bool flag)
     {
-        if (manipulator != null && ((manipulator.Id != playerId && !IsOwner(manipulator)) || IsOwner(playerId))) return;
+        if (manipulator is not null && ((manipulator.Id != playerId && !IsOwner(manipulator)) || IsOwner(playerId))) return;
 
         if (Rights.Contains(playerId) == flag) return;
 
@@ -192,7 +192,7 @@ public class RoomSecurityManager(
 
         var playerEntity = await playerRepository.FindAsync(playerId);
 
-        if (playerEntity == null) return;
+        if (playerEntity is null) return;
 
         if (flag)
         {
@@ -222,9 +222,9 @@ public class RoomSecurityManager(
 
         var player = _playerManager.GetPlayerById(playerId);
 
-        if (player != null) RefreshControllerLevel(player);
+        if (player is not null) RefreshControllerLevel(player);
 
-        if (player.RoomObject != null) player.RoomObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)GetControllerLevel(player)).ToString());
+        if (player.RoomObject is not null) player.RoomObject.Logic.AddStatus(RoomObjectAvatarStatus.FlatControl, ((int)GetControllerLevel(player)).ToString());
 
     }
 
@@ -261,7 +261,7 @@ public class RoomSecurityManager(
 
     public bool CanKickPlayer(IRoomManipulator manipulator)
     {
-        if (manipulator == null) return true;
+        if (manipulator is null) return true;
 
         var kickType = _room.RoomDetails.KickType;
 
@@ -282,7 +282,7 @@ public class RoomSecurityManager(
 
     public bool CanAdjustPlayerBan(IRoomManipulator manipulator, bool flag)
     {
-        if (manipulator == null) return true;
+        if (manipulator is null) return true;
 
         var banType = _room.RoomDetails.BanType;
 
@@ -303,7 +303,7 @@ public class RoomSecurityManager(
 
     public bool CanAdjustPlayerMute(IRoomManipulator manipulator, bool flag)
     {
-        if (manipulator == null) return true;
+        if (manipulator is null) return true;
 
         var muteType = _room.RoomDetails.MuteType;
 
@@ -322,9 +322,9 @@ public class RoomSecurityManager(
 
     public bool CanManipulateFurniture(IRoomManipulator manipulator, IRoomFurniture furniture)
     {
-        if (furniture == null) return false;
+        if (furniture is null) return false;
 
-        if (manipulator == null) return true;
+        if (manipulator is null) return true;
 
         var controllerLevel = GetControllerLevel(manipulator);
 
@@ -346,7 +346,7 @@ public class RoomSecurityManager(
 
     public bool CanPlaceFurniture(IRoomManipulator manipulator)
     {
-        if (manipulator == null) return true;
+        if (manipulator is null) return true;
 
         var controllerLevel = GetControllerLevel(manipulator);
 
@@ -369,9 +369,9 @@ public class RoomSecurityManager(
 
     public FurniturePickupType GetFurniturePickupType(IRoomManipulator manipulator, IRoomFurniture furniture)
     {
-        if (furniture == null) return FurniturePickupType.None;
+        if (furniture is null) return FurniturePickupType.None;
 
-        if (manipulator == null) return FurniturePickupType.SendToOwner;
+        if (manipulator is null) return FurniturePickupType.SendToOwner;
 
         if (manipulator.HasPermission("can_steal_furniture")) return FurniturePickupType.SendToManipulator;
 
@@ -390,7 +390,7 @@ public class RoomSecurityManager(
         var banEntities = await roomBanRepository.FindAllByRoomIdAsync(_room.Id);
         var rightEntities = await roomRightRepository.FindAllByRoomIdAsync(_room.Id);
 
-        if (banEntities != null)
+        if (banEntities is not null)
             foreach (var entity in banEntities)
             {
                 if (DateTime.Compare(DateTime.Now, entity.DateExpires) >= 0)

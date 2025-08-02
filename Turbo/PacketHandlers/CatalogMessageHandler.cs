@@ -27,11 +27,11 @@ public class CatalogMessageHandler(
 
     public void OnGetCatalogIndexMessage(GetCatalogIndexMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var root = catalogManager.GetRootForPlayer(session.Player, message.Type);
 
-        if (root == null) return;
+        if (root is null) return;
 
         session.Send(new CatalogIndexMessage
         {
@@ -43,11 +43,11 @@ public class CatalogMessageHandler(
 
     public void OnGetCatalogPageMessage(GetCatalogPageMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var page = catalogManager.GetPageForPlayer(session.Player, message.Type, message.PageId);
 
-        if (page == null) return;
+        if (page is null) return;
 
         session.Send(new CatalogPageMessage
         {
@@ -65,7 +65,7 @@ public class CatalogMessageHandler(
 
     public void OnPurchaseFromCatalogMessage(PurchaseFromCatalogMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         catalogManager.PurchaseOfferForPlayer(session.Player, CatalogType.Normal, message.PageId, message.OfferId,
             message.ExtraParam, message.Quantity);
@@ -73,11 +73,11 @@ public class CatalogMessageHandler(
 
     public void OnGetProductOfferMessage(GetProductOfferMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         var offer = catalogManager.GetOfferForPlayer(session.Player, CatalogType.Normal, message.OfferId);
 
-        if (offer == null) return;
+        if (offer is null) return;
 
         session.Send(new ProductOfferMessage
         {
@@ -87,7 +87,7 @@ public class CatalogMessageHandler(
 
     public void OnGetBonusRareInfoMessage(GetBonusRareInfoMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Send(new BonusRareInfoMessage { });
     }
@@ -95,7 +95,7 @@ public class CatalogMessageHandler(
     //TODO Don't know if this is supposed to be here.
     protected virtual void OnGetMarketplaceConfiguration(GetMarketplaceConfigurationMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         session.Send(new MarketplaceConfigurationMessage { });
     }

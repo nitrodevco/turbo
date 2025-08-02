@@ -86,11 +86,11 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
     public IRoomObjectFloor AddFloorRoomObject(IRoomObjectFloor floorObject, IPoint location)
     {
-        if (floorObject == null) return null;
+        if (floorObject is null) return null;
 
         var existingFloorObject = FloorObjects.GetRoomObject(floorObject.Id);
 
-        if (existingFloorObject != null)
+        if (existingFloorObject is not null)
         {
             floorObject.Dispose();
 
@@ -116,12 +116,12 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
     public async Task<IRoomObjectFloor> CreateFloorRoomObjectAndAssign(IRoomObjectFloorHolder floorHolder,
         IPoint location)
     {
-        if (floorHolder == null) return null;
+        if (floorHolder is null) return null;
 
         var floorObject =
             _roomObjectFactory.CreateFloorObject(_room, FloorObjects, floorHolder.Id, floorHolder.LogicType);
 
-        if (floorObject == null) return null;
+        if (floorObject is null) return null;
 
         if (!floorHolder.SetRoomObject(floorObject) || !await floorHolder.SetupRoomObject())
         {
@@ -135,7 +135,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
     public void RemoveFloorRoomObject(IRoomObjectFloor floorObject)
     {
-        if (floorObject == null || floorObject.Disposed) return;
+        if (floorObject is null || floorObject.Disposed) return;
 
         FloorObjects.RemoveRoomObject(floorObject);
 
@@ -154,7 +154,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var floorFurniture = GetFloorFurniture(furniId);
 
-        if (floorFurniture == null) return;
+        if (floorFurniture is null) return;
 
         RemoveFloorFurniture(manipulator, floorFurniture);
     }
@@ -165,7 +165,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var floorObject = FloorObjects.GetRoomObject(objectId);
 
-        if (floorObject == null) return;
+        if (floorObject is null) return;
 
         if (floorObject.RoomObjectHolder is not IRoomFloorFurniture floorFurniture) return;
 
@@ -182,7 +182,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (message.IsCancelled) return;
 
-        if (floorFurniture == null) return;
+        if (floorFurniture is null) return;
 
         var pickupType = _room?.RoomSecurityManager?.GetFurniturePickupType(manipulator, floorFurniture) ?? FurniturePickupType.None;
 
@@ -197,7 +197,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var player = _playerManager.GetPlayerById(pickerId);
 
-        if (player == null)
+        if (player is null)
         {
             floorFurniture.SetRoom(null);
             floorFurniture.SetPlayer(pickerId);
@@ -214,11 +214,11 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
     public IRoomObjectWall AddWallRoomObject(IRoomObjectWall wallObject, string location)
     {
-        if (wallObject == null) return null;
+        if (wallObject is null) return null;
 
         var existingWallObject = WallObjects.GetRoomObject(wallObject.Id);
 
-        if (existingWallObject != null)
+        if (existingWallObject is not null)
         {
             wallObject.Dispose();
 
@@ -243,11 +243,11 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
     public async Task<IRoomObjectWall> CreateWallRoomObjectAndAssign(IRoomObjectWallHolder wallHolder, string location)
     {
-        if (wallHolder == null) return null;
+        if (wallHolder is null) return null;
 
         var wallObject = _roomObjectFactory.CreateWallObject(_room, WallObjects, wallHolder.Id, wallHolder.LogicType);
 
-        if (wallObject == null) return null;
+        if (wallObject is null) return null;
 
         if (!wallHolder.SetRoomObject(wallObject) || !await wallHolder.SetupRoomObject())
         {
@@ -261,7 +261,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
     public void RemoveWallRoomObject(IRoomObjectWall wallObject)
     {
-        if (wallObject == null || wallObject.Disposed) return;
+        if (wallObject is null || wallObject.Disposed) return;
 
         WallObjects.RemoveRoomObject(wallObject);
 
@@ -280,7 +280,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var wallFurniture = GetWallFurniture(furniId);
 
-        if (wallFurniture == null) return;
+        if (wallFurniture is null) return;
 
         RemoveWallFurniture(manipulator, wallFurniture);
     }
@@ -291,7 +291,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var wallObject = WallObjects.GetRoomObject(objectId);
 
-        if (wallObject == null) return;
+        if (wallObject is null) return;
 
         if (wallObject.RoomObjectHolder is not IRoomWallFurniture wallFurniture) return;
 
@@ -308,7 +308,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (message.IsCancelled) return;
 
-        if (wallFurniture == null) return;
+        if (wallFurniture is null) return;
 
         var pickupType = _room?.RoomSecurityManager?.GetFurniturePickupType(manipulator, wallFurniture) ??
                          FurniturePickupType.None;
@@ -324,7 +324,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var player = _playerManager.GetPlayerById(pickerId);
 
-        if (player == null)
+        if (player is null)
         {
             wallFurniture.SetRoom(null);
             wallFurniture.SetPlayer(pickerId);
@@ -359,13 +359,13 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
         var isRotating = roomObject.Location.Compare(point) && roomObject.Location.Rotation != point.Rotation;
         var affectedPoints = AffectedPoints.GetPoints(roomObject, point);
 
-        if (affectedPoints == null || affectedPoints.Count == 0) return false;
+        if (affectedPoints is null || affectedPoints.Count == 0) return false;
 
         foreach (var affectedPoint in affectedPoints)
         {
             var roomTile = _room.RoomMap.GetTile(affectedPoint);
 
-            if (roomTile == null) return false;
+            if (roomTile is null) return false;
 
             // do we need to validate that all tiles base height is the same?
 
@@ -375,7 +375,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
             if (roomTile.HasStackHelper) continue;
 
-            if (roomTile.HighestObject != null)
+            if (roomTile.HighestObject is not null)
             {
                 if (isRotating && roomTile.HighestObject == roomObject) continue;
 
@@ -404,12 +404,12 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (message.IsCancelled) return false;
 
-        if (roomObject == null || roomObject.RoomObjectHolder is not IRoomFloorFurniture furniture) return false;
+        if (roomObject is null || roomObject.RoomObjectHolder is not IRoomFloorFurniture furniture) return false;
 
         if (!_room.RoomSecurityManager.CanManipulateFurniture(manipulator, furniture) ||
             !IsValidPlacement(roomObject, location))
         {
-            if (manipulator != null)
+            if (manipulator is not null)
                 // send placement notification
                 manipulator.Session.Send(new ObjectUpdateMessage
                 {
@@ -427,7 +427,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var tile = _room.RoomMap.GetTile(roomObject.Location);
 
-        if ((tile != null && tile.HighestObject != roomObject) || tile.HasStackHelper) roomObject.Z = tile.Height;
+        if ((tile is not null && tile.HighestObject != roomObject) || tile.HasStackHelper) roomObject.Z = tile.Height;
 
         _room.RoomMap.MoveFloorRoomObject(roomObject, previous);
 
@@ -449,11 +449,11 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (message.IsCancelled) return false;
 
-        if (player == null || furniId < 0 || location == null) return false;
+        if (player is null || furniId < 0 || location is null) return false;
 
         var playerFurniture = player.PlayerInventory?.FurnitureInventory?.GetFurniture(furniId);
 
-        if (playerFurniture == null) return false;
+        if (playerFurniture is null) return false;
 
         if (!_room.RoomSecurityManager.CanPlaceFurniture(player) ||
             !IsValidPlacement(playerFurniture.FurnitureDefinition, location))
@@ -464,13 +464,13 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var tile = _room.RoomMap.GetTile(newLocation);
 
-        if (tile == null) return false;
+        if (tile is null) return false;
 
         newLocation.Z = tile.Height;
 
         var furniture = _furnitureFactory.CreateFloorFurnitureFromPlayerFurniture(this, playerFurniture);
 
-        if (furniture == null) return false;
+        if (furniture is null) return false;
 
         furniture.SetRoom(_room);
 
@@ -484,7 +484,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var floorObject = await CreateFloorRoomObjectAndAssign(furniture, newLocation);
 
-        if (floorObject != null) floorObject.Logic.OnPlace(player);
+        if (floorObject is not null) floorObject.Logic.OnPlace(player);
 
         furniture.Save();
 
@@ -509,11 +509,11 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (message.IsCancelled) return false;
 
-        if (wallObject == null || wallObject.RoomObjectHolder is not IRoomWallFurniture furniture) return false;
+        if (wallObject is null || wallObject.RoomObjectHolder is not IRoomWallFurniture furniture) return false;
 
         if (!_room.RoomSecurityManager.CanManipulateFurniture(manipulator, furniture))
         {
-            if (manipulator != null)
+            if (manipulator is not null)
                 // send placement notification
                 manipulator.Session.Send(new ItemUpdateMessage
                 {
@@ -547,11 +547,11 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (message.IsCancelled) return false;
 
-        if (player == null || furniId < 0 || location.Length == 0) return false;
+        if (player is null || furniId < 0 || location.Length == 0) return false;
 
         var playerFurniture = player.PlayerInventory?.FurnitureInventory?.GetFurniture(furniId);
 
-        if (playerFurniture == null) return false;
+        if (playerFurniture is null) return false;
 
         if (!_room.RoomSecurityManager.CanPlaceFurniture(player))
             // cant place here
@@ -559,7 +559,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var furniture = _furnitureFactory.CreateWallFurnitureFromPlayerFurniture(this, playerFurniture);
 
-        if (furniture == null) return false;
+        if (furniture is null) return false;
 
         furniture.SetRoom(_room);
 
@@ -573,7 +573,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         var wallObject = await CreateWallRoomObjectAndAssign(furniture, location);
 
-        if (wallObject != null) wallObject.Logic.OnPlace(player);
+        if (wallObject is not null) wallObject.Logic.OnPlace(player);
 
         furniture.Save();
 
@@ -631,7 +631,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
     {
         var logicType = _roomObjectLogicFactory.GetLogicType(furnitureDefinition.Logic);
 
-        if (logicType != null)
+        if (logicType is not null)
         {
             if (logicType.IsAssignableFrom(typeof(FurnitureStackHelperLogic))) return true;
 
@@ -649,17 +649,17 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
     public bool IsValidPlacement(IFurnitureDefinition furnitureDefinition, IPoint point)
     {
-        if (furnitureDefinition == null || point == null) return false;
+        if (furnitureDefinition is null || point is null) return false;
 
         var affectedPoints = AffectedPoints.GetPoints(furnitureDefinition.X, furnitureDefinition.Y, point);
 
-        if (affectedPoints == null || affectedPoints.Count == 0) return false;
+        if (affectedPoints is null || affectedPoints.Count == 0) return false;
 
         foreach (var affectedPoint in affectedPoints)
         {
             var roomTile = _room.RoomMap.GetTile(affectedPoint);
 
-            if (roomTile == null) return false;
+            if (roomTile is null) return false;
 
             // do we need to validate that all tiles base height is the same?
 
@@ -669,7 +669,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
             if (roomTile.HasStackHelper) continue;
 
-            if (roomTile.HighestObject != null)
+            if (roomTile.HighestObject is not null)
                 if (!CanPlaceOnTop(roomTile.HighestObject, furnitureDefinition))
                     return false;
         }
@@ -754,7 +754,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
         var furnitureRepository = scope.ServiceProvider.GetService<IFurnitureRepository>();
         var furnitureEntities = await furnitureRepository.FindAllByRoomIdAsync(_room.Id);
 
-        if (furnitureEntities == null || furnitureEntities.Count == 0) return;
+        if (furnitureEntities is null || furnitureEntities.Count == 0) return;
 
         List<int> playerIds = [];
 
@@ -777,7 +777,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
         {
             var definition = _furnitureFactory.GetFurnitureDefinition(furnitureEntity.FurnitureDefinitionEntityId);
 
-            if (definition == null) continue;
+            if (definition is null) continue;
 
             if (definition.Type.Equals(FurniType.Floor))
             {
@@ -785,7 +785,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
                 var furniture = _furnitureFactory.CreateFloorFurniture(this, furnitureEntity);
 
-                if (furniture == null) continue;
+                if (furniture is null) continue;
 
                 furniture.SetRoom(_room);
 
@@ -806,7 +806,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
                 var furniture = _furnitureFactory.CreateWallFurniture(this, furnitureEntity);
 
-                if (furniture == null) continue;
+                if (furniture is null) continue;
 
                 furniture.SetRoom(_room);
 

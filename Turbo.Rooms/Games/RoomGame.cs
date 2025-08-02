@@ -37,15 +37,15 @@ public class RoomGame : IRoomGame
 
     public IRoomGameTeam GetTeamForAvatar(IRoomObjectAvatar avatar)
     {
-        if (avatar == null || Teams.Count == 0) return null;
+        if (avatar is null || Teams.Count == 0) return null;
 
         foreach (var team in Teams.Values)
         {
-            if (team == null) continue;
+            if (team is null) continue;
 
             var player = team.GetPlayerForAvatar(avatar);
 
-            if (player == null) continue;
+            if (player is null) continue;
 
             return team;
         }
@@ -57,7 +57,7 @@ public class RoomGame : IRoomGame
     {
         var team = GetActiveTeamByColor(color);
 
-        if (team != null) return team;
+        if (team is not null) return team;
 
         team = new RoomGameTeam(this, color);
 

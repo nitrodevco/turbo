@@ -27,14 +27,14 @@ public class Catalog(
 
     public ICatalogPage GetRootForPlayer(IPlayer player)
     {
-        if (player == null) return null;
+        if (player is null) return null;
 
         return Root;
     }
 
     public ICatalogPage GetPageForPlayer(IPlayer player, int pageId)
     {
-        if (player == null) return null;
+        if (player is null) return null;
 
         if (Pages.TryGetValue(pageId, out var page)) return page;
 
@@ -43,7 +43,7 @@ public class Catalog(
 
     public ICatalogOffer GetOfferForPlayer(IPlayer player, int offerId)
     {
-        if (player == null) return null;
+        if (player is null) return null;
 
         if (Offers.TryGetValue(offerId, out var offer))
         {
@@ -59,7 +59,7 @@ public class Catalog(
     {
         var page = GetPageForPlayer(player, pageId);
 
-        if (page == null) return null;
+        if (page is null) return null;
 
         return await page.PurchaseOffer(player, offerId, extraParam, quantity);
     }
@@ -83,7 +83,7 @@ public class Catalog(
 
         foreach (var offer in Offers.Values)
         {
-            if (offer == null) continue;
+            if (offer is null) continue;
 
             if (!Pages.ContainsKey(offer.PageId)) continue;
 
@@ -92,7 +92,7 @@ public class Catalog(
 
         foreach (var product in Products.Values)
         {
-            if (product == null) continue;
+            if (product is null) continue;
 
             if (!Offers.ContainsKey(product.OfferId)) continue;
 
@@ -101,7 +101,7 @@ public class Catalog(
 
         foreach (var page in Pages.Values)
         {
-            if (page == null) continue;
+            if (page is null) continue;
 
             if (!Pages.ContainsKey(page.ParentId)) continue;
 
@@ -127,7 +127,7 @@ public class Catalog(
         var offerEntities = await catalogOfferRepository.FindAllAsync();
         var productEntities = await catalogProductRepository.FindAllAsync();
 
-        if (pageEntities != null)
+        if (pageEntities is not null)
         {
             pageEntities = pageEntities.OrderBy(entity => entity.Localization).ToList();
 
@@ -141,7 +141,7 @@ public class Catalog(
             }
         }
 
-        if (offerEntities != null)
+        if (offerEntities is not null)
             foreach (var offerEntity in offerEntities)
             {
                 var offer = _catalogFactory.CreateOffer(offerEntity);
@@ -149,7 +149,7 @@ public class Catalog(
                 Offers.Add(offer.Id, offer);
             }
 
-        if (productEntities != null)
+        if (productEntities is not null)
             foreach (var productEntity in productEntities)
             {
                 var product = _catalogFactory.CreateProduct(productEntity);

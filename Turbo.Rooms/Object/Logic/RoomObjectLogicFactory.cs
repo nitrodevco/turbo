@@ -24,7 +24,7 @@ public class RoomObjectLogicFactory : IRoomObjectLogicFactory
         {
             var attributeData = item.GetCustomAttribute<RoomObjectLogicAttribute>();
 
-            if (attributeData == null) continue;
+            if (attributeData is null) continue;
 
             Logics.TryAdd(attributeData.Name, item);
         }
@@ -36,7 +36,7 @@ public class RoomObjectLogicFactory : IRoomObjectLogicFactory
     {
         var logicType = GetLogicType(type);
 
-        if (logicType == null) return null;
+        if (logicType is null) return null;
 
         var instance = (IRoomObjectLogic)Activator.CreateInstance(logicType);
 

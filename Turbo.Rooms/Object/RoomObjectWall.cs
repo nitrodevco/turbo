@@ -11,7 +11,7 @@ public class RoomObjectWall : RoomObject, IRoomObjectWall
     public RoomObjectWall(IRoom room, IRoomObjectContainer<IRoomObjectWall> roomObjectContainer, int id) : base(room,
         id)
     {
-        WallLocation = "";
+        WallLocation = string.Empty;
 
         _roomObjectContainer = roomObjectContainer;
     }
@@ -22,7 +22,7 @@ public class RoomObjectWall : RoomObject, IRoomObjectWall
 
     public virtual bool SetHolder(IRoomObjectWallHolder roomObjectHolder)
     {
-        if (roomObjectHolder == null) return false;
+        if (roomObjectHolder is null) return false;
 
         RoomObjectHolder = roomObjectHolder;
 
@@ -35,7 +35,7 @@ public class RoomObjectWall : RoomObject, IRoomObjectWall
 
         var currentLogic = Logic;
 
-        if (currentLogic != null)
+        if (currentLogic is not null)
         {
             Logic = null;
 
@@ -44,12 +44,12 @@ public class RoomObjectWall : RoomObject, IRoomObjectWall
 
         Logic = logic;
 
-        if (Logic != null) Logic.SetRoomObject(this);
+        if (Logic is not null) Logic.SetRoomObject(this);
     }
 
     public virtual void SetLocation(string location)
     {
-        if (location == null || location.Length == 0) return;
+        if (location is null || location.Length == 0) return;
 
         // needs validation
 
@@ -60,9 +60,9 @@ public class RoomObjectWall : RoomObject, IRoomObjectWall
 
     protected override void OnDispose()
     {
-        if (_roomObjectContainer != null) _roomObjectContainer.RemoveRoomObject(Id);
+        if (_roomObjectContainer is not null) _roomObjectContainer.RemoveRoomObject(Id);
 
-        if (RoomObjectHolder != null)
+        if (RoomObjectHolder is not null)
         {
             RoomObjectHolder.ClearRoomObject();
 

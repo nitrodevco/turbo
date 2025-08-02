@@ -29,14 +29,14 @@ public class RoomCycleManager(IRoom _room) : IRoomCycleManager
 
     public void AddCycle(ICyclable cycle)
     {
-        if (cycle == null || _cycles.Contains(cycle)) return;
+        if (cycle is null || _cycles.Contains(cycle)) return;
 
         _cycles.Add(cycle);
     }
 
     public void RemoveCycle(ICyclable cycle)
     {
-        if (cycle == null || !_cycles.Contains(cycle)) return;
+        if (cycle is null || !_cycles.Contains(cycle)) return;
 
         _cycles.Remove(cycle);
     }

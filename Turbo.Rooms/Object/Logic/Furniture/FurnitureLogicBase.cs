@@ -17,7 +17,7 @@ public abstract class FurnitureLogicBase : RoomObjectLogicBase, IFurnitureLogic
 
     public virtual async Task<bool> Setup(IFurnitureDefinition furnitureDefinition, string jsonString = null)
     {
-        if (furnitureDefinition == null) return false;
+        if (furnitureDefinition is null) return false;
 
         FurnitureDefinition = furnitureDefinition;
 

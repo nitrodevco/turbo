@@ -40,7 +40,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
         RoomObject?.SetLogic(null);
 
-        if (roomObject == null)
+        if (roomObject is null)
         {
             Dispose();
 
@@ -60,7 +60,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
     {
         NeedsRepathing = false;
 
-        if (location == null || (!CanWalk && selfWalk)) return;
+        if (location is null || (!CanWalk && selfWalk)) return;
 
         location = location.Clone();
 
@@ -72,18 +72,18 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
         var roomTile = RoomObject.Room.RoomMap.GetValidTile(RoomObject, location);
 
-        if (roomTile == null)
+        if (roomTile is null)
         {
             StopWalking();
 
             return;
         }
 
-        if (roomTile.CanLay() && roomTile.HighestObject != null)
+        if (roomTile.CanLay() && roomTile.HighestObject is not null)
         {
             location = RoomObject.Room.RoomMap.GetValidPillowPoint(RoomObject, roomTile.HighestObject, location);
 
-            if (location == null)
+            if (location is null)
             {
                 StopWalking();
 
@@ -98,7 +98,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
     {
         NeedsRepathing = false;
 
-        if (location == null || (!CanWalk && selfWalk)) return;
+        if (location is null || (!CanWalk && selfWalk)) return;
 
         location = location.Clone();
 
@@ -113,16 +113,16 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
         var currentTile = GetCurrentTile();
         var nextTile = GetNextTile();
 
-        if (currentTile == null || nextTile == null) return;
+        if (currentTile is null || nextTile is null) return;
 
-        if (currentTile.HighestObject != null)
+        if (currentTile.HighestObject is not null)
             if (currentTile.HighestObject != nextTile.HighestObject)
                 currentTile.HighestObject.Logic.OnLeave(RoomObject);
 
         currentTile.RemoveRoomObject(RoomObject);
         nextTile.AddRoomObject(RoomObject);
 
-        if (nextTile.HighestObject != null)
+        if (nextTile.HighestObject is not null)
             if (nextTile.HighestObject != currentTile.HighestObject)
                 nextTile.HighestObject.Logic.OnLeave(RoomObject);
 
@@ -135,7 +135,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
     public virtual void ResetPath()
     {
-        if (LocationGoal == null) return;
+        if (LocationGoal is null) return;
 
         ClearPath();
         WalkTo(LocationGoal, true);
@@ -152,7 +152,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
     public virtual void ClearPath()
     {
-        if (CurrentPath == null) return;
+        if (CurrentPath is null) return;
 
         CurrentPath.Clear();
         LocationNext = null;
@@ -160,9 +160,9 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
     public virtual bool ProcessNextLocation()
     {
-        if (RoomObject == null || LocationNext == null) return false;
+        if (RoomObject is null || LocationNext is null) return false;
 
-        if (RoomObject.Location != null)
+        if (RoomObject.Location is not null)
         {
             LocationPrevious ??= new Point();
 
@@ -177,7 +177,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
         var roomTile = GetCurrentTile();
 
-        if (roomTile == null)
+        if (roomTile is null)
         {
             StopWalking();
 
@@ -197,7 +197,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
     {
         roomTile ??= GetCurrentTile();
 
-        if (roomTile == null) return;
+        if (roomTile is null) return;
 
         var height = roomTile.GetWalkingHeight();
         var oldHeight = RoomObject.Location.Z;
@@ -218,7 +218,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
     public virtual void InvokeBeforeGoalAction()
     {
-        if (BeforeGoalAction == null) return;
+        if (BeforeGoalAction is null) return;
 
         BeforeGoalAction(RoomObject);
 
@@ -227,7 +227,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
     public virtual void InvokeGoalAction()
     {
-        if (GoalAction == null) return;
+        if (GoalAction is null) return;
 
         GoalAction(RoomObject);
 
@@ -246,12 +246,12 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
     public virtual bool HasStatus(params string[] types)
     {
-        return types != null && types.Length != 0 && types.Any(x => Statuses.ContainsKey(x));
+        return types is not null && types.Length != 0 && types.Any(x => Statuses.ContainsKey(x));
     }
 
     public void RemoveStatus(params string[] types)
     {
-        if (types == null || types.Length == 0) return;
+        if (types is null || types.Length == 0) return;
 
         var updated = false;
 
@@ -277,16 +277,16 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
         return RoomObject?.Room?.RoomMap?.GetTile(LocationNext);
     }
 
-    public bool DidMove => LocationPrevious != null && LocationPrevious.Compare(RoomObject?.Location);
+    public bool DidMove => LocationPrevious is not null && LocationPrevious.Compare(RoomObject?.Location);
 
-    public bool IsRolling => _rollerData != null;
+    public bool IsRolling => _rollerData is not null;
 
     public IRollerData RollerData
     {
         get => _rollerData;
         set
         {
-            if (_rollerData != null) _rollerData.RemoveRoomObject(RoomObject);
+            if (_rollerData is not null) _rollerData.RemoveRoomObject(RoomObject);
 
             _rollerData = value;
         }
@@ -301,7 +301,7 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
 
     private void WalkPath(IPoint goal, IList<IPoint> path)
     {
-        if (goal == null || path == null || path.Count == 0)
+        if (goal is null || path is null || path.Count == 0)
         {
             StopWalking();
 
@@ -326,6 +326,6 @@ public class MovingAvatarLogic : RoomObjectLogicBase, IRollingObjectLogic, IMovi
         LocationNext = null;
         LocationGoal = null;
 
-        if (RoomObject != null) RemoveStatus(RoomObjectAvatarStatus.Move);
+        if (RoomObject is not null) RemoveStatus(RoomObjectAvatarStatus.Move);
     }
 }

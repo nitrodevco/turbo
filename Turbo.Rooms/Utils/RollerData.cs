@@ -45,7 +45,7 @@ public class RollerData : IRollerData
         var currentTile = _room.RoomMap.GetTile(Location);
         var nextTile = _room.RoomMap.GetTile(LocationNext);
 
-        if (currentTile == null || nextTile == null) return;
+        if (currentTile is null || nextTile is null) return;
 
         if (Avatars.Count > 0)
             foreach (var rollerItemData in Avatars.Values)

@@ -19,7 +19,7 @@ public class AdvertisementMessageHandler(
 
     private async void OnInterstitialMessage(GetInterstitialMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await session.Send(new InterstitialMessage()
         {

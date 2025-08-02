@@ -88,7 +88,7 @@ public class AuthenticationMessageHandler(
 
         var player = await playerManager.CreatePlayer(userId, session);
 
-        if (player == null)
+        if (player is null)
         {
             await session.DisposeAsync();
 
@@ -160,22 +160,11 @@ public class AuthenticationMessageHandler(
             Player = session.Player
         });
 
+        var playerPerks = session.Player.PlayerPerks;
+
         await session.Send(new PerkAllowancesMessage
         {
-            TotalPerks = 13,
-            CITIZEN = await session.Player.PlayerPerks.HasPerkAsync("CITIZEN"),
-            VOTE_IN_COMPETITIONS = await session.Player.PlayerPerks.HasPerkAsync("VOTE_IN_COMPETITIONS"),
-            TRADE = await session.Player.PlayerPerks.HasPerkAsync("TRADE"),
-            CALL_ON_HELPERS = await session.Player.PlayerPerks.HasPerkAsync("CALL_ON_HELPERS"),
-            JUDGE_CHAT_REVIEWS = await session.Player.PlayerPerks.HasPerkAsync("JUDGE_CHAT_REVIEWS"),
-            NAVIGATOR_ROOM_THUMBNAIL_CAMERA = await session.Player.PlayerPerks.HasPerkAsync("NAVIGATOR_ROOM_THUMBNAIL_CAMERA"),
-            USE_GUIDE_TOOL = await session.Player.PlayerPerks.HasPerkAsync("USE_GUIDE_TOOL"),
-            MOUSE_ZOOM = await session.Player.PlayerPerks.HasPerkAsync("MOUSE_ZOOM"),
-            HABBO_CLUB_OFFER_BETA = await session.Player.PlayerPerks.HasPerkAsync("HABBO_CLUB_OFFER_BETA"),
-            NAVIGATOR_PHASE_TWO_2014 = await session.Player.PlayerPerks.HasPerkAsync("NAVIGATOR_PHASE_TWO_2014"),
-            UNITY_TRADE = await session.Player.PlayerPerks.HasPerkAsync("UNITY_TRADE"),
-            BUILDER_AT_WORK = await session.Player.PlayerPerks.HasPerkAsync("BUILDER_AT_WORK"),
-            CAMERA = await session.Player.PlayerPerks.HasPerkAsync("CAMERA")
+            PlayerPerks = playerPerks
         });
     }
 }

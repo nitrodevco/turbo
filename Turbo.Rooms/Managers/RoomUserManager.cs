@@ -50,11 +50,11 @@ public class RoomUserManager : Component, IRoomUserManager
 
     public IRoomObjectAvatar AddRoomObject(IRoomObjectAvatar avatarObject, IPoint location = null)
     {
-        if (avatarObject == null) return null;
+        if (avatarObject is null) return null;
 
         var existingRoomObject = AvatarObjects.GetRoomObject(avatarObject.Id);
 
-        if (existingRoomObject != null)
+        if (existingRoomObject is not null)
         {
             avatarObject.Dispose();
 
@@ -86,9 +86,9 @@ public class RoomUserManager : Component, IRoomUserManager
 
     public IRoomObjectAvatar CreateRoomObjectAndAssign(IRoomObjectAvatarHolder userHolder, IPoint location = null)
     {
-        if (userHolder == null) return null;
+        if (userHolder is null) return null;
 
-        var logicType = "";
+        var logicType = string.Empty;
 
         switch (userHolder.Type)
         {
@@ -109,7 +109,7 @@ public class RoomUserManager : Component, IRoomUserManager
         var roomObject =
             _roomObjectFactory.CreateAvatarObject(_room, AvatarObjects, AvatarObjects.GetNextId(), logicType);
 
-        if (roomObject == null) return null;
+        if (roomObject is null) return null;
 
         if (!userHolder.SetRoomObject(roomObject)) return null;
 
@@ -118,7 +118,7 @@ public class RoomUserManager : Component, IRoomUserManager
 
     public void RemoveRoomObject(IRoomObjectAvatar avatarObject)
     {
-        if (avatarObject == null || avatarObject.Disposed) return;
+        if (avatarObject is null || avatarObject.Disposed) return;
 
         AvatarObjects.RemoveRoomObject(avatarObject);
 
@@ -135,7 +135,7 @@ public class RoomUserManager : Component, IRoomUserManager
 
     public void AddPlayerToRoom(IPlayer player)
     {
-        if (IsDisposing || player == null) return;
+        if (IsDisposing || player is null) return;
 
         List<IRoomObjectAvatar> roomObjects = new();
         List<IComposer> composers = new();

@@ -15,9 +15,9 @@ public class RoomObjectFactory : IRoomObjectFactory
     }
 
     public IRoomObjectAvatar CreateAvatarObject(IRoom room, IRoomObjectContainer<IRoomObjectAvatar> roomObjectContainer,
-        int id, string logicType = "")
+        int id, string logicType = string.Empty)
     {
-        if (logicType == null || logicType.Length == 0) return null;
+        if (logicType is null || logicType.Length == 0) return null;
 
         IRoomObjectAvatar roomObject = new RoomObjectAvatar(room, roomObjectContainer, id);
 
@@ -27,15 +27,15 @@ public class RoomObjectFactory : IRoomObjectFactory
     }
 
     public IRoomObjectFloor CreateFloorObject(IRoom room, IRoomObjectContainer<IRoomObjectFloor> roomObjectContainer,
-        int id, string logicType = "")
+        int id, string logicType = string.Empty)
     {
-        if (logicType == null || logicType.Length == 0) return null;
+        if (logicType is null || logicType.Length == 0) return null;
 
         var roomObject = new RoomObjectFloor(room, roomObjectContainer, id);
 
         var logic = _logicFactory.Create(logicType);
 
-        if (logic != null && logic is not IFurnitureFloorLogic)
+        if (logic is not null && logic is not IFurnitureFloorLogic)
         {
             logic.Dispose();
 
@@ -48,15 +48,15 @@ public class RoomObjectFactory : IRoomObjectFactory
     }
 
     public IRoomObjectWall CreateWallObject(IRoom room, IRoomObjectContainer<IRoomObjectWall> roomObjectContainer,
-        int id, string logicType = "")
+        int id, string logicType = string.Empty)
     {
-        if (logicType == null || logicType.Length == 0) return null;
+        if (logicType is null || logicType.Length == 0) return null;
 
         var roomObject = new RoomObjectWall(room, roomObjectContainer, id);
 
         var logic = _logicFactory.Create(logicType);
 
-        if (logic != null && logic is not IFurnitureWallLogic)
+        if (logic is not null && logic is not IFurnitureWallLogic)
         {
             logic.Dispose();
 

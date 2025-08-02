@@ -6,6 +6,7 @@ using Turbo.Packets.Incoming.Camera;
 using Turbo.Packets.Outgoing.Camera;
 
 namespace Turbo.Main.PacketHandlers;
+
 internal class CameraMessageHandler(
     IPacketMessageHub messageHub,
     ILogger<CameraMessageHandler> logger) : IPacketHandlerManager
@@ -17,7 +18,7 @@ internal class CameraMessageHandler(
 
     private async void OnInitCameraMessage(RequestCameraConfigurationMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         await session.Send(new InitCameraMessage
         {

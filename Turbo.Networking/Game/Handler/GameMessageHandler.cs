@@ -50,7 +50,7 @@ public class GameMessageHandler : SimpleChannelInboundHandler<IClientPacket>
             return;
         }
 
-        if (session.Revision == null)
+        if (session.Revision is null)
         {
             _logger.LogInformation("Session revision not set for {}", ctx.Channel.RemoteAddress);
 

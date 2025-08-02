@@ -45,7 +45,7 @@ public class AvatarLogic : MovingAvatarLogic
     {
         var roomTile = GetCurrentTile();
 
-        if (roomTile == null) return;
+        if (roomTile is null) return;
 
         if (!roomTile.CanSit() || !roomTile.CanLay())
         {
@@ -65,7 +65,7 @@ public class AvatarLogic : MovingAvatarLogic
             Dance(RoomObjectAvatarDanceType.None);
             RemoveStatus(RoomObjectAvatarStatus.Lay);
 
-            rotation = rotation == null ? RoomObject.Location.CalculateSitRotation() : rotation;
+            rotation = rotation is null ? RoomObject.Location.CalculateSitRotation() : rotation;
 
             RoomObject.Rotation = (Rotation)rotation;
             RoomObject.HeadRotation = (Rotation)rotation;
@@ -91,7 +91,7 @@ public class AvatarLogic : MovingAvatarLogic
             Dance(RoomObjectAvatarDanceType.None);
             RemoveStatus(RoomObjectAvatarStatus.Sit);
 
-            rotation = rotation == null ? RoomObject.Location.CalculateSitRotation() : rotation;
+            rotation = rotation is null ? RoomObject.Location.CalculateSitRotation() : rotation;
 
             RoomObject.Rotation = (Rotation)rotation;
             RoomObject.HeadRotation = (Rotation)rotation;

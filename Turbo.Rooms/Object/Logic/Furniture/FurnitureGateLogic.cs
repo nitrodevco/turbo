@@ -16,7 +16,7 @@ public class FurnitureGateLogic : FurnitureFloorLogic
     {
         var roomTile = GetCurrentTile();
 
-        if (roomTile == null || roomTile.Avatars.Count > 0) return;
+        if (roomTile is null || roomTile.Avatars.Count > 0) return;
 
         base.OnInteract(avatar, param);
     }
