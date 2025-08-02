@@ -63,7 +63,7 @@ public abstract class RoomFurniture(
         return SetPlayer(player.Id, player.Name);
     }
 
-    public bool SetPlayer(int playerId, string playerName = string.Empty)
+    public bool SetPlayer(int playerId, string playerName = "")
     {
         if (playerId <= 0) return false;
 

@@ -20,5 +20,5 @@ public interface IRoomChatManager : IComponent
         int chatStyleId = -1, int? targetRoomObjectId = null);
 
     public void SendMessageFromRoomObject(IRoomObjectAvatar roomObject, string message,
-        RoomChatType chatType = RoomChatType.Normal, int chatStyleId = -1, IRoomObjectAvatar targetRoomObject);
+        RoomChatType chatType = RoomChatType.Normal, int chatStyleId = -1, IRoomObjectAvatar? targetRoomObject = null);
 }

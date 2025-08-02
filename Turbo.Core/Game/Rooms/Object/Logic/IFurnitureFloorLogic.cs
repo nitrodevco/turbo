@@ -15,11 +15,11 @@ public interface IFurnitureFloorLogic : IFurnitureLogic, IRollingObjectLogic
     public void OnStep(IRoomObjectAvatar avatar);
     public void OnStop(IRoomObjectAvatar avatar);
     public bool CanStack();
-    public bool CanWalk(IRoomObjectAvatar avatar);
-    public bool CanSit(IRoomObjectAvatar avatar);
-    public bool CanLay(IRoomObjectAvatar avatar);
+    public bool CanWalk(IRoomObjectAvatar? avatar = null);
+    public bool CanSit(IRoomObjectAvatar? avatar = null);
+    public bool CanLay(IRoomObjectAvatar? avatar = null);
     public bool CanRoll();
-    public bool IsOpen(IRoomObjectAvatar avatar);
+    public bool IsOpen(IRoomObjectAvatar? avatar = null);
     public IRoomTile GetCurrentTile();
     public IList<IRoomTile> GetCurrentTiles();
 }

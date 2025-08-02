@@ -58,7 +58,7 @@ public class WiredMessageHandler : IWiredMessageHandler
         if (floorFurniture is null || floorFurniture.RoomObject is null ||
             floorFurniture.RoomObject.Logic is not IFurnitureWiredLogic wiredLogic) return;
 
-        var wiredData = wiredLogic.CreateWiredDataFromJson();
+        var wiredData = wiredLogic.CreateWiredDataFromJson("");
 
         if (wiredData is null) return;
 

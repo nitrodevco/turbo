@@ -26,7 +26,7 @@ public class FurnitureRepository(IEmulatorContext _context) : IFurnitureReposito
     public async Task<List<FurnitureEntity>> FindAllInventoryByPlayerIdAsync(int playerId)
     {
         return await _context.Furnitures
-            .Where(entity => entity.PlayerEntityId == playerId && entity.RoomEntityId is null)
+            .Where(entity => entity.PlayerEntityId == playerId && entity.RoomEntityId == null)
             .ToListAsync();
     }
 

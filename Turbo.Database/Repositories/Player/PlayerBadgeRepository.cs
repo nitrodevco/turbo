@@ -25,7 +25,7 @@ public class PlayerBadgeRepository(IEmulatorContext _context) : IPlayerBadgeRepo
     public async Task<List<PlayerBadgeDto>> FindActiveByPlayerIdAsync(int playerId)
     {
         return await _context.PlayerBadges
-            .Where(entity => entity.PlayerEntityId == playerId && entity.SlotId is not null)
+            .Where(entity => entity.PlayerEntityId == playerId && entity.SlotId != null)
             .Select(entity => new PlayerBadgeDto
             {
                 Id = entity.Id,
