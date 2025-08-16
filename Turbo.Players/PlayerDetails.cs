@@ -50,6 +50,7 @@ public class PlayerDetails(
         {
             _playerEntity.Name = value;
             _storageQueue.Add(_playerEntity);
+
         }
     }
 

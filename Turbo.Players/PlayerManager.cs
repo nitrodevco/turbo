@@ -83,9 +83,8 @@ public class PlayerManager(
         }
     }
 
-    private async Task<IPlayer> GetOfflinePlayerByUsername(string username)
+    public async Task<IPlayer> GetOfflinePlayerByUsername(string username)
     {
-
         if (string.IsNullOrEmpty(username)) return null;
 
         var player = GetPlayerByUsername(username);

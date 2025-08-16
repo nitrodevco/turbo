@@ -20,6 +20,7 @@ using Turbo.Core.Storage;
 using Turbo.Database.Queue;
 using Turbo.Database.Repositories.Catalog;
 using Turbo.Database.Repositories.Furniture;
+using Turbo.Database.Repositories.Messenger;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
 using Turbo.Database.Repositories.Room;
@@ -31,6 +32,7 @@ using Turbo.Furniture.Factories;
 using Turbo.Inventory.Factories;
 using Turbo.Main.EventHandlers;
 using Turbo.Main.PacketHandlers;
+using Turbo.Messenger.Factories;
 using Turbo.Navigator;
 using Turbo.Networking;
 using Turbo.Networking.EventLoop;
@@ -135,6 +137,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IRoomSecurityFactory, RoomSecurityFactory>();
         services.AddSingleton<ICatalogFactory, CatalogFactory>();
         services.AddSingleton<IRoomChatFactory, RoomChatFactory>();
+        services.AddSingleton<IMessengerFactory, MessengerFactory>();
     }
 
     public static void AddRepositories(this IServiceCollection services)
@@ -161,5 +164,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlayerChatStyleOwnedRepository, PlayerChatStyleOwnedRepository>();
         services.AddScoped<IPerformanceLogRepository, PerformanceLogRepository>();
         services.AddScoped<IPlayerFavouriteRoomsRepository, PlayerFavouriteRoomsRepository>();
+        services.AddScoped<IMessengerFriendsRepository, MessengerFriendsRepository>();
+        services.AddScoped<IMessengerRequestsRepository, MessengerRequestsRepository>();
     }
 }

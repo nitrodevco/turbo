@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Inventory;
+using Turbo.Core.Game.Messenger;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms.Object;
@@ -20,6 +21,7 @@ public class Player(
     public IPlayerDetails PlayerDetails { get; } = _playerDetails;
     public IPlayerInventory PlayerInventory { get; private set; }
     public IPlayerWallet PlayerWallet { get; private set; }
+    public IMessenger Messenger { get; private set; }
     public ISession Session { get; private set; }
     public IRoomObjectAvatar RoomObject { get; private set; }
 
@@ -48,6 +50,15 @@ public class Player(
         if (PlayerWallet is not null && PlayerWallet != playerWallet) return false;
 
         PlayerWallet = playerWallet;
+
+        return true;
+    }
+
+    public bool SetMessenger(IMessenger messenger)
+    {
+        if (Messenger is not null && Messenger != messenger) return false;
+
+        Messenger = messenger;
 
         return true;
     }
@@ -112,6 +123,9 @@ public class Player(
 
         if (PlayerWallet is not null) await PlayerWallet.InitAsync();
         if (PlayerInventory is not null) await PlayerInventory.InitAsync();
+        if (Messenger is not null) await Messenger.InitAsync();
+
+        await Messenger.SendUpdateToFriends(true);
     }
 
     protected override async Task OnDispose()
@@ -121,8 +135,9 @@ public class Player(
         if (PlayerManager is not null) await PlayerManager.RemovePlayer(Id);
 
         PlayerDetails.PlayerStatus = PlayerStatusEnum.Offline;
+        await Messenger.SendUpdateToFriends(true);
 
-        // dispose messenger
+        if(Messenger is not null) await Messenger.DisposeAsync();
         // dispose roles
 
         if (PlayerWallet is not null) await PlayerWallet.DisposeAsync();
