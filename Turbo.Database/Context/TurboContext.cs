@@ -4,11 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Turbo.Database.Attributes;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Turbo.Database.Attributes;
 using Turbo.Database.Entities;
 using Turbo.Database.Entities.Catalog;
 using Turbo.Database.Entities.Furniture;
+using Turbo.Database.Entities.Logs.Chat;
 using Turbo.Database.Entities.Messenger;
 using Turbo.Database.Entities.Navigator;
 using Turbo.Database.Entities.Players;
@@ -46,6 +47,7 @@ public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(op
     public DbSet<PlayerFavouriteRoomsEntity> PlayerFavouriteRooms { get; set; }
     public DbSet<MessengerRequestEntity> MessengerRequests { get; set; }
     public DbSet<MessengerFriendEntity> MessengerFriends { get; set; }
+    public DbSet<ConsoleChatLogEntity> ConsoleChatLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

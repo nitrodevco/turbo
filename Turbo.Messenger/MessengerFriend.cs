@@ -8,7 +8,7 @@ namespace Turbo.Messenger;
 
 public class MessengerFriend(MessengerFriendEntity entity) : IMessengerFriend
 {
-    private bool _inRoom;
+    private bool _canBeFollowed;
 
     public int Id => entity.FriendPlayerEntityId;
 
@@ -83,9 +83,9 @@ public class MessengerFriend(MessengerFriendEntity entity) : IMessengerFriend
         }
     }
 
-    public bool InRoom
+    public bool CanBeFollowed
     {
-        get => _inRoom;
-        set => _inRoom = value;
+        get => _canBeFollowed;
+        set => _canBeFollowed = value;
     }
 }

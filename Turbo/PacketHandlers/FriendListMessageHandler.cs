@@ -2,14 +2,16 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Turbo.Core.Game.Messenger.Constants;
+using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
 using Turbo.Packets.Incoming.FriendList;
+using Turbo.Packets.Incoming.Navigator;
 using Turbo.Packets.Outgoing.FriendList;
-using Turbo.Players;
+using Turbo.Packets.Outgoing.Room.Session;
 using FriendListUpdateEventMessage = Turbo.Packets.Incoming.FriendList.FriendListUpdateMessage;
 using FriendListUpdateMessage = Turbo.Packets.Outgoing.FriendList.FriendListUpdateMessage;
 using MessengerInitEventMessage = Turbo.Packets.Incoming.FriendList.MessengerInitMessage;
@@ -19,7 +21,8 @@ namespace Turbo.Main.PacketHandlers;
 
 public class FriendListMessageHandler(
     IPacketMessageHub messageHub,
-    IPlayerManager _playerManager) : IPacketHandlerManager
+    IPlayerManager playerManager,
+    INavigatorManager navigatorManager) : IPacketHandlerManager
 {
     public void Register()
     {
@@ -41,7 +44,7 @@ public class FriendListMessageHandler(
 
     private async Task OnAcceptFriendMessage(AcceptFriendMessage message, ISession session)
     {
-        if (session.Player == null || message.Friends == null || message.Friends.Count == 0)
+        if (session.Player is null || message.Friends is null || message.Friends.Count == 0)
             return;
 
         var messenger = session.Player.Messenger;
@@ -51,7 +54,7 @@ public class FriendListMessageHandler(
 
     private async void OnDeclineRequestMessage(DeclineFriendMessage message, ISession session)
     {
-        if (session.Player == null || !session.Player.IsInitialized)
+        if (session.Player is null || !session.Player.IsInitialized)
             return;
 
         var messenger = session.Player.Messenger;
@@ -69,19 +72,75 @@ public class FriendListMessageHandler(
         }
     }
 
-    private void OnFollowFriendMessage(FollowFriendMessage message, ISession session)
+    private async Task OnFollowFriendMessage(FollowFriendMessage message, ISession session)
     {
-        if (session.Player == null) return;
+        if (session.Player is null) return;
 
         if (message.PlayerId <= 0)
             return;
+
+        var friend = session.Player.Messenger.GetFriend(message.PlayerId);
+
+        if(friend is null)
+        {
+            await session.Send(new FollowFriendFailedMessage
+            {
+                ErrorCode = FollowFriendErrorEnum.NotFriend
+            });
+
+            return;
+        }
+
+        if (friend.Status is PlayerStatusEnum.Offline)
+        {
+            await session.Send(new FollowFriendFailedMessage
+            {
+                ErrorCode = FollowFriendErrorEnum.Offline
+            });
+            return;
+        }
+
+        if (!friend.CanBeFollowed)
+        {
+            await session.Send(new FollowFriendFailedMessage
+            {
+                ErrorCode = FollowFriendErrorEnum.Prevented
+            });
+            return;
+        }
+
+        var friendPlayer = playerManager.GetPlayerById(friend.Id);
+
+        if(friendPlayer is null || !friendPlayer.IsInitialized || friendPlayer.RoomObject is null) return;
+
+        if(friendPlayer.RoomObject.Room is null)
+        {
+            await session.Send(new FollowFriendFailedMessage
+            {
+                ErrorCode = FollowFriendErrorEnum.NotInRoom
+            });
+            return;
+        }
+
+        var roomId = friendPlayer.RoomObject.Room.Id;
+
+        if (session.Player.RoomObject?.Room?.Id == roomId)
+        {
+            //Already in the same room, no need to follow
+            return;
+        }
+
+        await session.Send(new RoomForwardMessage
+        {
+            RoomId = roomId
+        });
     }
 
     private void OnFindNewFriendMessage(FindNewFriendsMessage message, ISession session) => throw new NotImplementedException();
 
     private void OnFriendListUpdateMessage(FriendListUpdateEventMessage message, ISession session)
     {
-        if (session.Player == null || !session.Player.IsInitialized) return;
+        if (session.Player is null || !session.Player.IsInitialized) return;
 
         var messenger = session.Player.Messenger;
 
@@ -93,7 +152,7 @@ public class FriendListMessageHandler(
 
     private void OnGetFriendRequestsMessage(GetFriendRequestsMessage message, ISession session)
     {
-        if (session.Player == null || !session.Player.IsInitialized) return;
+        if (session.Player is null || !session.Player.IsInitialized) return;
 
         var messenger = session.Player.Messenger;
 
@@ -103,7 +162,21 @@ public class FriendListMessageHandler(
         });
     }
 
-    private void OnGetMessengerHistoryMessage(GetMessengerHistoryMessage message, ISession session) => throw new NotImplementedException();
+    private async Task OnGetMessengerHistoryMessage(GetMessengerHistoryMessage message, ISession session)
+    {
+        if (session.Player is null) return;
+
+        var friendId = message.ChatId;
+        var messageId = message.Message;
+
+        var consoleHistory = await session.Player.Messenger.GetConsoleHistory(friendId, messageId);
+
+        await session.Send(new ConsoleMessageHistoryMessage
+        {
+            ChatId = friendId,
+            Messages = consoleHistory
+        });
+    }
 
     private void OnHabboSearchMessage(HabboSearchMessage message, ISession session)
     {
@@ -131,6 +204,8 @@ public class FriendListMessageHandler(
         {
             FriendListFragments = messenger.GetFriendsFragments(100)
         });
+
+        messenger.SetClientInitialized();
     }
 
     private async Task OnRemoveFriendMessage(RemoveFriendMessage message, ISession session)
@@ -149,7 +224,7 @@ public class FriendListMessageHandler(
 
         var messenger = session.Player.Messenger;
 
-        var targetPlayer = await _playerManager.GetOfflinePlayerByUsername(message.PlayerName);
+        var targetPlayer = await playerManager.GetOfflinePlayerByUsername(message.PlayerName);
 
         if (targetPlayer == null)
         {
@@ -206,16 +281,16 @@ public class FriendListMessageHandler(
         }
     }
 
-    private void OnSendMsgMessage(SendMsgMessage message, ISession session)
+    private async Task OnSendMsgMessage(SendMsgMessage message, ISession session)
     {
-        if (session.Player == null || message.ChatId <= 0 || string.IsNullOrWhiteSpace(message.Message))
+        if (session.Player == null || message.ChatId <= 0 || string.IsNullOrWhiteSpace(message.MessageText))
             return;
 
-        throw new NotImplementedException();
-        //Find the friend by ID
-        //If Friend does not exist, skip
-        //Send the message to the friend
-        //If friend is offline, store the message for later delivery
+        var friendId = message.ChatId;
+        var chatMessage = message.MessageText;
+        var confirmationId = message.ConfirmationId;
+
+        await session.Player.Messenger.SendMessage(friendId, chatMessage, confirmationId);
     }
 
     private void OnSendRoomInviteMessage(SendRoomInviteMessage message, ISession session)

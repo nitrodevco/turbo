@@ -108,9 +108,9 @@ public class Session : ISession
             {
                 if (Revision.Parsers.TryGetValue(msg.Header, out var parser))
                 {
-                    _logger.LogInformation($"\u001b[94mINCOMING[{msg.Header}] -> {{in:{parser.GetType().Name}}}{msg.ToString()}\u001b[0m");
-
                     await parser.HandleAsync(this, msg, _messageHub);
+
+                    _logger.LogInformation($"\u001b[94mINCOMING[{msg.Header}] -> {{in:{parser.GetType().Name}}}{msg}\u001b[0m");
                 }
                 else
                 {

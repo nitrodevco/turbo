@@ -17,6 +17,8 @@ public interface IMessenger : IComponent
     ConcurrentDictionary<int, IMessengerCategory> Categories { get; }
     ConcurrentDictionary<int, IMessengerFriend> Friends { get; }
     ConcurrentDictionary<int, IMessengerRequest> Requests { get; }
+    bool ClientInitialized { get; set; }
+    Task SetClientInitialized();
     IMessengerFriend? GetFriend(int playerId);
     int GetFriendsCount();
     List<List<IMessengerFriend>> GetFriendsFragments(int fragmentSize);
@@ -33,9 +35,11 @@ public interface IMessenger : IComponent
     Task ClearRequests();
     bool HasPendingRequest(int playerId);
     void UpdateFriend(IPlayer player, bool commit = true);
-    Task SendUpdateToFriends(bool commit = false);
+    void SendUpdateToFriends(bool commit = false);
     void UpdateFriendRelation(int friendId, MessengerFriendRelationEnum relationType);
     IReadOnlyDictionary<MessengerUpdateTypeEnum, IReadOnlyList<IMessengerUpdateItem>> GetAndClearUpdates();
-    void SendMessage(int friendId, string message);
+    Task<IReadOnlyList<IMessengerConsoleMessage>> GetConsoleHistory(int friendId, string? messageId);
+    Task SendMessage(int friendId, string message, int confirmationId);
+    void ReceiveMessage(IMessengerConsoleMessage message, bool queueMessage = false);
     void SendRoomInvite(string message, int[] friendIds);
 }

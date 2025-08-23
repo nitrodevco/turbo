@@ -8,11 +8,13 @@ using Turbo.Database.Entities.Messenger;
 
 namespace Turbo.Database.Repositories.Messenger;
 
-public class MessengerFriendsRepository(IEmulatorContext _context) : IMessengerFriendsRepository
+public class MessengerFriendsRepository(
+    IEmulatorContext context
+) : IMessengerFriendsRepository
 {
     public async Task<List<MessengerFriendEntity>> FindAllFriends(int playerId)
     {
-        return await _context.MessengerFriends
+        return await context.MessengerFriends
             .Where(entity => entity.PlayerEntityId == playerId)
             .Include(entity => entity.PlayerEntity)
             .Include(entity => entity.FriendPlayerEntity)
@@ -26,7 +28,7 @@ public class MessengerFriendsRepository(IEmulatorContext _context) : IMessengerF
             return (null, null);
         }
 
-        var existing = await _context.MessengerFriends
+        var existing = await context.MessengerFriends
             .Where(friendship =>
                  (friendship.PlayerEntityId == playerId && friendship.FriendPlayerEntityId == friendId) ||
                 (friendship.PlayerEntityId == friendId && friendship.FriendPlayerEntityId == playerId)
@@ -63,11 +65,11 @@ public class MessengerFriendsRepository(IEmulatorContext _context) : IMessengerF
 
         if (toAdd.Count > 0)
         {
-            await _context.MessengerFriends.AddRangeAsync(toAdd);
-            await _context.SaveChangesAsync();
+            await context.MessengerFriends.AddRangeAsync(toAdd);
+            await context.SaveChangesAsync();
         }
 
-        var reloaded = await _context.MessengerFriends
+        var reloaded = await context.MessengerFriends
             .Where(friendship =>
                  (friendship.PlayerEntityId == playerId && friendship.FriendPlayerEntityId == friendId) ||
                 (friendship.PlayerEntityId == friendId && friendship.FriendPlayerEntityId == playerId)
@@ -90,25 +92,25 @@ public class MessengerFriendsRepository(IEmulatorContext _context) : IMessengerF
 
     public async Task DeleteFriendship(int playerId, int friendId)
     {
-        var friendship = await _context.MessengerFriends
+        var friendship = await context.MessengerFriends
             .Where(entity =>
                 (entity.PlayerEntityId == playerId && entity.FriendPlayerEntityId == friendId) ||
                 (entity.PlayerEntityId == friendId && entity.FriendPlayerEntityId == playerId))
             .ToListAsync();
 
-        _context.MessengerFriends.RemoveRange(friendship);
+        context.MessengerFriends.RemoveRange(friendship);
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public async Task DeleteFriendships(int playerId, IEnumerable<int> friendIds)
     {
-        var friendships = await _context.MessengerFriends
+        var friendships = await context.MessengerFriends
             .Where(entity =>
                 (entity.PlayerEntityId == playerId && friendIds.Contains(entity.FriendPlayerEntityId)) ||
                 (friendIds.Contains(entity.PlayerEntityId) && entity.FriendPlayerEntityId == playerId))
             .ToListAsync();
-        _context.MessengerFriends.RemoveRange(friendships);
-        await _context.SaveChangesAsync();
+        context.MessengerFriends.RemoveRange(friendships);
+        await context.SaveChangesAsync();
     }
 }

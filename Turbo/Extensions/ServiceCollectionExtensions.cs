@@ -20,6 +20,7 @@ using Turbo.Core.Storage;
 using Turbo.Database.Queue;
 using Turbo.Database.Repositories.Catalog;
 using Turbo.Database.Repositories.Furniture;
+using Turbo.Database.Repositories.Logs.Chat;
 using Turbo.Database.Repositories.Messenger;
 using Turbo.Database.Repositories.Navigator;
 using Turbo.Database.Repositories.Player;
@@ -166,5 +167,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPlayerFavouriteRoomsRepository, PlayerFavouriteRoomsRepository>();
         services.AddScoped<IMessengerFriendsRepository, MessengerFriendsRepository>();
         services.AddScoped<IMessengerRequestsRepository, MessengerRequestsRepository>();
+        services.AddScoped<IConsoleChatLogsRepository, ConsoleChatLogsRepository>();
     }
 }

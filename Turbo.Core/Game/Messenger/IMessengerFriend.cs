@@ -14,5 +14,5 @@ public interface IMessengerFriend
     string Motto { get; set; }
     int CategoryId { get; set; }
     MessengerFriendRelationEnum Relation { get; set; }
-    bool InRoom { get; set; }
+    bool CanBeFollowed { get; set; }
 }

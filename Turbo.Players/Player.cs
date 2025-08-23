@@ -78,7 +78,7 @@ public class Player(
 
         RoomObject = avatarObject;
 
-        // TODO notify messenger friends that you've entered a room
+        Messenger.SendUpdateToFriends(true);
 
         return true;
     }
@@ -95,7 +95,7 @@ public class Player(
 
             RoomObject = null;
 
-            // TODO notify messenger friends that you've left a room
+            Messenger.SendUpdateToFriends(true);
         }
 
         PlayerManager.ClearPlayerRoomStatus(this);
@@ -125,7 +125,7 @@ public class Player(
         if (PlayerInventory is not null) await PlayerInventory.InitAsync();
         if (Messenger is not null) await Messenger.InitAsync();
 
-        await Messenger.SendUpdateToFriends(true);
+        Messenger.SendUpdateToFriends(true);
     }
 
     protected override async Task OnDispose()
@@ -135,7 +135,7 @@ public class Player(
         if (PlayerManager is not null) await PlayerManager.RemovePlayer(Id);
 
         PlayerDetails.PlayerStatus = PlayerStatusEnum.Offline;
-        await Messenger.SendUpdateToFriends(true);
+        Messenger.SendUpdateToFriends(true);
 
         if(Messenger is not null) await Messenger.DisposeAsync();
         // dispose roles
