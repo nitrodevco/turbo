@@ -63,4 +63,20 @@ public class PlayerRepository(IEmulatorContext _context) : IPlayerRepository
         })
         .FirstOrDefaultAsync();
     }
+
+    public async Task<IList<PlayerUsernameDto>> SearchPlayersAsync(string query, int limit = 10)
+    {
+        var lowered = query.ToLower();
+
+        return await _context.Players
+            .Where(player => EF.Functions.Like(player.Name, query + "%"))
+            .OrderBy(player => player.Name)
+            .Take(limit)
+            .Select(player => new PlayerUsernameDto
+            {
+                Id = player.Id,
+                Name = player.Name
+            })
+            .ToListAsync();
+    }
 }

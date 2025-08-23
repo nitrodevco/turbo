@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Turbo.Core.Game.Messenger;
 using Turbo.Core.Game.Messenger.Constants;
 using Turbo.Core.Game.Navigator;
 using Turbo.Core.Game.Players;
@@ -8,6 +10,7 @@ using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Networking.Game.Clients;
 using Turbo.Core.PacketHandlers;
 using Turbo.Core.Packets;
+using Turbo.Messenger;
 using Turbo.Packets.Incoming.FriendList;
 using Turbo.Packets.Incoming.Navigator;
 using Turbo.Packets.Outgoing.FriendList;
@@ -178,12 +181,39 @@ public class FriendListMessageHandler(
         });
     }
 
-    private void OnHabboSearchMessage(HabboSearchMessage message, ISession session)
+    private async Task OnHabboSearchMessage(HabboSearchMessage message, ISession session)
     {
         if (session.Player == null || String.IsNullOrWhiteSpace(message.SearchQuery))
             return;
 
+        var results = await playerManager.SearchPlayersByUsername(message.SearchQuery, 50);
 
+        var friends = new List<IMessengerSearchResult>();
+        var others = new List<IMessengerSearchResult>();
+
+        foreach (var result in results)
+        {
+            if(result.Id == session.Player.Id) continue;
+
+            var searchResult = new MessengerSearchResult(result);
+
+            var friend = session.Player.Messenger.GetFriend(result.Id);
+
+            if (friend is not null)
+            {
+                friends.Add(searchResult);
+            }
+            else
+            {
+                others.Add(searchResult);
+            }
+        }
+
+        await session.Send(new HabboSearchResultMessage
+        {
+            Friends = friends,
+            Others = others
+        });
     }
 
     private void OnMessengerInitMessage(MessengerInitEventMessage message, ISession session)

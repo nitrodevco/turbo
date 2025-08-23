@@ -13,6 +13,7 @@ public interface IPlayerManager : IComponent
     public IPlayer GetPlayerByUsername(string username);
     public Task<IPlayer> GetOfflinePlayerById(int id);
     public Task<IPlayer> GetOfflinePlayerByUsername(string username);
+    public Task<List<IPlayer>> SearchPlayersByUsername(string query, int limit = 10);
     public Task<IPlayer> CreatePlayer(int id, ISession session);
     public Task RemovePlayer(int id);
     public Task RemoveAllPlayers();

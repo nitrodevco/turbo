@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Utilities.IO;
 using Turbo.Core.Game.Inventory;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Rooms;
@@ -107,6 +108,36 @@ public class PlayerManager(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error fetching offline player by username '{Username}'", username);
+            return null;
+        }
+    }
+
+    public async Task<List<IPlayer>> SearchPlayersByUsername(string query, int limit = 10)
+    {
+        if (string.IsNullOrWhiteSpace(query) || limit <= 0) return null;
+
+        try
+        {
+            using var scope = _serviceScopeFactory.CreateScope();
+            var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+            var playerUsernameDTOs = await playerRepository.SearchPlayersAsync(query, limit);
+
+            var players = new List<IPlayer>();
+            foreach (var dto in playerUsernameDTOs)
+            {
+                var player = await GetOfflinePlayerById(dto.Id);
+
+                if (player is not null)
+                {
+                    players.Add(player);
+                }
+            }
+
+            return players;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error searching players by username with query '{Query}'", query);
             return null;
         }
     }
