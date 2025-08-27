@@ -369,7 +369,20 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
             // do we need to validate that all tiles base height is the same?
 
-            if (roomTile.Avatars.Count > 0 && !isRotating) return false;
+            if (roomTile.Avatars.Count > 0)
+            {
+                /*
+                 * Emulator Option to allow placement of furniture on tiles with avatars
+                 * Add this condition to allow Seats, Beds, Tiles to be placed under avatars
+                 * 
+                 * !(roomObject.Logic.CanSit() || roomObject.Logic.CanWalk()
+                */
+
+                if (!isRotating)
+                {
+                    return false;
+                }
+            }
 
             if (roomTile.Height + roomObject.Logic.StackHeight > DefaultSettings.MaximumFurnitureHeight) return false;
 
@@ -663,6 +676,12 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
             // do we need to validate that all tiles base height is the same?
 
+            /*
+             * Emulator Option to allow placement of furniture on tiles with avatars
+             * Add this condition to allow Seats, Beds, Tiles to be placed under avatars
+             * 
+             * !(roomObject.Logic.CanSit() || roomObject.Logic.CanWalk()
+            */
             if (roomTile.Avatars.Count > 0) return false;
 
             if (roomTile.Height + furnitureDefinition.Z > DefaultSettings.MaximumFurnitureHeight) return false;

@@ -431,11 +431,11 @@ public class RoomMap : IRoomMap
                 TilesToUpdate = roomTiles
             });
 
-        //if (updatedAvatars.Count > 0)
-        //    _room.SendComposer(new UserUpdateMessage
-        //    {
-        //        RoomObjects = updatedAvatars
-        //    });
+        if (updatedAvatars.Count > 0)
+            _room.SendComposer(new UserUpdateMessage
+            {
+                RoomObjects = updatedAvatars
+            });
     }
 
     public bool BlockingDisabled => _room.RoomDetails.BlockingDisabled;

@@ -47,6 +47,10 @@ public class FurnitureDefinitionEntity : Entity
     [DefaultValueSql(0.0d)]
     public double Z { get; set; }
 
+    [Column("multi_heights")]
+    [DefaultValueSql("")]
+    public string? MultiHeights { get; set; }
+
     [Column("can_stack")]
     [Required]
     [DefaultValueSql(true)]
