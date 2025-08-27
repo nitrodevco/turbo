@@ -369,7 +369,13 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
             // do we need to validate that all tiles base height is the same?
 
-            if (roomTile.Avatars.Count > 0 && !isRotating) return false;
+            if (roomTile.Avatars.Count > 0)
+            {
+                if(!(roomObject.Logic.CanSit() || roomObject.Logic.CanWalk()) && !isRotating)
+                {
+                    return false;
+                }
+            }
 
             if (roomTile.Height + roomObject.Logic.StackHeight > DefaultSettings.MaximumFurnitureHeight) return false;
 
@@ -406,8 +412,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (roomObject is null || roomObject.RoomObjectHolder is not IRoomFloorFurniture furniture) return false;
 
-        if (!_room.RoomSecurityManager.CanManipulateFurniture(manipulator, furniture) ||
-            !IsValidPlacement(roomObject, location))
+        if (!_room.RoomSecurityManager.CanManipulateFurniture(manipulator, furniture) || !IsValidPlacement(roomObject, location))
         {
             if (manipulator is not null)
                 // send placement notification
@@ -455,8 +460,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
         if (playerFurniture is null) return false;
 
-        if (!_room.RoomSecurityManager.CanPlaceFurniture(player) ||
-            !IsValidPlacement(playerFurniture.FurnitureDefinition, location))
+        if (!_room.RoomSecurityManager.CanPlaceFurniture(player) || !IsValidPlacement(playerFurniture.FurnitureDefinition, location))
             // cant place here
             return false;
 
@@ -663,7 +667,13 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
             // do we need to validate that all tiles base height is the same?
 
-            if (roomTile.Avatars.Count > 0) return false;
+            if (roomTile.Avatars.Count > 0)
+            {
+                if (!(furnitureDefinition.CanSit || furnitureDefinition.CanWalk))
+                {
+                    return false;
+                }
+            }
 
             if (roomTile.Height + furnitureDefinition.Z > DefaultSettings.MaximumFurnitureHeight) return false;
 
