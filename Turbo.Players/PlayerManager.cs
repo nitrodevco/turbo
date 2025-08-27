@@ -83,7 +83,7 @@ public class PlayerManager(
         }
     }
 
-    private async Task<IPlayer> GetOfflinePlayerByUsername(string username)
+    public async Task<IPlayer> GetOfflinePlayerByUsername(string username)
     {
 
         if (string.IsNullOrEmpty(username)) return null;
@@ -108,6 +108,36 @@ public class PlayerManager(
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error fetching offline player by username '{Username}'", username);
+            return null;
+        }
+    }
+
+    public async Task<List<IPlayer>> SearchPlayersByUsername(string query, int limit = 10)
+    {
+        if (string.IsNullOrWhiteSpace(query) || limit <= 0) return null;
+
+        try
+        {
+            using var scope = _serviceScopeFactory.CreateScope();
+            var playerRepository = scope.ServiceProvider.GetRequiredService<IPlayerRepository>();
+            var playerUsernameDTOs = await playerRepository.SearchPlayersAsync(query, limit);
+
+            var players = new List<IPlayer>();
+            foreach (var dto in playerUsernameDTOs)
+            {
+                var player = await GetOfflinePlayerById(dto.Id);
+
+                if (player is not null)
+                {
+                    players.Add(player);
+                }
+            }
+
+            return players;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error searching players by username with query '{Query}'", query);
             return null;
         }
     }

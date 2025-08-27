@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\Turbo.Messenger\Turbo.Messenger.csproj" />
         <ProjectReference Include="..\Turbo.Rooms\Turbo.Rooms.csproj" />
         <ProjectReference Include="..\Turbo.Security\Turbo.Security.csproj" />
         <ProjectReference Include="..\Turbo.Inventory\Turbo.Inventory.csproj" />

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Turbo.Core.Game.Inventory;
+using Turbo.Core.Game.Messenger;
 using Turbo.Core.Game.Players;
 using Turbo.Core.Game.Players.Constants;
 using Turbo.Core.Game.Rooms.Object;
@@ -20,6 +21,7 @@ public class Player(
     public IPlayerDetails PlayerDetails { get; } = _playerDetails;
     public IPlayerInventory PlayerInventory { get; private set; }
     public IPlayerWallet PlayerWallet { get; private set; }
+    public IMessenger Messenger { get; private set; }
     public ISession Session { get; private set; }
     public IRoomObjectAvatar RoomObject { get; private set; }
 
@@ -52,6 +54,15 @@ public class Player(
         return true;
     }
 
+    public bool SetMessenger(IMessenger messenger)
+    {
+        if (Messenger is not null && Messenger != messenger) return false;
+
+        Messenger = messenger;
+
+        return true;
+    }
+
     public Task<bool> SetupRoomObject()
     {
         if (RoomObject is null) return Task.FromResult(false);
@@ -67,7 +78,7 @@ public class Player(
 
         RoomObject = avatarObject;
 
-        // TODO notify messenger friends that you've entered a room
+        Messenger.SendUpdateToFriends(true);
 
         return true;
     }
@@ -84,7 +95,7 @@ public class Player(
 
             RoomObject = null;
 
-            // TODO notify messenger friends that you've left a room
+            Messenger.SendUpdateToFriends(true);
         }
 
         PlayerManager.ClearPlayerRoomStatus(this);
@@ -112,6 +123,9 @@ public class Player(
 
         if (PlayerWallet is not null) await PlayerWallet.InitAsync();
         if (PlayerInventory is not null) await PlayerInventory.InitAsync();
+        if (Messenger is not null) await Messenger.InitAsync();
+
+        Messenger.SendUpdateToFriends(true);
     }
 
     protected override async Task OnDispose()
@@ -121,10 +135,10 @@ public class Player(
         if (PlayerManager is not null) await PlayerManager.RemovePlayer(Id);
 
         PlayerDetails.PlayerStatus = PlayerStatusEnum.Offline;
+        Messenger.SendUpdateToFriends(true);
 
-        // dispose messenger
         // dispose roles
-
+        if (Messenger is not null) await Messenger.DisposeAsync();
         if (PlayerWallet is not null) await PlayerWallet.DisposeAsync();
         if (PlayerInventory is not null) await PlayerInventory.DisposeAsync();
         if (Session is not null) await Session.DisposeAsync();

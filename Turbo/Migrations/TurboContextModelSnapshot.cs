@@ -19,7 +19,7 @@ namespace Turbo.Main.Migrations
                 .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Catalog.CatalogOfferEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -28,39 +28,29 @@ namespace Turbo.Main.Migrations
 
                     b.Property<bool?>("CanBundle")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_bundle")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("can_bundle");
 
                     b.Property<bool?>("CanGift")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_gift")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("can_gift");
 
                     b.Property<int>("CatalogPageEntityId")
                         .HasColumnType("int")
                         .HasColumnName("page_id");
 
                     b.Property<int>("ClubLevel")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("club_level")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("club_level");
 
                     b.Property<int>("CostCredits")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("cost_credits")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("cost_credits");
 
                     b.Property<int>("CostCurrency")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("cost_currency")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("cost_currency");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -88,10 +78,8 @@ namespace Turbo.Main.Migrations
 
                     b.Property<bool?>("Visible")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("visible")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("visible");
 
                     b.HasKey("Id");
 
@@ -100,7 +88,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("catalog_offers");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Catalog.CatalogPageEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogPageEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -118,23 +106,18 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("deleted_at");
 
                     b.Property<int>("Icon")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("icon")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("icon");
 
                     b.Property<string>("ImageData")
-                        .IsRequired()
                         .HasColumnType("json")
                         .HasColumnName("image_data");
 
                     b.Property<string>("Layout")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)")
-                        .HasColumnName("layout")
-                        .HasDefaultValueSql("'default_3x3'");
+                        .HasColumnName("layout");
 
                     b.Property<string>("Localization")
                         .IsRequired()
@@ -152,7 +135,6 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("parent_id");
 
                     b.Property<string>("TextData")
-                        .IsRequired()
                         .HasColumnType("json")
                         .HasColumnName("text_data");
 
@@ -163,10 +145,8 @@ namespace Turbo.Main.Migrations
 
                     b.Property<bool?>("Visible")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("visible")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("visible");
 
                     b.HasKey("Id");
 
@@ -175,7 +155,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("catalog_pages");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Catalog.CatalogProductEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogProductEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -210,22 +190,16 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("product_type");
 
                     b.Property<int>("Quantity")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("quantity")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("quantity");
 
                     b.Property<int>("UniqueRemaining")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("unique_remaining")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("unique_remaining");
 
                     b.Property<int>("UniqueSize")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("unique_size")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("unique_size");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -241,7 +215,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("catalog_products");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Furniture.FurnitureDefinitionEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -250,59 +224,43 @@ namespace Turbo.Main.Migrations
 
                     b.Property<bool?>("CanGroup")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_group")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("can_group");
 
                     b.Property<bool?>("CanLay")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_lay")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("can_lay");
 
                     b.Property<bool?>("CanRecycle")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_recycle")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("can_recycle");
 
                     b.Property<bool?>("CanSell")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_sell")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("can_sell");
 
                     b.Property<bool?>("CanSit")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_sit")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("can_sit");
 
                     b.Property<bool?>("CanStack")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_stack")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("can_stack");
 
                     b.Property<bool?>("CanTrade")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_trade")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("can_trade");
 
                     b.Property<bool?>("CanWalk")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("can_walk")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("can_walk");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -320,11 +278,9 @@ namespace Turbo.Main.Migrations
 
                     b.Property<string>("Logic")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(30)
                         .HasColumnType("varchar(30)")
-                        .HasColumnName("logic")
-                        .HasDefaultValueSql("'default'");
+                        .HasColumnName("logic");
 
                     b.Property<string>("ProductName")
                         .IsRequired()
@@ -341,17 +297,13 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("sprite_id");
 
                     b.Property<int>("TotalStates")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("total_states")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("total_states");
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("varchar(255)")
-                        .HasColumnName("type")
-                        .HasDefaultValueSql("'s'");
+                        .HasColumnName("type");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -360,26 +312,19 @@ namespace Turbo.Main.Migrations
 
                     b.Property<int>("UsagePolicy")
                         .HasColumnType("int")
-                        .HasColumnName("usage_policy")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("usage_policy");
 
                     b.Property<int>("X")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("x")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("x");
 
                     b.Property<int>("Y")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("y")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("y");
 
                     b.Property<double>("Z")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("double(10,3)")
-                        .HasColumnName("z")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("z");
 
                     b.HasKey("Id");
 
@@ -389,7 +334,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("furniture_definitions");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Furniture.FurnitureEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -420,8 +365,7 @@ namespace Turbo.Main.Migrations
 
                     b.Property<int>("Rotation")
                         .HasColumnType("int")
-                        .HasColumnName("direction")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("direction");
 
                     b.Property<string>("StuffData")
                         .HasColumnType("longtext")
@@ -437,22 +381,16 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("wall_position");
 
                     b.Property<int>("X")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("x")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("x");
 
                     b.Property<int>("Y")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("y")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("y");
 
                     b.Property<double>("Z")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("double(10,3)")
-                        .HasColumnName("z")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("z");
 
                     b.HasKey("Id");
 
@@ -465,7 +403,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("furniture");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Furniture.FurnitureTeleportLinkEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureTeleportLinkEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -506,7 +444,67 @@ namespace Turbo.Main.Migrations
                     b.ToTable("furniture_teleport_links");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Messenger.MessengerCategoryEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Logs.History.ConsoleChatLogEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ConfirmationId")
+                        .HasColumnType("int")
+                        .HasColumnName("confirmation_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("delivered_at");
+
+                    b.Property<bool>("IsDelivered")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_delivered");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("longtext")
+                        .HasColumnName("message");
+
+                    b.Property<int>("RecipientEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("recipient_id");
+
+                    b.Property<int>("SenderEntityId")
+                        .HasColumnType("int")
+                        .HasColumnName("sender_id");
+
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("sent_at");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RecipientEntityId");
+
+                    b.HasIndex("SenderEntityId", "RecipientEntityId");
+
+                    b.ToTable("logs_chat_console");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerCategoryEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -545,7 +543,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("messenger_categories");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Messenger.MessengerFriendEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerFriendEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -595,7 +593,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("messenger_friends");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Messenger.MessengerRequestEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerRequestEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -635,7 +633,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("messenger_requests");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Navigator.NavigatorEventCategoryEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorEventCategoryEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -671,7 +669,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("navigator_eventcats");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Navigator.NavigatorFlatCategoryEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorFlatCategoryEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -683,7 +681,6 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("automatic");
 
                     b.Property<string>("AutomaticCategory")
-                        .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("automatic_category");
 
@@ -698,7 +695,6 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("deleted_at");
 
                     b.Property<string>("GlobalCategory")
-                        .IsRequired()
                         .HasColumnType("longtext")
                         .HasColumnName("global_category");
 
@@ -733,7 +729,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("navigator_flatcats");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Navigator.NavigatorTopLevelContextEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Navigator.NavigatorTopLevelContextEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -776,7 +772,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("navigator_top_level_contexts");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerBadgeEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerBadgeEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -819,7 +815,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("player_badges");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerChatStyleEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerChatStyleEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -853,7 +849,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("player_chat_styles");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerChatStyleOwnedEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerChatStyleOwnedEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -893,7 +889,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("player_chat_styles_owned");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerCurrencyEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerCurrencyEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -901,10 +897,8 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("id");
 
                     b.Property<int>("Amount")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("amount")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("amount");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -938,7 +932,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("player_currencies");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -957,16 +951,13 @@ namespace Turbo.Main.Migrations
 
                     b.Property<string>("Figure")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)")
-                        .HasColumnName("figure")
-                        .HasDefaultValueSql("'hr-115-42.hd-195-19.ch-3030-82.lg-275-1408.fa-1201.ca-1804-64'");
+                        .HasColumnName("figure");
 
                     b.Property<int>("Gender")
                         .HasColumnType("int")
-                        .HasColumnName("gender")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("gender");
 
                     b.Property<string>("Motto")
                         .HasColumnType("longtext")
@@ -977,10 +968,13 @@ namespace Turbo.Main.Migrations
                         .HasColumnType("varchar(255)")
                         .HasColumnName("name");
 
+                    b.Property<int>("PlayerPerks")
+                        .HasColumnType("int")
+                        .HasColumnName("perk_flags");
+
                     b.Property<int>("PlayerStatus")
                         .HasColumnType("int")
-                        .HasColumnName("status")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("status");
 
                     b.Property<int?>("RoomChatStyleId")
                         .HasColumnType("int")
@@ -999,7 +993,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("players");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerFavouriteRoomsEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerFavouriteRoomsEntity", b =>
                 {
                     b.Property<int>("PlayerId")
                         .HasColumnType("int")
@@ -1031,93 +1025,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("player_favourite_rooms");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerPerksEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<bool>("BuilderAtWork")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("BUILDER_AT_WORK");
-
-                    b.Property<bool>("CallOnHelpers")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("CALL_ON_HELPERS");
-
-                    b.Property<bool>("Camera")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("CAMERA");
-
-                    b.Property<bool>("Citizen")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("CITIZEN");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("created_at");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("deleted_at");
-
-                    b.Property<bool>("HabboClubOfferBeta")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("HABBO_CLUB_OFFER_BETA");
-
-                    b.Property<bool>("JudgeChatReviews")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("JUDGE_CHAT_REVIEWS");
-
-                    b.Property<bool>("MouseZoom")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("MOUSE_ZOOM");
-
-                    b.Property<bool>("NavigatorPhaseTwo2014")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("NAVIGATOR_PHASE_TWO_2014");
-
-                    b.Property<bool>("NavigatorRoomThumbnailCamera")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("NAVIGATOR_ROOM_THUMBNAIL_CAMERA");
-
-                    b.Property<int>("PlayerEntityId")
-                        .HasColumnType("int")
-                        .HasColumnName("player_id");
-
-                    b.Property<bool>("Trade")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("TRADE");
-
-                    b.Property<bool>("UnityTrade")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("UNITY_TRADE");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime(6)")
-                        .HasColumnName("updated_at");
-
-                    b.Property<bool>("UseGuideTool")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("USE_GUIDE_TOOL");
-
-                    b.Property<bool>("VoteInCompetitions")
-                        .HasColumnType("tinyint(1)")
-                        .HasColumnName("VOTE_IN_COMPETITIONS");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlayerEntityId")
-                        .IsUnique();
-
-                    b.ToTable("player_perks");
-                });
-
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomBanEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomBanEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1161,7 +1069,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("room_bans");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomChatlogEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomChatlogEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1179,7 +1087,6 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("deleted_at");
 
                     b.Property<string>("Message")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)")
                         .HasColumnName("message");
@@ -1212,7 +1119,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("room_chatlogs");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1221,62 +1128,47 @@ namespace Turbo.Main.Migrations
 
                     b.Property<bool?>("AllowEditing")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("allow_editing")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("allow_editing");
 
                     b.Property<bool?>("AllowPets")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("allow_pets")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("allow_pets");
 
                     b.Property<bool?>("AllowPetsEat")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("allow_pets_eat")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("allow_pets_eat");
 
                     b.Property<bool?>("AllowWalkThrough")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("allow_walk_through")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("allow_walk_through");
 
                     b.Property<int>("BanType")
                         .HasColumnType("int")
-                        .HasColumnName("ban_type")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("ban_type");
 
                     b.Property<int>("ChatDistance")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("chat_distance")
-                        .HasDefaultValueSql("50");
+                        .HasColumnName("chat_distance");
 
                     b.Property<int>("ChatModeType")
                         .HasColumnType("int")
-                        .HasColumnName("chat_mode_type")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("chat_mode_type");
 
                     b.Property<int>("ChatProtectionType")
                         .HasColumnType("int")
-                        .HasColumnName("chat_protection_type")
-                        .HasDefaultValueSql("2");
+                        .HasColumnName("chat_protection_type");
 
                     b.Property<int>("ChatSpeedType")
                         .HasColumnType("int")
-                        .HasColumnName("chat_speed_type")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("chat_speed_type");
 
                     b.Property<int>("ChatWeightType")
                         .HasColumnType("int")
-                        .HasColumnName("chat_weight_type")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("chat_weight_type");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -1294,15 +1186,12 @@ namespace Turbo.Main.Migrations
 
                     b.Property<bool?>("HideWalls")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("hide_walls")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("hide_walls");
 
                     b.Property<int>("KickType")
                         .HasColumnType("int")
-                        .HasColumnName("kick_type")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("kick_type");
 
                     b.Property<DateTime>("LastActive")
                         .ValueGeneratedOnAdd()
@@ -1311,8 +1200,7 @@ namespace Turbo.Main.Migrations
 
                     b.Property<int>("MuteType")
                         .HasColumnType("int")
-                        .HasColumnName("mute_type")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("mute_type");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1324,22 +1212,16 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("category_id");
 
                     b.Property<double>("PaintFloor")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("double")
-                        .HasColumnName("paint_floor")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("paint_floor");
 
                     b.Property<double>("PaintLandscape")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("double")
-                        .HasColumnName("paint_landscape")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("paint_landscape");
 
                     b.Property<double>("PaintWall")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("double")
-                        .HasColumnName("paint_wall")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("paint_wall");
 
                     b.Property<string>("Password")
                         .HasColumnType("longtext")
@@ -1355,23 +1237,19 @@ namespace Turbo.Main.Migrations
 
                     b.Property<int>("RoomState")
                         .HasColumnType("int")
-                        .HasColumnName("state")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("state");
 
                     b.Property<int>("ThicknessFloor")
                         .HasColumnType("int")
-                        .HasColumnName("thickness_floor")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("thickness_floor");
 
                     b.Property<int>("ThicknessWall")
                         .HasColumnType("int")
-                        .HasColumnName("thickness_wall")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("thickness_wall");
 
                     b.Property<int>("TradeType")
                         .HasColumnType("int")
-                        .HasColumnName("trade_type")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("trade_type");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -1379,22 +1257,16 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("updated_at");
 
                     b.Property<int>("UsersMax")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("users_max")
-                        .HasDefaultValueSql("25");
+                        .HasColumnName("users_max");
 
                     b.Property<int>("UsersNow")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("users_now")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("users_now");
 
                     b.Property<int>("WallHeight")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("wall_height")
-                        .HasDefaultValueSql("-1");
+                        .HasColumnName("wall_height");
 
                     b.HasKey("Id");
 
@@ -1407,7 +1279,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("rooms");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomEntryLogEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntryLogEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1446,7 +1318,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("room_entry_logs");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomModelEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomModelEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1460,10 +1332,8 @@ namespace Turbo.Main.Migrations
 
                     b.Property<bool?>("Custom")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("custom")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("custom");
 
                     b.Property<DateTime?>("DeletedAt")
                         .ValueGeneratedOnAddOrUpdate()
@@ -1472,27 +1342,20 @@ namespace Turbo.Main.Migrations
 
                     b.Property<int>("DoorRotation")
                         .HasColumnType("int")
-                        .HasColumnName("door_rotation")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("door_rotation");
 
                     b.Property<int>("DoorX")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("door_x")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("door_x");
 
                     b.Property<int>("DoorY")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int")
-                        .HasColumnName("door_y")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("door_y");
 
                     b.Property<bool?>("Enabled")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("enabled")
-                        .HasDefaultValueSql("1");
+                        .HasColumnName("enabled");
 
                     b.Property<string>("Model")
                         .IsRequired()
@@ -1517,7 +1380,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("room_models");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomMuteEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomMuteEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1561,7 +1424,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("room_mutes");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomRightEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomRightEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1601,7 +1464,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("room_rights");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Security.SecurityTicketEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Security.SecurityTicketEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1624,10 +1487,8 @@ namespace Turbo.Main.Migrations
                         .HasColumnName("ip_address");
 
                     b.Property<bool?>("IsLocked")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("tinyint(1)")
-                        .HasColumnName("is_locked")
-                        .HasDefaultValueSql("0");
+                        .HasColumnName("is_locked");
 
                     b.Property<int>("PlayerEntityId")
                         .HasColumnType("int")
@@ -1654,7 +1515,7 @@ namespace Turbo.Main.Migrations
                     b.ToTable("security_tickets");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Tracking.PerformanceLogEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Tracking.PerformanceLogEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1716,9 +1577,9 @@ namespace Turbo.Main.Migrations
                     b.ToTable("performance_logs");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Catalog.CatalogOfferEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Catalog.CatalogPageEntity", "Page")
+                    b.HasOne("Turbo.Database.Entities.Catalog.CatalogPageEntity", "Page")
                         .WithMany("Offers")
                         .HasForeignKey("CatalogPageEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1727,24 +1588,24 @@ namespace Turbo.Main.Migrations
                     b.Navigation("Page");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Catalog.CatalogPageEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogPageEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Catalog.CatalogPageEntity", "ParentEntity")
+                    b.HasOne("Turbo.Database.Entities.Catalog.CatalogPageEntity", "ParentEntity")
                         .WithMany("Children")
                         .HasForeignKey("ParentEntityId");
 
                     b.Navigation("ParentEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Catalog.CatalogProductEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogProductEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Catalog.CatalogOfferEntity", "Offer")
+                    b.HasOne("Turbo.Database.Entities.Catalog.CatalogOfferEntity", "Offer")
                         .WithMany("Products")
                         .HasForeignKey("CatalogOfferEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Furniture.FurnitureDefinitionEntity", "FurnitureDefinition")
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", "FurnitureDefinition")
                         .WithMany()
                         .HasForeignKey("FurnitureDefinitionEntityId");
 
@@ -1753,21 +1614,21 @@ namespace Turbo.Main.Migrations
                     b.Navigation("Offer");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Furniture.FurnitureEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Furniture.FurnitureDefinitionEntity", "FurnitureDefinitionEntity")
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", "FurnitureDefinitionEntity")
                         .WithMany("Furnitures")
                         .HasForeignKey("FurnitureDefinitionEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("Furniture")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomEntity", "RoomEntity")
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "RoomEntity")
                         .WithMany()
                         .HasForeignKey("RoomEntityId");
 
@@ -1778,15 +1639,15 @@ namespace Turbo.Main.Migrations
                     b.Navigation("RoomEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Furniture.FurnitureTeleportLinkEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureTeleportLinkEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntityOne")
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntityOne")
                         .WithMany()
                         .HasForeignKey("FurnitureEntityOneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntityTwo")
+                    b.HasOne("Turbo.Database.Entities.Furniture.FurnitureEntity", "FurnitureEntityTwo")
                         .WithMany()
                         .HasForeignKey("FurnitureEntityTwoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1797,9 +1658,28 @@ namespace Turbo.Main.Migrations
                     b.Navigation("FurnitureEntityTwo");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Messenger.MessengerCategoryEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Logs.History.ConsoleChatLogEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "RecipientEntity")
+                        .WithMany()
+                        .HasForeignKey("RecipientEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "SenderEntity")
+                        .WithMany()
+                        .HasForeignKey("SenderEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RecipientEntity");
+
+                    b.Navigation("SenderEntity");
+                });
+
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerCategoryEntity", b =>
+                {
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("MessengerCategories")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1808,19 +1688,19 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Messenger.MessengerFriendEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerFriendEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "FriendPlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "FriendPlayerEntity")
                         .WithMany()
                         .HasForeignKey("FriendPlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Messenger.MessengerCategoryEntity", "MessengerCategoryEntity")
+                    b.HasOne("Turbo.Database.Entities.Messenger.MessengerCategoryEntity", "MessengerCategoryEntity")
                         .WithMany()
                         .HasForeignKey("MessengerCategoryEntityId");
 
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("MessengerFriends")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1833,15 +1713,15 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Messenger.MessengerRequestEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Messenger.MessengerRequestEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("MessengerRequestsSent")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "RequestedPlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "RequestedPlayerEntity")
                         .WithMany("MessengerRequests")
                         .HasForeignKey("RequestedPlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1852,9 +1732,9 @@ namespace Turbo.Main.Migrations
                     b.Navigation("RequestedPlayerEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerBadgeEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerBadgeEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("PlayerBadges")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1863,15 +1743,15 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerChatStyleOwnedEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerChatStyleOwnedEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerChatStyleEntity", "ChatStyle")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerChatStyleEntity", "ChatStyle")
                         .WithMany("OwnedChatStyles")
                         .HasForeignKey("ChatStyleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("PlayerOwnedChatStyles")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1882,9 +1762,9 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerCurrencyEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerCurrencyEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("PlayerCurrencies")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1893,15 +1773,15 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerFavouriteRoomsEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerFavouriteRoomsEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "Player")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "Player")
                         .WithMany()
                         .HasForeignKey("PlayerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomEntity", "Room")
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "Room")
                         .WithMany()
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1912,26 +1792,15 @@ namespace Turbo.Main.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerPerksEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomBanEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
-                        .WithMany()
-                        .HasForeignKey("PlayerEntityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PlayerEntity");
-                });
-
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomBanEntity", b =>
-                {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("RoomBans")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomEntity", "RoomEntity")
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "RoomEntity")
                         .WithMany("RoomBans")
                         .HasForeignKey("RoomEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1942,21 +1811,21 @@ namespace Turbo.Main.Migrations
                     b.Navigation("RoomEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomChatlogEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomChatlogEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("RoomChatlogs")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomEntity", "RoomEntity")
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "RoomEntity")
                         .WithMany("RoomChats")
                         .HasForeignKey("RoomEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "TargetPlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "TargetPlayerEntity")
                         .WithMany()
                         .HasForeignKey("TargetPlayerEntityId");
 
@@ -1967,19 +1836,19 @@ namespace Turbo.Main.Migrations
                     b.Navigation("TargetPlayerEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Navigator.NavigatorFlatCategoryEntity", "NavigatorFlatCategoryEntity")
+                    b.HasOne("Turbo.Database.Entities.Navigator.NavigatorFlatCategoryEntity", "NavigatorFlatCategoryEntity")
                         .WithMany()
                         .HasForeignKey("NavigatorCategoryEntityId");
 
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("Rooms")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomModelEntity", "RoomModelEntity")
+                    b.HasOne("Turbo.Database.Entities.Room.RoomModelEntity", "RoomModelEntity")
                         .WithMany()
                         .HasForeignKey("RoomModelEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1992,15 +1861,15 @@ namespace Turbo.Main.Migrations
                     b.Navigation("RoomModelEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomEntryLogEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntryLogEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany()
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomEntity", "RoomEntity")
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "RoomEntity")
                         .WithMany()
                         .HasForeignKey("RoomEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2011,15 +1880,15 @@ namespace Turbo.Main.Migrations
                     b.Navigation("RoomEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomMuteEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomMuteEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("RoomMutes")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomEntity", "RoomEntity")
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "RoomEntity")
                         .WithMany("RoomMutes")
                         .HasForeignKey("RoomEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2030,15 +1899,15 @@ namespace Turbo.Main.Migrations
                     b.Navigation("RoomEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomRightEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomRightEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("RoomRights")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Turbo.Core.Database.Entities.Room.RoomEntity", "RoomEntity")
+                    b.HasOne("Turbo.Database.Entities.Room.RoomEntity", "RoomEntity")
                         .WithMany("RoomRights")
                         .HasForeignKey("RoomEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2049,9 +1918,9 @@ namespace Turbo.Main.Migrations
                     b.Navigation("RoomEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Security.SecurityTicketEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Security.SecurityTicketEntity", b =>
                 {
-                    b.HasOne("Turbo.Core.Database.Entities.Players.PlayerEntity", "PlayerEntity")
+                    b.HasOne("Turbo.Database.Entities.Players.PlayerEntity", "PlayerEntity")
                         .WithMany("SecurityTickets")
                         .HasForeignKey("PlayerEntityId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2060,29 +1929,29 @@ namespace Turbo.Main.Migrations
                     b.Navigation("PlayerEntity");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Catalog.CatalogOfferEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogOfferEntity", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Catalog.CatalogPageEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Catalog.CatalogPageEntity", b =>
                 {
                     b.Navigation("Children");
 
                     b.Navigation("Offers");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Furniture.FurnitureDefinitionEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Furniture.FurnitureDefinitionEntity", b =>
                 {
                     b.Navigation("Furnitures");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerChatStyleEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerChatStyleEntity", b =>
                 {
                     b.Navigation("OwnedChatStyles");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Players.PlayerEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Players.PlayerEntity", b =>
                 {
                     b.Navigation("Furniture");
 
@@ -2113,7 +1982,7 @@ namespace Turbo.Main.Migrations
                     b.Navigation("SecurityTickets");
                 });
 
-            modelBuilder.Entity("Turbo.Core.Database.Entities.Room.RoomEntity", b =>
+            modelBuilder.Entity("Turbo.Database.Entities.Room.RoomEntity", b =>
                 {
                     b.Navigation("RoomBans");
 
