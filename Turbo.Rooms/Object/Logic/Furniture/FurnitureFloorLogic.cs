@@ -107,7 +107,7 @@ public class FurnitureFloorLogic : FurnitureLogicBase, IRollingObjectLogic, IFur
 
         if (CanSit())
         {
-            avatarLogic.Sit(true, StackHeight, RoomObject.Rotation);
+            avatarLogic.Sit(true, Height, RoomObject.Rotation);
 
             return;
         }

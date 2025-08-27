@@ -47,7 +47,7 @@ public class AvatarLogic : MovingAvatarLogic
 
         if (roomTile is null) return;
 
-        if (!roomTile.CanSit() || !roomTile.CanLay())
+        if(!(roomTile.CanSit() || roomTile.CanLay()))
         {
             Sit(false);
             Lay(false);
@@ -60,12 +60,22 @@ public class AvatarLogic : MovingAvatarLogic
     {
         if (flag)
         {
-            if (HasStatus(RoomObjectAvatarStatus.Sit)) return false;
+            if (HasStatus(RoomObjectAvatarStatus.Sit))
+            {
+                if (rotation.HasValue && RoomObject.Rotation != rotation.Value)
+                {
+                    RoomObject.Rotation = rotation.Value;
+                    RoomObject.HeadRotation = rotation.Value;
+                    return true;
+                }
+
+                return false;
+            }
 
             Dance(RoomObjectAvatarDanceType.None);
             RemoveStatus(RoomObjectAvatarStatus.Lay);
 
-            rotation = rotation is null ? RoomObject.Location.CalculateSitRotation() : rotation;
+            rotation ??= RoomObject.Location.CalculateSitRotation();
 
             RoomObject.Rotation = (Rotation)rotation;
             RoomObject.HeadRotation = (Rotation)rotation;
@@ -86,12 +96,22 @@ public class AvatarLogic : MovingAvatarLogic
     {
         if (flag)
         {
-            if (HasStatus(RoomObjectAvatarStatus.Lay)) return false;
+            if (HasStatus(RoomObjectAvatarStatus.Lay))
+            {
+                if (rotation.HasValue && RoomObject.Rotation != rotation.Value)
+                {
+                    RoomObject.Rotation = rotation.Value;
+                    RoomObject.HeadRotation = rotation.Value;
+                    return true;
+                }
+
+                return false;
+            }
 
             Dance(RoomObjectAvatarDanceType.None);
             RemoveStatus(RoomObjectAvatarStatus.Sit);
 
-            rotation = rotation is null ? RoomObject.Location.CalculateSitRotation() : rotation;
+            rotation ??= RoomObject.Location.CalculateSitRotation();
 
             RoomObject.Rotation = (Rotation)rotation;
             RoomObject.HeadRotation = (Rotation)rotation;
