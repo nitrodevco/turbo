@@ -369,12 +369,9 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
             // do we need to validate that all tiles base height is the same?
 
-            if (roomTile.Avatars.Count > 0)
+            if (roomTile.Avatars.Count > 0 && !isRotating)
             {
-                if(!(roomObject.Logic.CanSit() || roomObject.Logic.CanWalk()) && !isRotating)
-                {
-                    return false;
-                }
+                return false;
             }
 
             if (roomTile.Height + roomObject.Logic.StackHeight > DefaultSettings.MaximumFurnitureHeight) return false;
@@ -667,13 +664,7 @@ public class RoomFurnitureManager : Component, IRoomFurnitureManager
 
             // do we need to validate that all tiles base height is the same?
 
-            if (roomTile.Avatars.Count > 0)
-            {
-                if (!(furnitureDefinition.CanSit || furnitureDefinition.CanWalk))
-                {
-                    return false;
-                }
-            }
+            if (roomTile.Avatars.Count > 0) return false;
 
             if (roomTile.Height + furnitureDefinition.Z > DefaultSettings.MaximumFurnitureHeight) return false;
 
