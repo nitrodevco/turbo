@@ -6,14 +6,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj"/>
-        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj"/>
+        <ProjectReference Include="..\Turbo.Core\Turbo.Core.csproj" />
+        <ProjectReference Include="..\Turbo.Database\Turbo.Database.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Data\"/>
-    </ItemGroup>
-    <ItemGroup>
-        <Folder Include="Data\"/>
+        <None Remove="Data\" />
     </ItemGroup>
 </Project>

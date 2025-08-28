@@ -4,4 +4,5 @@ namespace Turbo.Packets.Incoming.Room.Furniture;
 
 public record RoomDimmerChangeStateMessage : IMessageEvent
 {
+    public int ObjectId { get; init; }
 }

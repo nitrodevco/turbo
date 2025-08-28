@@ -4,9 +4,11 @@ namespace Turbo.Packets.Incoming.Room.Furniture;
 
 public record RoomDimmerSavePresetMessage : IMessageEvent
 {
-    public int PresetNumber { get; init; }
-    public int EffectTypeId { get; init; }
-    public string ColorRgbHex { get; init; }
-    public int ColorBrightness { get; init; }
-    public bool SetAsSelectedPreset { get; init; }
+    public int PresetId { get; init; }
+    public int EffectType { get; init; }
+    public string ColorHex { get; init; }
+    public int Brightness { get; init; }
+    public bool Apply { get; init; }
+    public bool Unknown { get; init; }
+    public int ObjectId { get; init; }
 }

@@ -1,6 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Turbo.Core.Database.Dtos;
 using Turbo.Core.Game.Furniture;
 using Turbo.Core.Game.Furniture.Definition;
 using Turbo.Core.Game.Rooms.Managers;
@@ -54,6 +56,16 @@ public class RoomWallFurniture(
     }
 
     public string SavedWallLocation => FurnitureEntity.WallPosition;
+
+    public async Task<List<MoodLightPresetDto>> GetMoodLightPresets(int itemId)
+    {
+        return await _furnitureManager.GetMoodLightPresets(itemId);
+    }
+
+    public async Task UpdateMoodLightPreset(int itemId, MoodLightPresetDto moodLightPresetDto)
+    {
+        await _furnitureManager.UpdateMoodLightPreset(itemId, moodLightPresetDto);
+    }
 
     protected override void OnDispose()
     {

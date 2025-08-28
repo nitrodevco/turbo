@@ -34,6 +34,26 @@ public class FurnitureManager(
         return await furnitureRepository.GetTeleportPairingAsync(furnitureId);
     }
 
+    public async Task<List<MoodLightPresetDto>> GetMoodLightPresets(int furnitureId)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+        
+        var furnitureMoodLightPresetsRepository =
+            scope.ServiceProvider.GetService<IFurnitureRepository>();
+        
+        return await furnitureMoodLightPresetsRepository.GetMoodLightPresets(furnitureId);
+    }
+
+    public async Task UpdateMoodLightPreset(int itemId, MoodLightPresetDto moodLightPresetDto)
+    {
+        using var scope = _serviceScopeFactory.CreateScope();
+
+        var furnitureMoodLightPresetsRepository =
+            scope.ServiceProvider.GetService<IFurnitureRepository>();
+
+        await furnitureMoodLightPresetsRepository.UpdateMoodLightPreset(itemId, moodLightPresetDto);
+    }
+
     protected override async Task OnInit()
     {
         await LoadDefinitions();

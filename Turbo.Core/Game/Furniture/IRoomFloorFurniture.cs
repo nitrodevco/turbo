@@ -8,12 +8,9 @@ namespace Turbo.Core.Game.Furniture;
 
 public interface IRoomFloorFurniture : IRoomFurniture, IRoomObjectFloorHolder, IDisposable
 {
-    public int SavedX { get; }
-
-    public int SavedY { get; }
-
-    public double SavedZ { get; }
-
-    public Rotation SavedRotation { get; }
-    public Task<TeleportPairingDto> GetTeleportPairing();
+    int SavedX { get; }
+    int SavedY { get; }
+    double SavedZ { get; }
+    Rotation SavedRotation { get; }
+    Task<TeleportPairingDto> GetTeleportPairing();
 }

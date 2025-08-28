@@ -7,7 +7,9 @@ namespace Turbo.Database.Repositories.Furniture;
 
 public interface IFurnitureRepository : IBaseRepository<FurnitureEntity>
 {
-    public Task<List<FurnitureEntity>> FindAllByRoomIdAsync(int roomId);
-    public Task<List<FurnitureEntity>> FindAllInventoryByPlayerIdAsync(int playerId);
-    public Task<TeleportPairingDto> GetTeleportPairingAsync(int furnitureId);
+    Task<List<FurnitureEntity>> FindAllByRoomIdAsync(int roomId);
+    Task<List<FurnitureEntity>> FindAllInventoryByPlayerIdAsync(int playerId);
+    Task<TeleportPairingDto> GetTeleportPairingAsync(int furnitureId);
+    Task<List<MoodLightPresetDto>> GetMoodLightPresets(int furnitureId);
+    Task UpdateMoodLightPreset(int furnitureId, MoodLightPresetDto moodLightPresetDto);
 }

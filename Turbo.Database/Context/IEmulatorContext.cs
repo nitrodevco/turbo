@@ -23,6 +23,7 @@ public interface IEmulatorContext : IDisposable
     public DbSet<CatalogProductEntity> CatalogProducts { get; set; }
     public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }
     public DbSet<FurnitureEntity> Furnitures { get; set; }
+    public DbSet<FurnitureMoodLightPresetEntity> FurnitureMoodLightPresets { get; set; }
     public DbSet<FurnitureTeleportLinkEntity> FurnitureTeleportLinks { get; set; }
     public DbSet<PlayerBadgeEntity> PlayerBadges { get; set; }
     public DbSet<PlayerCurrencyEntity> PlayerCurrencies { get; set; }
