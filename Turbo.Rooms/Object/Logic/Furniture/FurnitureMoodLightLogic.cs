@@ -35,6 +35,15 @@ public class FurnitureMoodLightLogic : FurnitureWallLogic
         return true;
     }
 
+    /// <summary>
+    /// Updates the mood light on/off state and persists StuffData if there is a change.
+    /// Builds a canonical legacy state string using the current preset and the requested state (1 = off, 2 = on),
+    /// compares it to the current StuffData value, and saves only when different. Also updates _isEnabled and
+    /// optionally refreshes client state after persisting.
+    /// </summary>
+    /// <param name="state">Desired state: 1 = off, 2 = on.</param>
+    /// <param name="refresh">Whether to send a StuffData refresh to clients.</param>
+    /// <returns>True if StuffData changed and was saved; otherwise false.</returns>
     public override bool SetState(int state, bool refresh = true)
     {
         if (StuffData is null) return false;
@@ -58,6 +67,12 @@ public class FurnitureMoodLightLogic : FurnitureWallLogic
         return true;
     }
 
+    /// <summary>
+    /// Loads mood light presets for this item and initializes the internal state.
+    /// Populates the local presets cache, then initializes _isEnabled and _currentPreset from StuffData when available.
+    /// If StuffData is empty, selects the first preset (if any) and initializes an "off" state without client refresh.
+    /// </summary>
+    /// <param name="furniture">The wall furniture holder used to fetch presets.</param>
     private async Task LoadPresetsAsync(IRoomWallFurniture furniture)
     {
         _presets.Clear();
@@ -105,6 +120,16 @@ public class FurnitureMoodLightLogic : FurnitureWallLogic
         }
     }
 
+    /// <summary>
+    /// Saves changes to a mood light preset and optionally applies it immediately.
+    /// Updates the preset fields when they differ and persists via the furniture manager.
+    /// If apply is true, sets the preset as current and re-saves StuffData preserving the on/off state.
+    /// </summary>
+    /// <param name="presetId">Preset slot to update.</param>
+    /// <param name="effectType">Effect type value.</param>
+    /// <param name="colorHex">Color hex string (e.g., #FFCC00).</param>
+    /// <param name="brightness">Brightness value.</param>
+    /// <param name="apply">Whether to apply the preset immediately.</param>
     public async Task SavePresetAsync(int presetId, int effectType, string colorHex, int brightness, bool apply)
     {
         var existing = _presets.Values.FirstOrDefault(preset => preset.PresetId == presetId);
@@ -144,6 +169,13 @@ public class FurnitureMoodLightLogic : FurnitureWallLogic
         }
     }
 
+    /// <summary>
+    /// Builds the legacy StuffData string for the mood light using the current or first available preset.
+    /// Format: "state,presetId,effectType,colorHex,brightness,false".
+    /// Returns null when no preset is available.
+    /// </summary>
+    /// <param name="state">Desired on/off state (1 = off, 2 = on).</param>
+    /// <returns>Composed legacy string or null if a preset is unavailable.</returns>
     private string BuildLegacyStateString(int state)
     {
         var preset = _currentPreset ?? _presets.Values.FirstOrDefault();
