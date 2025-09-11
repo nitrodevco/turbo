@@ -22,6 +22,7 @@ namespace Turbo.Database.Context;
 public class TurboContext(DbContextOptions<TurboContext> options) : DbContext(options), IEmulatorContext
 {
     public DbSet<CatalogOfferEntity> CatalogOffers { get; set; }
+    public DbSet<CatalogPageOfferEntity> CatalogPageOffers { get; set; }
     public DbSet<CatalogPageEntity> CatalogPages { get; set; }
     public DbSet<CatalogProductEntity> CatalogProducts { get; set; }
     public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }

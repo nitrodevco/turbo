@@ -6,17 +6,17 @@ namespace Turbo.Core.Game.Catalog;
 
 public interface ICatalogProduct
 {
-    public int Id { get; }
-    public int OfferId { get; }
-    public int FurnitureDefinitionId { get; }
-    public string ProductType { get; }
-    public int SpriteId { get; }
-    public string ExtraParam { get; }
-    public int Quantity { get; }
-    public int UniqueSize { get; }
-    public int UniqueRemaining { get; }
-    public void SetOffer(ICatalogOffer catalogOffer);
-    public void SetFurnitureDefinition(IFurnitureDefinition furnitureDefinition);
-    public bool CanPlayerRecieveProduct(IPlayer player);
-    public Task GiveProductToPlayer(IPlayer player);
+    int Id { get; }
+    int OfferId { get; }
+    int FurnitureDefinitionId { get; }
+    string ProductType { get; }
+    int SpriteId { get; }
+    string ExtraParam { get; }
+    int Quantity { get; }
+    int UniqueSize { get; }
+    int UniqueRemaining { get; }
+    void SetOffer(ICatalogOffer catalogOffer);
+    void SetFurnitureDefinition(IFurnitureDefinition furnitureDefinition);
+    bool CanPlayerRecieveProduct(IPlayer player);
+    Task GiveProductToPlayer(IPlayer player);
 }

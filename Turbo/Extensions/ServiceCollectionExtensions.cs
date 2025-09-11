@@ -155,6 +155,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICatalogOfferRepository, CatalogOfferRepository>();
         services.AddScoped<ICatalogPageRepository, CatalogPageRepository>();
         services.AddScoped<ICatalogProductRepository, CatalogProductRepository>();
+        services.AddScoped<ICatalogPageOfferRepository, CatalogPageOfferRepository>();
         services.AddScoped<IFurnitureDefinitionRepository, FurnitureDefinitionRepository>();
         services.AddScoped<IFurnitureRepository, FurnitureRepository>();
         services.AddScoped<IPlayerBadgeRepository, PlayerBadgeRepository>();

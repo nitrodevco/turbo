@@ -19,6 +19,7 @@ namespace Turbo.Database.Context;
 public interface IEmulatorContext : IDisposable
 {
     public DbSet<CatalogOfferEntity> CatalogOffers { get; set; }
+    public DbSet<CatalogPageOfferEntity> CatalogPageOffers { get; set; }
     public DbSet<CatalogPageEntity> CatalogPages { get; set; }
     public DbSet<CatalogProductEntity> CatalogProducts { get; set; }
     public DbSet<FurnitureDefinitionEntity> FurnitureDefinitions { get; set; }

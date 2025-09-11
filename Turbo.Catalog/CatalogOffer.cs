@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -10,8 +11,23 @@ namespace Turbo.Catalog;
 
 public class CatalogOffer(
     ILogger<ICatalogOffer> _logger,
-    CatalogOfferEntity _entity) : ICatalogOffer
+    CatalogPageOfferEntity _entity) : ICatalogOffer
 {
+    public int Id => _entity.Id; // page-offer id
+    public int PageId => _entity.CatalogPageEntityId;
+    public int OfferEntityId => _entity.CatalogOfferEntityId; // base offer id
+    public string LocalizationId => _entity.Offer.LocalizationId;
+    public int CostCredits => _entity.CostCredits;
+    public int CostCurrency => _entity.CostCurrency;
+    public int? CurrencyType => _entity.CurrencyType;
+    public int CostSilver => _entity.CostSilver;
+    public int OrderIndex => _entity.OrderIndex ?? int.MaxValue;
+    public bool CanGift => _entity.Offer.CanGift ?? false;
+    public bool CanBundle => _entity.Offer.CanBundle ?? false;
+    public int ClubLevel => _entity.Offer.ClubLevel;
+    public bool IsPet => Products.Count >= 1 ? Products[0].ProductType.Equals(ProductTypeEnum.Pet) : false;
+    public string PreviewImage => string.Empty;
+    public bool Visible => _entity.Visible ?? false;
     public ICatalogPage Page { get; private set; }
     public IList<ICatalogProduct> Products { get; } = [];
 
@@ -44,7 +60,7 @@ public class CatalogOffer(
         var totalCreditsCost = CostCredits * quantity;
         var totalCurrencyCost = CostCurrency * quantity;
 
-        // check club level, cost, 
+        // TODO: check club level and deduct costs from wallet
 
         for (var i = 0; i < quantity; i++)
             foreach (var product in Products)
@@ -52,17 +68,4 @@ public class CatalogOffer(
 
         return this;
     }
-
-    public int Id => _entity.Id;
-    public int PageId => _entity.CatalogPageEntityId;
-    public string LocalizationId => _entity.LocalizationId;
-    public int CostCredits => _entity.CostCredits;
-    public int CostCurrency => _entity.CostCurrency;
-    public int? CurrencyType => _entity.CurrencyType;
-    public bool CanGift => _entity.CanGift ?? false;
-    public bool CanBundle => _entity.CanBundle ?? false;
-    public int ClubLevel => _entity.ClubLevel;
-    public bool IsPet => Products.Count >= 1 ? Products[0].ProductType.Equals(ProductTypeEnum.Pet) : false;
-    public string PreviewImage => string.Empty;
-    public bool Visible => _entity.Visible ?? false;
 }

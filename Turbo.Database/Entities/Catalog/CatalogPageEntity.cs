@@ -8,7 +8,8 @@ namespace Turbo.Database.Entities.Catalog;
 [Table("catalog_pages")]
 public class CatalogPageEntity : Entity
 {
-    [Column("parent_id")] public int? ParentEntityId { get; set; }
+    [Column("parent_id")]
+    public int? ParentEntityId { get; set; }
 
     [Column("localization")]
     [Required]
@@ -41,9 +42,10 @@ public class CatalogPageEntity : Entity
     [DefaultValueSql(true)]
     public bool? Visible { get; set; }
 
-    [ForeignKey(nameof(ParentEntityId))] public CatalogPageEntity? ParentEntity { get; set; }
+    [ForeignKey(nameof(ParentEntityId))] 
+    public CatalogPageEntity? ParentEntity { get; set; }
 
     public IList<CatalogPageEntity>? Children { get; set; }
 
-    public IList<CatalogOfferEntity>? Offers { get; set; }
+    public IList<CatalogPageOfferEntity>? Offers { get; set; }
 }

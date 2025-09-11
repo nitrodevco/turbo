@@ -8,21 +8,9 @@ namespace Turbo.Database.Entities.Catalog;
 [Table("catalog_offers")]
 public class CatalogOfferEntity : Entity
 {
-    [Column("page_id")][Required] public int CatalogPageEntityId { get; set; }
-
-    [Column("localization_id")][Required] public string LocalizationId { get; set; }
-
-    [Column("cost_credits")]
+    [Column("localization_id")]
     [Required]
-    [DefaultValueSql("0")]
-    public int CostCredits { get; set; }
-
-    [Column("cost_currency")]
-    [Required]
-    [DefaultValueSql(0)]
-    public int CostCurrency { get; set; }
-
-    [Column("currency_type")] public int? CurrencyType { get; set; }
+    public string LocalizationId { get; set; }
 
     [Column("can_gift")]
     [Required]
@@ -38,14 +26,6 @@ public class CatalogOfferEntity : Entity
     [Required]
     [DefaultValueSql(0)]
     public int ClubLevel { get; set; }
-
-    [Column("visible")]
-    [Required]
-    [DefaultValueSql(true)]
-    public bool? Visible { get; set; }
-
-    [ForeignKey(nameof(CatalogPageEntityId))]
-    public CatalogPageEntity Page { get; set; }
 
     public IList<CatalogProductEntity> Products { get; set; }
 }

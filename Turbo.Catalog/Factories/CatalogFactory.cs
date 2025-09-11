@@ -26,7 +26,7 @@ public class CatalogFactory(
         return ActivatorUtilities.CreateInstance<CatalogPage>(_provider, entity);
     }
 
-    public ICatalogOffer CreateOffer(CatalogOfferEntity entity)
+    public ICatalogOffer CreateOffer(CatalogPageOfferEntity entity)
     {
         return ActivatorUtilities.CreateInstance<CatalogOffer>(_provider, entity);
     }

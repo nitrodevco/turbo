@@ -16,9 +16,18 @@ public class CatalogManager(
 {
     public IDictionary<string, ICatalog> Catalogs { get; } = new Dictionary<string, ICatalog>();
 
+    protected override async Task OnInit()
+    {
+        var normalCatalog = _catalogFactory.CreateCatalog(CatalogType.Normal);
+
+        await normalCatalog.InitAsync();
+
+        Catalogs.Add(normalCatalog.CatalogType, normalCatalog);
+    }
+
     public ICatalogPage GetRootForPlayer(IPlayer player, string catalogType)
     {
-        if (catalogType is null || catalogType is null) return null;
+        if (player is null || catalogType is null) return null;
 
         if (Catalogs.TryGetValue(catalogType, out var catalog)) return catalog?.GetRootForPlayer(player) ?? null;
 
@@ -72,15 +81,6 @@ public class CatalogManager(
         if (Catalogs.TryGetValue(catalogType, out var catalog)) return catalog.GetPageForPlayer(player, pageId) ?? null;
 
         return null;
-    }
-
-    protected override async Task OnInit()
-    {
-        var normalCatalog = _catalogFactory.CreateCatalog(CatalogType.Normal);
-
-        await normalCatalog.InitAsync();
-
-        Catalogs.Add(normalCatalog.CatalogType, normalCatalog);
     }
 
     protected override async Task OnDispose()

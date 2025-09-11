@@ -11,6 +11,13 @@ public class CatalogPage(
     ILogger<ICatalogPage> _logger,
     CatalogPageEntity _entity) : ICatalogPage
 {
+    public virtual int Id => _entity.Id;
+    public virtual int ParentId => _entity.ParentEntityId ?? -1;
+    public virtual int Icon => _entity.Icon;
+    public virtual string Name => _entity.Name;
+    public virtual string Localization => _entity.Localization;
+    public virtual string Layout => _entity.Layout;
+    public virtual bool Visible => _entity.Visible ?? false;
     public ICatalogPage Parent { get; private set; }
     public IDictionary<int, ICatalogPage> Children { get; } = new Dictionary<int, ICatalogPage>();
     public IDictionary<int, ICatalogOffer> Offers { get; } = new Dictionary<int, ICatalogOffer>();
@@ -58,12 +65,4 @@ public class CatalogPage(
 
         return null;
     }
-
-    public virtual int Id => _entity.Id;
-    public virtual int ParentId => _entity.ParentEntityId ?? -1;
-    public virtual int Icon => _entity.Icon;
-    public virtual string Name => _entity.Name;
-    public virtual string Localization => _entity.Localization;
-    public virtual string Layout => _entity.Layout;
-    public virtual bool Visible => _entity.Visible ?? false;
 }
